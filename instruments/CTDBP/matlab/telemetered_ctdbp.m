@@ -8,7 +8,7 @@ api_token = "IXL48EQ2XY";
 start_date='2018-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';
 mooring_name = 'CE02SHSM';
-node = 'NSIF';
+node = 'NSIF'; %BUOY, NSIF, or MFN
 
 %.. Explicitly construct UFrame dataset names
 if strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF')

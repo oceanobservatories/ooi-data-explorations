@@ -1,5 +1,5 @@
 
-%Written By Craig Risien on June 26, 2019 using Matlab2018a
+%Written By Craig Risien on July 3, 2019 using Matlab2018a
 
 %.. set login details
 api_key = "OOIAPI-D8S960UXPK4K03";
@@ -12,29 +12,29 @@ node = 'NSIF'; %BUOY, NSIF, or MFN
 
 %.. Explicitly construct UFrame dataset names
 if strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
 else
     error('Illegal mooring_name or node or combination thereof.');
 end

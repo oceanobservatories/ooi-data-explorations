@@ -7,34 +7,26 @@ api_token = "IXL48EQ2XY";
 %.. set mooring info and time period of interest
 start_date='2018-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';
-mooring_name = 'CE02SHSM';
-node = 'NSIF'; %BUOY, NSIF, or MFN
+mooring_name = 'CE07SHSM';
+node = 'NSIF'; %BUOY, or NSIF
 
 %.. Explicitly construct UFrame dataset names
 if strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/RID16/02-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/SBD17/06-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/RID16/02-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/SBD17/06-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE02SHSM/RID27/02-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE07SHSM/RID27/02-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE04OSSM/RID27/02-FLORTD000/telemetered/flort_sample';
 elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE09OSSM/RID27/02-FLORTD000/telemetered/flort_sample';
 else
     error('Illegal mooring_name or node or combination thereof.');
 end
@@ -93,28 +85,22 @@ nc_urls = cellfun(@(x) regexp(x, strings_to_match, 'match'), nc_urls_all, 'Unifo
 nc_urls(cellfun(@isempty, nc_urls)) = [];  % cell elements are themselves cells
 nc_urls = string(nc_urls(:));  % string array
 
-time_array=[];salinity_array=[];temperature_array=[];conductivity_array=[];density_array=[];pressure_array=[];
+time_array=[];chlorophyll_a_array=[];cdom_array=[];backscatter_array=[];
 
 for i = 1:length(nc_urls)
     
     %Time (seconds since 1900-01-01 0:0:0)
     data=ncread(char(nc_urls(i,:)),'time');
     time_array(length(time_array)+1:length(time_array)+length(data)) = data;clear data
-    %Seawater Temperature (oC)
-    data=ncread(char(nc_urls(i,:)),'temp');
-    temperature_array(length(temperature_array)+1:length(temperature_array)+length(data)) = data;clear data
-    %Seawater Salinity
-    data=ncread(char(nc_urls(i,:)),'practical_salinity');
-    salinity_array(length(salinity_array)+1:length(salinity_array)+length(data)) = data;clear data
-    %Seawater Conductivity
-    data=ncread(char(nc_urls(i,:)),'conductivity');
-    conductivity_array(length(conductivity_array)+1:length(conductivity_array)+length(data)) = data;clear data
-    %Seawater Pressure
-    data=ncread(char(nc_urls(i,:)),'pressure');
-    pressure_array(length(pressure_array)+1:length(pressure_array)+length(data)) = data;clear data
-    %Seawater Density
-    data=ncread(char(nc_urls(i,:)),'density');
-    density_array(length(density_array)+1:length(density_array)+length(data)) = data;clear data
+    %CHLA
+    data=ncread(char(nc_urls(i,:)),'fluorometric_chlorophyll_a');
+    chlorophyll_a_array(length(chlorophyll_a_array)+1:length(chlorophyll_a_array)+length(data)) = data;clear data
+    %CDOM
+    data=ncread(char(nc_urls(i,:)),'fluorometric_cdom');
+    cdom_array(length(cdom_array)+1:length(cdom_array)+length(data)) = data;clear data
+    %Backscatter
+    data=ncread(char(nc_urls(i,:)),'optical_backscatter');
+    backscatter_array(length(backscatter_array)+1:length(backscatter_array)+length(data)) = data;clear data
     
 end
 
@@ -125,41 +111,26 @@ ticksx=datenum(2018,1,1):datenum(2019,1,1);
 doy=str2num(datestr(ticksx,7));
 ind=find(doy==1);
 
-subplot(511)
-plot(time_array,temperature_array,'.k')
+subplot(311)
+plot(time_array,chlorophyll_a_array,'.k')
 axis([datenum(2018,1,1) datenum(2019,1,1) 0 20])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('^oC')
-title(strcat(mooring_name,{' '},node,{' '},'Temperature'))
+ylabel('ug L-1')
+title(strcat(mooring_name,{' '},node,{' '},'CHLA'))
 
-subplot(512)
-plot(time_array,conductivity_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 3 4])
+subplot(312)
+plot(time_array,cdom_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 0 5])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('S m-1')
-title(strcat(mooring_name,{' '},node,{' '},'Conductivity'))
+ylabel('ppb')
+title(strcat(mooring_name,{' '},node,{' '},'CDOM'))
 
-subplot(513)
-plot(time_array,salinity_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 28 34])
+subplot(313)
+plot(time_array,backscatter_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 0 .1])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-title(strcat(mooring_name,{' '},node,{' '},'Salinity'))
-
-subplot(514)
-plot(time_array,density_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 1020 1030])
-xticks(ticksx(ind))
-xticklabels(datestr(ticksx(ind)))
-ylabel('kg m-3')
-title(strcat(mooring_name,{' '},node,{' '},'Density'))
-
-subplot(515)
-plot(time_array,pressure_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 10])
-xticks(ticksx(ind))
-xticklabels(datestr(ticksx(ind)))
-ylabel('dbar')
-title(strcat(mooring_name,{' '},node,{' '},'Pressure'))
+ylabel('m-1')
+title(strcat(mooring_name,{' '},node,{' '},'Optical Backscatter'))

@@ -1,5 +1,5 @@
 
-%Written By Craig Risien on June 26, 2019 using Matlab2018a
+%Written By Craig Risien on July 3, 2019 using Matlab2018a
 
 %.. set login details
 api_key = "OOIAPI-D8S960UXPK4K03";
@@ -12,29 +12,29 @@ node = 'NSIF'; %BUOY, NSIF, or MFN
 
 %.. Explicitly construct UFrame dataset names
 if strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF')
-    uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
 elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN')
-    uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
+    uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/recovered_inst/ctdbp_cdef_instrument_recovered';
 else
     error('Illegal mooring_name or node or combination thereof.');
 end
@@ -101,16 +101,16 @@ for i = 1:length(nc_urls)
     data=ncread(char(nc_urls(i,:)),'time');
     time_array(length(time_array)+1:length(time_array)+length(data)) = data;clear data
     %Seawater Temperature (oC)
-    data=ncread(char(nc_urls(i,:)),'temp');
+    data=ncread(char(nc_urls(i,:)),'ctdbp_seawater_temperature');
     temperature_array(length(temperature_array)+1:length(temperature_array)+length(data)) = data;clear data
     %Seawater Salinity
     data=ncread(char(nc_urls(i,:)),'practical_salinity');
     salinity_array(length(salinity_array)+1:length(salinity_array)+length(data)) = data;clear data
     %Seawater Conductivity
-    data=ncread(char(nc_urls(i,:)),'conductivity');
+    data=ncread(char(nc_urls(i,:)),'ctdbp_seawater_conductivity');
     conductivity_array(length(conductivity_array)+1:length(conductivity_array)+length(data)) = data;clear data
     %Seawater Pressure
-    data=ncread(char(nc_urls(i,:)),'pressure');
+    data=ncread(char(nc_urls(i,:)),'ctdbp_seawater_pressure');
     pressure_array(length(pressure_array)+1:length(pressure_array)+length(data)) = data;clear data
     %Seawater Density
     data=ncread(char(nc_urls(i,:)),'density');

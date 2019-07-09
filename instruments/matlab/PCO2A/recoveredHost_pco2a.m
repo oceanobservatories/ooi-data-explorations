@@ -130,7 +130,7 @@ plot(time_array,water_temperature_array,'.k')
 axis([datenum(2018,1,1) datenum(2019,1,1) 6 18])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('uatm')
+ylabel('^oC')
 title(strcat(mooring_name,{' '},node,{' '},'Water Temperature'))
 
 subplot(313)

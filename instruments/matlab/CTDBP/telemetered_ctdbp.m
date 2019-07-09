@@ -131,7 +131,7 @@ axis([datenum(2018,1,1) datenum(2019,1,1) 0 20])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
 ylabel('^oC')
-title(strcat(mooring_name,{' '},node,{' '},'Temperature'))
+title(strcat(mooring_name,{' '},node,{' '},'Water Temperature'))
 
 subplot(512)
 plot(time_array,conductivity_array,'.k')

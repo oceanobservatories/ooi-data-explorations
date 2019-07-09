@@ -2,10 +2,10 @@
 %Written By Craig Risien on June 26, 2019 using Matlab2018a
 
 %.. set login details
-api_key = "OOIAPI-D8S960UXPK4K03";
-api_token = "IXL48EQ2XY";
+api_key = "OOIAPI-853A3LA6QI3L62";
+api_token = "WYAN89W5X4Z0QZ";
 %.. set mooring info and time period of interest
-start_date='2018-01-01T00:00:00.000Z';
+start_date='2017-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';
 mooring_name = 'CE07SHSM';
 node = 'NSIF'; %BUOY, or NSIF
@@ -89,22 +89,22 @@ nc_urls = cellfun(@(x) regexp(x, strings_to_match, 'match'), nc_urls_all, 'Unifo
 nc_urls(cellfun(@isempty, nc_urls)) = [];  % cell elements are themselves cells
 nc_urls = string(nc_urls(:));  % string array
 
-time_array=[];chlorophyll_a_array=[];cdom_array=[];backscatter_array=[];
+time_array=[];ph_array=[];temperature_array=[];salinity_array=[];
 
 for i = 1:length(nc_urls)
     
     %Time (seconds since 1900-01-01 0:0:0)
     data=ncread(char(nc_urls(i,:)),'time');
     time_array(length(time_array)+1:length(time_array)+length(data)) = data;clear data
-    %CHLA
-    data=ncread(char(nc_urls(i,:)),'fluorometric_chlorophyll_a');
-    chlorophyll_a_array(length(chlorophyll_a_array)+1:length(chlorophyll_a_array)+length(data)) = data;clear data
-    %CDOM
-    data=ncread(char(nc_urls(i,:)),'fluorometric_cdom');
-    cdom_array(length(cdom_array)+1:length(cdom_array)+length(data)) = data;clear data
-    %Backscatter
-    data=ncread(char(nc_urls(i,:)),'optical_backscatter');
-    backscatter_array(length(backscatter_array)+1:length(backscatter_array)+length(data)) = data;clear data
+    %PH
+    data=ncread(char(nc_urls(i,:)),'phsen_abcdef_ph_seawater');
+    ph_array(length(ph_array)+1:length(ph_array)+length(data)) = data;clear data
+    %Temperature
+    data=ncread(char(nc_urls(i,:)),'phsen_thermistor_temperature');
+    temperature_array(length(temperature_array)+1:length(temperature_array)+length(data)) = data;clear data
+    %Salinity
+    data=ncread(char(nc_urls(i,:)),'practical_salinity');
+    salinity_array(length(salinity_array)+1:length(salinity_array)+length(data)) = data;clear data
     
 end
 
@@ -116,25 +116,23 @@ doy=str2num(datestr(ticksx,7));
 ind=find(doy==1);
 
 subplot(311)
-plot(time_array,chlorophyll_a_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 20])
+plot(time_array,ph_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 7.5 9])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('ug L-1')
-title(strcat(mooring_name,{' '},node,{' '},'CHLA'))
+title(strcat(mooring_name,{' '},node,{' '},'pH'))
 
 subplot(312)
-plot(time_array,cdom_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 5])
+plot(time_array,temperature_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 6 16])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('ppb')
-title(strcat(mooring_name,{' '},node,{' '},'CDOM'))
+title(strcat(mooring_name,{' '},node,{' '},'Temperature'))
+ylabel('^oC')
 
 subplot(313)
-plot(time_array,backscatter_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 .1])
+plot(time_array,salinity_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 26 34])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('m-1')
-title(strcat(mooring_name,{' '},node,{' '},'Optical Backscatter'))
+title(strcat(mooring_name,{' '},node,{' '},'Salinity'))

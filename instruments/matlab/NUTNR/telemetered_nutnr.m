@@ -2,8 +2,8 @@
 %Written By Craig Risien on June 26, 2019 using Matlab2018a
 
 %.. set login details
-api_key = "OOIAPI-D8S960UXPK4K03";
-api_token = "IXL48EQ2XY";
+api_key = "OOIAPI-853A3LA6QI3L62";
+api_token = "WYAN89W5X4Z0QZ";
 %.. set mooring info and time period of interest
 start_date='2018-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';

@@ -2,8 +2,8 @@
 
 %.. set the base M2M URL and user tokens
 m2m_url = "https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/";
-api_key = "OOIAPI-D8S960UXPK4K03";
-api_token = "IXL48EQ2XY";
+api_key = "OOIAPI-853A3LA6QI3L62";
+api_token = "WYAN89W5X4Z0QZ";
 options = weboptions("Username", api_key, "Password", api_token, "Timeout", 120);
 
 %.. Explicitly construct UFrame dataset names

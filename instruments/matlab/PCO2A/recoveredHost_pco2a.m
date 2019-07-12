@@ -2,23 +2,23 @@
 %Written By Craig Risien on June 26, 2019 using Matlab2018a
 
 %.. set login details
-api_key = "OOIAPI-D8S960UXPK4K03";
-api_token = "IXL48EQ2XY";
+api_key = "OOIAPI-853A3LA6QI3L62";
+api_token = "WYAN89W5X4Z0QZ";
 %.. set mooring info and time period of interest
 start_date='2018-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';
 mooring_name = 'CE07SHSM';
-node = 'NSIF'; %BUOY, or NSIF
+node = 'BUOY';
 
 %.. Explicitly construct UFrame dataset names
 if strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE02SHSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
+    uframe_dataset_name = 'CE02SHSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_air_recovered';
 elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE04OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
+    uframe_dataset_name = 'CE04OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_air_recovered';
 elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE07SHSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
+    uframe_dataset_name = 'CE07SHSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_air_recovered';
 elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY')
-    uframe_dataset_name = 'CE09OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
+    uframe_dataset_name = 'CE09OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_air_recovered';
 else
     error('Illegal mooring_name or node or combination thereof.');
 end
@@ -77,22 +77,33 @@ nc_urls = cellfun(@(x) regexp(x, strings_to_match, 'match'), nc_urls_all, 'Unifo
 nc_urls(cellfun(@isempty, nc_urls)) = [];  % cell elements are themselves cells
 nc_urls = string(nc_urls(:));  % string array
 
-time_array=[];chlorophyll_a_array=[];cdom_array=[];backscatter_array=[];
+time_array=[];pco2a_array=[];pco2w_array=[];water_temperature_array=[];salinity_array=[];
 
 for i = 1:length(nc_urls)
     
     %Time (seconds since 1900-01-01 0:0:0)
     data=ncread(char(nc_urls(i,:)),'time');
     time_array(length(time_array)+1:length(time_array)+length(data)) = data;clear data
-    %CHLA
-    data=ncread(char(nc_urls(i,:)),'fluorometric_chlorophyll_a');
-    chlorophyll_a_array(length(chlorophyll_a_array)+1:length(chlorophyll_a_array)+length(data)) = data;clear data
-    %CDOM
-    data=ncread(char(nc_urls(i,:)),'fluorometric_cdom');
-    cdom_array(length(cdom_array)+1:length(cdom_array)+length(data)) = data;clear data
-    %Backscatter
-    data=ncread(char(nc_urls(i,:)),'optical_backscatter');
-    backscatter_array(length(backscatter_array)+1:length(backscatter_array)+length(data)) = data;clear data
+    %PCO2A
+    data=ncread(char(nc_urls(i,:)),'partial_pressure_co2_atm');
+    pco2a_array(length(pco2a_array)+1:length(pco2a_array)+length(data)) = data;clear data
+    %PCO2W
+    data=ncread(char(nc_urls(i,:)),'partial_pressure_co2_ssw');
+    pco2w_array(length(pco2w_array)+1:length(pco2w_array)+length(data)) = data;clear data
+    %Salinity
+    try
+        data=ncread(char(nc_urls(i,:)),'met_salsurf');
+        salinity_array(length(salinity_array)+1:length(salinity_array)+length(data)) = data;clear data
+    catch
+        salinity_array(length(salinity_array)+1:length(pco2w_array)) = nan;
+    end
+    %Water Temperature
+    try
+        data=ncread(char(nc_urls(i,:)),'sea_surface_temperature');
+        water_temperature_array(length(water_temperature_array)+1:length(water_temperature_array)+length(data)) = data;clear data
+    catch
+        water_temperature_array(length(water_temperature_array)+1:length(pco2w_array)) = nan;
+    end
     
 end
 
@@ -104,25 +115,27 @@ doy=str2num(datestr(ticksx,7));
 ind=find(doy==1);
 
 subplot(311)
-plot(time_array,chlorophyll_a_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 20])
+plot(time_array,pco2a_array,'.k')
+hold on
+plot(time_array,pco2w_array,'.b')
+axis([datenum(2018,1,1) datenum(2019,1,1) 0 600])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('ug L-1')
-title(strcat(mooring_name,{' '},node,{' '},'CHLA'))
+ylabel('uatm')
+title(strcat(mooring_name,{' '},node,{' '},'PCO2'))
+legend('PCO2A','PCO2W')
 
 subplot(312)
-plot(time_array,cdom_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 5])
+plot(time_array,water_temperature_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 6 18])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('ppb')
-title(strcat(mooring_name,{' '},node,{' '},'CDOM'))
+ylabel('^oC')
+title(strcat(mooring_name,{' '},node,{' '},'Water Temperature'))
 
 subplot(313)
-plot(time_array,backscatter_array,'.k')
-axis([datenum(2018,1,1) datenum(2019,1,1) 0 .1])
+plot(time_array,salinity_array,'.k')
+axis([datenum(2018,1,1) datenum(2019,1,1) 20 34])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
-ylabel('m-1')
-title(strcat(mooring_name,{' '},node,{' '},'Optical Backscatter'))
+title(strcat(mooring_name,{' '},node,{' '},'Salinity'))

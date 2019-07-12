@@ -2,8 +2,8 @@
 %Written By Craig Risien on June 26, 2019 using Matlab2018a
 
 %.. set login details
-api_key = "OOIAPI-D8S960UXPK4K03";
-api_token = "IXL48EQ2XY";
+api_key = "OOIAPI-853A3LA6QI3L62";
+api_token = "WYAN89W5X4Z0QZ";
 %.. set mooring info and time period of interest
 start_date='2018-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';
@@ -131,7 +131,7 @@ axis([datenum(2018,1,1) datenum(2019,1,1) 0 20])
 xticks(ticksx(ind))
 xticklabels(datestr(ticksx(ind)))
 ylabel('^oC')
-title(strcat(mooring_name,{' '},node,{' '},'Temperature'))
+title(strcat(mooring_name,{' '},node,{' '},'Water Temperature'))
 
 subplot(512)
 plot(time_array,conductivity_array,'.k')

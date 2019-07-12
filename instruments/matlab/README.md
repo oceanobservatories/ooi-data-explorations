@@ -1,0 +1,1 @@
+For information on Endurance Array moorings, nodes and instrument classes click [**HERE**](../../README.md)

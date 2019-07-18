@@ -7,6 +7,7 @@
 """
 import argparse
 import netrc
+import numpy as np
 import re
 import requests
 import sys
@@ -25,8 +26,8 @@ SENSOR_URL = '12576/sensor/inv/'                             # Sensor Informatio
 VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Information
 
 # setup access credentials
-nc = netrc.netrc()  # best option is user has their own account
-AUTH = nc.authenticators('ooinet.oceanobservatories.org')
+nrc = netrc.netrc()  # best option is user has their own account
+AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
 if AUTH is None:
     # Use our default user credentials.
     AUTH = ['OOIAPI-853A3LA6QI3L62', 'WYAN89W5X4Z0QZ']
@@ -104,11 +105,12 @@ def deployment_dates(site, node, sensor, deploy):
     """
     Based on the site, node and sensor names and the deployment number, determine the start and end times for a
     deployment.
-    :param site:
-    :param node:
-    :param sensor:
-    :param deploy:
-    :return:
+
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :param deploy: Deployment number
+    :return: start and stop dates for the deployment of interest
     """
     # request deployment metadata
     r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy), auth=(AUTH[0], AUTH[2]))
@@ -118,7 +120,7 @@ def deployment_dates(site, node, sensor, deploy):
     start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStartTime'] / 1000.))
     if data[0]['eventStopTime']:
         # check to see if there is a stop time for the deployment, if so use it ...
-        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStoptTime'] / 1000.))
+        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStopTime'] / 1000.))
     else:
         # ... otherwise use the current time as this is an active deployment
         stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(time.time()))
@@ -126,44 +128,17 @@ def deployment_dates(site, node, sensor, deploy):
     return start, stop
 
 
-def list_files(url, tag=''):
+def get_vocabulary(site, node, sensor):
     """
-    Function to create a list of the NetCDF data files in the THREDDS catalog created by a request to the M2M system.
+    Based on the site, node and sensor name download the vocabulary record defining this sensor.
 
-    :param url: URL to user's THREDDS catalog specific to a data request
-    :param tag: regex pattern used to distinguish files of interest
-    :return: list of files in the catalog with the URL path set relative to the catalog
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :return: json object with the site-node-sensor specific vocabulary
     """
-    page = requests.get(url).text
-    soup = BeautifulSoup(page, 'html.parser')
-    pattern = re.compile(tag)
-    return [node.get('href') for node in soup.find_all('a', text=pattern)]
-
-
-def process_file(catalog_file):
-    """
-    Function to download one of the NetCDF files as an xarray data set, convert to time as the appropriate dimension
-    instead of obs, and drop the extraneous timestamp variables (these were originally not intended to be exposed to
-    users and lead to confusion as to their meaning).
-
-    :param catalog_file: Unique file, referenced by a URL relative to the catalog, to download and convert the data
-        file to an xarray data set.
-    :return: downloaded data in an xarray dataset.
-    """
-    dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
-    url = re.sub('catalog.html\\?dataset=', dods_url, catalog_file)
-    ds = xr.open_dataset(url).load()  # fully download the data first, before converting
-    ds = ds.swap_dims({'obs': 'time'})
-    ds = ds.drop(['obs', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp'])
-
-    # convert datetime values from nanoseconds to seconds since 1970-01-01
-    ds['time'] = dt64_epoch(ds.time)
-    ds['internal_timestamp'] = dt64_epoch(ds.internal_timestamp)
-
-    # resetting cdm_data_type from Point to Station, more accurate for time series datasets
-    ds.attrs['cdm_data_type'] = 'Station'
-
-    return ds
+    r = requests.get(BASE_URL + VOCAB_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    return r.json()
 
 
 def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
@@ -197,6 +172,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     data = r.json()
 
     # wait until the request is completed
+    print('Waiting for OOINet to process and prepare data request, this may take up to 10 minutes\n')
     check_complete = data['allURLs'][1] + '/status.txt'
     with tqdm(total=1200, desc='Processing Request') as bar:
         for i in range(1200):
@@ -206,7 +182,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
                 bar.n = 1200
                 bar.last_print_n = 1200
                 bar.refresh()
-                print('\nrequest completed in %f minutes\n' % elapsed)
+                print('\nrequest completed in %f minutes.' % elapsed)
                 break
             else:
                 time.sleep(.5)
@@ -230,7 +206,178 @@ def m2m_collect(data, tag=''):
     # Process the data files found above and concatenate into a single data set
     frames = [process_file(f) for f in files]
     m2m = xr.concat(frames, 'time')
+    m2m = m2m.sortby('time')
+
     return m2m
+
+
+def list_files(url, tag=''):
+    """
+    Function to create a list of the NetCDF data files in the THREDDS catalog created by a request to the M2M system.
+
+    :param url: URL to user's THREDDS catalog specific to a data request
+    :param tag: regex pattern used to distinguish files of interest
+    :return: list of files in the catalog with the URL path set relative to the catalog
+    """
+    page = requests.get(url).text
+    soup = BeautifulSoup(page, 'html.parser')
+    pattern = re.compile(tag)
+    return [node.get('href') for node in soup.find_all('a', text=pattern)]
+
+
+def process_file(catalog_file):
+    """
+    Function to download one of the NetCDF files as an xarray data set, convert to time as the appropriate dimension
+    instead of obs, and drop the extraneous timestamp variables (these were originally not intended to be exposed to
+    users and lead to confusion as to their meaning). The ID and provenance variables are better off obtained directly
+    from the M2M system via a different process. Having them included imposes unnecessary constraints.
+
+    :param catalog_file: Unique file, referenced by a URL relative to the catalog, to download and convert the data
+        file to an xarray data set.
+    :return: downloaded data in an xarray dataset.
+    """
+    dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
+    url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
+    with xr.open_dataset(url, cache=False) as xrd:
+        ds = xrd.load()
+
+    ds = ds.swap_dims({'obs': 'time'})
+    ds = ds.drop(['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp'])
+    ds = ds.sortby('time')
+
+    # resetting cdm_data_type from Point to Station and the featureType from point to timeSeries
+    ds.attrs['cdm_data_type'] = 'Station'
+    ds.attrs['featureType'] = 'timeSeries'
+
+    # clear-up some global attributes we will no longer be using
+    keys = ['DODS.strlen', 'DODS.dimName', 'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
+    for key in keys:
+        if key in ds.attrs:
+            del(ds.attrs[key])
+
+    # update some of the global attributes
+    ds.attrs['acknowledgement'] = 'National Science Foundation'
+    ds.attrs['comment'] = 'Data collected from the OOI M2M API and reworked for use in locally stored NetCDF files.'
+    ds.attrs['publisher_email'] = 'help@oceanobservatories.org'
+    ds.attrs['creator_email'] = 'ooice.platforms@gmail.com'
+
+    return ds
+
+
+def update_dataset(ds, depth):
+    """
+    Updates a data set with global and variable level metadata attributes and sets appropriate dimensions and
+    coordinate axes.
+
+    :param ds: Data set to update
+    :param depth: instrument deployment depth
+    :return ds: The updated data set
+    """
+    # add a default station identifier as a coordinate variable to the data set
+    ds.coords['station'] = 0
+    ds = ds.expand_dims('station', axis=None)
+    ds['station'].attrs = dict({
+        'cf_role': 'timeseries_id',
+        'long_name': 'Station Identifier',
+        'comment': ds.attrs['subsite'].upper()
+    })
+
+    # add the geospatial coordinates using the station identifier from above as the dimension
+    geo_coords = xr.Dataset({
+        'lat': ('station', [ds.lat.values[0][0]]),
+        'lon': ('station', [ds.lon.values[0][0]]),
+        'z': ('station', [depth])
+    }, coords={'station': [0]})
+
+    geo_attrs = dict({
+        'station': {
+            'cf_role': 'timeseries_id',
+            'long_name': 'Station Identifier',
+            'comment': ds.attrs['subsite'].upper()
+        },
+        'lon': {
+            'long_name': 'Longitude',
+            'standard_name': 'longitude',
+            'units': 'degrees_east',
+            'axis': 'X',
+            'comment': 'Deployment location'
+        },
+        'lat': {
+            'long_name': 'Latitude',
+            'standard_name': 'latitude',
+            'units': 'degrees_north',
+            'axis': 'Y',
+            'comment': 'Deployment location'
+        },
+        'z': {
+            'long_name': 'Depth',
+            'standard_name': 'depth',
+            'units': 'm',
+            'comment': 'Instrument deployment depth',
+            'positive': 'down',
+            'axis': 'Z'
+        }
+    })
+    for v in geo_coords.variables:
+        geo_coords[v].attrs = geo_attrs[v]
+
+    # merge the geospatial coordinates into the data set
+    ds = ds.drop(['lat', 'lon'])
+    ds = ds.merge(geo_coords)
+
+    # update coordinate attributes for all variables
+    for v in ds.variables:
+        if v not in ['time', 'lat', 'lon', 'z', 'station']:
+            ds[v].attrs['coordinates'] = 'time lon lat z'
+
+    # update some variable attributes to get somewhat closer to IOOS compliance, more importantly convert QC variables
+    # to bytes and set the attributes to define the flag masks and meanings.
+    ds['deployment'].attrs['long_name'] = 'Deployment Number'   # add missing long_name attribute
+    qc_pattern = re.compile(r'^.+_qc_.+$')
+    executed_pattern = re.compile(r'^.+_qc_executed$')
+    results_pattern = re.compile(r'^.+_qc_results$')
+    flag_masks = np.array([1, 2, 4, 8, 16, 32, 64, 128], dtype=np.uint8)
+    for v in ds.variables:
+        if qc_pattern.match(v):     # update QC variables
+            ds[v] = (('station', 'time'), [[np.uint8(x) for x in ds[v].values[0]]])
+            ds[v].attrs['long_name'] = re.sub('Qc', 'QC', re.sub('_', ' ', v.title()))
+
+            if executed_pattern.match(v):   # *_qc_executed variables
+                ds[v].attrs['flag_masks'] = flag_masks
+                ds[v].attrs['flag_meanings'] = ('global_range_test local_range_test spike_test poly_trend_test ' +
+                                                'stuck_value_test gradient_test propogate_flags')
+                ds[v].attrs['comment'] = 'Automated QC tests executed for the associated named variable.'
+
+                ancillary = re.sub('_qc_executed', '', v)
+                ds[v].attrs['ancillary_variables'] = ancillary
+                if 'standard_name' in ds[ancillary].attrs:
+                    ds[v].attrs['standard_name'] = ds[ancillary].attrs['standard_name'] + ' qc_tests_executed'
+
+            if results_pattern.match(v):    # *_qc_results variables
+                ds[v].attrs['flag_masks'] = flag_masks
+                ds[v].attrs['flag_meanings'] = ('global_range_test_passed local_range_test_passed spike_test_passed ' +
+                                                'poly_trend_test_passed stuck_value_test_passed gradient_test_passed ' +
+                                                'all_tests_passed')
+                ds[v].attrs['comment'] = ('QC result flags are set to true (1) if the test passed. Otherwise, if ' +
+                                          'the test failed or was not executed, the flag is set to false (0).')
+
+                ancillary = re.sub('_qc_results', '', v)
+                ds[v].attrs['ancillary_variables'] = ancillary
+                if 'standard_name' in ds[ancillary].attrs:
+                    ds[v].attrs['standard_name'] = ds[ancillary].attrs['standard_name'] + ' qc_tests_results'
+
+    # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
+    ds['time'] = dt64_epoch(ds.time)
+    ds['time'].attrs = dict({
+        'long_name': 'Time',
+        'standard_name': 'time',
+        'units': 'seconds since 1970-01-01 00:00:00 0:00',
+        'axis': 'T',
+        'calendar': 'gregorian'
+    })
+
+    # return the data set for further work
+    return ds
 
 
 def dt64_epoch(dt64):
@@ -262,10 +409,11 @@ def inputs(argv=None):
     parser.add_argument("-sn", "--sensor", dest="sensor", type=str, required=True)
     parser.add_argument("-mt", "--method", dest="method", type=str, required=True)
     parser.add_argument("-st", "--stream", dest="stream", type=str, required=True)
+    parser.add_argument("-dp", "--deploy", dest="deploy", type=int, required=False)
     parser.add_argument("-bt", "--beginDT", dest="start", type=str, required=False)
     parser.add_argument("-et", "--endDT", dest="stop", type=str, required=False)
-    parser.add_argument("-et", "--endDT", dest="stop", type=str, required=False)
-    parser.add_argument("-o", "--outfile", dest="outfile", type=str, required=False)
+    parser.add_argument("-ba", "--burst_average", dest="burst", default=False, action='store_true')
+    parser.add_argument("-o", "--outfile", dest="outfile", type=str, required=True)
 
     # parse the input arguments and create a parser object
     args = parser.parse_args(argv)

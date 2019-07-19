@@ -1,23 +1,32 @@
 %Written By Craig Risien on June 7, 2019 using Matlab2018a
 
-%.. set the base M2M URL and user tokens
-m2m_url = "https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/";
+%.. set login details
 api_key = "OOIAPI-853A3LA6QI3L62";
 api_token = "WYAN89W5X4Z0QZ";
-options = weboptions("Username", api_key, "Password", api_token, "Timeout", 120);
-
-%.. Explicitly construct UFrame dataset names
-%dataset_name = 'CE02SHSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
-%dataset_name = 'CE04OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
-dataset_name = 'CE07SHSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
-%dataset_name = 'CE09OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
-
-%.. construct the data URL
-data_url = strcat(m2m_url, dataset_name);
-
+%.. set mooring info and time period of interest
 start_date='2018-01-01T00:00:00.000Z';
 end_date='2018-12-31T23:59:59.000Z';
+mooring_name = 'CE02SHSM';
+node = 'BUOY';
 
+%.. Explicitly construct UFrame dataset names
+if strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY')
+    uframe_dataset_name = 'CE02SHSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
+elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY')
+    uframe_dataset_name = 'CE07SHSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
+elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY')
+    uframe_dataset_name = 'CE04OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
+elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY')
+    uframe_dataset_name = 'CE09OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
+else
+    error('Illegal mooring_name or node or combination thereof.');
+end
+
+%.. construct the data URL
+m2m_url = "https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/";
+data_url = strcat(m2m_url, uframe_dataset_name);
+
+options = weboptions("Username", api_key, "Password", api_token, "Timeout", 120);
 m2m_response = webread(data_url, "beginDT", start_date, "endDT", end_date, options);
 
 for ii = 1:1800

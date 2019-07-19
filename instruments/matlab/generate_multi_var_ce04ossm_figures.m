@@ -521,5 +521,3 @@ for year = 2015:2018
     set(gcf,'color','w');
     export_fig('-r300',strcat(mooring_name,'_September_April_',num2str(year)),'-pdf')
 end
-
-save CE04OSSM_Data

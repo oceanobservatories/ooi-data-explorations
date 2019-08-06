@@ -13,7 +13,7 @@ CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 
 def ctdbp_datalogger(ds, burst=False):
     """
-    Takes CTDBP data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
+    Takes ctdbp data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
     it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
     are of no use/value.
 
@@ -36,7 +36,7 @@ def ctdbp_datalogger(ds, burst=False):
         'units': 'seconds since 1970-01-01 00:00:00 0:00',
         'calendar': 'gregorian',
         'comment': ('Comparing the instrument internal clock versus the GPS referenced sampling time will allow for ' +
-                    'calculations of the instrument clock offset and drift. Useful when working then with the ' +
+                    'calculations of the instrument clock offset and drift. Useful when working with the ' +
                     'recovered instrument data where no external GPS referenced clock is available.')
     })
 
@@ -81,7 +81,7 @@ def ctdbp_datalogger(ds, burst=False):
 
 def ctdbp_instrument(ds, burst=False):
     """
-    Takes CTDBP data recorded by internally by the instrument, and cleans up the data set to make it more
+    Takes ctdbp data recorded by internally by the instrument, and cleans up the data set to make it more
     user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
     of no use/value.
 
@@ -90,7 +90,7 @@ def ctdbp_instrument(ds, burst=False):
     :return: cleaned up data set
     """
     """
-    Takes CTDBP data recorded by internally by the instrument, and cleans up the data set to make it more
+    Takes ctdbp data recorded by internally by the instrument, and cleans up the data set to make it more
     user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
     of no use/value.
 
@@ -196,11 +196,26 @@ def main(argv=None):
 
     # Determine start and end dates based on the deployment number
     start, stop = deployment_dates(site, node, sensor, deploy)
+    if not start or not stop:
+        exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d. Check request.' % (site, node,
+                                                                                                         sensor,
+                                                                                                         deploy))
+        raise SystemExit(exit_text)
 
-    # request and download the data
+    # Deployment dates are available, request the data for download
     r = m2m_request(site, node, sensor, method, stream, start, stop)
-    ctdbp = m2m_collect(r, '.*CTDBP.*\\.nc$')
+    if not r:
+        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d. Check request.' % (site, node, sensor, deploy))
+        raise SystemExit(exit_text)
+
+    # Valid request, start downloading the data
+    ctdbp = m2m_collect(r, '.*ctdbp.*\\.nc$')
     ctdbp = ctdbp.where(ctdbp.deployment == deploy, drop=True)  # limit to the deployment of interest
+
+    # check to see if there is any data after limiting to this specific deployment
+    if len(ctdbp.time) == 0:
+        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
+        raise SystemExit(exit_text)
 
     # clean-up and reorganize
     if method in ['telemetered', 'recovered_host']:

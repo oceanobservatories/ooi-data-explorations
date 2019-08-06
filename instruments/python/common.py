@@ -45,7 +45,10 @@ def list_nodes(site):
     :return: List of the the available nodes for this site
     """
     r = requests.get(BASE_URL + DEPLOY_URL + site, auth=(AUTH[0], AUTH[2]))
-    return r.json()
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def list_sensors(site, node):
@@ -57,7 +60,10 @@ def list_sensors(site, node):
     :return: list of the the available sensors for this site and node
     """
     r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node, auth=(AUTH[0], AUTH[2]))
-    return r.json()
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def list_methods(site, node, sensor):
@@ -70,7 +76,10 @@ def list_methods(site, node, sensor):
     :return: list of the data delivery methods associated with this site, node and sensor
     """
     r = requests.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
-    return r.json()
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def list_streams(site, node, sensor, method):
@@ -85,7 +94,10 @@ def list_streams(site, node, sensor, method):
     """
     # Determine the streams associated with the delivery method available for this sensor
     r = requests.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method, auth=(AUTH[0], AUTH[2]))
-    return r.json()
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def list_deployments(site, node, sensor):
@@ -98,7 +110,10 @@ def list_deployments(site, node, sensor):
     :return: list of the deployments of this site, node and sensor combination
     """
     r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
-    return r.json()
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def deployment_dates(site, node, sensor, deploy):
@@ -113,11 +128,19 @@ def deployment_dates(site, node, sensor, deploy):
     :return: start and stop dates for the deployment of interest
     """
     # request deployment metadata
-    r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy), auth=(AUTH[0], AUTH[2]))
-    data = r.json()
+    r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy), auth=(AUTH[0],
+                                                                                                         AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        data = r.json()
+    else:
+        return None, None
 
     # use the metadata to extract the start and end times for the deployment
-    start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStartTime'] / 1000.))
+    if data:
+        start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStartTime'] / 1000.))
+    else:
+        return None, None
+
     if data[0]['eventStopTime']:
         # check to see if there is a stop time for the deployment, if so use it ...
         stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStopTime'] / 1000.))
@@ -138,7 +161,10 @@ def get_vocabulary(site, node, sensor):
     :return: json object with the site-node-sensor specific vocabulary
     """
     r = requests.get(BASE_URL + VOCAB_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
-    return r.json()
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
@@ -169,7 +195,10 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     options = begin_date + end_date + '&format=application/netcdf'
     r = requests.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,
                      auth=(AUTH[0], AUTH[2]))
-    data = r.json()
+    if r.status_code == requests.codes.ok:
+        data = r.json()
+    else:
+        return None
 
     # wait until the request is completed
     print('Waiting for OOINet to process and prepare data request, this may take up to 10 minutes\n')

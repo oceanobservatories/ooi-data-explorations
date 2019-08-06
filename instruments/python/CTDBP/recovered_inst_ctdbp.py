@@ -5,7 +5,7 @@ import yaml
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset
-from instruments.python.CTDBP.request_ctdbp import ctdbp_instrument
+from instruments.python.ctdbp.request_ctdbp import ctdbp_instrument
 
 CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 
@@ -31,8 +31,8 @@ def main():
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)
-    ctdbp = m2m_collect(r, '.*CTDBP.*\\.nc$')
-    ctdbp = ctdbp.where(ctdbp.deployment == deploy, drop=True)  # limit to the first deployment
+    ctdbp = m2m_collect(r, '.*ctdbp.*\\.nc$')
+    ctdbp = ctdbp.where(ctdbp.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize
     ctdbp = ctdbp_instrument(ctdbp, burst=True)

@@ -5,7 +5,7 @@ import yaml
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset
-from instruments.python.ctdbp.request_ctdbp import ctdbp_datalogger
+from instruments.python.uncabled.ctdbp.request_ctdbp import ctdbp_datalogger
 
 CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 

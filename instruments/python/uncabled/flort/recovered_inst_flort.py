@@ -5,7 +5,7 @@ import yaml
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset
-from instruments.python.flort.request_flort import flort_datalogger
+from instruments.python.uncabled.flort.request_flort import flort_instrument
 
 CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 
@@ -13,21 +13,21 @@ CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
     # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two parameters (level and instrmt) will set path and naming
-    # conventions to save the data to the local disk.
+    # Ocean Observatories Initiative web site. The last two will set path and naming conventions to save the data
+    # to the local disk
     site = 'CE01ISSM'           # OOI Net site designator
-    node = 'RID16'              # OOI Net node designator
-    sensor = '02-FLORTD000'     # OOI Net sensor designator
+    node = 'SBD17'              # OOI Net node designator
+    sensor = '06-FLORTD000'     # OOI Net sensor designator
     stream = 'flort_sample'     # OOI Net stream name
-    method = 'telemetered'      # OOI Net data delivery method
-    level = 'nsif'              # local directory name, level below site
+    method = 'recovered_inst'   # OOI Net data delivery method
+    level = 'buoy'              # local directory name, level below site
     instrmt = 'flort'           # local directory name, instrument below level
 
-    # We are after telemetered data. Determine list of deployments and use the last, presumably currently active,
-    # deployment to determine the start and end dates for our request.
+    # We are after recovered instrument data. Determine list of deployments and use a more recent deployment to
+    # determine the start and end dates for our request.
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
-    deploy = deployments[-1]
+    deploy = deployments[5]
     start, stop = deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
@@ -36,7 +36,7 @@ def main():
     flort = flort.where(flort.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize
-    flort = flort_datalogger(flort, burst=True)
+    flort = flort_instrument(flort)
     flort = update_dataset(flort, vocab['maxdepth'])
 
     # save the data

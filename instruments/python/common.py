@@ -6,13 +6,16 @@
     M2M interface
 """
 import argparse
+import collections
 import netrc
 import numpy as np
+import os
 import re
 import requests
 import sys
 import time
 import xarray as xr
+import yaml
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -24,6 +27,8 @@ ASSET_URL = '12587/asset/'                                   # Asset and Calibra
 DEPLOY_URL = '12587/events/deployment/inv/'                  # Deployment Information
 SENSOR_URL = '12576/sensor/inv/'                             # Sensor Information
 VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Information
+STREAM_URL = '12575/parameter/'                              # Stream Information
+PARAMETER_URL = '12575/stream/byname/'                       # Parameter Information
 
 # setup access credentials
 nrc = netrc.netrc()  # best option is user has their own account
@@ -35,6 +40,21 @@ if AUTH is None:
                   'User is encouraged to setup their own access credentials in a netrc file ' +
                   'maintained in their home directory using ooinet.oceanobservatories.org as the ' +
                   'machine name.')
+
+# load configuration settings
+if '__file__' in vars():
+    wk_dir = os.path.dirname(os.path.realpath(__file__))
+    config_file = os.path.join(wk_dir, 'config.yaml')
+else:
+    wk_dir = os.getcwd()
+    config_file = os.path.join(wk_dir, 'instruments', 'python', 'config.yaml')
+
+if os.path.isfile(config_file):
+    CONFIG = yaml.safe_load(open(config_file))
+else:
+    raise SystemError('Unable to load configuration file. User needs to edit the config.yaml file (using the ' +
+                      'config.yaml.changeme file as a template) to set directory paths for where the data ' +
+                      'will be saved.')
 
 
 def list_nodes(site):
@@ -167,6 +187,34 @@ def get_vocabulary(site, node, sensor):
         return None
 
 
+def get_stream_information(stream):
+    """
+    Use the stream name to retrieve information about the stream contents: parameters, units, sources, etc.
+
+    :param stream: Stream name
+    :return: json object with information on the contents of the stream
+    """
+    r = requests.get(BASE_URL + STREAM_URL + stream, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
+def get_parameter_information(parameter_id):
+    """
+    Use the Parameter ID# to retrieve information about the parameter: units, sources, data product ID, comments,etc.
+
+    :param parameter_id: Stream name
+    :return: json object with information on the parameter of interest
+    """
+    r = requests.get(BASE_URL + PARAMETER_URL + parameter_id, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
 def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     """
     Request data from OOINet for a particular instrument (as defined by the reference designator), delivery method
@@ -287,7 +335,7 @@ def process_file(catalog_file):
     # update some of the global attributes
     ds.attrs['acknowledgement'] = 'National Science Foundation'
     ds.attrs['comment'] = 'Data collected from the OOI M2M API and reworked for use in locally stored NetCDF files.'
-    ds.attrs['publisher_email'] = 'help@oceanobservatories.org'
+    ds.attrs['publisher_email'] = 'ooice.platforms@gmail.com'
     ds.attrs['creator_email'] = 'ooice.platforms@gmail.com'
 
     return ds
@@ -311,10 +359,21 @@ def update_dataset(ds, depth):
         'comment': ds.attrs['subsite'].upper()
     })
 
+    # determine if the latitude and longitude are set as global attribute or a variable, and parse accordingly
+    if 'lat' in ds.variables:
+        lat = ds.lat.values[0][0]
+        lon = ds.lon.values[0][0]
+        ds.drop(['lat', 'lon'])
+    else:
+        lat = ds.attrs['lat']
+        lon = ds.attrs['lon']
+        del(ds.attrs['lat'])
+        del(ds.attrs['lon'])
+
     # add the geospatial coordinates using the station identifier from above as the dimension
     geo_coords = xr.Dataset({
-        'lat': ('station', [ds.lat.values[0][0]]),
-        'lon': ('station', [ds.lon.values[0][0]]),
+        'lat': ('station', [lat]),
+        'lon': ('station', [lon]),
         'z': ('station', [depth])
     }, coords={'station': [0]})
 
@@ -351,7 +410,6 @@ def update_dataset(ds, depth):
         geo_coords[v].attrs = geo_attrs[v]
 
     # merge the geospatial coordinates into the data set
-    ds = ds.drop(['lat', 'lon'])
     ds = ds.merge(geo_coords)
 
     # update coordinate attributes for all variables
@@ -419,6 +477,22 @@ def dt64_epoch(dt64):
     """
     epts = dt64.values.astype(float) / 10.0 ** 9
     return epts
+
+
+def dict_update(source, overrides):
+    """
+    Update a nested dictionary or similar mapping. Modifies ``source`` in place.
+
+    From https://stackoverflow.com/a/30655448. Replaces original dict_update used by poceans-core, also pulled from
+    the same thread.
+    """
+    for key, value in overrides.items():
+        if isinstance(value, collections.Mapping) and value:
+            returned = dict_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
 
 
 def inputs(argv=None):

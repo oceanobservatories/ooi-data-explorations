@@ -1,4 +1,4 @@
 base_dir:
-  raw_base: 'T:\data\cgsn\raw'
-  json_base: 'U:\data\cgsn\mi'
-  m2m_base: 'U:\data\cgsn\m2m'
+  raw_base: '/home/ooiuser/data/raw'
+  json_base: '/home/ooiuser/data/testing/mi'
+  m2m_base: '/home/ooiuser/data/testing/m2m'

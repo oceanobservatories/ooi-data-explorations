@@ -11,7 +11,7 @@
 # C. Wingard, 2019-07-22 -- Initial code
 
 # set the base directory python command for all subsequent processing
-cd /cygdrive/c/Users/cwingard/Documents/GitHub/ooi-data-explorations
+cd /home/ooiuser/code/ooi-data-explorations
 PYTHON="python -m instruments.python.uncabled.flort.request_flort"
 
 ### CE01ISSM ###

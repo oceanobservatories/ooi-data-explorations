@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd /cygdrive/c/Users/cwingard/Documents/GitHub/ooi-data-explorations
+cd /home/ooiuser/code/ooi-data-explorations
 SITE="CE01ISSM"
 DEPLOY=12
 METHOD="telemetered"

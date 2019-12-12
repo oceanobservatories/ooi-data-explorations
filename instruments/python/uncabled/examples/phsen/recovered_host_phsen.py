@@ -4,7 +4,7 @@ import os
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset, CONFIG
-from instruments.python.uncabled.phsen.request_phsen import phsen_datalogger
+from instruments.python.uncabled.request_phsen import phsen_datalogger
 
 
 def main():

@@ -27,8 +27,8 @@ ASSET_URL = '12587/asset/'                                   # Asset and Calibra
 DEPLOY_URL = '12587/events/deployment/inv/'                  # Deployment Information
 SENSOR_URL = '12576/sensor/inv/'                             # Sensor Information
 VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Information
-STREAM_URL = '12575/parameter/'                              # Stream Information
-PARAMETER_URL = '12575/stream/byname/'                       # Parameter Information
+STREAM_URL = '12575/stream/byname/'                          # Stream Information
+PARAMETER_URL = '12575/parameter/'                           # Parameter Information
 
 # setup access credentials
 nrc = netrc.netrc()  # best option is user has their own account

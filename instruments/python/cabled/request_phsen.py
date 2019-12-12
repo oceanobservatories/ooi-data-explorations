@@ -6,7 +6,7 @@ import xarray as xr
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG
-from instruments.python.uncabled.phsen.request_phsen import PHSEN
+from instruments.python.uncabled.request_phsen import PHSEN
 
 
 def phsen_streamed(ds):
@@ -22,7 +22,6 @@ def phsen_streamed(ds):
     #   checksum == meaningless
     #   record_type == there is only one, don't need this
     #   record_length == meaningless
-    #   dcl_controller_timestamp == time, redundant so can remove
     #   signal_intensity_434, part of the light measurements array, redundant so can remove
     #   signal_intensity_578, part of the light measurements array, redundant so can remove
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
@@ -31,7 +30,8 @@ def phsen_streamed(ds):
                   'signal_intensity_578', 'provenance'])
 
     # convert the internal_timestamp values from a datetime64[ns] object to a floating point number with the time in
-    # seconds, replacing the internal_timestamp with the record_time (incorrectly set in NetCDF file).
+    # seconds, replacing the internal_timestamp with the record_time (the internal_timestamp is incorrectly set in the
+    # NetCDF file).
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.record_time))
     ds['internal_timestamp'].attrs = dict({
         'long_name': 'Internal SAMI-pH Clock Time',
@@ -135,7 +135,7 @@ def main(argv=None):
                                                                                                   deploy))
                 raise SystemExit(exit_text)
 
-    # Request the data based on the deployment number or explicit start and end dates
+    # Request the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)
     if not r:
         exit_text = ('Data unavailable for %s-%s-%s, deployment %02d. Check request.' % (site, node, sensor, deploy))

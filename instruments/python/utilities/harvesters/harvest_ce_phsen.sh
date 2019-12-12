@@ -12,7 +12,7 @@
 
 # set the base directory python command for all subsequent processing
 cd /home/ooiuser/code/ooi-data-explorations
-PYTHON="python -m instruments.python.uncabled.phsen.request_phsen"
+PYTHON="python -m instruments.python.uncabled.request_phsen"
 
 ### CE01ISSM ###
 BASE_FLAGS="-s CE01ISSM -n RID16 -sn 06-PHSEND000"

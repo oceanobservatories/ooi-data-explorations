@@ -5,7 +5,7 @@ import yaml
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset
-from instruments.python.uncabled.flort.request_flort import flort_datalogger
+from instruments.python.uncabled.request_flort import flort_datalogger
 
 CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 

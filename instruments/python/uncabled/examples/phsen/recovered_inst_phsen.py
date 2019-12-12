@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import yaml
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
-    update_dataset
-from instruments.python.uncabled.ctdbp.request_ctdbp import ctdbp_instrument
-
-CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
+    update_dataset, CONFIG
+from instruments.python.uncabled.request_phsen import phsen_instrument
 
 
 def main():
@@ -15,31 +12,31 @@ def main():
     # sites/instruments of interest. Site, node, sensor and stream names can be obtained from the Ocean Observatories
     # Initiative web site
     site = 'CE02SHSM'           # OOI Net site designator
-    node = 'RID27'              # OOI Net node designator
-    sensor = '03-CTDBPC000'     # OOI Net sensor designator
-    stream = 'ctdbp_cdef_instrument_recovered'  # OOI Net stream name
+    node = 'RID26'              # OOI Net node designator
+    sensor = '06-PHSEND000'     # OOI Net sensor designator
+    stream = 'phsen_abcdef_instrument'  # OOI Net stream name
     method = 'recovered_inst'   # OOI Net data delivery method
     level = 'nsif'              # local directory name, level below site
-    instrmt = 'ctdbp'           # local directory name, instrument below level
+    instrmt = 'phsen'           # local directory name, instrument below level
 
-    # We are after recovered instrument data. Determine list of deployments and use the first deployment to determine
+    # We are after recovered instrument data. Determine list of deployments and use a recent one to determine
     # the start and end dates for our request.
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
-    deploy = deployments[0]
+    deploy = deployments[-3]
     start, stop = deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)
-    ctdbp = m2m_collect(r, '.*ctdbp.*\\.nc$')
-    ctdbp = ctdbp.where(ctdbp.deployment == deploy, drop=True)  # limit to the deployment of interest
+    phsen = m2m_collect(r, '.*phsen.*\\.nc$')
+    phsen = phsen.where(phsen.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize
-    ctdbp = ctdbp_instrument(ctdbp, burst=True)
-    ctdbp = update_dataset(ctdbp, vocab['maxdepth'])
+    phsen = phsen_instrument(phsen)
+    phsen = update_dataset(phsen, vocab['maxdepth'])
 
     # save the data
-    out_path = CONFIG['base_dir']['m2m_base'] + ('\\%s\\%s\\%s' % (site.lower(), level, instrmt))
+    out_path = os.path.join(CONFIG['base_dir']['m2m_base'], site.lower(), level, instrmt)
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
@@ -47,7 +44,7 @@ def main():
     out_file = ('%s.%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, deploy, method, stream))
     nc_out = os.path.join(out_path, out_file)
 
-    ctdbp.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='netcdf4')
+    phsen.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='netcdf4')
 
 
 if __name__ == '__main__':

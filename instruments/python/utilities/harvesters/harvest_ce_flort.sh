@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# harvest_flort.sh
+# harvest_ce_flort.sh
 #
 # Harvest the ctdbp data from all of the OOI Coastal Endurance moorings. Data
 # sets include telemetered and recovered host and instrument data. Data is
@@ -12,7 +12,7 @@
 
 # set the base directory python command for all subsequent processing
 cd /home/ooiuser/code/ooi-data-explorations
-PYTHON="python -m instruments.python.uncabled.flort.request_flort"
+PYTHON="python -m instruments.python.uncabled.request_flort"
 
 ### CE01ISSM ###
 BUOY_FLAGS="-s CE01ISSM -n SBD17 -sn 06-FLORTD000"

@@ -4,8 +4,7 @@ import os
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset, CONFIG
-from instruments.python.cabled.phsen.request_phsen import phsen_streamed
-from instruments.python.cabled.ctdpf.request_ctdpf import ctdpf_streamed
+from instruments.python.cabled.request_phsen import phsen_streamed
 
 
 def main():

@@ -20,12 +20,9 @@ def main():
     level = 'imm'               # local directory name, level below site
     instrmt = 'phsen'           # local directory name, instrument below level
 
-    # We are after telemetered, inductive modem data. Determine list of deployments and use the last, presumably
-    # currently active, deployment to determine the start and end dates for our request.
+    # We are after telemetered, inductive modem data.
     vocab = get_vocabulary(site, node, sensor)[0]
-    deployments = list_deployments(site, node, sensor)
-    # deploy = deployments[-1]
-    deploy = 5  # there is not a lot of telemetered data, choose a deployment with known data.
+    deploy = 5  # there is not a lot of telemetered data, choosing a deployment with known data.
     start, stop = deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
@@ -43,7 +40,8 @@ def main():
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
-    out_file = ('%s.%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, deploy, method, stream))
+    out_file = ('%s.%s.%s.%dm.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, vocab['maxdepth'], deploy,
+                                                      method, stream))
     nc_out = os.path.join(out_path, out_file)
 
     phsen.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='netcdf4')

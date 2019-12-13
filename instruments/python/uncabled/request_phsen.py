@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
+import re
 import xarray as xr
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
@@ -314,7 +315,7 @@ def phsen_instrument(ds):
 
 def phsen_imodem(ds):
     """
-    Takes PHSEN data recorded by internally by the instrument, and cleans up the data set to make it more
+    Takes PHSEN data recorded by over the inductive modem line, and cleans up the data set to make it more
     user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
     of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
 
@@ -322,11 +323,15 @@ def phsen_imodem(ds):
     :return: cleaned up data set
     """
     # drop some of the variables:
+    #   passed_checksum == useless, if it didn't we wouldn't have any data
     #   record_type == there is only one, don't need this
     #   record_time == internal_timestamp == time, redundant so can remove both
+    #   phsen_abcdef_signal_intensity_434, part of the light measurements array, redundant so can remove
+    #   phsen_abcdef_signal_intensity_578, part of the light measurements array, redundant so can remove
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp', 'provenance'])
+    ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'internal_timestamp', 'provenance',
+                  'phsen_abcdef_signal_intensity_434', 'phsen_abcdef_signal_intensity_578'])
 
     # rename some of the variables for better clarity
     rename = {
@@ -437,7 +442,10 @@ def main(argv=None):
 
     # clean-up and reorganize
     if method in ['telemetered', 'recovered_host']:
-        phsen = phsen_datalogger(phsen)
+        if re.match('.*imodem.*', stream):
+            phsen = phsen_imodem(phsen)
+        else:
+            phsen = phsen_datalogger(phsen)
     else:
         phsen = phsen_instrument(phsen)
 

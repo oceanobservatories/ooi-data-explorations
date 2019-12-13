@@ -278,7 +278,8 @@ def m2m_collect(data, tag=''):
     :return: the collected data as an xarray dataset
     """
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
-    files = list_files(data['allURLs'][0], tag)
+    url = [url for url in data['allURLs'] if re.match(r'.*thredds.*', url)][0]
+    files = list_files(url, tag)
 
     # Process the data files found above and concatenate into a single data set
     frames = [process_file(f) for f in files]

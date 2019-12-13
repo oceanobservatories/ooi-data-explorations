@@ -312,6 +312,87 @@ def phsen_instrument(ds):
     return ds
 
 
+def phsen_imodem(ds):
+    """
+    Takes PHSEN data recorded by internally by the instrument, and cleans up the data set to make it more
+    user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
+    of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
+
+    :param ds: initial PHSEN data set recorded internally by the instrument and downloaded from OOI via the M2M system
+    :return: cleaned up data set
+    """
+    # drop some of the variables:
+    #   record_type == there is only one, don't need this
+    #   record_time == internal_timestamp == time, redundant so can remove both
+    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
+    ds = ds.reset_coords()
+    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp', 'provenance'])
+
+    # rename some of the variables for better clarity
+    rename = {
+        'voltage_battery': 'raw_battery_voltage',
+        'thermistor_start': 'raw_thermistor_start',
+        'thermistor_end': 'raw_thermistor_end',
+        'phsen_thermistor_temperature': 'thermistor_temperature',
+        'phsen_abcdef_ph_seawater': 'seawater_ph',
+        'phsen_abcdef_ph_seawater_qc_executed': 'seawater_ph_qc_executed',
+        'phsen_abcdef_ph_seawater_qc_results': 'seawater_ph_qc_results'
+    }
+    ds = ds.rename(rename)
+
+    # now we need to reset the light and reference arrays to named variables that will be more meaningful and useful in
+    # the final data files
+    nrec = len(ds['time'].values)
+    light = np.array(np.vstack(ds['light_measurements'].values), dtype='int32')
+    light = np.atleast_3d(light)
+    light = np.reshape(light, (nrec, 23, 4))  # 4 sets of 23 seawater measurements
+    reference_434 = light[:, :, 0]            # reference signal, 434 nm
+    signal_434 = light[:, :, 1]               # signal intensity, 434 nm (PH434SI_L0)
+    reference_578 = light[:, :, 2]            # reference signal, 578 nm
+    signal_578 = light[:, :, 3]               # signal intensity, 578 nm (PH578SI_L0)
+
+    refnc = np.array(np.vstack(ds['reference_light_measurements'].values), dtype='int32')
+    refnc = np.atleast_3d(refnc)
+    refnc = np.reshape(refnc, (nrec, 4, 4))   # 4 sets of 4 DI water measurements (blanks)
+    fill = np.ones((nrec, 19)) * -9999999     # fill value to pad the reference measurements to same shape as light
+    blank_refrnc_434 = np.concatenate((refnc[:, :, 0], fill), axis=1)  # DI blank reference, 434 nm
+    blank_signal_434 = np.concatenate((refnc[:, :, 1], fill), axis=1)  # DI blank signal, 434 nm
+    blank_refrnc_578 = np.concatenate((refnc[:, :, 2], fill), axis=1)  # DI blank reference, 578 nm
+    blank_signal_578 = np.concatenate((refnc[:, :, 3], fill), axis=1)  # DI blank signal, 578 nm
+
+    # create a data set with the reference and light measurements
+    ph = xr.Dataset({
+        'blank_refrnc_434': (['time', 'measurements'], blank_refrnc_434.astype('int32')),
+        'blank_signal_434': (['time', 'measurements'], blank_signal_434.astype('int32')),
+        'blank_refrnc_578': (['time', 'measurements'], blank_refrnc_578.astype('int32')),
+        'blank_signal_578': (['time', 'measurements'], blank_signal_578.astype('int32')),
+        'reference_434': (['time', 'measurements'], reference_434.astype('int32')),
+        'signal_434': (['time', 'measurements'], signal_434.astype('int32')),
+        'reference_578': (['time', 'measurements'], reference_578.astype('int32')),
+        'signal_578': (['time', 'measurements'], signal_578.astype('int32'))
+    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32')})
+    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
+
+    # merge the data sets back together
+    ds = ds.merge(ph)
+
+    # reset some of the variable attributes, and ...
+    for v in ds.variables:  # variable level attributes
+        if v in PHSEN:
+            ds[v].attrs = PHSEN[v]
+
+    # ... add the renamed information
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # and reset some of the data types
+    data_types = ['deployment', 'raw_thermistor_end', 'raw_thermistor_start', 'raw_battery_voltage']
+    for v in data_types:
+        ds[v] = ds[v].astype('int32')
+
+    return ds
+
+
 def main(argv=None):
     # setup the input arguments
     args = inputs(argv)

@@ -56,12 +56,12 @@ done
 ### RS03AXPS ###
 BASE_FLAGS="-s RS03AXPS -n PC03A -sn 4B-PHSENA302"
 BASE_FILE="rs03axps/200m/phsen/rs03axps.200m.phsen"
-for i in $(seq -f "%02g" 1 6); do
+for i in $(seq -f "%02g" 1 5); do
   $PYTHON $BASE_FLAGS -mt streamed -st phsen_data_record -dp $i -o "$BASE_FILE.deploy$i.streamed.phsen_data_record.nc"
 done
 
 BASE_FLAGS="-s RS03AXPS -n SF03A -sn 2D-PHSENA301"
 BASE_FILE="rs03axps/profiler/phsen/rs03axps.profiler.phsen"
-for i in $(seq -f "%02g" 1 6); do
+for i in $(seq -f "%02g" 1 5); do
   $PYTHON $BASE_FLAGS -mt streamed -st phsen_data_record -dp $i -o "$BASE_FILE.deploy$i.streamed.phsen_data_record.nc"
 done

@@ -40,7 +40,7 @@ for i in $(seq -f "%02g" 1 5); do
 	$PYTHON $BASE_FLAGS -mt recovered_inst -st phsen_abcdef_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.phsen_abcdef_instrument.nc"
 done
 # Current deployment
-$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp 12 -o "$BASE_FILE.deploy12.telemetered.phsen_abcdef_imodem_instrument.nc"
+$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp 6 -o "$BASE_FILE.deploy12.telemetered.phsen_abcdef_imodem_instrument.nc"
 
 BASE_FLAGS="-s GI01SUMO -n RII11 -sn 02-PHSENE042"
 BASE_FILE="gi01sumo/imm/phsen/gi01sumo.imm.phsen.100m"
@@ -50,7 +50,7 @@ for i in $(seq -f "%02g" 1 5); do
 	$PYTHON $BASE_FLAGS -mt recovered_inst -st phsen_abcdef_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.phsen_abcdef_instrument.nc"
 done
 # Current deployment
-$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp 12 -o "$BASE_FILE.deploy12.telemetered.phsen_abcdef_imodem_instrument.nc"
+$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp 6 -o "$BASE_FILE.deploy12.telemetered.phsen_abcdef_imodem_instrument.nc"
 
 ### GS01SUMO ###
 BASE_FLAGS="-s GS01SUMO -n RII11 -sn 02-PHSENE041"

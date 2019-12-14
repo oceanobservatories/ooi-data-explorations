@@ -249,15 +249,17 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
         return None
 
     # wait until the request is completed
-    print('Waiting for OOINet to process and prepare data request, this may take up to 10 minutes\n')
-    check_complete = data['allURLs'][1] + '/status.txt'
-    with tqdm(total=200, desc='Processing Request') as bar:
-        for i in range(200):
+    print('Waiting for OOINet to process and prepare data request, this may take up to 20 minutes')
+    # print('\tRequest: %s-%s-%s, %s, %s, %s to %s\n' % site, node, sensor, method, stream, start, stop)
+    url = [url for url in data['allURLs'] if re.match(r'.*async_results.*', url)][0]
+    check_complete = url + '/status.txt'
+    with tqdm(total=400, desc='Waiting') as bar:
+        for i in range(400):
             r = requests.get(check_complete)
             bar.update(1)
             if r.status_code == requests.codes.ok:
-                bar.n = 200
-                bar.last_print_n = 200
+                bar.n = 400
+                bar.last_print_n = 400
                 bar.refresh()
                 print('\nrequest completed in %f minutes.' % elapsed)
                 break

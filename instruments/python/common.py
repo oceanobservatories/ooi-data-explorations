@@ -6,13 +6,16 @@
     M2M interface
 """
 import argparse
+import collections
 import netrc
 import numpy as np
+import os
 import re
 import requests
 import sys
 import time
 import xarray as xr
+import yaml
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -24,6 +27,8 @@ ASSET_URL = '12587/asset/'                                   # Asset and Calibra
 DEPLOY_URL = '12587/events/deployment/inv/'                  # Deployment Information
 SENSOR_URL = '12576/sensor/inv/'                             # Sensor Information
 VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Information
+STREAM_URL = '12575/stream/byname/'                          # Stream Information
+PARAMETER_URL = '12575/parameter/'                           # Parameter Information
 
 # setup access credentials
 nrc = netrc.netrc()  # best option is user has their own account
@@ -35,6 +40,21 @@ if AUTH is None:
                   'User is encouraged to setup their own access credentials in a netrc file ' +
                   'maintained in their home directory using ooinet.oceanobservatories.org as the ' +
                   'machine name.')
+
+# load configuration settings
+if '__file__' in vars():
+    wk_dir = os.path.dirname(os.path.realpath(__file__))
+    config_file = os.path.join(wk_dir, 'config.yaml')
+else:
+    wk_dir = os.getcwd()
+    config_file = os.path.join(wk_dir, 'instruments', 'python', 'config.yaml')
+
+if os.path.isfile(config_file):
+    CONFIG = yaml.safe_load(open(config_file))
+else:
+    raise SystemError('Unable to load configuration file. User needs to edit the config.yaml file (using the ' +
+                      'config.yaml.changeme file as a template) to set directory paths for where the data ' +
+                      'will be saved.')
 
 
 def list_nodes(site):
@@ -167,6 +187,34 @@ def get_vocabulary(site, node, sensor):
         return None
 
 
+def get_stream_information(stream):
+    """
+    Use the stream name to retrieve information about the stream contents: parameters, units, sources, etc.
+
+    :param stream: Stream name
+    :return: json object with information on the contents of the stream
+    """
+    r = requests.get(BASE_URL + STREAM_URL + stream, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
+def get_parameter_information(parameter_id):
+    """
+    Use the Parameter ID# to retrieve information about the parameter: units, sources, data product ID, comments,etc.
+
+    :param parameter_id: Stream name
+    :return: json object with information on the parameter of interest
+    """
+    r = requests.get(BASE_URL + PARAMETER_URL + parameter_id, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
 def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     """
     Request data from OOINet for a particular instrument (as defined by the reference designator), delivery method
@@ -201,21 +249,23 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
         return None
 
     # wait until the request is completed
-    print('Waiting for OOINet to process and prepare data request, this may take up to 10 minutes\n')
-    check_complete = data['allURLs'][1] + '/status.txt'
-    with tqdm(total=1200, desc='Processing Request') as bar:
-        for i in range(1200):
+    print('Waiting for OOINet to process and prepare data request, this may take up to 20 minutes')
+    # print('\tRequest: %s-%s-%s, %s, %s, %s to %s\n' % site, node, sensor, method, stream, start, stop)
+    url = [url for url in data['allURLs'] if re.match(r'.*async_results.*', url)][0]
+    check_complete = url + '/status.txt'
+    with tqdm(total=400, desc='Waiting') as bar:
+        for i in range(400):
             r = requests.get(check_complete)
             bar.update(1)
             if r.status_code == requests.codes.ok:
-                bar.n = 1200
-                bar.last_print_n = 1200
+                bar.n = 400
+                bar.last_print_n = 400
                 bar.refresh()
                 print('\nrequest completed in %f minutes.' % elapsed)
                 break
             else:
-                time.sleep(.5)
-                elapsed = (i * 0.5) / 60
+                time.sleep(3)
+                elapsed = (i * 3) / 60
 
     return data
 
@@ -230,7 +280,8 @@ def m2m_collect(data, tag=''):
     :return: the collected data as an xarray dataset
     """
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
-    files = list_files(data['allURLs'][0], tag)
+    url = [url for url in data['allURLs'] if re.match(r'.*thredds.*', url)][0]
+    files = list_files(url, tag)
 
     # Process the data files found above and concatenate into a single data set
     frames = [process_file(f) for f in files]
@@ -287,7 +338,7 @@ def process_file(catalog_file):
     # update some of the global attributes
     ds.attrs['acknowledgement'] = 'National Science Foundation'
     ds.attrs['comment'] = 'Data collected from the OOI M2M API and reworked for use in locally stored NetCDF files.'
-    ds.attrs['publisher_email'] = 'help@oceanobservatories.org'
+    ds.attrs['publisher_email'] = 'ooice.platforms@gmail.com'
     ds.attrs['creator_email'] = 'ooice.platforms@gmail.com'
 
     return ds
@@ -311,10 +362,21 @@ def update_dataset(ds, depth):
         'comment': ds.attrs['subsite'].upper()
     })
 
+    # determine if the latitude and longitude are set as global attribute or a variable, and parse accordingly
+    if 'lat' in ds.variables:
+        lat = ds.lat.values[0][0]
+        lon = ds.lon.values[0][0]
+        ds.drop(['lat', 'lon'])
+    else:
+        lat = ds.attrs['lat']
+        lon = ds.attrs['lon']
+        del(ds.attrs['lat'])
+        del(ds.attrs['lon'])
+
     # add the geospatial coordinates using the station identifier from above as the dimension
     geo_coords = xr.Dataset({
-        'lat': ('station', [ds.lat.values[0][0]]),
-        'lon': ('station', [ds.lon.values[0][0]]),
+        'lat': ('station', [lat]),
+        'lon': ('station', [lon]),
         'z': ('station', [depth])
     }, coords={'station': [0]})
 
@@ -351,7 +413,6 @@ def update_dataset(ds, depth):
         geo_coords[v].attrs = geo_attrs[v]
 
     # merge the geospatial coordinates into the data set
-    ds = ds.drop(['lat', 'lon'])
     ds = ds.merge(geo_coords)
 
     # update coordinate attributes for all variables
@@ -419,6 +480,22 @@ def dt64_epoch(dt64):
     """
     epts = dt64.values.astype(float) / 10.0 ** 9
     return epts
+
+
+def dict_update(source, overrides):
+    """
+    Update a nested dictionary or similar mapping. Modifies ``source`` in place.
+
+    From https://stackoverflow.com/a/30655448. Replaces original dict_update used by poceans-core, also pulled from
+    the same thread.
+    """
+    for key, value in overrides.items():
+        if isinstance(value, collections.Mapping) and value:
+            returned = dict_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
 
 
 def inputs(argv=None):

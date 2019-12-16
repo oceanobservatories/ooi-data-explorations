@@ -5,25 +5,24 @@ import yaml
 
 from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset
-from instruments.python.ctdbp.request_ctdbp import ctdbp_datalogger
+from instruments.python.uncabled.request_ctdbp import ctdbp_instrument
 
 CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 
 
 def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
-    # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two will set path and naming conventions to save the data
-    # to the local disk
+    # sites/instruments of interest. Site, node, sensor and stream names can be obtained from the Ocean Observatories
+    # Initiative web site
     site = 'CE02SHSM'           # OOI Net site designator
     node = 'RID27'              # OOI Net node designator
     sensor = '03-CTDBPC000'     # OOI Net sensor designator
-    stream = 'ctdbp_cdef_dcl_instrument_recovered'  # OOI Net stream name
-    method = 'recovered_host'   # OOI Net data delivery method
+    stream = 'ctdbp_cdef_instrument_recovered'  # OOI Net stream name
+    method = 'recovered_inst'   # OOI Net data delivery method
     level = 'nsif'              # local directory name, level below site
     instrmt = 'ctdbp'           # local directory name, instrument below level
 
-    # We are after recovered host data. Determine list of deployments and use the first deployment to determine
+    # We are after recovered instrument data. Determine list of deployments and use the first deployment to determine
     # the start and end dates for our request.
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
@@ -36,7 +35,7 @@ def main():
     ctdbp = ctdbp.where(ctdbp.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize
-    ctdbp = ctdbp_datalogger(ctdbp, burst=True)
+    ctdbp = ctdbp_instrument(ctdbp, burst=True)
     ctdbp = update_dataset(ctdbp, vocab['maxdepth'])
 
     # save the data

@@ -21,15 +21,15 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2017-08-01T00:00:00.000Z';
-end_date='2017-10-30T23:59:59.000Z';
+start_date='2019-07-01T00:00:00.000Z';
+end_date='2019-07-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE09OSSM';
-node = 'NSIF';
-instrument_class = 'ADCP';
-method = 'RecoveredInst';
+mooring_name = 'CE02SHSP';
+node = 'PROFILER';
+instrument_class = 'CTD';
+method = 'RecoveredCSPP';
 
 %Get M2M URL
 [uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
@@ -38,31 +38,31 @@ method = 'RecoveredInst';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
-%[adcp_variables, adcp_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[adcp_variables, adcp_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+%[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
+[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
-%example ADCP plot
-%Plot W/E
+%example plot
 subplot(211)
-pcolor(adcp_mtime,squeeze(adcp_variables(2).data(:,1)),adcp_variables(6).data)
-shading flat
-datetick('x',1)
-caxis([-.5 .5])
+scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(2).data)
+caxis([6 16])
 c=colorbar;
-title(c,adcp_variables(6).units)
+title(c,ctd_variables(2).units)
 set(gca, 'YDir','reverse')
 ylabel('depth')
-ylim([0 110])
-title([mooring_name ' ' node ' ' strrep(adcp_variables(6).name,'_',' ')])
-%Plot N/S
+xlim([min(ctd_mtime) max(ctd_mtime)])
+ylim([0 80])
+datetick('x')
+title([mooring_name ' ' strrep(ctd_variables(2).name,'_',' ')])
+box on
 subplot(212)
-pcolor(adcp_mtime,squeeze(adcp_variables(2).data(:,1)),adcp_variables(7).data)
-shading flat
-datetick('x',1)
-caxis([-.5 .5])
+scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(3).data)
+caxis([30 34])
 c=colorbar;
-title(c,adcp_variables(7).units)
+title(c,ctd_variables(3).units)
 set(gca, 'YDir','reverse')
 ylabel('depth')
-ylim([0 110])
-title([mooring_name ' ' node ' ' strrep(adcp_variables(7).name,'_',' ')])
+xlim([min(ctd_mtime) max(ctd_mtime)])
+ylim([0 80])
+datetick('x')
+title([mooring_name ' ' strrep(ctd_variables(3).name,'_',' ')])
+box on

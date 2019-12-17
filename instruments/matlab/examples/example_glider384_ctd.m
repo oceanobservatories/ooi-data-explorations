@@ -25,7 +25,7 @@ start_date='2017-05-01T00:00:00.000Z';
 end_date='2017-05-30T23:59:59.000Z';
 
 %%
-%Get ADCP Data
+%Specify metadata
 mooring_name = 'CEGL384';
 node = 'GLIDER';
 instrument_class = 'CTD';
@@ -41,7 +41,7 @@ method = 'RecoveredHost';
 %[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
 [ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
-%example plot
+%Example plot
 scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(2).data)
 caxis([4 14])
 c=colorbar;

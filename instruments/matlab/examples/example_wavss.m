@@ -55,7 +55,7 @@ for i = 1:col
     end    
 end
 
-%% plot
+%Example plots
 figure
 pcolor(wavss_mtime,frequency_matrix(:,1),wavss_variables(12).data); %wavss_a_corrected_directional_wave_direction
 shading flat

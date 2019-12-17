@@ -41,6 +41,7 @@ method = 'RecoveredInst';
 %[variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
 [variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
+%Example plot
 plot(mtime,variables(2).data)
 datetick('x',1)
 title([mooring_name ' ' node ' ' strrep(variables(2).name,'_',' ')])

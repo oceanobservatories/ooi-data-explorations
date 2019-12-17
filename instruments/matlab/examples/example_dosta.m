@@ -38,15 +38,15 @@ method = 'Telemetered';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
-%[buoy_variables, buoy_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[buoy_variables, buoy_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+%[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
+[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 figure(1)
 subplot(211)
-plot(buoy_mtime,buoy_variables(2).data)
+plot(nsif_mtime,nsif_variables(2).data)
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(buoy_variables(2).name,'_',' ')])
-ylabel(buoy_variables(2).units)
+title([mooring_name ' ' node ' ' strrep(nsif_variables(2).name,'_',' ')])
+ylabel(nsif_variables(2).units)
 
 %%
 %Specify metadata
@@ -62,12 +62,12 @@ method = 'RecoveredHost';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
-%[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+%[mfn_variables, mfn_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
+[mfn_variables, mfn_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 figure(1)
 subplot(212)
-plot(nsif_mtime,nsif_variables(2).data)
+plot(mfn_mtime,mfn_variables(2).data)
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(nsif_variables(2).name,'_',' ')])
-ylabel(nsif_variables(2).units)
+title([mooring_name ' ' node ' ' strrep(mfn_variables(2).name,'_',' ')])
+ylabel(mfn_variables(2).units)

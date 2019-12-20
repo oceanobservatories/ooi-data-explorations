@@ -21,14 +21,14 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2017-08-01T00:00:00.000Z';
-end_date='2017-10-30T23:59:59.000Z';
+start_date='2019-01-01T00:00:00.000Z';
+end_date='2019-09-30T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE09OSSM';
+mooring_name = 'CE07SHSM';
 node = 'NSIF';
-instrument_class = 'ADCP';
+instrument_class = 'CTD';
 method = 'RecoveredInst';
 
 %Get M2M URL
@@ -38,31 +38,11 @@ method = 'RecoveredInst';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
-%[adcp_variables, adcp_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[adcp_variables, adcp_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+%[variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
+[variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
-%example ADCP plot
-%Plot W/E
-subplot(211)
-pcolor(adcp_mtime,squeeze(adcp_variables(2).data(:,1)),adcp_variables(6).data)
-shading flat
+%Example plot
+plot(mtime,variables(2).data)
 datetick('x',1)
-caxis([-.5 .5])
-c=colorbar;
-title(c,adcp_variables(6).units)
-set(gca, 'YDir','reverse')
-ylabel('depth')
-ylim([0 110])
-title([mooring_name ' ' node ' ' strrep(adcp_variables(6).name,'_',' ')])
-%Plot N/S
-subplot(212)
-pcolor(adcp_mtime,squeeze(adcp_variables(2).data(:,1)),adcp_variables(7).data)
-shading flat
-datetick('x',1)
-caxis([-.5 .5])
-c=colorbar;
-title(c,adcp_variables(7).units)
-set(gca, 'YDir','reverse')
-ylabel('depth')
-ylim([0 110])
-title([mooring_name ' ' node ' ' strrep(adcp_variables(7).name,'_',' ')])
+title([mooring_name ' ' node ' ' strrep(variables(2).name,'_',' ')])
+ylabel(variables(2).units)

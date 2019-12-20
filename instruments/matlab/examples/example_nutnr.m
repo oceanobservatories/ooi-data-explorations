@@ -43,7 +43,7 @@ method = 'Telemetered';
 [variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 %%
-%example plot
+%Example plot
 if strcmpi(method, 'Telemetered')
     figure(101)
 elseif strcmpi(method, 'RecoveredHost')

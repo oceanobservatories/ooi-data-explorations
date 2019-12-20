@@ -41,6 +41,7 @@ method = 'Telemetered';
 %[buoy_variables, buoy_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
 [buoy_variables, buoy_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
+%Example plot
 figure(1)
 subplot(211)
 plot(buoy_mtime,buoy_variables(3).data)
@@ -65,6 +66,7 @@ method = 'RecoveredHost';
 %[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
 [nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
+%Example plot
 figure(1)
 subplot(212)
 plot(nsif_mtime,nsif_variables(3).data)

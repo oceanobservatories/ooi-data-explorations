@@ -25,7 +25,7 @@ start_date='2016-06-01T00:00:00.000Z';
 end_date='2016-06-21T23:59:59.000Z';
 
 %%
-%Get METBK Data
+%Specify metadata
 mooring_name = 'CE07SHSM';
 node = 'BUOY';
 instrument_class = 'METBK';
@@ -42,7 +42,7 @@ method = 'RecoveredHost';
 [metbk_variables, metbk_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 %%
-%Plot some data
+%Example plot
 figure(1)
 %Plot W/E Winds
 subplot(311)

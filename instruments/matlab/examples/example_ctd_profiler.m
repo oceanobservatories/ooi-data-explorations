@@ -21,15 +21,15 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2019-01-01T00:00:00.000Z';
-end_date='2019-09-30T23:59:59.000Z';
+start_date='2019-07-01T00:00:00.000Z';
+end_date='2019-07-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE07SHSM';
-node = 'NSIF';
+mooring_name = 'CE02SHSP';
+node = 'PROFILER';
 instrument_class = 'CTD';
-method = 'RecoveredInst';
+method = 'RecoveredCSPP';
 
 %Get M2M URL
 [uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
@@ -38,10 +38,31 @@ method = 'RecoveredInst';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
-%[variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+%[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
+[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
-plot(mtime,variables(2).data)
-datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(variables(2).name,'_',' ')])
-ylabel(variables(2).units)
+%example plot
+subplot(211)
+scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(2).data)
+caxis([6 16])
+c=colorbar;
+title(c,ctd_variables(2).units)
+set(gca, 'YDir','reverse')
+ylabel('depth')
+xlim([min(ctd_mtime) max(ctd_mtime)])
+ylim([0 80])
+datetick('x')
+title([mooring_name ' ' strrep(ctd_variables(2).name,'_',' ')])
+box on
+subplot(212)
+scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(3).data)
+caxis([30 34])
+c=colorbar;
+title(c,ctd_variables(3).units)
+set(gca, 'YDir','reverse')
+ylabel('depth')
+xlim([min(ctd_mtime) max(ctd_mtime)])
+ylim([0 80])
+datetick('x')
+title([mooring_name ' ' strrep(ctd_variables(3).name,'_',' ')])
+box on

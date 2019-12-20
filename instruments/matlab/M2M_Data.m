@@ -21,20 +21,26 @@ function [variables, mtime, netcdfFilenames] = M2M_Data(variables, nclist, opend
 %.. INPUT: opendap is a switch. if it is 1 or true, the opendap call is made.
 %..                             if it is 0 or false, nc files are downloaded.
 %..                             DEFAULT IS TRUE.         
-%..        these cases have the same outputs.
 %
 %
-%.. netcdf files containing data from surface moorings formerly had variables
-%.. named 'lat' and 'lon'; now, they do not (except for some metbk and fdchp
-%.. data streams). these netcdf files do have lat and lon mins and maxes 
-%.. listed as global attributes (as do those metbk and fdchp exceptions).
-%.. Therefore a section has been included to read in those global attribute
-%.. values.
+%.. USAGE:
+%..         [variables, mtime, ~]   = M2M_Data(variables, nclist)   
+%..         [variables, mtime, ~]   = M2M_Data(variables, nclist, true)   
+%..
+%..         [~, ~, netcdfFilenames] = M2M_Data(variables, nclist, false)
+%
+%.. NOTES:
+%..    netcdf files containing data from surface moorings formerly had variables
+%..    named 'lat' and 'lon'; now, they do not (except for some metbk and fdchp
+%..    data streams). these netcdf files do have lat and lon mins and maxes 
+%..    listed as global attributes (as do those metbk and fdchp exceptions).
+%..    Therefore a section has been included to read in those global attribute
+%..    values.
 %
 %.. this function was written to be run last in the sequence:
-%.. .. M2M_URLs
-%.. .. M2M_Call
-%.. .. M2M_Data
+%..    M2M_URLs
+%..    M2M_Call
+%..    M2M_Data
 
 if nargin==2
     opendap = true;
@@ -97,11 +103,11 @@ nc_urls = strcat(thredds_url, "/", nclist);  % string array
 
 for i = 1:length(nclist)
     if opendap
-        source = char(nc_urls(i));
+        source = char(nc_urls(i));    % char required for R2018a (or use {i})
     else
-        netcdfFilenames(i) = websave( ...
+        source = websave( ...
             netcdfFilenames(i), strrep(nc_urls{i,1}, 'dodsC', 'fileServer'));
-        source = netcdfFilenames(i);
+        % char(source) *not* required for R2018a
     end
     %.. first variable is always time; pull it out of the following
     %.. loop so that nans can be assigned if a particular stream is

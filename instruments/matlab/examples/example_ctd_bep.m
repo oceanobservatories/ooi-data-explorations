@@ -21,8 +21,8 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2014-09-24T00:00:00.000Z';
-end_date='2019-12-20T23:59:59.000Z';
+start_date='2019-01-01T00:00:00.000Z';
+end_date='2019-01-10T23:59:59.000Z';
 
 %%
 %Specify metadata
@@ -62,5 +62,3 @@ plot(mtime_binned,seawater_temperature_binned)
 datetick('x',1)
 title([mooring_name ' ' node ' ' strrep(variables(2).name,'_',' ')])
 ylabel(variables(2).units)
-
-save ce02shbp_ctd -v7.3

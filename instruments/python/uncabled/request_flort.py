@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
-import yaml
 
-from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, update_dataset
+from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+    update_dataset, CONFIG
 
 # load configuration settings
-CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 ATTRS = dict({
     'raw_backscatter': {
         'long_name': 'Raw Optical Backscatter at 700 nm',
@@ -272,7 +271,7 @@ def main(argv=None):
     flort = update_dataset(flort, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(CONFIG['base_dir']['m2m_base'] + '\\' + args.outfile)
+    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

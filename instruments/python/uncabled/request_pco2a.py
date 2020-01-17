@@ -1,0 +1,239 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import numpy as np
+import os
+import re
+
+from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+    dt64_epoch, update_dataset, CONFIG
+
+
+def pco2a_datalogger(ds, burst=False):
+    """
+    Takes pco2a data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
+    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
+    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner dataset
+    with the key parameters of interest.
+
+    The PCO2A data is poorly handled in the OOI system. The instrument reports burst measurements (9 samples) from the
+    air and  water portions every hour, approximately at the top of the hour. OOI artificially splits these burst
+    measurements apart into two separate streams requiring users to really jump through some hoops to get to the data
+    of interest. This module is really the first step needed to put the data back together. Additionally, for each
+    stream, air or water, there are a bunch of extraneous parameters added from the upstream processing that really
+    shouldn't be here. Those are removed.
+
+    :param ds: initial pco2a data set for the air measurements downloaded from OOI via the M2M system
+    :param burst: resample the data to an hourly, burst averaged time interval
+    :return: cleaned up data set
+    """
+    # drop some of the variables:
+    #   ### OOI generated parameters
+    #   date_time_string == internal_timestamp, redundant so can remove
+    #   dcl_controller_timestamp == time, redundant so can remove
+    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
+    #   supply_voltage == we asked for it to be removed, never ingested, but it was anyway. Deleting it.
+    #   ### Data products from upstream processing used to calculate the normalized 10 m wind, but are not needed
+    #   eastward_velocity
+    #   northward_velocity
+    #   air_temperature
+    #   met_relwind_speed
+    #   longwave_irradiance
+    #   shortwave_irradiance
+    #   relative_humidity
+    #   barometric_pressure
+    #   precipitation
+    shared = ['date_time_string', 'dcl_controller_timestamp', 'provenance', 'supply_voltage']
+    upstream = ['eastward_velocity', 'northward_velocity', 'air_temperature', 'met_relwind_speed',
+                'longwave_irradiance', 'shortwave_irradiance', 'relative_humidity', 'barometric_pressure',
+                'precipitation']
+    ds = ds.reset_coords()
+    ds = ds.drop(shared)
+
+    # determine if the upstream parameters are present. delete them if needed, otherwise add the required ones to make
+    # sure the NetCDF files are consistent
+    if 'eastward_velocity' in ds.variables:
+        ds = ds.drop(upstream)
+    else:
+        # METBK data was missing, add variables below to keep datasets consistent
+        ds['sea_surface_temperature'] = ('time', ds['deployment'] * np.nan)
+        ds['sea_surface_temperature'].attrs = {
+            'comment': ('Normally this would be sea surface temperature data from a co-located CTD. However, data ' +
+                        'from that sensor is unavailable. This value has been filled with NaNs to preserve the ' +
+                        'structure of the data set.'),
+            'data_product_identifier': 'TEMPSRF_L1',
+            'long_name': 'Sea Surface Temperature',
+            'standard_name': 'sea_surface_temperature',
+            'units': 'degree_Celsius',
+            'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
+            'stream': 'metbk_a_dcl_instrument',
+            '_FillValue': np.nan
+        }
+
+        ds['met_salsurf'] = ('time', ds['deployment'] * np.nan)
+        ds['met_salsurf'].attrs = {
+            'long_name': 'Sea Surface Practical Salinity',
+            'standard_name': 'sea_surface_salinity',
+            'units': '1e-3',
+            'comment': ('Normally this would be sea surface salinity data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'SALSURF_L2',
+            'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
+            'stream': 'metbk_a_dcl_instrument',
+            '_FillValue': np.nan
+        }
+
+        ds['met_wind10m'] = ('time', ds['deployment'] * np.nan)
+        ds['met_wind10m'].attrs = {
+            'long_name': 'Normalized Wind Speed at 10 m',
+            'standard_name': 'wind_speed',
+            'units': 'm s-1',
+            'comment': ('Normally this would be the modelled wind speed at a reference height of 10 m from a ' +
+                        'co-located wind sensor. However, data from that sensor is unavailable. This value has been ' +
+                        'filled with NaNs to preserve the structure of the data set.'),
+            'data_product_identifier': 'WIND10M_L2',
+            'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
+            'stream': 'metbk_hourly',
+            '_FillValue': np.nan
+        }
+
+    # drop the two QC tests applied to the L0 values (not supposed to happen)
+    if re.match(r'.*_air.*', ds.attrs['stream']):
+        # air stream
+        ds = ds.drop(['measured_air_co2_qc_executed', 'measured_air_co2_qc_results'])
+    else:
+        # water stream
+        ds = ds.drop(['measured_water_co2_qc_executed', 'measured_water_co2_qc_results'])
+
+    # convert the internal timestamp values from a datetime64[ns] object to a floating point number, time in seconds
+    ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
+    ds['internal_timestamp'].attrs = dict({
+        'long_name': 'Internal pCO2-Pro Clock Time',
+        'standard_name': 'time',
+        'units': 'seconds since 1970-01-01 00:00:00 0:00',
+        'calendar': 'gregorian',
+        'comment': ('Comparing the instrument internal clock versus the GPS referenced sampling time will allow for ' +
+                    'calculations of the instrument clock offset and drift.')
+    })
+
+    # lots of renaming here to get a better defined data set with a cleaner set of attributes
+    rename = {
+        'met_salsurf': 'salinity',
+        'sea_surface_temperature': 'temperature',
+        'met_wind10m': 'normalized_10m_wind',
+        'pco2_co2flux': 'air_sea_co2_flux',
+        'pco2_co2flux_qc_executed': 'air_sea_co2_flux_qc_executed',
+        'pco2_co2flux_qc_results': 'air_sea_co2_flux_qc_results'
+    }
+    ds = ds.rename(rename)
+    for key, value in rename.items():   # bulk attribute update...
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    ds['air_sea_co2_flux'].attrs['ancillary_variables'] = ('partial_pressure_co2_atm partial_pressure_co2_ssw ' +
+                                                           'temperature salinity normalized_10m_wind ' +
+                                                           'air_sea_co2_flux_qc_executed air_sea_co2_flux_qc_results')
+
+    # reset incorrectly formatted temperature units
+    temp_vars = ['avg_irga_temperature', 'humidity_temperature', 'irga_detector_temperature', 'irga_source_temperature']
+    for var in temp_vars:
+        ds[var].attrs['units'] = 'degree_Celsius'
+
+    # reset incorrectly set attributes for salinity and wind speed
+    ds['salinity'].attrs['standard_name'] = 'sea_surface_salinity'
+    ds['salinity'].attrs['units'] = '1e-3'
+    ds['normalized_10m_wind'].attrs['standard_name'] = 'wind_speed'
+    ds['normalized_10m_wind'].attrs['long_name'] = 'Normalized Wind Speed at 10 m'
+
+    if burst:   # re-sample the data to a defined time interval using a median average
+        burst = ds  # make a copy of the original dataset
+        burst['time'] = burst['time'].dt.round('H')  # reset the time values to the nearest hour
+        burst = burst.resample(time='1H', keep_attrs=True, skipna=True).median()  # median average the hourly bursts
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # reset the attributes...which keep_attrs should do...
+        burst.attrs = ds.attrs
+        for v in burst.variables:
+            burst[v].attrs = ds[v].attrs
+
+        # save the newly average data
+        ds = burst
+
+    return ds
+
+
+def main(argv=None):
+    # setup the input arguments
+    args = inputs(argv)
+    site = args.site
+    node = args.node
+    sensor = args.sensor
+    method = args.method
+    stream = args.stream
+    deploy = args.deploy
+    start = args.start
+    stop = args.stop
+
+    # determine the start and stop times for the data request based on either the deployment number or user entered
+    # beginning and ending dates.
+    if not deploy or (start and stop):
+        return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
+    else:
+        if deploy:
+            # Determine start and end dates based on the deployment number
+            start, stop = deployment_dates(site, node, sensor, deploy)
+            if not start or not stop:
+                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
+                                                                                                  deploy))
+                raise SystemExit(exit_text)
+
+    # Determine start and end dates based on the deployment number
+    start, stop = deployment_dates(site, node, sensor, deploy)
+    if not start or not stop:
+        exit_text = ('Dates unavailable for %s-%s-%s, deployment %d. Check request.' % (site, node, sensor, deploy))
+        raise SystemExit(exit_text)
+
+    # Deployment dates are available, request the data for download
+    r = m2m_request(site, node, sensor, method, stream, start, stop)
+    if not r:
+        exit_text = ('Request failed for %s-%s-%s, deployment %d. Check request.' % (site, node, sensor, deploy))
+        raise SystemExit(exit_text)
+
+    # Valid request, start downloading the data
+    if re.match(r'.*_air.*', stream):
+        if deploy:
+            pco2a = m2m_collect(r, ('.*deployment%04d.*PCO2A.*air.*\\.nc$' % deploy))
+        else:
+            pco2a = m2m_collect(r, '.*PCO2A.*air.*\\.nc$')
+        nc_group = 'air'
+    else:
+        if deploy:
+            pco2a = m2m_collect(r, ('.*deployment%04d.*PCO2A.*water.*\\.nc$' % deploy))
+        else:
+            pco2a = m2m_collect(r, '.*PCO2A.*water.*\\.nc$')
+        nc_group = 'water'
+
+    pco2a = pco2a.where(pco2a.deployment == deploy, drop=True)  # limit to the deployment of interest
+
+    # check to see if there is any data after limiting to this specific deployment
+    if len(pco2a.time) == 0:
+        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
+        raise SystemExit(exit_text)
+
+    # clean-up and reorganize
+    pco2a = pco2a_datalogger(pco2a, True)
+    vocab = get_vocabulary(site, node, sensor)[0]
+    pco2a = update_dataset(pco2a, vocab['maxdepth'])
+
+    # save the data to disk
+    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    if not os.path.exists(os.path.dirname(out_file)):
+        os.makedirs(os.path.dirname(out_file))
+
+    if os.path.isfile(out_file):
+        pco2a.to_netcdf(out_file, mode='a', format='NETCDF4', engine='netcdf4', group=nc_group)
+    else:
+        pco2a.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4', group=nc_group)
+
+
+if __name__ == '__main__':
+    main()

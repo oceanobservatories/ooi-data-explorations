@@ -2,13 +2,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
-import yaml
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset
-
-# load configuration settings
-CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
+    dt64_epoch, update_dataset, CONFIG
 
 
 def ctdbp_datalogger(ds, burst=False):
@@ -227,7 +223,7 @@ def main(argv=None):
     ctdbp = update_dataset(ctdbp, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(CONFIG['base_dir']['m2m_base'] + '\\' + args.outfile)
+    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

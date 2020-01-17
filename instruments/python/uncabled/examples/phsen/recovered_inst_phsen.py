@@ -11,8 +11,8 @@ def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
     # sites/instruments of interest. Site, node, sensor and stream names can be obtained from the Ocean Observatories
     # Initiative web site
-    site = 'CE02SHSM'           # OOI Net site designator
-    node = 'RID26'              # OOI Net node designator
+    site = 'CE06ISSM'           # OOI Net site designator
+    node = 'RID16'              # OOI Net node designator
     sensor = '06-PHSEND000'     # OOI Net sensor designator
     stream = 'phsen_abcdef_instrument'  # OOI Net stream name
     method = 'recovered_inst'   # OOI Net data delivery method

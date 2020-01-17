@@ -49,7 +49,7 @@ done
 
 BASE_FLAGS="-s RS01SBPS -n SF01A -sn 2D-PHSENA101"
 BASE_FILE="rs01sbps/profiler/phsen/rs01sbps.profiler.phsen"
-for i in $(seq -f "%02g" 1 6); do
+for i in $(seq -f "%02g" 1 7); do
   $PYTHON $BASE_FLAGS -mt streamed -st phsen_data_record -dp $i -o "$BASE_FILE.deploy$i.streamed.phsen_data_record.nc"
 done
 

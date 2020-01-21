@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
+from instruments.python.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset, CONFIG
 from instruments.python.uncabled.request_flort import flort_datalogger
 
@@ -25,7 +25,7 @@ def main():
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[-1]
-    start, stop = deployment_dates(site, node, sensor, deploy)
+    start, stop = get_deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)

@@ -57,6 +57,21 @@ else:
                       'will be saved.')
 
 
+# Sensor Information
+def list_sites():
+    """
+    Returns a of all the available sites in the system. The list can then be used to either iterate over the sites
+    programmatically or inform the user of the available sites and their codes.
+
+    :return: list of all available sites in the system
+    """
+    r = requests.get(BASE_URL + SENSOR_URL, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
 def list_nodes(site):
     """
     Based on the site name, list the nodes that are available.
@@ -120,67 +135,32 @@ def list_streams(site, node, sensor, method):
         return None
 
 
-def list_deployments(site, node, sensor):
+def list_metadata(site, node, sensor):
     """
-    Based on the site, node and sensor name, list the deployment numbers that are available.
+    Based on the site, node and sensor names, return a metadata dictionary with the times and parameters available
+    for a sensor.
 
     :param site: Site name to query
     :param node: Node name to query
     :param sensor: Sensor name to query
-    :return: list of the deployments of this site, node and sensor combination
+    :return: dictionary with the parameters and available time ranges available for the sensor
     """
-    r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    r = requests.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/metadata', auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
         return None
 
 
-def deployment_dates(site, node, sensor, deploy):
+# Preload Information
+def get_parameter_information(parameter_id):
     """
-    Based on the site, node and sensor names and the deployment number, determine the start and end times for a
-    deployment.
+    Use the Parameter ID# to retrieve information about the parameter: units, sources, data product ID, comments,etc.
 
-    :param site: Site name to query
-    :param node: Node name to query
-    :param sensor: Sensor name to query
-    :param deploy: Deployment number
-    :return: start and stop dates for the deployment of interest
+    :param parameter_id: Stream name
+    :return: json object with information on the parameter of interest
     """
-    # request deployment metadata
-    r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy), auth=(AUTH[0],
-                                                                                                         AUTH[2]))
-    if r.status_code == requests.codes.ok:
-        data = r.json()
-    else:
-        return None, None
-
-    # use the metadata to extract the start and end times for the deployment
-    if data:
-        start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStartTime'] / 1000.))
-    else:
-        return None, None
-
-    if data[0]['eventStopTime']:
-        # check to see if there is a stop time for the deployment, if so use it ...
-        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStopTime'] / 1000.))
-    else:
-        # ... otherwise use the current time as this is an active deployment
-        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(time.time()))
-
-    return start, stop
-
-
-def get_vocabulary(site, node, sensor):
-    """
-    Based on the site, node and sensor name download the vocabulary record defining this sensor.
-
-    :param site: Site name to query
-    :param node: Node name to query
-    :param sensor: Sensor name to query
-    :return: json object with the site-node-sensor specific vocabulary
-    """
-    r = requests.get(BASE_URL + VOCAB_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    r = requests.get(BASE_URL + PARAMETER_URL + parameter_id, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -201,24 +181,209 @@ def get_stream_information(stream):
         return None
 
 
-def get_parameter_information(parameter_id):
+# Asset Information
+def get_asset_by_uid(uid):
     """
-    Use the Parameter ID# to retrieve information about the parameter: units, sources, data product ID, comments,etc.
+    TODO
 
-    :param parameter_id: Stream name
-    :return: json object with information on the parameter of interest
+    :param uid:
+    :return:
     """
-    r = requests.get(BASE_URL + PARAMETER_URL + parameter_id, auth=(AUTH[0], AUTH[2]))
+    pass
+
+
+def get_asset_by_asset_id(asset_id):
+    """
+    TODO
+
+    :param asset_id:
+    :return:
+    """
+    pass
+
+
+def get_asset_by_serial(serial_number):
+    """
+    TODO
+
+    :param serial_number:
+    :return:
+    """
+    pass
+
+
+# Deployment Information
+def list_deployments(site, node, sensor):
+    """
+    Based on the site, node and sensor name, list the deployment numbers that are available.
+
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :return: list of the deployments of this site, node and sensor combination
+    """
+    r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
         return None
 
 
+def get_sensor_information(site, node, sensor, deploy):
+    """
+    Uses the metadata information available from the system for an instrument deployment to obtain the asset and
+    calibration information for the specified sensor and deployment. This information is part of the sensor
+    metadata specific to that deployment.
+
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :param deploy: Deployment number
+    :return: json object with the site-node-sensor-deployment specific sensor metadata
+    """
+    r = requests.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy),
+                     auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
+def get_sensor_history(uid):
+    """
+    Obtain the asset and calibration information for all deployments for the specified unique asset identifier (UID).
+
+    :param uid: unique asset identifier (UID)
+    :return: json object with the asset and calibration information
+    """
+    r = requests.get(BASE_URL + ASSET_URL + '/deployments/' + uid + '?editphase=ALL', auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
+def get_deployment_dates(site, node, sensor, deploy):
+    """
+    Based on the site, node and sensor names and the deployment number, determine the start and end times for a
+    deployment.
+
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :param deploy: Deployment number
+    :return: start and stop dates for the deployment of interest
+    """
+    # request the sensor deployment metadata
+    data = get_sensor_information(site, node, sensor, deploy)
+
+    # use the metadata to extract the start and end times for the deployment
+    if data:
+        start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStartTime'] / 1000.))
+    else:
+        return None, None
+
+    if data[0]['eventStopTime']:
+        # check to see if there is a stop time for the deployment, if so use it ...
+        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStopTime'] / 1000.))
+    else:
+        # ... otherwise use the current time as this is an active deployment
+        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(time.time()))
+
+    return start, stop
+
+
+# Calibration Information
+def get_calibrations_by_uid(uid):
+    """
+    TODO
+
+    :param uid:
+    :return:
+    """
+    pass
+
+
+def get_calibrations_by_asset_id(asset_id):
+    """
+    TODO
+
+    :param asset_id:
+    :return:
+    """
+    pass
+
+
+def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
+    """
+    TODO
+
+    :param site:
+    :param node:
+    :param sensor:
+    :param start:
+    :param stop:
+    :return:
+    """
+    pass
+
+
+# Annotations and Vocabulary Information
+def get_annotations(site, node, sensor, start, stop=None, method=None, stream=None):
+    """
+    TODO
+
+    :param site:
+    :param node:
+    :param sensor:
+    :param start:
+    :param stop:
+    :param method:
+    :param stream:
+    :return:
+    """
+    pass
+
+
+def get_vocabulary(site, node, sensor):
+    """
+    Based on the site, node and sensor name download the vocabulary record defining this sensor.
+
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :return: json object with the site-node-sensor specific vocabulary
+    """
+    r = requests.get(BASE_URL + VOCAB_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
+
+
+# Requesting and compiling data via synchronous and asynchronous requests
+def m2m_sync(site, node, sensor, method, stream, start=None, stop=None, parameters=None):
+    """
+    TODO
+
+    :param site:
+    :param node:
+    :param sensor:
+    :param method:
+    :param stream:
+    :param start:
+    :param stop:
+    :param parameters:
+    :return:
+    """
+    pass
+
+
 def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     """
     Request data from OOINet for a particular instrument (as defined by the reference designator), delivery method
     and stream name via the M2M system. Optionally, can bound the data with a beginning and ending date and time range.
+    This method formulates an asynchronous request. 
 
     :param site: Site designator, extracted from the first part of the reference designator
     :param node: Node designator, extracted from the second part of the reference designator
@@ -285,9 +450,11 @@ def m2m_collect(data, tag=''):
 
     # Process the data files found above and concatenate into a single data set
     frames = [process_file(f) for f in files]
+    if not frames:
+        return None
+
     m2m = xr.concat(frames, 'time')
     m2m = m2m.sortby('time')
-
     return m2m
 
 
@@ -320,6 +487,9 @@ def process_file(catalog_file):
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
     with xr.open_dataset(url, cache=False) as xrd:
         ds = xrd.load()
+
+    if not ds:
+        return None
 
     ds = ds.swap_dims({'obs': 'time'})
     ds = ds.drop(['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp'])

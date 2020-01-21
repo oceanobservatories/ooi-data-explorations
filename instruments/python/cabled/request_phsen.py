@@ -4,7 +4,7 @@ import numpy as np
 import os
 import xarray as xr
 
-from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG
 from instruments.python.uncabled.request_phsen import PHSEN
 
@@ -129,7 +129,7 @@ def main(argv=None):
     else:
         if deploy:
             # Determine start and end dates based on the deployment number
-            start, stop = deployment_dates(site, node, sensor, deploy)
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
             if not start or not stop:
                 exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
                                                                                                   deploy))

@@ -3,7 +3,7 @@
 import numpy as np
 import os
 
-from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     update_dataset, CONFIG
 
 # load configuration settings
@@ -224,7 +224,6 @@ def flort_instrument(ds):
 
 
 def main(argv=None):
-    # setup the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node
@@ -232,38 +231,42 @@ def main(argv=None):
     method = args.method
     stream = args.stream
     deploy = args.deploy
+    start = args.start
+    stop = args.stop
+    burst = args.burst
 
     # determine the start and stop times for the data request based on either the deployment number or user entered
     # beginning and ending dates.
-    if not deploy:
+    if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
+    else:
+        if deploy:
+            # Determine start and end dates based on the deployment number
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
+            if not start or not stop:
+                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
+                                                                                                  deploy))
+                raise SystemExit(exit_text)
 
-    # TODO: add code to use beginning and ending dates
-
-    # Determine start and end dates based on the deployment number
-    start, stop = deployment_dates(site, node, sensor, deploy)
-    if not start or not stop:
-        exit_text = ('Dates unavailable for %s-%s-%s, deployment %d. Check request.' % (site, node, sensor, deploy))
-        raise SystemExit(exit_text)
-
-    # Deployment dates are available, request the data for download
+    # Request the data for download
     r = m2m_request(site, node, sensor, method, stream, start, stop)
     if not r:
-        exit_text = ('Request failed for %s-%s-%s, deployment %d. Check request.' % (site, node, sensor, deploy))
+        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # Valid request, start downloading the data
-    flort = m2m_collect(r, '.*flort.*\\.nc$')
-    flort = flort.where(flort.deployment == deploy, drop=True)  # limit to the deployment of interest
+    if deploy:
+        flort = m2m_collect(r, '.*deployment%04d.*FLORT.*\\.nc$')
+    else:
+        flort = m2m_collect(r, '.*FLORT.*\\.nc$')
 
-    # check to see if there is any data after limiting to this specific deployment
-    if len(flort.time) == 0:
-        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
+    if not flort:
+        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # clean-up and reorganize
     if method in ['telemetered', 'recovered_host']:
-        flort = flort_datalogger(flort, True)
+        flort = flort_datalogger(flort, burst)
     else:
         flort = flort_instrument(flort)
 

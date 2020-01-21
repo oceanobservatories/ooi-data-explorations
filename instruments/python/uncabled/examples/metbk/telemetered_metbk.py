@@ -4,7 +4,7 @@ import os
 
 from instruments.python.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset, CONFIG
-from instruments.python.uncabled.request_pco2a import pco2a_datalogger
+from instruments.python.uncabled.request_metbk import metbk_datalogger
 
 
 def main():
@@ -13,12 +13,12 @@ def main():
     # Ocean Observatories Initiative web site. The last two parameters (level and instrmt) will set path and naming
     # conventions to save the data to the local disk.
     site = 'CE02SHSM'           # OOI Net site designator
-    node = 'SBD12'              # OOI Net node designator
-    sensor = '04-PCO2AA000'     # OOI Net sensor designator
-    stream = 'pco2a_a_dcl_instrument_air'  # OOI Net stream name
+    node = 'SBD11'              # OOI Net node designator
+    sensor = '06-METBKA000'     # OOI Net sensor designator
+    stream = 'metbk_a_dcl_instrument'  # OOI Net stream name
     method = 'telemetered'      # OOI Net data delivery method
     level = 'buoy'              # local directory name, level below site
-    instrmt = 'pco2a'           # local directory name, instrument below level
+    instrmt = 'metbk'           # local directory name, instrument below level
 
     # We are after telemetered data. Determine list of deployments and use the last, presumably currently active,
     # deployment to determine the start and end dates for our request.
@@ -27,23 +27,15 @@ def main():
     deploy = deployments[-1]
     start, stop = get_deployment_dates(site, node, sensor, deploy)
 
-    # request and download the data -- air measurements
+    # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)
-    air = m2m_collect(r, ('.*deployment%04d.*PCO2A.*air.*\\.nc$' % deploy))
-    air = air.where(air.deployment == deploy, drop=True)  # limit to the deployment of interest
+    metbk = m2m_collect(r, ('.*deployment%04d.*METBK.*\\.nc$' % deploy))
 
-    # request and download the data -- water measurements
-    r = m2m_request(site, node, sensor, method, 'pco2a_a_dcl_instrument_water', start, stop)
-    water = m2m_collect(r, ('.*deployment%04d.*PCO2A.*water.*\\.nc$' % deploy))
-    water = water.where(water.deployment == deploy, drop=True)  # limit to the deployment of interest
+    # clean-up and reorganize the metbk and water datasets
+    metbk = metbk_datalogger(metbk)
+    metbk = update_dataset(metbk, vocab['maxdepth'])
 
-    # clean-up and reorganize the air and water datasets
-    air = pco2a_datalogger(air, True)
-    air = update_dataset(air, vocab['maxdepth'])
-    water = pco2a_datalogger(water, True)
-    water = update_dataset(water, vocab['maxdepth'])
-
-    # save the data -- utilize groups for the air and water datasets
+    # save the data -- utilize groups for the metbk and water datasets
     out_path = os.path.join(CONFIG['base_dir']['m2m_base'], site.lower(), level, instrmt)
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
@@ -51,8 +43,7 @@ def main():
 
     out_file = ('%s.%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, deploy, method, stream))
     nc_out = os.path.join(out_path, out_file)
-    air.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='netcdf4', group='air')
-    water.to_netcdf(nc_out, mode='a', format='NETCDF4', engine='netcdf4', group='water')
+    metbk.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='netcdf4')
 
 
 if __name__ == '__main__':

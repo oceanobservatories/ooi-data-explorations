@@ -1,0 +1,142 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import numpy as np
+import os
+
+from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
+    update_dataset, CONFIG
+from gsw.conversions import SP_from_C
+
+
+def metbk_datalogger(ds):
+    """
+    Takes METBK data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
+    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
+    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner data set
+    with the key parameters of interest.
+
+    :param ds: initial metbk data set downloaded from OOI via the M2M system
+    :param burst: resample the data to a 10 minute time interval
+    :return: cleaned up data set
+    """
+    # drop some of the variables:
+    #   date_time_string == internal_timestamp, redundant so can remove
+    #   dcl_controller_timestamp == time, redundant so can remove
+    #   internal_timestamp == doesn't exist, always empty so can remove
+    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
+    #   ### Data products from downstream processing used to calculate hourly flux measurements. Remove from here to
+    #   keep this data set clean. Will obtain hourly flux data from a different stream
+    #   met_barpres
+    #   met_windavg_mag_corr_east
+    #   met_windavg_mag_corr_north
+    #   met_netsirr
+    #   met_salsurf
+    #   met_spechum
+    #   ct_depth
+    #   eastward_velocity
+    #   northward_velocity
+    #   met_current_direction
+    #   met_current_speed
+    #   met_relwind_direction
+    #   met_relwind_speed
+    #   met_heatflx_minute
+    #   met_latnflx_minute
+    #   met_netlirr_minute
+    #   met_sensflx_minute
+    clean = ['dcl_controller_timestamp', 'provenance', 'internal_timestamp', 'met_barpres',
+              'met_windavg_mag_corr_east', 'met_windavg_mag_corr_north', 'met_netsirr', 'met_salsurf', 'met_spechum',
+              'ct_depth', 'eastward_velocity', 'northward_velocity', 'met_current_direction', 'met_current_speed',
+              'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute', 'met_latnflx_minute',
+              'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed', 'met_barpres_qc_results',
+              'met_current_direction_qc_executed', 'met_current_direction_qc_results', 'met_current_speed_qc_executed',
+              'met_current_speed_qc_results', 'met_relwind_direction_qc_executed', 'met_relwind_direction_qc_results',
+              'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results', 'met_netsirr_qc_executed',
+              'met_netsirr_qc_results', 'met_salsurf_qc_executed', 'met_salsurf_qc_results', 'met_spechum_qc_executed',
+              'met_spechum_qc_results']
+    ds = ds.reset_coords()
+    ds = ds.drop(clean)
+
+    # drop the QC test applied to the L0 values (not supposed to happen)
+    ds = ds.drop(['precipitation_qc_executed', 'precipitation_qc_results'])
+
+    # reset incorrectly formatted temperature units
+    temp_vars = ['air_temperature', 'sea_surface_temperature']
+    for var in temp_vars:
+        ds[var].attrs['units'] = 'degree_Celsius'
+
+    # calculate the near surface salinity
+    ds['sea_surface_salinity'] = ('time', SP_from_C(ds['sea_surface_conductivity'] * 10, ds['sea_surface_temperature'],
+                                                    1.0))
+    ds['sea_surface_salinity'].attrs = {
+        'long_name': 'Sea Surface Practical Salinity',
+        'standard_name': 'sea_surface_salinity',
+        'units': '1e-3',
+        'comment': ('Salinity is generally defined as the concentration of dissolved salt in a parcel of seawater. ' +
+                    'Practical Salinity is a more specific unitless quantity calculated from the conductivity of ' +
+                    'seawater and adjusted for temperature and pressure. It is approximately equivalent to Absolute ' +
+                    'Salinity (the mass fraction of dissolved salt in seawater), but they are not interchangeable.'),
+        'data_product_identifier': 'SALSURF_L2',
+        'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
+        'stream': 'metbk_a_dcl_instrument',
+        '_FillValue': np.nan
+    }
+
+    return ds
+
+
+def main(argv=None):
+    # setup the input arguments
+    args = inputs(argv)
+    site = args.site
+    node = args.node
+    sensor = args.sensor
+    method = args.method
+    stream = args.stream
+    deploy = args.deploy
+    start = args.start
+    stop = args.stop
+
+    # determine the start and stop times for the data request based on either the deployment number or user entered
+    # beginning and ending dates.
+    if not deploy or (start and stop):
+        return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
+    else:
+        if deploy:
+            # Determine start and end dates based on the deployment number
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
+            if not start or not stop:
+                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
+                                                                                                  deploy))
+                raise SystemExit(exit_text)
+
+    # Request the data for download
+    r = m2m_request(site, node, sensor, method, stream, start, stop)
+    if not r:
+        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
+        raise SystemExit(exit_text)
+
+    # Valid request, start downloading the data
+    if deploy:
+        metbk = m2m_collect(r, ('.*deployment%04d.*METBK.*air.*\\.nc$' % deploy))
+    else:
+        metbk = m2m_collect(r, '.*METBK.*air.*\\.nc$')
+
+    if not metbk:
+        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
+        raise SystemExit(exit_text)
+
+    # clean-up and reorganize
+    metbk = metbk_datalogger(metbk)
+    vocab = get_vocabulary(site, node, sensor)[0]
+    metbk = update_dataset(metbk, vocab['maxdepth'])
+
+    # save the data to disk
+    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    if not os.path.exists(os.path.dirname(out_file)):
+        os.makedirs(os.path.dirname(out_file))
+
+    metbk.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4')
+
+
+if __name__ == '__main__':
+    main()

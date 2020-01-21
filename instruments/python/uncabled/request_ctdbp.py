@@ -3,7 +3,7 @@
 import numpy as np
 import os
 
-from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG
 
 
@@ -173,7 +173,6 @@ def ctdbp_instrument(ds, burst=False):
 
 
 def main(argv=None):
-    # setup the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node
@@ -181,36 +180,37 @@ def main(argv=None):
     method = args.method
     stream = args.stream
     deploy = args.deploy
+    start = args.start
+    stop = args.stop
     burst = args.burst
 
     # determine the start and stop times for the data request based on either the deployment number or user entered
     # beginning and ending dates.
-    if not deploy:
+    if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
+    else:
+        if deploy:
+            # Determine start and end dates based on the deployment number
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
+            if not start or not stop:
+                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
+                                                                                                  deploy))
+                raise SystemExit(exit_text)
 
-    # TODO: add code to use beginning and ending dates
-
-    # Determine start and end dates based on the deployment number
-    start, stop = deployment_dates(site, node, sensor, deploy)
-    if not start or not stop:
-        exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d. Check request.' % (site, node,
-                                                                                                         sensor,
-                                                                                                         deploy))
-        raise SystemExit(exit_text)
-
-    # Deployment dates are available, request the data for download
+    # Request the data for download
     r = m2m_request(site, node, sensor, method, stream, start, stop)
     if not r:
-        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d. Check request.' % (site, node, sensor, deploy))
+        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # Valid request, start downloading the data
-    ctdbp = m2m_collect(r, '.*ctdbp.*\\.nc$')
-    ctdbp = ctdbp.where(ctdbp.deployment == deploy, drop=True)  # limit to the deployment of interest
+    if deploy:
+        ctdbp = m2m_collect(r, '.*deployment%04d.*CTDBP.*\\.nc$')
+    else:
+        ctdbp = m2m_collect(r, '.*CTDBP.*\\.nc$')
 
-    # check to see if there is any data after limiting to this specific deployment
-    if len(ctdbp.time) == 0:
-        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
+    if not ctdbp:
+        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # clean-up and reorganize

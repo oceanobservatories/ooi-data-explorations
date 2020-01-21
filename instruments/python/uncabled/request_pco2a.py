@@ -4,7 +4,7 @@ import numpy as np
 import os
 import re
 
-from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG
 
 
@@ -172,6 +172,7 @@ def main(argv=None):
     deploy = args.deploy
     start = args.start
     stop = args.stop
+    burst = args.burst
 
     # determine the start and stop times for the data request based on either the deployment number or user entered
     # beginning and ending dates.
@@ -180,22 +181,16 @@ def main(argv=None):
     else:
         if deploy:
             # Determine start and end dates based on the deployment number
-            start, stop = deployment_dates(site, node, sensor, deploy)
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
             if not start or not stop:
                 exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
                                                                                                   deploy))
                 raise SystemExit(exit_text)
 
-    # Determine start and end dates based on the deployment number
-    start, stop = deployment_dates(site, node, sensor, deploy)
-    if not start or not stop:
-        exit_text = ('Dates unavailable for %s-%s-%s, deployment %d. Check request.' % (site, node, sensor, deploy))
-        raise SystemExit(exit_text)
-
-    # Deployment dates are available, request the data for download
+    # Request the data for download
     r = m2m_request(site, node, sensor, method, stream, start, stop)
     if not r:
-        exit_text = ('Request failed for %s-%s-%s, deployment %d. Check request.' % (site, node, sensor, deploy))
+        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # Valid request, start downloading the data
@@ -212,15 +207,12 @@ def main(argv=None):
             pco2a = m2m_collect(r, '.*PCO2A.*water.*\\.nc$')
         nc_group = 'water'
 
-    pco2a = pco2a.where(pco2a.deployment == deploy, drop=True)  # limit to the deployment of interest
-
-    # check to see if there is any data after limiting to this specific deployment
-    if len(pco2a.time) == 0:
-        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
+    if not pco2a:
+        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # clean-up and reorganize
-    pco2a = pco2a_datalogger(pco2a, True)
+    pco2a = pco2a_datalogger(pco2a, burst)
     vocab = get_vocabulary(site, node, sensor)[0]
     pco2a = update_dataset(pco2a, vocab['maxdepth'])
 

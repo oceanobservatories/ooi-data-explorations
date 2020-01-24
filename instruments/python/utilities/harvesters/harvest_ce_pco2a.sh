@@ -20,6 +20,8 @@ BASE_FILE="ce02shsm/buoy/pco2a/ce02shsm.buoy.pco2a"
 for i in $(seq -f "%02g" 1 10); do
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_air -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_water -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_air_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_water_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
 done
 
 ### CE04OSSM ###
@@ -28,6 +30,8 @@ BASE_FILE="ce04ossm/buoy/pco2a/ce04ossm.buoy.pco2a"
 for i in $(seq -f "%02g" 1 9); do
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_air -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_water -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_air_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_water_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
 done
 
 ### CE07SHSM ###
@@ -36,6 +40,8 @@ BASE_FILE="ce07shsm/buoy/pco2a/ce07shsm.buoy.pco2a"
 for i in $(seq -f "%02g" 1 10); do
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_air -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_water -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_air_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_water_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
 done
 
 ### CE09OSSM ###
@@ -44,4 +50,6 @@ BASE_FILE="ce09ossm/buoy/pco2a/ce09ossm.buoy.pco2a"
 for i in $(seq -f "%02g" 1 10); do
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_air -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
   $PYTHON $BASE_FLAGS -mt telemetered -st pco2a_a_dcl_instrument_water -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2a_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_air_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st pco2a_a_dcl_instrument_water_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2a_a_dcl_instrument_recovered.nc"
 done

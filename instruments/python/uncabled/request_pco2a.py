@@ -12,15 +12,15 @@ def pco2a_datalogger(ds, burst=False):
     """
     Takes pco2a data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
     it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner dataset
+    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner data set
     with the key parameters of interest.
 
     The PCO2A data is poorly handled in the OOI system. The instrument reports burst measurements (9 samples) from the
     air and  water portions every hour, approximately at the top of the hour. OOI artificially splits these burst
     measurements apart into two separate streams requiring users to really jump through some hoops to get to the data
-    of interest. This module is really the first step needed to put the data back together. Additionally, for each
-    stream, air or water, there are a bunch of extraneous parameters added from the upstream processing that really
-    shouldn't be here. Those are removed.
+    of interest back together. This module is really the first step needed to put the data back together. Additionally,
+    for each stream, air or water, there are a bunch of extraneous parameters added from the upstream processing that
+    really shouldn't be here. Those are removed.
 
     :param ds: initial pco2a data set for the air measurements downloaded from OOI via the M2M system
     :param burst: resample the data to an hourly, burst averaged time interval
@@ -42,28 +42,31 @@ def pco2a_datalogger(ds, burst=False):
     #   relative_humidity
     #   barometric_pressure
     #   precipitation
-    shared = ['date_time_string', 'dcl_controller_timestamp', 'provenance', 'supply_voltage']
-    upstream = ['eastward_velocity', 'northward_velocity', 'air_temperature', 'met_relwind_speed',
-                'longwave_irradiance', 'shortwave_irradiance', 'relative_humidity', 'barometric_pressure',
-                'precipitation']
-    ds = ds.reset_coords()
+    shared = ['date_time_string', 'dcl_controller_timestamp', 'provenance']
+    if 'supply_voltage' in ds.variables:
+        # ... because it is in the telemetered, but not the recovered_host ...
+        shared.append('supply_voltage')
+
     ds = ds.drop(shared)
 
     # determine if the upstream parameters are present. delete them if needed, otherwise add the required ones to make
     # sure the NetCDF files are consistent
+    upstream = ['eastward_velocity', 'northward_velocity', 'air_temperature', 'met_relwind_speed',
+                'longwave_irradiance', 'shortwave_irradiance', 'relative_humidity', 'barometric_pressure',
+                'precipitation']
     if 'eastward_velocity' in ds.variables:
         ds = ds.drop(upstream)
     else:
-        # METBK data was missing, add variables below to keep datasets consistent
+        # METBK data was missing, add variables below to keep data sets consistent
         ds['sea_surface_temperature'] = ('time', ds['deployment'] * np.nan)
         ds['sea_surface_temperature'].attrs = {
+            'long_name': 'Sea Surface Temperature',
+            'standard_name': 'sea_surface_temperature',
             'comment': ('Normally this would be sea surface temperature data from a co-located CTD. However, data ' +
                         'from that sensor is unavailable. This value has been filled with NaNs to preserve the ' +
                         'structure of the data set.'),
-            'data_product_identifier': 'TEMPSRF_L1',
-            'long_name': 'Sea Surface Temperature',
-            'standard_name': 'sea_surface_temperature',
             'units': 'degree_Celsius',
+            'data_product_identifier': 'TEMPSRF_L1',
             'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
             'stream': 'metbk_a_dcl_instrument',
             '_FillValue': np.nan
@@ -116,31 +119,33 @@ def pco2a_datalogger(ds, burst=False):
                     'calculations of the instrument clock offset and drift.')
     })
 
-    # lots of renaming here to get a better defined data set with a cleaner set of attributes
+    # rename variables to get a cleaner set variables and attributes
     rename = {
-        'met_salsurf': 'salinity',
-        'sea_surface_temperature': 'temperature',
+        'met_salsurf': 'sea_surface_salinity',
         'met_wind10m': 'normalized_10m_wind',
-        'pco2_co2flux': 'air_sea_co2_flux',
-        'pco2_co2flux_qc_executed': 'air_sea_co2_flux_qc_executed',
-        'pco2_co2flux_qc_results': 'air_sea_co2_flux_qc_results'
+        'pco2_co2flux': 'sea_air_co2_flux',
+        'pco2_co2flux_qc_executed': 'sea_air_co2_flux_qc_executed',
+        'pco2_co2flux_qc_results': 'sea_air_co2_flux_qc_results'
     }
     ds = ds.rename(rename)
     for key, value in rename.items():   # bulk attribute update...
         ds[value].attrs['ooinet_variable_name'] = key
 
-    ds['air_sea_co2_flux'].attrs['ancillary_variables'] = ('partial_pressure_co2_atm partial_pressure_co2_ssw ' +
-                                                           'temperature salinity normalized_10m_wind ' +
-                                                           'air_sea_co2_flux_qc_executed air_sea_co2_flux_qc_results')
+    ds['sea_air_co2_flux'].attrs['ancillary_variables'] = ('partial_pressure_co2_atm partial_pressure_co2_ssw ' +
+                                                           'sea_surface_temperature sea_surface_salinity ' +
+                                                           'normalized_10m_wind sea_air_co2_flux_qc_executed ' +
+                                                           'sea_air_co2_flux_qc_results')
 
     # reset incorrectly formatted temperature units
-    temp_vars = ['avg_irga_temperature', 'humidity_temperature', 'irga_detector_temperature', 'irga_source_temperature']
+    temp_vars = ['sea_surface_temperature', 'avg_irga_temperature', 'humidity_temperature', 'irga_detector_temperature',
+                 'irga_source_temperature']
     for var in temp_vars:
         ds[var].attrs['units'] = 'degree_Celsius'
 
     # reset incorrectly set attributes for salinity and wind speed
-    ds['salinity'].attrs['standard_name'] = 'sea_surface_salinity'
-    ds['salinity'].attrs['units'] = '1e-3'
+    ds['sea_surface_salinity'].attrs['standard_name'] = 'sea_surface_salinity'
+    ds['sea_surface_salinity'].attrs['long_name'] = 'Sea Surface Practical Salinity'
+    ds['sea_surface_salinity'].attrs['units'] = '1e-3'
     ds['normalized_10m_wind'].attrs['standard_name'] = 'wind_speed'
     ds['normalized_10m_wind'].attrs['long_name'] = 'Normalized Wind Speed at 10 m'
 

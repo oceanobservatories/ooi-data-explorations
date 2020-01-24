@@ -8,6 +8,41 @@ from instruments.python.common import inputs, m2m_collect, m2m_request, get_depl
 from gsw.conversions import SP_from_C
 
 
+def metbk_hourly(ds):
+    """
+    Takes METBK hourly averaged bulk flux estimates from the CGSN/EA moorings and cleans up the data set to make
+    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
+    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner data set
+    with the key parameters of interest.
+
+    :param ds: initial metbk hourly averaged data set downloaded from OOI via the M2M system
+    :return: cleaned up data set
+    """
+    # drop some of the variables:
+    #   met_timeflx == time, redundant, thus removed
+    #   ### Data products from upstream processing used to calculate hourly flux measurements. Remove from here to
+    #   ### keep this data set clean. Will obtain the 1 minute source data from a separate stream.
+    #   eastward_velocity
+    #   northward_velocity
+    #   longwave_irradiance
+    #   air_temperature
+    #   barometric_pressure
+    #   precipitation
+    #   sea_surface_temperature
+    #   relative_humidity
+    #   shortwave_irradiance
+    ds = ds.drop(['met_timeflx', 'eastward_velocity', 'northward_velocity', 'longwave_irradiance', 'air_temperature',
+                  'barometric_pressure', 'precipitation', 'sea_surface_temperature', 'relative_humidity',
+                  'shortwave_irradiance'])
+
+    # reset incorrectly formatted temperature units
+    temp_vars = ['met_tempa2m', 'met_tempskn']
+    for var in temp_vars:
+        ds[var].attrs['units'] = 'degree_Celsius'
+
+    return ds
+
+
 def metbk_datalogger(ds):
     """
     Takes METBK data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
@@ -16,7 +51,6 @@ def metbk_datalogger(ds):
     with the key parameters of interest.
 
     :param ds: initial metbk data set downloaded from OOI via the M2M system
-    :param burst: resample the data to a 10 minute time interval
     :return: cleaned up data set
     """
     # drop some of the variables:
@@ -25,7 +59,7 @@ def metbk_datalogger(ds):
     #   internal_timestamp == doesn't exist, always empty so can remove
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     #   ### Data products from downstream processing used to calculate hourly flux measurements. Remove from here to
-    #   keep this data set clean. Will obtain hourly flux data from a different stream
+    #   ### keep this data set clean. Will obtain hourly flux data from a different stream.
     #   met_barpres
     #   met_windavg_mag_corr_east
     #   met_windavg_mag_corr_north
@@ -33,8 +67,6 @@ def metbk_datalogger(ds):
     #   met_salsurf
     #   met_spechum
     #   ct_depth
-    #   eastward_velocity
-    #   northward_velocity
     #   met_current_direction
     #   met_current_speed
     #   met_relwind_direction
@@ -43,23 +75,22 @@ def metbk_datalogger(ds):
     #   met_latnflx_minute
     #   met_netlirr_minute
     #   met_sensflx_minute
-    clean = ['dcl_controller_timestamp', 'provenance', 'internal_timestamp', 'met_barpres',
-              'met_windavg_mag_corr_east', 'met_windavg_mag_corr_north', 'met_netsirr', 'met_salsurf', 'met_spechum',
-              'ct_depth', 'eastward_velocity', 'northward_velocity', 'met_current_direction', 'met_current_speed',
-              'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute', 'met_latnflx_minute',
-              'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed', 'met_barpres_qc_results',
-              'met_current_direction_qc_executed', 'met_current_direction_qc_results', 'met_current_speed_qc_executed',
-              'met_current_speed_qc_results', 'met_relwind_direction_qc_executed', 'met_relwind_direction_qc_results',
-              'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results', 'met_netsirr_qc_executed',
-              'met_netsirr_qc_results', 'met_salsurf_qc_executed', 'met_salsurf_qc_results', 'met_spechum_qc_executed',
-              'met_spechum_qc_results']
-    ds = ds.reset_coords()
-    ds = ds.drop(clean)
+    ds = ds.drop(['dcl_controller_timestamp', 'provenance', 'internal_timestamp', 'met_barpres',
+                  'met_windavg_mag_corr_east', 'met_windavg_mag_corr_north', 'met_netsirr', 'met_salsurf',
+                  'met_spechum', 'ct_depth', 'met_current_direction', 'met_current_speed', 'met_relwind_direction',
+                  'met_relwind_speed', 'met_heatflx_minute', 'met_latnflx_minute', 'met_netlirr_minute',
+                  'met_sensflx_minute', 'met_barpres_qc_executed', 'met_barpres_qc_results',
+                  'met_current_direction_qc_executed', 'met_current_direction_qc_results',
+                  'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
+                  'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
+                  'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_salsurf_qc_executed',
+                  'met_salsurf_qc_results', 'met_spechum_qc_executed', 'met_spechum_qc_results'])
 
     # drop the QC test applied to the L0 values (not supposed to happen)
     ds = ds.drop(['precipitation_qc_executed', 'precipitation_qc_results'])
 
-    # reset incorrectly formatted temperature units
+    # reset incorrectly formatted temperature and relative humidity units
+    ds['relative_humidity'].attrs['units'] = 'percent'
     temp_vars = ['air_temperature', 'sea_surface_temperature']
     for var in temp_vars:
         ds[var].attrs['units'] = 'degree_Celsius'
@@ -77,7 +108,8 @@ def metbk_datalogger(ds):
                     'Salinity (the mass fraction of dissolved salt in seawater), but they are not interchangeable.'),
         'data_product_identifier': 'SALSURF_L2',
         'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
-        'stream': 'metbk_a_dcl_instrument',
+        'stream': ds.attrs['stream'],
+        'ancillary_variables': 'sea_surface_conductivity sea_surface_temperature',
         '_FillValue': np.nan
     }
 
@@ -116,17 +148,32 @@ def main(argv=None):
         raise SystemExit(exit_text)
 
     # Valid request, start downloading the data
-    if deploy:
-        metbk = m2m_collect(r, ('.*deployment%04d.*METBK.*air.*\\.nc$' % deploy))
+    if stream in ['metbk_a_dcl_instrument', 'metbk_a_dcl_instrument_recovered']:
+        if deploy:
+            metbk = m2m_collect(r, ('.*deployment%04d.*METBK.*\\.nc$' % deploy))
+        else:
+            metbk = m2m_collect(r, '.*METBK.*\\.nc$')
+
+        if not metbk:
+            exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
+            raise SystemExit(exit_text)
+
+        # clean-up and reorganize
+        metbk = metbk_datalogger(metbk)
+
     else:
-        metbk = m2m_collect(r, '.*METBK.*air.*\\.nc$')
+        if deploy:
+            metbk = m2m_collect(r, ('.*deployment%04d.*METBK.*hourly.*\\.nc$' % deploy))
+        else:
+            metbk = m2m_collect(r, '.*METBK.*hourly.*\\.nc$')
 
-    if not metbk:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        if not metbk:
+            exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
+            raise SystemExit(exit_text)
 
-    # clean-up and reorganize
-    metbk = metbk_datalogger(metbk)
+        # clean-up and reorganize
+        metbk = metbk_hourly(metbk)
+
     vocab = get_vocabulary(site, node, sensor)[0]
     metbk = update_dataset(metbk, vocab['maxdepth'])
 

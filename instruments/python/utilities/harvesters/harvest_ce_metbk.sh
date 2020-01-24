@@ -17,27 +17,39 @@ PYTHON="$OOI/python -m instruments.python.uncabled.request_metbk"
 ### CE02SHSM ###
 BASE_FLAGS="-s CE02SHSM -n SBD11 -sn 06-METBKA000"
 BASE_FILE="ce02shsm/buoy/metbk/ce02shsm.buoy.metbk"
-for i in $(seq -f "%02g" 1 10); do
-  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument_air -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+for i in $(seq -f "%02g" 7 10); do
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.telemetered.hourly.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_a_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.metbk_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.recovered_host.hourly.nc"
 done
 
 ### CE04OSSM ###
 BASE_FLAGS="-s CE04OSSM -n SBD11 -sn 06-METBKA000"
 BASE_FILE="ce04ossm/buoy/metbk/ce04ossm.buoy.metbk"
 for i in $(seq -f "%02g" 1 9); do
-  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument_air -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.telemetered.hourly.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_a_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.metbk_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.recovered_host.hourly.nc"
 done
 
 ### CE07SHSM ###
 BASE_FLAGS="-s CE07SHSM -n SBD11 -sn 06-METBKA000"
 BASE_FILE="ce07shsm/buoy/metbk/ce07shsm.buoy.metbk"
 for i in $(seq -f "%02g" 1 10); do
-  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument_air -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.telemetered.hourly.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_a_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.metbk_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.recovered_host.hourly.nc"
 done
 
 ### CE09OSSM ###
 BASE_FLAGS="-s CE09OSSM -n SBD11 -sn 06-METBKA000"
 BASE_FILE="ce09ossm/buoy/metbk/ce09ossm.buoy.metbk"
 for i in $(seq -f "%02g" 1 10); do
-  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument_air -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_a_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.metbk_a_dcl_instrument.nc"
+  $PYTHON $BASE_FLAGS -mt telemetered -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.telemetered.hourly.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_a_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.metbk_a_dcl_instrument_recovered.nc"
+  $PYTHON $BASE_FLAGS -mt recovered_host -st metbk_hourly -dp $i -o "$BASE_FILE.deploy$i.recovered_host.hourly.nc"
 done

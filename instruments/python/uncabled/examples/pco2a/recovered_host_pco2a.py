@@ -15,12 +15,12 @@ def main():
     site = 'CE02SHSM'           # OOI Net site designator
     node = 'SBD12'              # OOI Net node designator
     sensor = '04-PCO2AA000'     # OOI Net sensor designator
-    stream = 'pco2a_a_dcl_instrument_air'  # OOI Net stream name
-    method = 'telemetered'      # OOI Net data delivery method
+    stream = 'pco2a_a_dcl_instrument_air_recovered'  # OOI Net stream name
+    method = 'recovered_host'      # OOI Net data delivery method
     level = 'buoy'              # local directory name, level below site
     instrmt = 'pco2a'           # local directory name, instrument below level
 
-    # We are after telemetered data. Determine list of deployments and use the last, presumably currently active,
+    # We are after recovered_host data. Determine list of deployments and use the last, presumably currently active,
     # deployment to determine the start and end dates for our request.
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
@@ -30,10 +30,12 @@ def main():
     # request and download the data -- air measurements
     r = m2m_request(site, node, sensor, method, stream, start, stop)
     air = m2m_collect(r, ('.*deployment%04d.*PCO2A.*air.*\\.nc$' % deploy))
+    air = air.where(air.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # request and download the data -- water measurements
-    r = m2m_request(site, node, sensor, method, 'pco2a_a_dcl_instrument_water', start, stop)
+    r = m2m_request(site, node, sensor, method, 'pco2a_a_dcl_instrument_water_recovered', start, stop)
     water = m2m_collect(r, ('.*deployment%04d.*PCO2A.*water.*\\.nc$' % deploy))
+    water = water.where(water.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize the air and water datasets
     air = pco2a_datalogger(air, True)

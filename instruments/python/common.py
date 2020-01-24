@@ -414,8 +414,8 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
         return None
 
     # wait until the request is completed
+    print('Request: %s-%s-%s, %s, %s, %s to %s' % (site, node, sensor, method, stream, start, stop))
     print('Waiting for OOINet to process and prepare data request, this may take up to 20 minutes')
-    # print('\tRequest: %s-%s-%s, %s, %s, %s to %s\n' % site, node, sensor, method, stream, start, stop)
     url = [url for url in data['allURLs'] if re.match(r'.*async_results.*', url)][0]
     check_complete = url + '/status.txt'
     with tqdm(total=400, desc='Waiting') as bar:
@@ -453,8 +453,17 @@ def m2m_collect(data, tag=''):
     if not frames:
         return None
 
-    m2m = xr.concat(frames, 'time')
-    m2m = m2m.sortby('time')
+    # merge the frames into a single data set, preserving global attributes from the first file if more than one
+    m2m = frames[0]
+    if len(frames) > 1:
+        for i in range(1, len(frames)):
+            m2m = m2m.merge(frames[i])
+
+        m2m = m2m.sortby('time')
+        m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
+        m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
+        m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+
     return m2m
 
 
@@ -492,18 +501,25 @@ def process_file(catalog_file):
         return None
 
     ds = ds.swap_dims({'obs': 'time'})
-    ds = ds.drop(['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp'])
+    ds = ds.reset_coords()
+    keys = ['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp']
+    for key in keys:
+        if key in ds.variables:
+            ds = ds.drop(key)
     ds = ds.sortby('time')
-
-    # resetting cdm_data_type from Point to Station and the featureType from point to timeSeries
-    ds.attrs['cdm_data_type'] = 'Station'
-    ds.attrs['featureType'] = 'timeSeries'
 
     # clear-up some global attributes we will no longer be using
     keys = ['DODS.strlen', 'DODS.dimName', 'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
     for key in keys:
         if key in ds.attrs:
             del(ds.attrs[key])
+
+    if ds.encoding['unlimited_dims']:
+        del ds.encoding['unlimited_dims']
+
+    # resetting cdm_data_type from Point to Station and the featureType from point to timeSeries
+    ds.attrs['cdm_data_type'] = 'Station'
+    ds.attrs['featureType'] = 'timeSeries'
 
     # update some of the global attributes
     ds.attrs['acknowledgement'] = 'National Science Foundation'

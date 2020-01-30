@@ -5,7 +5,7 @@ import os
 import re
 import xarray as xr
 
-from instruments.python.common import inputs, m2m_collect, m2m_request, deployment_dates, get_vocabulary, \
+from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below
@@ -417,28 +417,27 @@ def main(argv=None):
     else:
         if deploy:
             # Determine start and end dates based on the deployment number
-            start, stop = deployment_dates(site, node, sensor, deploy)
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
             if not start or not stop:
                 exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
                                                                                                   deploy))
                 raise SystemExit(exit_text)
 
-    # Request the data based on the deployment number or explicit start and end dates
+    # Request the data for download
     r = m2m_request(site, node, sensor, method, stream, start, stop)
     if not r:
-        exit_text = ('Data unavailable for %s-%s-%s, deployment %02d. Check request.' % (site, node, sensor, deploy))
+        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
     # Valid request, start downloading the data
-    phsen = m2m_collect(r, '.*PHSEN.*\\.nc$')
-
-    # If limiting to a specific deployment, apply the filter
     if deploy:
-        phsen = phsen.where(phsen.deployment == deploy, drop=True)  # limit to the deployment of interest
-        # check to see if there is any data after limiting to this specific deployment
-        if len(phsen.time) == 0:
-            exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
-            raise SystemExit(exit_text)
+        phsen = m2m_collect(r, '.*deployment%04d.*PHSEN.*\\.nc$')
+    else:
+        phsen = m2m_collect(r, '.*PHSEN.*\\.nc$')
+
+    if not phsen:
+        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
+        raise SystemExit(exit_text)
 
     # clean-up and reorganize
     if method in ['telemetered', 'recovered_host']:

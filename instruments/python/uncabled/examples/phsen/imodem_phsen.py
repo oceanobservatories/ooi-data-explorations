@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
+from instruments.python.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset, CONFIG
 from instruments.python.uncabled.request_phsen import phsen_imodem
 
@@ -23,7 +23,7 @@ def main():
     # We are after telemetered, inductive modem data.
     vocab = get_vocabulary(site, node, sensor)[0]
     deploy = 5  # there is not a lot of telemetered data, choosing a deployment with known data.
-    start, stop = deployment_dates(site, node, sensor, deploy)
+    start, stop = get_deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)

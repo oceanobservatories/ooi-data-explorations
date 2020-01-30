@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import yaml
 
-from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
-    update_dataset
+from instruments.python.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
+    update_dataset, CONFIG
 from instruments.python.uncabled.request_ctdbp import ctdbp_datalogger
-
-CONFIG = yaml.safe_load(open('instruments\\python\\config.yaml'))
 
 
 def main():
@@ -28,7 +25,7 @@ def main():
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[-1]
-    start, stop = deployment_dates(site, node, sensor, deploy)
+    start, stop = get_deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)
@@ -40,7 +37,7 @@ def main():
     ctdbp = update_dataset(ctdbp, vocab['maxdepth'])
 
     # save the data
-    out_path = CONFIG['base_dir']['m2m_base'] + ('\\%s\\%s\\%s' % (site.lower(), level, instrmt))
+    out_path = os.path.join(CONFIG['base_dir']['m2m_base'], site.lower(), level, instrmt)
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)

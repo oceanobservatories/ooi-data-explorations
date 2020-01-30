@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from instruments.python.common import list_deployments, deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
+from instruments.python.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
     update_dataset, CONFIG
 from instruments.python.uncabled.request_phsen import phsen_instrument
 
@@ -11,8 +11,8 @@ def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
     # sites/instruments of interest. Site, node, sensor and stream names can be obtained from the Ocean Observatories
     # Initiative web site
-    site = 'CE02SHSM'           # OOI Net site designator
-    node = 'RID26'              # OOI Net node designator
+    site = 'CE06ISSM'           # OOI Net site designator
+    node = 'RID16'              # OOI Net node designator
     sensor = '06-PHSEND000'     # OOI Net sensor designator
     stream = 'phsen_abcdef_instrument'  # OOI Net stream name
     method = 'recovered_inst'   # OOI Net data delivery method
@@ -24,7 +24,7 @@ def main():
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[-3]
-    start, stop = deployment_dates(site, node, sensor, deploy)
+    start, stop = get_deployment_dates(site, node, sensor, deploy)
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)

@@ -1,5 +1,6 @@
 function variables = M2M_OPTAA(netcdfFilenames, tf_addDiscreteWavelengthTimeSeries)
 
+netcdfFilenames = string(netcdfFilenames);  % so that character vector will work
 ooifile = netcdfFilenames(contains(netcdfFilenames, 'OPTAA'));
 gridded_file = strcat('processed_', ooifile);
 for i = 1:length(ooifile)

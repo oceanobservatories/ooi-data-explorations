@@ -1,5 +1,6 @@
 function [variables] = M2M_SPKIR(netcdfFilenames)
 
+netcdfFilenames = string(netcdfFilenames);  % so that character vector will work
 ooifile = netcdfFilenames(contains(netcdfFilenames, 'SPKIR'));
 processed_file = strcat('processed_', ooifile);
 for i = 1:length(ooifile)
@@ -34,14 +35,12 @@ end
 %%
 %Bin raw data and apply median
 % make sure bounds outside actual data ranges
-bin_first = datenum(str2double(datestr(min(mtime-1),10)),...
-    str2double(datestr(min(mtime-1),5)),str2double(datestr(min(mtime-1),7)),0,7,30);
-bin_last = datenum(str2double(datestr(max(mtime+1),10)),...
-    str2double(datestr(max(mtime+1),5)),str2double(datestr(max(mtime+1),7)),0,7,30);
+fractionalDay_T000730 = 7/60/24 + 30/60/60/24;
+bin_first = floor(min(mtime-1)) + fractionalDay_T000730;
+bin_last  = floor(max(mtime+1)) + fractionalDay_T000730;
 bin_edges = (bin_first*24*60:15:bin_last*24*60)/24/60; %15 min bins
 %
 ind = discretize(mtime,bin_edges);
-
 % time
 mtime_binned = accumarray(ind',mtime,[],@nanmedian);
 mtime_binned(mtime_binned==0)=nan;
@@ -54,4 +53,3 @@ for ii = 1:length(vars)
     binnedII(binnedII==0)=nan;
     variables.(binned_vars{ii}) = binnedII';
 end
-

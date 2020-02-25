@@ -109,7 +109,8 @@ for jj = 1:length(data_url)
         disp(['uframe_m2m_status: ' response_status{jj}]);
     end
     
-    disp(['THREDDS Catalog URL: ' catalogURL])
+    disp('THREDDS Catalog URL:')
+    disp(catalogURL);
     disp(' ');
     
     nc_all = [nc_all{:}]';  % nc_all is now a cell array of character vectors

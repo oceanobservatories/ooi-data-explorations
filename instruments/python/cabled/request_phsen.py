@@ -5,7 +5,7 @@ import os
 import xarray as xr
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG
+    dt64_epoch, update_dataset, CONFIG, ENCODINGS
 from instruments.python.uncabled.request_phsen import PHSEN
 
 
@@ -71,24 +71,25 @@ def phsen_streamed(ds):
     refnc = np.array(np.vstack(ds['reference_light_measurements'].values), dtype='int32')
     refnc = np.atleast_3d(refnc)
     refnc = np.reshape(refnc, (nrec, 4, 4))   # 4 sets of 4 DI water measurements (blanks)
-    fill = np.ones((nrec, 19)) * -9999999     # fill value to pad the reference measurements to same shape as light
-    blank_refrnc_434 = np.concatenate((refnc[:, :, 0], fill), axis=1)  # DI blank reference, 434 nm
-    blank_signal_434 = np.concatenate((refnc[:, :, 1], fill), axis=1)  # DI blank signal, 434 nm
-    blank_refrnc_578 = np.concatenate((refnc[:, :, 2], fill), axis=1)  # DI blank reference, 578 nm
-    blank_signal_578 = np.concatenate((refnc[:, :, 3], fill), axis=1)  # DI blank signal, 578 nm
+    blank_refrnc_434 = refnc[:, :, 0]  # DI blank reference, 434 nm
+    blank_signal_434 = refnc[:, :, 1]  # DI blank signal, 434 nm
+    blank_refrnc_578 = refnc[:, :, 2]  # DI blank reference, 578 nm
+    blank_signal_578 = refnc[:, :, 3]  # DI blank signal, 578 nm
 
     # create a data set with the reference and light measurements
     ph = xr.Dataset({
-        'blank_refrnc_434': (['time', 'measurements'], blank_refrnc_434.astype('int32')),
-        'blank_signal_434': (['time', 'measurements'], blank_signal_434.astype('int32')),
-        'blank_refrnc_578': (['time', 'measurements'], blank_refrnc_578.astype('int32')),
-        'blank_signal_578': (['time', 'measurements'], blank_signal_578.astype('int32')),
+        'blank_refrnc_434': (['time', 'blanks'], blank_refrnc_434.astype('int32')),
+        'blank_signal_434': (['time', 'blanks'], blank_signal_434.astype('int32')),
+        'blank_refrnc_578': (['time', 'blanks'], blank_refrnc_578.astype('int32')),
+        'blank_signal_578': (['time', 'blanks'], blank_signal_578.astype('int32')),
         'reference_434': (['time', 'measurements'], reference_434.astype('int32')),
         'signal_434': (['time', 'measurements'], signal_434.astype('int32')),
         'reference_578': (['time', 'measurements'], reference_578.astype('int32')),
         'signal_578': (['time', 'measurements'], signal_578.astype('int32'))
-    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32')})
-    ds = ds.drop(['ph_light_measurements', 'reference_light_measurements'])
+    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
+               'blanks': np.arange(0, 4).astype('int32')
+               })
+    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
 
     # merge the data sets back together
     ds = ds.merge(ph)
@@ -142,15 +143,14 @@ def main(argv=None):
         raise SystemExit(exit_text)
 
     # Valid request, start downloading the data
-    phsen = m2m_collect(r, '.*PHSEN.*\\.nc$')
-
-    # If limiting to a specific deployment, apply the filter
     if deploy:
-        phsen = phsen.where(phsen.deployment == deploy, drop=True)  # limit to the deployment of interest
-        # check to see if there is any data after limiting to this specific deployment
-        if len(phsen.time) == 0:
-            exit_text = ('Data unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor, deploy))
-            raise SystemExit(exit_text)
+        phsen = m2m_collect(r, ('.*deployment%04d.*PHSEN.*\\.nc$' % deploy))
+    else:
+        phsen = m2m_collect(r, '.*PHSEN.*\\.nc$')
+
+    if not phsen:
+        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
+        raise SystemExit(exit_text)
 
     # clean-up and reorganize
     phsen = phsen_streamed(phsen)
@@ -163,7 +163,7 @@ def main(argv=None):
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 
-    phsen.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4')
+    phsen.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,31 @@
+name: ooi
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python>=3.6
+  - argcomplete
+  - chest
+  - configobj
+  - geos
+  - gsw
+  - hdf4
+  - krb5
+  - libnetcdf
+  - matplotlib
+  - munch>=2.1.0
+  - netcdf4
+  - h5netcdf
+  - nodejs
+  - jupyterlab
+  - pocean-core
+  - pyasn1
+  - pyaxiom
+  - pygc
+  - pyncml
+  - setuptools
+  - simplejson
+  - sockjs-tornado
+  - xarray
+  - pip:
+    - igrf12

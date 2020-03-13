@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    update_dataset, CONFIG
+    update_dataset, CONFIG, ENCODINGS
 from gsw.conversions import SP_from_C
 
 
@@ -43,7 +43,7 @@ def metbk_hourly(ds):
     return ds
 
 
-def metbk_datalogger(ds):
+def metbk_datalogger(ds, burst=False):
     """
     Takes METBK data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
     it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
@@ -109,9 +109,22 @@ def metbk_datalogger(ds):
         'data_product_identifier': 'SALSURF_L2',
         'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
         'stream': ds.attrs['stream'],
-        'ancillary_variables': 'sea_surface_conductivity sea_surface_temperature',
-        '_FillValue': np.nan
+        'ancillary_variables': 'sea_surface_conductivity sea_surface_temperature'
     }
+
+    if burst:   # re-sample the data to a 15 minute interval using a median average
+        burst = ds
+        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
+        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # reset the attributes...which keep_attrs should do...
+        burst.attrs = ds.attrs
+        for v in burst.variables:
+            burst[v].attrs = ds[v].attrs
+
+        # save the newly average data
+        ds = burst
 
     return ds
 
@@ -182,7 +195,7 @@ def main(argv=None):
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 
-    metbk.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4')
+    metbk.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

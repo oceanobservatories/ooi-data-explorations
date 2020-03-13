@@ -56,6 +56,13 @@ else:
                       'config.yaml.changeme file as a template) to set directory paths for where the data ' +
                       'will be saved.')
 
+# Default NetCDF encodings for CF compliance
+ENCODINGS = {
+    'time': {'_FillValue': None},
+    'lon': {'_FillValue': None},
+    'lat': {'_FillValue': None},
+    'z': {'_FillValue': None}
+}
 
 # Sensor Information
 def list_sites():
@@ -486,7 +493,7 @@ def process_file(catalog_file):
     Function to download one of the NetCDF files as an xarray data set, convert to time as the appropriate dimension
     instead of obs, and drop the extraneous timestamp variables (these were originally not intended to be exposed to
     users and lead to confusion as to their meaning). The ID and provenance variables are better off obtained directly
-    from the M2M system via a different process. Having them included imposes unnecessary constraints.
+    from the M2M system via a different process. Having them included imposes unnecessary constraints on the processing.
 
     :param catalog_file: Unique file, referenced by a URL relative to the catalog, to download and convert the data
         file to an xarray data set.
@@ -494,8 +501,7 @@ def process_file(catalog_file):
     """
     dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
-    with xr.open_dataset(url, cache=False) as xrd:
-        ds = xrd.load()
+    ds = xr.load_dataset(url)
 
     if not ds:
         return None
@@ -505,7 +511,7 @@ def process_file(catalog_file):
     keys = ['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp']
     for key in keys:
         if key in ds.variables:
-            ds = ds.drop(key)
+            ds = ds.drop_vars(key)
     ds = ds.sortby('time')
 
     # clear-up some global attributes we will no longer be using

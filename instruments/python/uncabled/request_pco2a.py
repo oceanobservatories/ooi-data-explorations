@@ -5,7 +5,7 @@ import os
 import re
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG
+    dt64_epoch, update_dataset, CONFIG, ENCODINGS
 
 
 def pco2a_datalogger(ds, burst=False):
@@ -68,8 +68,7 @@ def pco2a_datalogger(ds, burst=False):
             'units': 'degree_Celsius',
             'data_product_identifier': 'TEMPSRF_L1',
             'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
-            'stream': 'metbk_a_dcl_instrument',
-            '_FillValue': np.nan
+            'stream': 'metbk_a_dcl_instrument'
         }
 
         ds['met_salsurf'] = ('time', ds['deployment'] * np.nan)
@@ -82,8 +81,7 @@ def pco2a_datalogger(ds, burst=False):
                         'of the data set.'),
             'data_product_identifier': 'SALSURF_L2',
             'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
-            'stream': 'metbk_a_dcl_instrument',
-            '_FillValue': np.nan
+            'stream': 'metbk_a_dcl_instrument'
         }
 
         ds['met_wind10m'] = ('time', ds['deployment'] * np.nan)
@@ -96,8 +94,7 @@ def pco2a_datalogger(ds, burst=False):
                         'filled with NaNs to preserve the structure of the data set.'),
             'data_product_identifier': 'WIND10M_L2',
             'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
-            'stream': 'metbk_hourly',
-            '_FillValue': np.nan
+            'stream': 'metbk_hourly'
         }
 
     # drop the two QC tests applied to the L0 values (not supposed to happen)
@@ -227,9 +224,9 @@ def main(argv=None):
         os.makedirs(os.path.dirname(out_file))
 
     if os.path.isfile(out_file):
-        pco2a.to_netcdf(out_file, mode='a', format='NETCDF4', engine='netcdf4', group=nc_group)
+        pco2a.to_netcdf(out_file, mode='a', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS, group=nc_group)
     else:
-        pco2a.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4', group=nc_group)
+        pco2a.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS, group=nc_group)
 
 
 if __name__ == '__main__':

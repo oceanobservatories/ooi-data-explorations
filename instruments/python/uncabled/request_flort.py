@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    update_dataset, CONFIG
+    update_dataset, CONFIG, ENCODINGS
 
 # load configuration settings
 ATTRS = dict({
@@ -12,22 +12,19 @@ ATTRS = dict({
         'long_name': 'Raw Optical Backscatter at 700 nm',
         'units': 'counts',
         'comment': 'Raw optical backscatter measurements at 700 nm.',
-        'data_product_identifier': 'FLUBSCT_L0',
-        '_FillValue': np.nan
+        'data_product_identifier': 'FLUBSCT_L0'
     },
     'raw_chlorophyll': {
         'long_name': 'Raw Chlorophyll Fluorescence',
         'units': 'counts',
         'comment': 'Raw chlorophyll fluorescence (470 nm excitation/ 695 nm emission) measurements.',
-        'data_product_identifier': 'CHLAFLO_L0',
-        '_FillValue': np.nan
+        'data_product_identifier': 'CHLAFLO_L0'
     },
     'raw_cdom': {
         'long_name': 'Raw CDOM Fluorescence',
         'units': 'counts',
         'comment': 'Raw CDOM fluorescence (370 nm excitation/ 460 nm emission) measurements.',
-        'data_product_identifier': 'CDOMFLO_L0',
-        '_FillValue': np.nan
+        'data_product_identifier': 'CDOMFLO_L0'
     },
     'estimated_chlorophyll': {
         'long_name': 'Estimated Chlorophyll Concentration',
@@ -37,8 +34,7 @@ ATTRS = dict({
                     'proxy approximately equal to 25 ug/l of a Thalassiosira weissflogii phytoplankton culture. ' +
                     'This measurement is considered to be an estimate only of the true chlorophyll concentration.'),
         'data_product_identifier': 'CHLAFLO_L1',
-        'ancillary_variables': 'raw_chlorophyll estimated_chlorophyll_qc_executed estimated_chlorophyll_qc_results',
-        '_FillValue': np.nan
+        'ancillary_variables': 'raw_chlorophyll estimated_chlorophyll_qc_executed estimated_chlorophyll_qc_results'
     },
     'fluorometric_cdom': {
         'long_name': 'Fluorometric CDOM Concentration',
@@ -51,8 +47,7 @@ ATTRS = dict({
                     'plant and animal matter, and can enter coastal areas in river run-off containing organic ' +
                     'materials leached from soils.'),
         'data_product_identifier': 'CDOMFLO_L1',
-        'ancillary_variables': 'raw_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results',
-        '_FillValue': np.nan
+        'ancillary_variables': 'raw_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results'
     },
     'beta_700': {
         'long_name': 'Volume Scattering Function at 700 nm',
@@ -63,8 +58,7 @@ ATTRS = dict({
                     'scattering function is the intensity (flux per unit solid angle) of scattered radiation per ' +
                     'unit length of scattering medium, normalised by the incident radiation flux.'),
         'data_product_identifier': 'FLUBSCT_L1',
-        'ancillary_variables': 'raw_backscatter beta_700_qc_executed beta_700_qc_results',
-        '_FillValue': np.nan
+        'ancillary_variables': 'raw_backscatter beta_700_qc_executed beta_700_qc_results'
     },
     'bback': {
         'long_name': 'Total Optical Backscatter at 700 nm',
@@ -72,8 +66,7 @@ ATTRS = dict({
         'comment': ('Total (particulate + water) optical backscatter at 700 nm, derived from the Volume ' +
                     'Scattering Function and corrected for effects of temperature and salinity.'),
         'data_product_identifier': 'FLUBSCT_L2',
-        'ancillary_variables': 'beta_700 temperature salinity bback_qc_executed bback_qc_results',
-        '_FillValue': np.nan
+        'ancillary_variables': 'beta_700 temperature salinity bback_qc_executed bback_qc_results'
     }
 })
 
@@ -112,8 +105,7 @@ def flort_datalogger(ds, burst=True):
             'standard_name': 'sea_water_temperature',
             'units': 'degree_Celsius',
             'instrument': 'CE01ISSM-RID16-03-CTDBPC000',
-            'stream': 'ctdbp_cdef_dcl_instrument',
-            '_FillValue': np.nan
+            'stream': 'ctdbp_cdef_dcl_instrument'
         }
 
         ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
@@ -126,8 +118,7 @@ def flort_datalogger(ds, burst=True):
                         'of the data set.'),
             'data_product_identifier': 'PRACSAL_L2',
             'instrument': 'CE01ISSM-RID16-03-CTDBPC000',
-            'stream': 'ctdbp_cdef_dcl_instrument',
-            '_FillValue': np.nan
+            'stream': 'ctdbp_cdef_dcl_instrument'
         }
 
     # lots of renaming here to get a better defined data set with cleaner attributes
@@ -160,7 +151,9 @@ def flort_datalogger(ds, burst=True):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = ds
+        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
+        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -278,7 +271,7 @@ def main(argv=None):
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 
-    flort.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4')
+    flort.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

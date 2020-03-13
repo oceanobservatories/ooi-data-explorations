@@ -6,7 +6,7 @@ import re
 import xarray as xr
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG
+    dt64_epoch, update_dataset, CONFIG, ENCODINGS
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below
 PHSEN = {
@@ -20,7 +20,12 @@ PHSEN = {
     },
     'measurements': {
         'long_name': 'Measurements Array',
-        'comment': 'Dimensional indexing array created for the reference and light measurements.',
+        'comment': 'Dimensional indexing array created for the light measurements.',
+        # 'units': ''    # deliberately left blank, no units for this value
+    },
+    'blanks': {
+        'long_name': 'Blanks Array',
+        'comment': 'Dimensional indexing array created for the reference (blanks) measurements.',
         # 'units': ''    # deliberately left blank, no units for this value
     },
     'blank_refrnc_434': {
@@ -115,7 +120,6 @@ PHSEN = {
                     'measured by the thermistor. It is used to determine salinity and temperature dependent molar ' +
                     'absorptivities in the seawater sample in order to make an accurate pH estimation. This ' +
                     'variable represents the thermistor temperature measured at the end of the measurement cycle'),
-        'standard_name': 'seawater_temperature',
         'units': 'degrees_Celsius',
         'ancillary_variables': 'raw_thermistor_end'
     },
@@ -125,8 +129,7 @@ PHSEN = {
                     'to basic on a scale from 0 to 14 with 7 being neutral.'),
         'standard_name': 'sea_water_ph_reported_on_total_scale',
         'data_product_identifier': 'PHWATER_L2',
-        'units': '1',
-        '_FillValue': np.nan,
+        # 'units': ''    # deliberately left blank, no units for this value
         'ancillary_variables': ('blank_refrnc_434 blank_signal_434 blank_refrnc_578 blank_signal_578 ' +
                                 'reference_434 signal_434 reference_578 signal_578 thermistor_temperature ' +
                                 'practical_salinity')
@@ -193,23 +196,24 @@ def phsen_datalogger(ds):
     refnc = np.array(np.vstack(ds['reference_light_measurements'].values), dtype='int32')
     refnc = np.atleast_3d(refnc)
     refnc = np.reshape(refnc, (nrec, 4, 4))   # 4 sets of 4 DI water measurements (blanks)
-    fill = np.ones((nrec, 19)) * -9999999     # fill value to pad the reference measurements to same shape as light
-    blank_refrnc_434 = np.concatenate((refnc[:, :, 0], fill), axis=1)  # DI blank reference, 434 nm
-    blank_signal_434 = np.concatenate((refnc[:, :, 1], fill), axis=1)  # DI blank signal, 434 nm
-    blank_refrnc_578 = np.concatenate((refnc[:, :, 2], fill), axis=1)  # DI blank reference, 578 nm
-    blank_signal_578 = np.concatenate((refnc[:, :, 3], fill), axis=1)  # DI blank signal, 578 nm
+    blank_refrnc_434 = refnc[:, :, 0]  # DI blank reference, 434 nm
+    blank_signal_434 = refnc[:, :, 1]  # DI blank signal, 434 nm
+    blank_refrnc_578 = refnc[:, :, 2]  # DI blank reference, 578 nm
+    blank_signal_578 = refnc[:, :, 3]  # DI blank signal, 578 nm
 
     # create a data set with the reference and light measurements
     ph = xr.Dataset({
-        'blank_refrnc_434': (['time', 'measurements'], blank_refrnc_434.astype('int32')),
-        'blank_signal_434': (['time', 'measurements'], blank_signal_434.astype('int32')),
-        'blank_refrnc_578': (['time', 'measurements'], blank_refrnc_578.astype('int32')),
-        'blank_signal_578': (['time', 'measurements'], blank_signal_578.astype('int32')),
+        'blank_refrnc_434': (['time', 'blanks'], blank_refrnc_434.astype('int32')),
+        'blank_signal_434': (['time', 'blanks'], blank_signal_434.astype('int32')),
+        'blank_refrnc_578': (['time', 'blanks'], blank_refrnc_578.astype('int32')),
+        'blank_signal_578': (['time', 'blanks'], blank_signal_578.astype('int32')),
         'reference_434': (['time', 'measurements'], reference_434.astype('int32')),
         'signal_434': (['time', 'measurements'], signal_434.astype('int32')),
         'reference_578': (['time', 'measurements'], reference_578.astype('int32')),
         'signal_578': (['time', 'measurements'], signal_578.astype('int32'))
-    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32')})
+    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
+               'blanks': np.arange(0, 4).astype('int32')
+               })
     ds = ds.drop(['light_measurements', 'reference_light_measurements'])
 
     # merge the data sets back together
@@ -274,23 +278,24 @@ def phsen_instrument(ds):
     refnc = np.array(np.vstack(ds['reference_light_measurements'].values), dtype='int32')
     refnc = np.atleast_3d(refnc)
     refnc = np.reshape(refnc, (nrec, 4, 4))   # 4 sets of 4 DI water measurements (blanks)
-    fill = np.ones((nrec, 19)) * -9999999     # fill value to pad the reference measurements to same shape as light
-    blank_refrnc_434 = np.concatenate((refnc[:, :, 0], fill), axis=1)  # DI blank reference, 434 nm
-    blank_signal_434 = np.concatenate((refnc[:, :, 1], fill), axis=1)  # DI blank signal, 434 nm
-    blank_refrnc_578 = np.concatenate((refnc[:, :, 2], fill), axis=1)  # DI blank reference, 578 nm
-    blank_signal_578 = np.concatenate((refnc[:, :, 3], fill), axis=1)  # DI blank signal, 578 nm
+    blank_refrnc_434 = refnc[:, :, 0]  # DI blank reference, 434 nm
+    blank_signal_434 = refnc[:, :, 1]  # DI blank signal, 434 nm
+    blank_refrnc_578 = refnc[:, :, 2]  # DI blank reference, 578 nm
+    blank_signal_578 = refnc[:, :, 3]  # DI blank signal, 578 nm
 
     # create a data set with the reference and light measurements
     ph = xr.Dataset({
-        'blank_refrnc_434': (['time', 'measurements'], blank_refrnc_434.astype('int32')),
-        'blank_signal_434': (['time', 'measurements'], blank_signal_434.astype('int32')),
-        'blank_refrnc_578': (['time', 'measurements'], blank_refrnc_578.astype('int32')),
-        'blank_signal_578': (['time', 'measurements'], blank_signal_578.astype('int32')),
+        'blank_refrnc_434': (['time', 'blanks'], blank_refrnc_434.astype('int32')),
+        'blank_signal_434': (['time', 'blanks'], blank_signal_434.astype('int32')),
+        'blank_refrnc_578': (['time', 'blanks'], blank_refrnc_578.astype('int32')),
+        'blank_signal_578': (['time', 'blanks'], blank_signal_578.astype('int32')),
         'reference_434': (['time', 'measurements'], reference_434.astype('int32')),
         'signal_434': (['time', 'measurements'], signal_434.astype('int32')),
         'reference_578': (['time', 'measurements'], reference_578.astype('int32')),
         'signal_578': (['time', 'measurements'], signal_578.astype('int32'))
-    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32')})
+    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
+               'blanks': np.arange(0, 4).astype('int32')
+               })
     ds = ds.drop(['light_measurements', 'reference_light_measurements'])
 
     # merge the data sets back together
@@ -359,23 +364,24 @@ def phsen_imodem(ds):
     refnc = np.array(np.vstack(ds['reference_light_measurements'].values), dtype='int32')
     refnc = np.atleast_3d(refnc)
     refnc = np.reshape(refnc, (nrec, 4, 4))   # 4 sets of 4 DI water measurements (blanks)
-    fill = np.ones((nrec, 19)) * -9999999     # fill value to pad the reference measurements to same shape as light
-    blank_refrnc_434 = np.concatenate((refnc[:, :, 0], fill), axis=1)  # DI blank reference, 434 nm
-    blank_signal_434 = np.concatenate((refnc[:, :, 1], fill), axis=1)  # DI blank signal, 434 nm
-    blank_refrnc_578 = np.concatenate((refnc[:, :, 2], fill), axis=1)  # DI blank reference, 578 nm
-    blank_signal_578 = np.concatenate((refnc[:, :, 3], fill), axis=1)  # DI blank signal, 578 nm
+    blank_refrnc_434 = refnc[:, :, 0]  # DI blank reference, 434 nm
+    blank_signal_434 = refnc[:, :, 1]  # DI blank signal, 434 nm
+    blank_refrnc_578 = refnc[:, :, 2]  # DI blank reference, 578 nm
+    blank_signal_578 = refnc[:, :, 3]  # DI blank signal, 578 nm
 
     # create a data set with the reference and light measurements
     ph = xr.Dataset({
-        'blank_refrnc_434': (['time', 'measurements'], blank_refrnc_434.astype('int32')),
-        'blank_signal_434': (['time', 'measurements'], blank_signal_434.astype('int32')),
-        'blank_refrnc_578': (['time', 'measurements'], blank_refrnc_578.astype('int32')),
-        'blank_signal_578': (['time', 'measurements'], blank_signal_578.astype('int32')),
+        'blank_refrnc_434': (['time', 'blanks'], blank_refrnc_434.astype('int32')),
+        'blank_signal_434': (['time', 'blanks'], blank_signal_434.astype('int32')),
+        'blank_refrnc_578': (['time', 'blanks'], blank_refrnc_578.astype('int32')),
+        'blank_signal_578': (['time', 'blanks'], blank_signal_578.astype('int32')),
         'reference_434': (['time', 'measurements'], reference_434.astype('int32')),
         'signal_434': (['time', 'measurements'], signal_434.astype('int32')),
         'reference_578': (['time', 'measurements'], reference_578.astype('int32')),
         'signal_578': (['time', 'measurements'], signal_578.astype('int32'))
-    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32')})
+    }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
+               'blanks': np.arange(0, 4).astype('int32')
+               })
     ds = ds.drop(['light_measurements', 'reference_light_measurements'])
 
     # merge the data sets back together
@@ -431,7 +437,7 @@ def main(argv=None):
 
     # Valid request, start downloading the data
     if deploy:
-        phsen = m2m_collect(r, '.*deployment%04d.*PHSEN.*\\.nc$')
+        phsen = m2m_collect(r, ('.*deployment%04d.*PHSEN.*\\.nc$' % deploy))
     else:
         phsen = m2m_collect(r, '.*PHSEN.*\\.nc$')
 
@@ -456,7 +462,7 @@ def main(argv=None):
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 
-    phsen.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4')
+    phsen.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

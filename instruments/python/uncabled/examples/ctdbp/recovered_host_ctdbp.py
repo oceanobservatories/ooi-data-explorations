@@ -3,7 +3,7 @@
 import os
 
 from instruments.python.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, m2m_collect, \
-    update_dataset, CONFIG
+    update_dataset, CONFIG, ENCODINGS
 from instruments.python.uncabled.request_ctdbp import ctdbp_datalogger
 
 
@@ -45,7 +45,7 @@ def main():
     out_file = ('%s.%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, deploy, method, stream))
     nc_out = os.path.join(out_path, out_file)
 
-    ctdbp.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='netcdf4')
+    ctdbp.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 from instruments.python.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG
+    dt64_epoch, update_dataset, CONFIG, ENCODINGS
 
 
 def ctdbp_datalogger(ds, burst=False):
@@ -61,7 +61,9 @@ def ctdbp_datalogger(ds, burst=False):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = ds
+        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
+        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -158,7 +160,9 @@ def ctdbp_instrument(ds, burst=False):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = ds
+        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
+        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -227,7 +231,7 @@ def main(argv=None):
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 
-    ctdbp.to_netcdf(out_file, mode='w', format='NETCDF4', engine='netcdf4')
+    ctdbp.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

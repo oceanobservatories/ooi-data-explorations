@@ -28,7 +28,7 @@ end_date='2016-06-21T23:59:59.000Z';
 %Specify metadata
 mooring_name = 'CE07SHSM';
 node = 'BUOY';
-instrument_class = 'METBK';
+instrument_class = 'METBK1';
 method = 'RecoveredHost';
 
 %Get M2M URL

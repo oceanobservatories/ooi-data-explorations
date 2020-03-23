@@ -5,7 +5,7 @@
 %Node:
     %BUOY, NSIF, MFN, BEP, PROFILER, GLIDER
 %Instrument Class:
-    %ADCP, CTD, DOSTA, FDCHP, FLORT, METBK, METBK-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT, ZPLSC
+    %ADCP, CTD, DOSTA, FDCHP, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT, ZPLSC
 	%WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier
 %Method:
     %Telemetered, RecoveredHost, RecoveredInst, RecoveredCSPP, RecoveredWFP, Streamed
@@ -28,7 +28,7 @@ end_date='2016-06-21T23:59:59.000Z';
 %Specify metadata
 mooring_name = 'CE07SHSM';
 node = 'BUOY';
-instrument_class = 'METBK';
+instrument_class = 'METBK1';
 method = 'RecoveredHost';
 
 %Get M2M URL

@@ -1,4 +1,4 @@
-function [uframe_dataset_name, var_list] = M2M_URLs(mooring_name,node,instrument_class,method)
+function [uframe_dataset_name, var_list] = M2M_URLs(platform_name,node,instrument_class,method)
 %.. 2019-10-XX: CMRisien. original code.
 %.. 2019-11-04: RADesiderio.
 %..             (a) removed data_url from the output argument list;
@@ -11,46 +11,47 @@ function [uframe_dataset_name, var_list] = M2M_URLs(mooring_name,node,instrument
 %.. 2020-03-13: CMRisien. Added Coastal Pioneer CSM and WFP streams.
 %.. 2020-03-17: CMRisien. Added Coastal Pioneer WFP ADCP streams.
 %.. 2020-03-18: CMRisien. Added Coastal Pioneer Glider streams.
+%.. 2020-03-23: CMRisien. Added Coastal Pioneer NUTNR and MOPAK streams.
 %
 %.. Explicitly construct UFrame dataset names
 %MOPAK
-if strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+if strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/SBD17/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/SBD17/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %METBK
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -109,7 +110,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -168,7 +169,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -227,7 +228,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -287,7 +288,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
     %FLORT
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -307,7 +308,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -327,7 +328,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -347,7 +348,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -367,7 +368,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -387,7 +388,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -407,7 +408,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -427,7 +428,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -447,7 +448,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -471,13 +472,13 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
     %FDCHP
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/08-FDCHPA000/telemetered/fdchp_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %DOSTA
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/03-DOSTAD000/telemetered/dosta_abcdjm_ctdbp_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -488,7 +489,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -505,7 +506,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -522,7 +523,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/03-DOSTAD000/telemetered/dosta_abcdjm_ctdbp_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -533,7 +534,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -550,7 +551,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -567,7 +568,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-DOSTAD000/telemetered/dosta_abcdjm_ctdbp_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -578,7 +579,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-DOSTAD000/telemetered/dosta_abcdjm_ctdbp_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -589,7 +590,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-DOSTAD000/telemetered/dosta_abcdjm_ctdbp_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -600,7 +601,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-DOSTAD000/telemetered/dosta_abcdjm_ctdbp_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -611,7 +612,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -626,7 +627,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
     %ADCP
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID26/01-ADCPTA000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -652,7 +653,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID26/01-ADCPTC000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -678,7 +679,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID26/01-ADCPTA000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -704,7 +705,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID26/01-ADCPTC000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -730,7 +731,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -756,7 +757,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -782,7 +783,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD35/04-ADCPTC000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -808,7 +809,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD35/04-ADCPSJ000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -835,48 +836,48 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
     %ZPLSC
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %WAVSS
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_statistics';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -923,7 +924,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_statistics';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -970,7 +971,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_statistics';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -1017,7 +1018,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_statistics';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -1065,7 +1066,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
     %VELPT
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/SBD17/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1094,7 +1095,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD11/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1123,7 +1124,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD11/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1152,7 +1153,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/SBD17/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1181,7 +1182,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD11/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1210,7 +1211,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD11/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1239,7 +1240,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1268,7 +1269,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1297,7 +1298,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1326,7 +1327,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1355,7 +1356,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1384,7 +1385,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -1414,7 +1415,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
     %PCO2W
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -1425,7 +1426,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -1436,7 +1437,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -1447,7 +1448,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -1458,7 +1459,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -1469,7 +1470,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -1481,7 +1482,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
     %PHSEN
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1492,7 +1493,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1503,7 +1504,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1514,7 +1515,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1525,7 +1526,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1536,7 +1537,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1547,7 +1548,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1558,7 +1559,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1569,7 +1570,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1580,7 +1581,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -1592,7 +1593,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
     %SPKIR
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -1600,7 +1601,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -1608,7 +1609,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -1616,7 +1617,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -1624,7 +1625,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -1632,7 +1633,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -1641,7 +1642,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     %PRESF
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD35/02-PRESFA000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -1652,7 +1653,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD35/02-PRESFA000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -1663,7 +1664,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD35/02-PRESFB000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -1674,7 +1675,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD35/02-PRESFC000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -1686,7 +1687,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
     %CTDBP
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1706,7 +1707,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1726,7 +1727,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1746,7 +1747,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1766,7 +1767,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1786,7 +1787,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1806,7 +1807,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1826,7 +1827,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1846,7 +1847,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1866,7 +1867,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1886,7 +1887,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1906,7 +1907,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -1927,7 +1928,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
     %VEL3D
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD35/01-VEL3DD000/telemetered/vel3d_cd_dcl_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -1944,7 +1945,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD35/01-VEL3DD000/telemetered/vel3d_cd_dcl_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -1961,7 +1962,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD35/01-VEL3DD000/telemetered/vel3d_cd_dcl_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -1978,7 +1979,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD35/01-VEL3DD000/telemetered/vel3d_cd_dcl_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -1996,7 +1997,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
     %VEL3DK
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -2022,7 +2023,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -2043,7 +2044,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
     %PCO2A
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -2057,7 +2058,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -2071,7 +2072,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -2085,7 +2086,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -2100,7 +2101,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
     %PARAD
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -2112,58 +2113,58 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
     %OPTAA
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD37/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD37/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD37/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD37/01-OPTAAC000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %NUTNR
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name{1} = 'CE01ISSM/RID16/07-NUTNRB000/telemetered/nutnr_b_dcl_conc_instrument';
     uframe_dataset_name{2} = 'CE01ISSM/RID16/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
     uframe_dataset_name{3} = 'CE01ISSM/RID16/07-NUTNRB000/telemetered/suna_dcl_recovered';
@@ -2176,7 +2177,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name{1} = 'CE02SHSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_conc_instrument';
     uframe_dataset_name{2} = 'CE02SHSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
     uframe_dataset_name{3} = 'CE02SHSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
@@ -2189,7 +2190,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name{1} = 'CE04OSSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_conc_instrument';
     uframe_dataset_name{2} = 'CE04OSSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
     uframe_dataset_name{3} = 'CE04OSSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
@@ -2202,7 +2203,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name{1} = 'CE06ISSM/RID16/07-NUTNRB000/telemetered/nutnr_b_dcl_conc_instrument';
     uframe_dataset_name{2} = 'CE06ISSM/RID16/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
     uframe_dataset_name{3} = 'CE06ISSM/RID16/07-NUTNRB000/telemetered/suna_dcl_recovered';
@@ -2215,7 +2216,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name{1} = 'CE07SHSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_conc_instrument';
     uframe_dataset_name{2} = 'CE07SHSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
     uframe_dataset_name{3} = 'CE07SHSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
@@ -2228,7 +2229,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name{1} = 'CE09OSSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_conc_instrument';
     uframe_dataset_name{2} = 'CE09OSSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
     uframe_dataset_name{3} = 'CE09OSSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
@@ -2243,43 +2244,43 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     %%
     %MOPAK
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/SBD17/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/SBD17/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSPM/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %METBK
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -2338,7 +2339,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -2397,7 +2398,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -2456,7 +2457,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -2516,7 +2517,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
     %FLORT
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2536,7 +2537,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2556,7 +2557,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2576,7 +2577,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2596,7 +2597,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2616,7 +2617,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2636,7 +2637,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2656,7 +2657,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -2677,13 +2678,13 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     %FDCHP
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/08-FDCHPA000/recovered_host/fdchp_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %DOSTA
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/03-DOSTAD000/recovered_host/dosta_abcdjm_ctdbp_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2700,7 +2701,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2717,7 +2718,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2734,7 +2735,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/03-DOSTAD000/recovered_host/dosta_abcdjm_ctdbp_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2751,7 +2752,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2768,7 +2769,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2785,7 +2786,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-DOSTAD000/recovered_host/dosta_abcdjm_ctdbp_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2796,7 +2797,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-DOSTAD000/recovered_host/dosta_abcdjm_ctdbp_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2807,7 +2808,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-DOSTAD000/recovered_host/dosta_abcdjm_ctdbp_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2818,7 +2819,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-DOSTAD000/recovered_host/dosta_abcdjm_ctdbp_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -2830,7 +2831,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     %ADCP
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID26/01-ADCPTA000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -2856,7 +2857,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID26/01-ADCPTC000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -2882,7 +2883,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID26/01-ADCPTA000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -2908,7 +2909,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID26/01-ADCPTC000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -2934,7 +2935,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -2960,7 +2961,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -2986,7 +2987,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD35/04-ADCPTC000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -3012,7 +3013,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD35/04-ADCPSJ000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -3039,7 +3040,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
     %WAVSS
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_statistics_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -3086,7 +3087,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_statistics_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -3133,7 +3134,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_statistics_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -3180,7 +3181,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_statistics_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -3228,7 +3229,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
     %VELPT
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/SBD17/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3257,7 +3258,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD11/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3286,7 +3287,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD11/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3315,7 +3316,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     %uframe_dataset_name = 'CE06ISSM/RID16/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     uframe_dataset_name = 'CE06ISSM/RID16/04-VELPTA000/recovered_host/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
@@ -3345,7 +3346,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD11/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3374,7 +3375,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD11/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3403,7 +3404,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3432,7 +3433,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3461,7 +3462,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3490,7 +3491,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3519,7 +3520,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3548,7 +3549,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -3578,7 +3579,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
     %PCO2W
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -3589,7 +3590,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -3600,7 +3601,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -3611,7 +3612,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -3622,7 +3623,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -3633,7 +3634,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -3645,7 +3646,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
     %PHSEN
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3656,7 +3657,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3667,7 +3668,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3678,7 +3679,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3689,7 +3690,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3700,7 +3701,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3711,7 +3712,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3722,7 +3723,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3733,7 +3734,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3744,7 +3745,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -3756,7 +3757,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
     %SPKIR
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -3764,7 +3765,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -3772,7 +3773,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -3780,7 +3781,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -3788,7 +3789,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -3796,7 +3797,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -3805,7 +3806,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     %PRESF
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD35/02-PRESFA000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -3816,7 +3817,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD35/02-PRESFA000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -3827,7 +3828,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD35/02-PRESFB000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -3838,7 +3839,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD35/02-PRESFC000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -3850,7 +3851,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
     %CTDBP
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3870,7 +3871,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3890,7 +3891,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3910,7 +3911,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3930,7 +3931,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3950,7 +3951,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3970,7 +3971,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -3990,7 +3991,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -4010,7 +4011,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -4030,7 +4031,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -4050,7 +4051,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -4070,7 +4071,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -4091,7 +4092,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
     %VEL3D
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD35/01-VEL3DD000/recovered_host/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -4108,7 +4109,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD35/01-VEL3DD000/recovered_host/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -4125,7 +4126,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD35/01-VEL3DD000/recovered_host/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -4142,7 +4143,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD35/01-VEL3DD000/recovered_host/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -4160,7 +4161,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
     %PCO2A
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -4174,7 +4175,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -4188,7 +4189,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -4202,7 +4203,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -4217,58 +4218,58 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
     %OPTAA
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD37/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD37/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD37/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD37/01-OPTAAC000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %NUTNR
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name{1} = 'CE01ISSM/RID16/07-NUTNRB000/recovered_host/nutnr_b_dcl_conc_instrument_recovered';
     uframe_dataset_name{2} = 'CE01ISSM/RID16/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
     uframe_dataset_name{3} = 'CE01ISSM/RID16/07-NUTNRB000/recovered_host/suna_dcl_recovered';
@@ -4281,7 +4282,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name{1} = 'CE02SHSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_conc_instrument_recovered';
     uframe_dataset_name{2} = 'CE02SHSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
     uframe_dataset_name{3} = 'CE02SHSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
@@ -4294,7 +4295,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name{1} = 'CE04OSSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_conc_instrument_recovered';
     uframe_dataset_name{2} = 'CE04OSSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
     uframe_dataset_name{3} = 'CE04OSSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
@@ -4307,7 +4308,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name{1} = 'CE06ISSM/RID16/07-NUTNRB000/recovered_host/nutnr_b_dcl_conc_instrument_recovered';
     uframe_dataset_name{2} = 'CE06ISSM/RID16/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
     uframe_dataset_name{3} = 'CE06ISSM/RID16/07-NUTNRB000/recovered_host/suna_dcl_recovered';
@@ -4320,7 +4321,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name{1} = 'CE07SHSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_conc_instrument_recovered';
     uframe_dataset_name{2} = 'CE07SHSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
     uframe_dataset_name{3} = 'CE07SHSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
@@ -4333,7 +4334,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name{1} = 'CE09OSSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_conc_instrument_recovered';
     uframe_dataset_name{2} = 'CE09OSSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
     uframe_dataset_name{3} = 'CE09OSSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
@@ -4346,7 +4347,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4366,7 +4367,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4386,7 +4387,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4406,7 +4407,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4426,7 +4427,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4446,7 +4447,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4466,7 +4467,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4486,7 +4487,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4506,7 +4507,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4526,7 +4527,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4546,7 +4547,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4566,7 +4567,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -4586,7 +4587,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE09OSPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -4606,7 +4607,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/RID26/01-ADCPTA000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4632,7 +4633,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/RID26/01-ADCPTC000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4658,7 +4659,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/RID26/01-ADCPTA000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4684,7 +4685,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/RID26/01-ADCPTC000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4710,7 +4711,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4736,7 +4737,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4762,7 +4763,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/04-ADCPTC000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4788,7 +4789,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/04-ADCPSJ000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -4814,27 +4815,27 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/SBD17/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -4863,7 +4864,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/SBD11/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -4892,7 +4893,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/SBD11/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -4921,7 +4922,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/SBD17/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -4950,7 +4951,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/SBD11/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -4979,7 +4980,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/SBD11/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5008,7 +5009,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/RID16/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5037,7 +5038,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5066,7 +5067,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5095,7 +5096,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/RID16/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5124,7 +5125,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5153,7 +5154,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -5182,7 +5183,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE09OSPM/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -5208,7 +5209,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/01-VEL3DD000/recovered_inst/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -5225,7 +5226,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/01-VEL3DD000/recovered_inst/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -5242,7 +5243,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/01-VEL3DD000/recovered_inst/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -5259,7 +5260,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/01-VEL3DD000/recovered_inst/vel3d_cd_dcl_velocity_data_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -5276,7 +5277,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/02-PRESFA000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -5287,7 +5288,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/02-PRESFA000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -5298,7 +5299,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/02-PRESFB000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -5309,7 +5310,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/02-PRESFC000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -5320,7 +5321,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/RID16/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5331,7 +5332,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5342,7 +5343,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5353,7 +5354,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/RID16/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5364,7 +5365,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5375,7 +5376,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5386,7 +5387,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5397,7 +5398,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5408,7 +5409,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5419,7 +5420,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5430,7 +5431,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/RID16/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5441,7 +5442,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5452,7 +5453,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/RID16/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5463,7 +5464,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5474,7 +5475,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5485,7 +5486,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5496,7 +5497,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE09OSPM/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -5507,7 +5508,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE01ISSM/RID16/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
     uframe_dataset_name{2} = 'CE01ISSM/RID16/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
     var_list(1).name = 'time';
@@ -5519,7 +5520,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE02SHSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
     uframe_dataset_name{2} = 'CE02SHSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
     var_list(1).name = 'time';
@@ -5531,7 +5532,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE04OSSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
     uframe_dataset_name{2} = 'CE04OSSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
     var_list(1).name = 'time';
@@ -5543,7 +5544,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE06ISSM/RID16/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
     uframe_dataset_name{2} = 'CE06ISSM/RID16/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
     var_list(1).name = 'time';
@@ -5555,7 +5556,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE07SHSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
     uframe_dataset_name{2} = 'CE07SHSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
     var_list(1).name = 'time';
@@ -5567,7 +5568,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE09OSSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
     uframe_dataset_name{2} = 'CE09OSSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
     var_list(1).name = 'time';
@@ -5579,12 +5580,12 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/SBD12/08-FDCHPA000/recovered_inst/fdchp_a_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-FLORTD000/recovered_inst/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -5604,7 +5605,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-FLORTD000/recovered_inst/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -5624,7 +5625,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE09OSPM/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -5647,7 +5648,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE09OSPM/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -5661,7 +5662,7 @@ elseif strcmp(mooring_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/RID16/03-DOSTAD000/recovered_inst/dosta_abcdjm_ctdbp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5675,7 +5676,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/RID16/03-DOSTAD000/recovered_inst/dosta_abcdjm_ctdbp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5689,7 +5690,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-DOSTAD000/recovered_inst/dosta_abcdjm_ctdbp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5703,7 +5704,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-DOSTAD000/recovered_inst/dosta_abcdjm_ctdbp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5717,7 +5718,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-DOSTAD000/recovered_inst/dosta_abcdjm_ctdbp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5731,7 +5732,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-DOSTAD000/recovered_inst/dosta_abcdjm_ctdbp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5745,7 +5746,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
-elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/recovered_inst/adcpt_m_instrument_log9_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'significant_wave_height';
@@ -5759,7 +5760,7 @@ elseif strcmp(mooring_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'meters';
     var_list(3).units = 'seconds';
     var_list(4).units = 'degrees';
-elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/recovered_inst/adcpt_m_instrument_log9_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'significant_wave_height';
@@ -5773,7 +5774,7 @@ elseif strcmp(mooring_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(2).units = 'meters';
     var_list(3).units = 'seconds';
     var_list(4).units = 'degrees';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/06-CTDBPN106/streamed/ctdbp_no_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_temperature';
@@ -5793,7 +5794,7 @@ elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/06-CTDBPO108/streamed/ctdbp_no_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_temperature';
@@ -5813,7 +5814,7 @@ elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/06-CTDBPN106/streamed/ctdbp_no_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5824,7 +5825,7 @@ elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/06-CTDBPO108/streamed/ctdbp_no_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -5835,7 +5836,7 @@ elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/10-PHSEND103/streamed/phsen_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5846,7 +5847,7 @@ elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/10-PHSEND107/streamed/phsen_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -5857,7 +5858,7 @@ elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/09-PCO2WB103/streamed/pco2w_b_sami_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5868,7 +5869,7 @@ elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/09-PCO2WB104/streamed/pco2w_b_sami_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -5879,7 +5880,7 @@ elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'ADCP') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'ADCP') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/05-ADCPTB104/streamed/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -5905,7 +5906,7 @@ elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'ADCP') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'ADCP') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/05-ADCPSI103/streamed/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -5931,7 +5932,7 @@ elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/07-VEL3DC108/streamed/vel3d_cd_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -5948,7 +5949,7 @@ elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/07-VEL3DC107/streamed/vel3d_cd_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
@@ -5965,18 +5966,18 @@ elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrumen
     var_list(3).units = 'm/s';
     var_list(4).units = 'm/s';
     var_list(5).units = '0.001dbar';
-elseif strcmp(mooring_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/08-OPTAAD106/streamed/optaa_sample';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/08-OPTAAC104/streamed/optaa_sample';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     %CSPP Data below
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/telemetered/flort_dj_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -5999,7 +6000,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -6022,7 +6023,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/telemetered/flort_dj_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -6045,7 +6046,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -6068,7 +6069,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/02-DOSTAJ000/telemetered/dosta_abcdjm_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -6088,7 +6089,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'umol/L';
     var_list(5).units = 'degC';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/02-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -6108,7 +6109,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'umol/L';
     var_list(5).units = 'degC';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/02-DOSTAJ000/telemetered/dosta_abcdjm_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -6128,7 +6129,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'umol/L';
     var_list(5).units = 'degC';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/02-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -6148,7 +6149,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'umol/L';
     var_list(5).units = 'degC';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/09-CTDPFJ000/telemetered/ctdpf_j_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temperature';
@@ -6168,7 +6169,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temperature';
@@ -6188,7 +6189,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/09-CTDPFJ000/telemetered/ctdpf_j_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temperature';
@@ -6208,7 +6209,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temperature';
@@ -6228,7 +6229,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/10-PARADJ000/telemetered/parad_j_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_j_par_counts_output';
@@ -6239,7 +6240,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/10-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_j_par_counts_output';
@@ -6250,7 +6251,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/10-PARADJ000/telemetered/parad_j_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_j_par_counts_output';
@@ -6261,7 +6262,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/10-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_j_par_counts_output';
@@ -6272,7 +6273,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/06-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'salinity_corrected_nitrate';
@@ -6286,7 +6287,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/06-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'salinity_corrected_nitrate';
@@ -6300,7 +6301,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/07-SPKIRJ000/telemetered/spkir_abj_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -6311,7 +6312,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/07-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -6322,7 +6323,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/07-SPKIRJ000/telemetered/spkir_abj_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -6333,7 +6334,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/07-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -6344,7 +6345,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/05-VELPTJ000/telemetered/velpt_j_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_j_eastward_velocity';
@@ -6373,7 +6374,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(7).units = 'degrees';
     var_list(8).units = 'degC';
     var_list(9).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/05-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_j_eastward_velocity';
@@ -6402,7 +6403,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(7).units = 'degrees';
     var_list(8).units = 'degC';
     var_list(9).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/05-VELPTJ000/telemetered/velpt_j_cspp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_j_eastward_velocity';
@@ -6431,7 +6432,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(7).units = 'degrees';
     var_list(8).units = 'degC';
     var_list(9).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/05-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_j_eastward_velocity';
@@ -6460,7 +6461,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(7).units = 'degrees';
     var_list(8).units = 'degC';
     var_list(9).units = 'dbar';
-elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'int_ctd_pressure';
@@ -6468,7 +6469,7 @@ elseif strcmp(mooring_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
-elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'int_ctd_pressure';
@@ -6476,7 +6477,7 @@ elseif strcmp(mooring_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -6499,7 +6500,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -6522,7 +6523,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/01-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -6542,7 +6543,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'umol/L';
     var_list(5).units = 'degC';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/01-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -6562,7 +6563,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'umol/L';
     var_list(5).units = 'degC';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temperature';
@@ -6582,7 +6583,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temperature';
@@ -6602,7 +6603,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/09-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_j_par_counts_output';
@@ -6613,7 +6614,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/09-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_j_par_counts_output';
@@ -6624,7 +6625,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/05-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'salinity_corrected_nitrate';
@@ -6638,7 +6639,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/05-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'salinity_corrected_nitrate';
@@ -6652,7 +6653,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/06-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -6663,7 +6664,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/06-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -6674,7 +6675,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/02-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_j_eastward_velocity';
@@ -6703,7 +6704,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(7).units = 'degrees';
     var_list(8).units = 'degC';
     var_list(9).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/02-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_j_eastward_velocity';
@@ -6732,7 +6733,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(7).units = 'degrees';
     var_list(8).units = 'degC';
     var_list(9).units = 'dbar';
-elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'int_ctd_pressure';
@@ -6740,7 +6741,7 @@ elseif strcmp(mooring_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
-elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
+elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'int_ctd_pressure';
@@ -6748,7 +6749,7 @@ elseif strcmp(mooring_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL386/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6774,7 +6775,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL386/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6800,7 +6801,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL384/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6826,7 +6827,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL384/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6852,7 +6853,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL383/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6878,7 +6879,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL383/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6904,7 +6905,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL382/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6930,7 +6931,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL382/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6956,7 +6957,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL381/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -6982,7 +6983,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL381/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7008,7 +7009,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL327/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7034,7 +7035,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL327/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7060,7 +7061,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL326/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7086,7 +7087,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL326/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7112,7 +7113,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL320/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7138,7 +7139,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL320/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7164,7 +7165,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL319/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7190,7 +7191,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL319/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7216,7 +7217,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL312/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7242,7 +7243,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL312/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7268,7 +7269,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL311/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7294,7 +7295,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL311/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7320,7 +7321,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL247/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7346,7 +7347,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL247/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -7372,7 +7373,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL386/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7392,7 +7393,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL386/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7412,7 +7413,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL384/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7432,7 +7433,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL384/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7452,7 +7453,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL383/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7472,7 +7473,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL383/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7492,7 +7493,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL382/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7512,7 +7513,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL382/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7532,7 +7533,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL381/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7552,7 +7553,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL381/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7572,7 +7573,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL327/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7592,7 +7593,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL327/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7612,7 +7613,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL326/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7632,7 +7633,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL326/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7652,7 +7653,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL320/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7672,7 +7673,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL320/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7692,7 +7693,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL319/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7712,7 +7713,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL319/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7732,7 +7733,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL312/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7752,7 +7753,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL312/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7772,7 +7773,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL311/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7792,7 +7793,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL311/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7812,7 +7813,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL247/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7832,7 +7833,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL247/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -7852,7 +7853,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL386/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -7881,7 +7882,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL386/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -7910,7 +7911,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL384/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -7939,7 +7940,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL384/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -7968,7 +7969,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL383/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -7997,7 +7998,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL383/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8026,7 +8027,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL382/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8055,7 +8056,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL382/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8084,7 +8085,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL381/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8113,7 +8114,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL381/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8142,7 +8143,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL327/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8171,7 +8172,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL327/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8200,7 +8201,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL326/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8229,7 +8230,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL326/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8258,7 +8259,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL320/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8287,7 +8288,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL320/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8316,7 +8317,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL319/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8345,7 +8346,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL319/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8374,7 +8375,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL312/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8403,7 +8404,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL312/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8432,7 +8433,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL311/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8461,7 +8462,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL311/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8490,7 +8491,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL247/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8519,7 +8520,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL247/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -8548,7 +8549,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL386/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8565,7 +8566,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL386/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8582,7 +8583,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL384/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8599,7 +8600,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL384/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8616,7 +8617,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL383/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8633,7 +8634,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL383/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8650,7 +8651,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL382/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8667,7 +8668,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL382/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8684,7 +8685,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL381/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8701,7 +8702,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL381/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8718,7 +8719,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL327/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8735,7 +8736,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL327/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8752,7 +8753,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL326/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8769,7 +8770,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL326/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8786,7 +8787,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL320/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8803,7 +8804,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL320/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8820,7 +8821,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL319/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8837,7 +8838,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL319/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8854,7 +8855,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL312/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8871,7 +8872,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL312/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8888,7 +8889,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL311/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8905,7 +8906,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL311/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8922,7 +8923,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL247/01-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8939,7 +8940,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL247/01-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -8956,7 +8957,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL386/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -8991,7 +8992,7 @@ elseif strcmp(mooring_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL384/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9026,7 +9027,7 @@ elseif strcmp(mooring_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL383/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9061,7 +9062,7 @@ elseif strcmp(mooring_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL382/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9096,7 +9097,7 @@ elseif strcmp(mooring_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL381/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9131,7 +9132,7 @@ elseif strcmp(mooring_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL327/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9166,7 +9167,7 @@ elseif strcmp(mooring_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL326/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9201,7 +9202,7 @@ elseif strcmp(mooring_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL320/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9236,7 +9237,7 @@ elseif strcmp(mooring_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL319/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9271,7 +9272,7 @@ elseif strcmp(mooring_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL312/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9306,7 +9307,7 @@ elseif strcmp(mooring_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL311/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9341,7 +9342,7 @@ elseif strcmp(mooring_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL247/03-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -9376,7 +9377,7 @@ elseif strcmp(mooring_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9429,7 +9430,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9482,7 +9483,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9535,7 +9536,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9588,7 +9589,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9641,7 +9642,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9694,7 +9695,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9747,7 +9748,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -9800,7 +9801,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_mean_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -9838,7 +9839,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_mean_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -9876,7 +9877,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_mean_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -9914,7 +9915,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_mean_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -9952,7 +9953,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_mean_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -9990,7 +9991,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_mean_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -10028,7 +10029,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_mean_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -10066,7 +10067,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_mean_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -10104,7 +10105,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_non_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10124,7 +10125,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_non_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10144,7 +10145,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_non_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10164,7 +10165,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_non_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10184,7 +10185,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_non_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10204,7 +10205,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_non_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10224,7 +10225,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_non_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10244,7 +10245,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_non_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10264,7 +10265,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_motion';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10299,7 +10300,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_motion_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10334,7 +10335,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_motion';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10369,7 +10370,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_motion_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10404,7 +10405,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_motion';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10439,7 +10440,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_motion_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10474,7 +10475,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_motion';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10509,7 +10510,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_motion_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -10544,7 +10545,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_fourier';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10570,7 +10571,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_fourier_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10596,7 +10597,7 @@ elseif strcmp(mooring_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_fourier';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10622,7 +10623,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_fourier_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10648,7 +10649,7 @@ elseif strcmp(mooring_name,'CE04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_fourier';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10674,7 +10675,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_fourier_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10700,7 +10701,7 @@ elseif strcmp(mooring_name,'CE09OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_fourier';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10726,7 +10727,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_fourier_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -10752,7 +10753,7 @@ elseif strcmp(mooring_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/2A-CTDPFA107/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_temperature';
@@ -10772,7 +10773,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSPD/DP01B/01-CTDPFL105/recovered_inst/dpc_ctd_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -10792,7 +10793,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE04OSPD/DP01B/01-CTDPFL105/recovered_wfp/dpc_ctd_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -10812,7 +10813,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
     %uframe_dataset_name = 'CE04OSPS/SF01B/2A-DOFSTA107/streamed/ctdpf_sbe43_sample';
     uframe_dataset_name = 'CE04OSPS/SF01B/2A-CTDPFA107/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';
@@ -10825,7 +10826,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSPD/DP01B/06-DOSTAD105/recovered_inst/dpc_optode_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -10839,7 +10840,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE04OSPD/DP01B/06-DOSTAD105/recovered_wfp/dpc_optode_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -10853,7 +10854,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/3A-FLORTD104/streamed/flort_d_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -10876,7 +10877,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name{1} = 'CE04OSPD/DP01B/04-FLNTUA103/recovered_inst/dpc_flnturtd_instrument_recovered';
     uframe_dataset_name{2} = 'CE04OSPD/DP01B/03-FLCDRA103/recovered_inst/dpc_flcdrtd_instrument_recovered';
     var_list(1).name = 'time';
@@ -10897,7 +10898,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'm-1';
     var_list(5).units = 'ppb';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name{1} = 'CE04OSPD/DP01B/04-FLNTUA103/recovered_wfp/dpc_flnturtd_instrument_recovered';
     uframe_dataset_name{2} = 'CE04OSPD/DP01B/03-FLCDRA103/recovered_wfp/dpc_flcdrtd_instrument_recovered';
     var_list(1).name = 'time';
@@ -10918,7 +10919,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'm-1';
     var_list(5).units = 'ppb';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/2B-PHSENA108/streamed/phsen_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -10932,7 +10933,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/3C-PARADA102/streamed/parad_sa_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'par_counts_output';
@@ -10943,7 +10944,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/3D-SPKIRA102/streamed/spkir_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_downwelling_vector';
@@ -10954,7 +10955,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/4A-NUTNRA102/streamed/nutnr_a_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'nitrate_concentration';
@@ -10968,7 +10969,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/L';
     var_list(3).units = 'umol/L';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/4F-PCO2WA102/streamed/pco2w_a_sami_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -10982,7 +10983,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VELPT') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/4B-VELPTD106/streamed/velpt_velocity_data';
     var_list(1).name = 'time';
     var_list(2).name = 'velpt_d_eastward_velocity';
@@ -11014,7 +11015,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
     var_list(10).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSPD/DP01B/02-VEL3DA105/recovered_inst/dpc_acm_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_a_eastward_velocity';
@@ -11034,7 +11035,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'm/s';
     var_list(5).units = 'm/s';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE04OSPD/DP01B/02-VEL3DA105/recovered_wfp/dpc_acm_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_a_eastward_velocity';
@@ -11054,7 +11055,7 @@ elseif strcmp(mooring_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'm/s';
     var_list(5).units = 'm/s';
     var_list(6).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/PC01B/4A-CTDPFA109/streamed/ctdpf_optode_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_temperature';
@@ -11074,7 +11075,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
     %uframe_dataset_name = 'CE04OSPS/PC01B/4A-DOSTAD109/streamed/ctdpf_optode_sample';
     uframe_dataset_name = 'CE04OSPS/PC01B/4A-CTDPFA109/streamed/ctdpf_optode_sample';
     var_list(1).name = 'time';
@@ -11086,7 +11087,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/PC01B/4B-PHSENA106/streamed/phsen_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -11097,7 +11098,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/PC01B/4D-PCO2WA105/streamed/pco2w_a_sami_data_record';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -11109,7 +11110,7 @@ elseif strcmp(mooring_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
 %Coastal Pioneer CSM Data Streams
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11168,7 +11169,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11227,7 +11228,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11286,7 +11287,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11345,7 +11346,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11404,7 +11405,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11463,7 +11464,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/SBD11/06-METBKA000/telemetered/metbk_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11522,7 +11523,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/SBD11/06-METBKA000/recovered_host/metbk_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sea_surface_temperature';
@@ -11582,7 +11583,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
 %WAVSS
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_statistics';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -11629,7 +11630,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_statistics_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_zero_crossings';
@@ -11676,7 +11677,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(13).units = 'm';
     var_list(14).units = 'degrees';
     var_list(15).units = 'degrees';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_mean_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -11714,7 +11715,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_MeanDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_mean_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'mean_direction';
@@ -11752,7 +11753,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(10).units = 'Hz';
     var_list(11).units = 'deg';
     var_list(12).units = 'deg';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_non_directional';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -11772,7 +11773,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_NonDir') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_non_directional_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -11792,7 +11793,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(4).units = 'Hz';
     var_list(5).units = 'm2 Hz-1';
     var_list(6).units = 'Hz';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_motion';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -11827,7 +11828,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Motion') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_motion_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_time_samples';
@@ -11862,7 +11863,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(9).units = 'seconds since 1900-01-01';
     var_list(10).units = 'm';
     var_list(11).units = 'm';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_fourier';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -11888,7 +11889,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Fourier') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_fourier_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'number_bands';
@@ -11915,7 +11916,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
     %PCO2A
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -11929,7 +11930,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -11943,7 +11944,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/SBD12/04-PCO2AA000/telemetered/pco2a_a_dcl_instrument_water';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -11958,7 +11959,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
     %PCO2A
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -11972,7 +11973,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -11986,7 +11987,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'PCO2A') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/SBD12/04-PCO2AA000/recovered_host/pco2a_a_dcl_instrument_water_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'partial_pressure_co2_ssw';
@@ -12001,22 +12002,22 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
     %FDCHP
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/recovered_inst/fdchp_a_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/telemetered/fdchp_a_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/recovered_host/fdchp_a_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12069,7 +12070,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12122,7 +12123,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12175,7 +12176,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12228,7 +12229,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12281,7 +12282,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/SBD11/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12334,7 +12335,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2-hr') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12387,7 +12388,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2-hr') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK2-hr') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/SBD12/06-METBKA000/recovered_host/metbk_hourly';
     var_list(1).name = 'met_timeflx';
     var_list(2).name = 'met_rainrte';
@@ -12440,7 +12441,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrume
     var_list(15).units = 'degC';
     var_list(16).units = 'm/s';
     var_list(17).units = 'W/m2';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12460,7 +12461,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12480,7 +12481,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -12500,7 +12501,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12520,7 +12521,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12540,7 +12541,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -12560,7 +12561,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12580,7 +12581,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12600,7 +12601,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -12620,7 +12621,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12640,7 +12641,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD37/03-CTDBPE000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12660,7 +12661,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD37/03-CTDBPE000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -12680,7 +12681,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD37/03-CTDBPD000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12700,7 +12701,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD37/03-CTDBPD000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12720,7 +12721,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD37/03-CTDBPD000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -12740,7 +12741,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD37/03-CTDBPD000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12760,7 +12761,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD37/03-CTDBPD000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'temp';
@@ -12780,7 +12781,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD37/03-CTDBPD000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdbp_seawater_temperature';
@@ -12800,67 +12801,67 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD37/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD37/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD37/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD37/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID27/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD37/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID27/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'OPTAA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD37/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -12889,7 +12890,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -12918,7 +12919,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/RID26/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -12947,7 +12948,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -12976,7 +12977,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13005,7 +13006,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID26/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13034,7 +13035,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13063,7 +13064,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13092,7 +13093,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID26/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13121,7 +13122,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -13141,7 +13142,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -13161,7 +13162,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID27/02-FLORTD000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -13181,7 +13182,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -13201,7 +13202,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -13221,7 +13222,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID27/02-FLORTD000/recovered_host/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -13241,7 +13242,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(4).units = 'ppb';
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -13249,7 +13250,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -13257,7 +13258,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID26/08-SPKIRB000/recovered_host/spkir_abj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -13265,7 +13266,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -13273,7 +13274,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -13281,7 +13282,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'SPKIR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID26/08-SPKIRB000/telemetered/spkir_abj_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'spkir_abj_cspp_downwelling_vector';
@@ -13289,7 +13290,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'uW cm-2 nm-1';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -13306,7 +13307,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -13323,7 +13324,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID27/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -13340,7 +13341,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -13357,7 +13358,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -13374,7 +13375,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID27/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -13391,7 +13392,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13402,7 +13403,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13413,7 +13414,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13424,7 +13425,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13435,7 +13436,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13446,7 +13447,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13457,7 +13458,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13468,7 +13469,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13479,7 +13480,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13490,7 +13491,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13501,7 +13502,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13512,7 +13513,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13523,7 +13524,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13534,7 +13535,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13545,7 +13546,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13556,7 +13557,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13567,7 +13568,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13578,7 +13579,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PHSEN') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
@@ -13589,7 +13590,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13600,7 +13601,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13611,7 +13612,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13622,7 +13623,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13633,7 +13634,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13644,7 +13645,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13655,7 +13656,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD35/05-PCO2WB000/recovered_inst/pco2w_abc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13666,7 +13667,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD35/05-PCO2WB000/telemetered/pco2w_abc_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13677,7 +13678,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PCO2W') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD35/05-PCO2WB000/recovered_host/pco2w_abc_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'pco2w_thermistor_temperature';
@@ -13688,7 +13689,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD35/02-PRESFB000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -13699,7 +13700,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD35/02-PRESFB000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -13710,7 +13711,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD35/02-PRESFB000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -13721,7 +13722,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD35/02-PRESFB000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -13732,7 +13733,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD35/02-PRESFB000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -13743,7 +13744,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD35/02-PRESFB000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -13754,7 +13755,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD35/02-PRESFC000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -13765,7 +13766,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD35/02-PRESFC000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'presf_tide_pressure';
@@ -13776,7 +13777,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD35/02-PRESFC000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
@@ -13787,7 +13788,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
     var_list(3).units = 'degC';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD35/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13816,7 +13817,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD35/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13845,7 +13846,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD35/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13874,7 +13875,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD35/04-VELPTA000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13903,7 +13904,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD35/04-VELPTA000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13932,7 +13933,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD35/04-VELPTA000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13961,7 +13962,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD35/04-VELPTB000/recovered_inst/velpt_ab_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -13990,7 +13991,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD35/04-VELPTB000/telemetered/velpt_ab_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -14019,7 +14020,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'VELPT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD35/04-VELPTB000/recovered_host/velpt_ab_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'eastward_velocity';
@@ -14048,7 +14049,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'deci-degrees';
     var_list(8).units = '0.01degC';
     var_list(9).units = '0.001dbar';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD37/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -14065,7 +14066,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD37/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -14082,7 +14083,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD37/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -14099,7 +14100,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD37/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -14116,7 +14117,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD37/04-DOSTAD000/telemetered/dosta_abcdjm_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -14133,7 +14134,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD37/04-DOSTAD000/recovered_host/dosta_abcdjm_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
@@ -14150,52 +14151,52 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(3).units = 'umol/L';
     var_list(4).units = 'degC';
     var_list(5).units = 'umol/L';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD37/07-ZPLSCC000/recovered_host/zplsc_c_instrument';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD35/01-ADCPTF000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -14221,7 +14222,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD35/01-ADCPTF000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -14247,7 +14248,7 @@ elseif strcmp(mooring_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD35/01-ADCPTF000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -14273,7 +14274,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD35/01-ADCPTF000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -14299,7 +14300,7 @@ elseif strcmp(mooring_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD35/01-ADCPSJ000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -14325,7 +14326,7 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD35/01-ADCPSJ000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -14352,17 +14353,17 @@ elseif strcmp(mooring_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrumen
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
 %Coastal Pioneer WireFollowing Profilers (WFP)
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/SBS11/02-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSPM/SBS11/02-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14385,7 +14386,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP04OSPM/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14408,7 +14409,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -14422,7 +14423,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP04OSPM/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -14436,7 +14437,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -14462,7 +14463,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP04OSPM/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -14488,7 +14489,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -14508,7 +14509,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP04OSPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -14528,7 +14529,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -14539,7 +14540,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP04OSPM/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -14550,17 +14551,17 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNPM/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14583,7 +14584,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP01CNPM/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14606,7 +14607,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -14620,7 +14621,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP01CNPM/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -14634,7 +14635,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -14660,7 +14661,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP01CNPM/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -14686,7 +14687,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -14706,7 +14707,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP01CNPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -14726,7 +14727,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -14737,7 +14738,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP01CNPM/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -14748,17 +14749,17 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMCI/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14781,7 +14782,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCI/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14804,7 +14805,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -14818,7 +14819,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCI/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -14832,7 +14833,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -14858,7 +14859,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCI/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -14884,7 +14885,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -14904,7 +14905,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCI/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -14924,7 +14925,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -14935,7 +14936,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCI/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -14946,17 +14947,17 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMCO/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -14979,7 +14980,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCO/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15002,7 +15003,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15016,7 +15017,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCO/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15030,7 +15031,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15056,7 +15057,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCO/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15082,7 +15083,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15102,7 +15103,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCO/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15122,7 +15123,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15133,7 +15134,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCO/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15144,17 +15145,17 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMUI/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15177,7 +15178,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUI/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15200,7 +15201,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15214,7 +15215,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUI/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15228,7 +15229,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15254,7 +15255,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUI/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15280,7 +15281,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15300,7 +15301,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUI/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15320,7 +15321,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15331,7 +15332,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUI/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15342,17 +15343,17 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMUO/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15375,7 +15376,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUO/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15398,7 +15399,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15412,7 +15413,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUO/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15426,7 +15427,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15452,7 +15453,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUO/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15478,7 +15479,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15498,7 +15499,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUO/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15518,7 +15519,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15529,7 +15530,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUO/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15540,17 +15541,17 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISPM/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/WFP01/04-FLORTK000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15573,7 +15574,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP03ISPM/WFP01/04-FLORTK000/recovered_wfp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -15596,7 +15597,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(5).units = 'm-1 sr-1';
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/WFP01/02-DOFSTK000/telemetered/dofst_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15610,7 +15611,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP03ISPM/WFP01/02-DOFSTK000/recovered_wfp/dofst_k_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'dofst_k_oxygen_l2';
@@ -15624,7 +15625,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'Hz';
     var_list(4).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/WFP01/01-VEL3DK000/telemetered/vel3d_k_wfp_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15650,7 +15651,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'VEL3D') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP03ISPM/WFP01/01-VEL3DK000/recovered_wfp/vel3d_k_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'vel3d_k_eastward_velocity';
@@ -15676,7 +15677,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(6).units = 'ddegrees';
     var_list(7).units = 'ddegrees';
     var_list(8).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15696,7 +15697,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP03ISPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'ctdpf_ckl_seawater_temperature';
@@ -15716,7 +15717,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/WFP01/05-PARADK000/telemetered/parad_k__stc_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15727,7 +15728,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP03ISPM/WFP01/05-PARADK000/recovered_wfp/parad_k__stc_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_k_par';
@@ -15738,7 +15739,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(inst
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSPM/RII01/02-ADCPSL010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15764,7 +15765,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSPM/RII01/02-ADCPSL010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15790,7 +15791,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/RII01/02-ADCPSL010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15816,7 +15817,7 @@ elseif strcmp(mooring_name,'CP04OSPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNPM/RII01/02-ADCPTG010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15842,7 +15843,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNPM/RII01/02-ADCPTG010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15868,7 +15869,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/RII01/02-ADCPTG010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15894,7 +15895,7 @@ elseif strcmp(mooring_name,'CP01CNPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP02PMCI/RII01/02-ADCPTG010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15920,7 +15921,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMCI/RII01/02-ADCPTG010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15946,7 +15947,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/RII01/02-ADCPTG010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15972,7 +15973,7 @@ elseif strcmp(mooring_name,'CP02PMCI') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP02PMCO/RII01/02-ADCPTG010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -15998,7 +15999,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMCO/RII01/02-ADCPTG010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16024,7 +16025,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/RII01/02-ADCPTG010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16050,7 +16051,7 @@ elseif strcmp(mooring_name,'CP02PMCO') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP02PMUI/RII01/02-ADCPTG010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16076,7 +16077,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMUI/RII01/02-ADCPTG010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16102,7 +16103,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/RII01/02-ADCPTG010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16128,7 +16129,7 @@ elseif strcmp(mooring_name,'CP02PMUI') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP02PMUO/RII01/02-ADCPSL010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16154,7 +16155,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP02PMUO/RII01/02-ADCPSL010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16180,7 +16181,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/RII01/02-ADCPSL010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16206,7 +16207,7 @@ elseif strcmp(mooring_name,'CP02PMUO') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISPM/RII01/02-ADCPTG010/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16232,7 +16233,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISPM/RII01/02-ADCPTG010/recovered_host/adcps_jln_stc_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16258,7 +16259,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/RII01/02-ADCPTG010/telemetered/adcps_jln_stc_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16284,7 +16285,7 @@ elseif strcmp(mooring_name,'CP03ISPM') && strcmp(node,'NSIF') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL336/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16310,7 +16311,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL336/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16336,7 +16337,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL336/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -16356,7 +16357,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL336/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -16376,7 +16377,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL336/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -16405,7 +16406,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL336/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -16434,7 +16435,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL336/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -16451,7 +16452,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL336/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -16468,7 +16469,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL336/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16503,7 +16504,7 @@ elseif strcmp(mooring_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL388/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16529,7 +16530,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL388/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16555,7 +16556,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL388/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -16575,7 +16576,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL388/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -16595,7 +16596,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL388/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -16624,7 +16625,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL388/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -16653,7 +16654,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL388/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -16670,7 +16671,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL388/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -16687,7 +16688,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL388/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16722,7 +16723,7 @@ elseif strcmp(mooring_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL335/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16748,7 +16749,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL335/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16774,7 +16775,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL335/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -16794,7 +16795,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL335/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -16814,7 +16815,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL335/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -16843,7 +16844,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL335/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -16872,7 +16873,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL335/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -16889,7 +16890,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL335/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -16906,7 +16907,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL335/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -16941,7 +16942,7 @@ elseif strcmp(mooring_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL339/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16967,7 +16968,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL339/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -16993,7 +16994,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL339/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17013,7 +17014,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL339/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17033,7 +17034,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL339/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17062,7 +17063,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL339/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17091,7 +17092,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL339/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17108,7 +17109,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL339/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17125,7 +17126,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL339/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -17160,7 +17161,7 @@ elseif strcmp(mooring_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL340/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17186,7 +17187,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL340/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17212,7 +17213,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL340/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17232,7 +17233,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL340/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17252,7 +17253,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL340/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17281,7 +17282,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL340/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17310,7 +17311,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL340/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17327,7 +17328,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL340/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17344,7 +17345,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL340/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -17379,7 +17380,7 @@ elseif strcmp(mooring_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL374/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17405,7 +17406,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL374/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17431,7 +17432,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL374/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17451,7 +17452,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL374/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17471,7 +17472,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL374/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17500,7 +17501,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL374/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17529,7 +17530,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL374/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17546,7 +17547,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL374/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17563,7 +17564,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL374/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -17598,7 +17599,7 @@ elseif strcmp(mooring_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL375/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17624,7 +17625,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL375/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17650,7 +17651,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL375/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17670,7 +17671,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL375/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17690,7 +17691,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL375/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17719,7 +17720,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL375/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17748,7 +17749,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL375/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17765,7 +17766,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL375/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17782,7 +17783,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL375/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -17817,7 +17818,7 @@ elseif strcmp(mooring_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL376/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17843,7 +17844,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL376/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -17869,7 +17870,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL376/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17889,7 +17890,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL376/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -17909,7 +17910,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL376/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17938,7 +17939,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL376/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -17967,7 +17968,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL376/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -17984,7 +17985,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL376/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18001,7 +18002,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL376/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -18036,7 +18037,7 @@ elseif strcmp(mooring_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL379/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18062,7 +18063,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL379/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18088,7 +18089,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL379/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18108,7 +18109,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL379/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18128,7 +18129,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL379/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18157,7 +18158,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL379/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18186,7 +18187,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL379/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18203,7 +18204,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL379/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18220,7 +18221,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL379/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -18255,7 +18256,7 @@ elseif strcmp(mooring_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL380/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18281,7 +18282,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL380/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18307,7 +18308,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL380/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18327,7 +18328,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL380/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18347,7 +18348,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL380/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18376,7 +18377,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL380/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18405,7 +18406,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL380/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18422,7 +18423,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL380/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18439,7 +18440,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL380/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -18474,7 +18475,7 @@ elseif strcmp(mooring_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL387/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18500,7 +18501,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL387/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18526,7 +18527,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL387/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18546,7 +18547,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL387/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18566,7 +18567,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL387/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18595,7 +18596,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL387/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18624,7 +18625,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL387/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18641,7 +18642,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL387/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18658,7 +18659,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL387/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -18693,7 +18694,7 @@ elseif strcmp(mooring_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL389/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18719,7 +18720,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL389/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18745,7 +18746,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL389/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18765,7 +18766,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL389/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18785,7 +18786,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL389/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18814,7 +18815,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL389/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -18843,7 +18844,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL389/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18860,7 +18861,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL389/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -18877,7 +18878,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL389/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -18912,7 +18913,7 @@ elseif strcmp(mooring_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL514/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18938,7 +18939,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL514/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_water_temp';
@@ -18964,7 +18965,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(6).units = 'S/m';
     var_list(7).units = 'degree_north';
     var_list(8).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL514/04-DOSTAM000/telemetered/dosta_abcdjm_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -18984,7 +18985,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL514/04-DOSTAM000/recovered_host/dosta_abcdjm_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'sci_oxy4_oxygen';
@@ -19004,7 +19005,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(4).units = 'dbar';
     var_list(5).units = 'degree_north';
     var_list(6).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL514/02-FLORTM000/telemetered/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -19033,7 +19034,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL514/02-FLORTM000/recovered_host/flort_m_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
@@ -19062,7 +19063,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(7).units = 'dbar';
     var_list(8).units = 'degree_north';
     var_list(9).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL514/05-PARADM000/telemetered/parad_m_glider_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -19079,7 +19080,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL514/05-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'parad_m_par';
@@ -19096,7 +19097,7 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(3).units = 'dbar';
     var_list(4).units = 'degree_north';
     var_list(5).units = 'degree_east';
-elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
+elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL514/01-ADCPAM000/recovered_host/adcp_velocity_glider';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
@@ -19131,8 +19132,216 @@ elseif strcmp(mooring_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrum
     var_list(9).units = 'dbar';
     var_list(10).units = 'degree_north';
     var_list(11).units = 'degree_east';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP01CNSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP01CNSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP03ISSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP03ISSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP04OSSM/SBD11/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP04OSSM/SBD11/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP01CNPM/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP01CNPM/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP02PMCI/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP02PMCI/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP02PMCO/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP02PMCO/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP02PMUI/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP02PMUI/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP02PMUO/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP02PMUO/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP03ISPM/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP03ISPM/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP04OSPM/SBS01/01-MOPAK0000/telemetered/mopak_o_dcl_accel';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP04OSPM/SBS01/01-MOPAK0000/recovered_host/mopak_o_dcl_accel_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+    uframe_dataset_name{1} = 'CP04OSSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
+    uframe_dataset_name{2} = 'CP04OSSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name{1} = 'CP04OSSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
+    uframe_dataset_name{2} = 'CP04OSSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+    uframe_dataset_name{1} = 'CP04OSSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
+    uframe_dataset_name{2} = 'CP04OSSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+    uframe_dataset_name{1} = 'CP01CNSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
+    uframe_dataset_name{2} = 'CP01CNSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name{1} = 'CP01CNSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
+    uframe_dataset_name{2} = 'CP01CNSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+    uframe_dataset_name{1} = 'CP01CNSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
+    uframe_dataset_name{2} = 'CP01CNSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
+    uframe_dataset_name{1} = 'CP03ISSM/RID26/07-NUTNRB000/telemetered/nutnr_b_dcl_full_instrument';
+    uframe_dataset_name{2} = 'CP03ISSM/RID26/07-NUTNRB000/telemetered/suna_dcl_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name{1} = 'CP03ISSM/RID26/07-NUTNRB000/recovered_host/nutnr_b_dcl_full_instrument_recovered';
+    uframe_dataset_name{2} = 'CP03ISSM/RID26/07-NUTNRB000/recovered_host/suna_dcl_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
+elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredInst')
+    uframe_dataset_name{1} = 'CP03ISSM/RID26/07-NUTNRB000/recovered_inst/nutnr_b_instrument_recovered';
+    uframe_dataset_name{2} = 'CP03ISSM/RID26/07-NUTNRB000/recovered_inst/suna_instrument_recovered';
+    var_list(1).name = 'time';
+    var_list(2).name = 'nitrate_concentration';
+    var_list(3).name = 'salinity_corrected_nitrate';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/L';
+    var_list(3).units = 'umol/L';
 else
-    error('Illegal mooring_name, node, instrument_class, method or combination thereof.');
+    error('Illegal platform_name, node, instrument_class, method or combination thereof.');
 end
 uframe_dataset_name = string(uframe_dataset_name);
 end

@@ -31,13 +31,13 @@ end_date='2019-05-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE02SHSM';
+platform_name = 'CE02SHSM';
 node = 'NSIF';
 instrument_class = 'SPKIR';
 method = 'RecoveredHost';
 
 %Get M2M URL
-[uframe_dataset_name,variables]=M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables]=M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -65,7 +65,7 @@ legend('412nm','443nm','490nm','510nm','555nm','620nm','683nm')
 ylim([0 100])
 datetick('x',1,'keeplimits')
 ylabel('uW cm-2 nm-1')
-title([mooring_name ' ' node ' ' 'Downwelling Spectral Irradiance;  Local time is UTC-7'])
+title([platform_name ' ' node ' ' 'Downwelling Spectral Irradiance;  Local time is UTC-7'])
 %.. spectrum at time of maximum measured irradiance
 
 subplot(212)
@@ -81,4 +81,4 @@ spectrumMax = binnedChannelArray(:, idxMax);  % column vector
 plot(spkir_variables.wavelength, spectrumMax, 'k*-')
 xlabel('Wavelength (nm)')
 ylabel('uW cm-2 nm-1')
-title({[mooring_name ' ' node],['Maximum brightness at 7m depth was observed on ' datestr(timeAtMax) ' UTC;  Local time is UTC-7']})
+title({[platform_name ' ' node],['Maximum brightness at 7m depth was observed on ' datestr(timeAtMax) ' UTC;  Local time is UTC-7']})

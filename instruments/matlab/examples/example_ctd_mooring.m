@@ -31,13 +31,13 @@ end_date='2019-09-30T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE07SHSM';
+platform_name = 'CE07SHSM';
 node = 'NSIF';
 instrument_class = 'CTD';
 method = 'RecoveredInst';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -49,5 +49,5 @@ method = 'RecoveredInst';
 %Example plot
 plot(mtime,variables(2).data)
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(variables(2).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(variables(2).name,'_',' ')])
 ylabel(variables(2).units)

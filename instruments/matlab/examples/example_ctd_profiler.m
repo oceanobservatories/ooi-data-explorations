@@ -31,13 +31,13 @@ end_date='2019-07-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE02SHSP';
+platform_name = 'CE02SHSP';
 node = 'PROFILER';
 instrument_class = 'CTD';
 method = 'RecoveredCSPP';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -57,7 +57,7 @@ ylabel('depth')
 xlim([min(ctd_mtime) max(ctd_mtime)])
 ylim([0 80])
 datetick('x')
-title([mooring_name ' ' strrep(ctd_variables(2).name,'_',' ')])
+title([platform_name ' ' strrep(ctd_variables(2).name,'_',' ')])
 box on
 subplot(212)
 scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(3).data)
@@ -69,5 +69,5 @@ ylabel('depth')
 xlim([min(ctd_mtime) max(ctd_mtime)])
 ylim([0 80])
 datetick('x')
-title([mooring_name ' ' strrep(ctd_variables(3).name,'_',' ')])
+title([platform_name ' ' strrep(ctd_variables(3).name,'_',' ')])
 box on

@@ -31,13 +31,13 @@ end_date='2017-10-30T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE09OSSM';
+platform_name = 'CE09OSSM';
 node = 'NSIF';
 instrument_class = 'ADCP';
 method = 'RecoveredInst';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -58,7 +58,7 @@ title(c,adcp_variables(6).units)
 set(gca, 'YDir','reverse')
 ylabel('depth')
 ylim([0 110])
-title([mooring_name ' ' node ' ' strrep(adcp_variables(6).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(adcp_variables(6).name,'_',' ')])
 %Plot N/S
 subplot(212)
 pcolor(adcp_mtime,squeeze(adcp_variables(2).data(:,1)),adcp_variables(7).data)
@@ -70,4 +70,4 @@ title(c,adcp_variables(7).units)
 set(gca, 'YDir','reverse')
 ylabel('depth')
 ylim([0 110])
-title([mooring_name ' ' node ' ' strrep(adcp_variables(7).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(adcp_variables(7).name,'_',' ')])

@@ -31,13 +31,13 @@ end_date='2019-07-10T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE04OSPD';
+platform_name = 'CE04OSPD';
 node = 'PROFILER';
 instrument_class = 'FLORT';
 method = 'RecoveredInst';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -50,18 +50,18 @@ figure('units','normalized','outerposition',[0 0 1 1])
 subplot(211)
 plot(CE04OSPD_mtime,CE04OSPD_variables(2).data)
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(CE04OSPD_variables(2).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(CE04OSPD_variables(2).name,'_',' ')])
 ylabel(CE04OSPD_variables(2).units)
 
 %%
 %Specify metadata
-mooring_name = 'CE04OSPS';
+platform_name = 'CE04OSPS';
 node = 'PROFILER';
 instrument_class = 'FLORT';
 method = 'Streamed';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -78,6 +78,6 @@ cb=colorbar;title(cb,CE04OSPS_variables(3).units)
 set(cb,'Position',[.92 .18 0.01 0.2])
 set(gca, 'YDir','reverse')
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(CE04OSPS_variables(3).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(CE04OSPS_variables(3).name,'_',' ')])
 ylabel(CE04OSPS_variables(7).units)
 box on

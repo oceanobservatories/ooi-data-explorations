@@ -31,13 +31,13 @@ end_date='2016-06-21T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE07SHSM';
+platform_name = 'CE07SHSM';
 node = 'BUOY';
 instrument_class = 'METBK1';
 method = 'RecoveredHost';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -54,7 +54,7 @@ subplot(311)
 plot(metbk_mtime,metbk_variables(5).data)
 xlim([min(metbk_mtime) max(metbk_mtime)])
 datetick('x',1,'keeplimits')
-title([mooring_name ' ' node ' ' strrep(metbk_variables(5).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(metbk_variables(5).name,'_',' ')])
 ylabel(metbk_variables(5).units)
 ylim([-10 10])
 %Plot N/S Winds
@@ -62,7 +62,7 @@ subplot(312)
 plot(metbk_mtime,metbk_variables(6).data)
 xlim([min(metbk_mtime) max(metbk_mtime)])
 datetick('x',1,'keeplimits')
-title([mooring_name ' ' node ' ' strrep(metbk_variables(6).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(metbk_variables(6).name,'_',' ')])
 ylabel(metbk_variables(6).units)
 ylim([-10 10])
 %Plot Barometric Pressure
@@ -70,7 +70,7 @@ subplot(313)
 plot(metbk_mtime,metbk_variables(7).data)
 xlim([min(metbk_mtime) max(metbk_mtime)])
 datetick('x',1,'keeplimits')
-title([mooring_name ' ' node ' ' strrep(metbk_variables(7).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(metbk_variables(7).name,'_',' ')])
 ylabel(metbk_variables(7).units)
 
 %Plot a wind stickplot
@@ -81,4 +81,4 @@ set(h,'color','k','linewidth',.4)
 ylabel(metbk_variables(6).units)
 datetick('x',1,'keeplimits')
 box on
-title([mooring_name ' ' node ' Winds'])
+title([platform_name ' ' node ' Winds'])

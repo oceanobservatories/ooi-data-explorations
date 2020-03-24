@@ -31,13 +31,13 @@ end_date='2019-11-10T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE09OSSM';
+platform_name = 'CE09OSSM';
 node = 'MFN';
 instrument_class = 'OPTAA';
 method = 'Telemetered';
 
 %Get M2M URL
-[uframe_dataset_name,variables]=M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables]=M2M_URLs(platform_name,node,instrument_class,method);
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 %Get Data
@@ -67,7 +67,7 @@ colormap(jet)
 c=colorbar;
 title(c,'m^-^1')
 ylabel('Wavelength (nm)')
-title({[mooring_name ' ' node ' ' 'Attenuation'],'pre-deployment calibration offsets have not been applied to these data'})
+title({[platform_name ' ' node ' ' 'Attenuation'],'pre-deployment calibration offsets have not been applied to these data'})
 datetick('x',1,'keeplimits')
 set(gca,'Layer','top')
 %
@@ -93,7 +93,7 @@ colormap(jet)
 c=colorbar;
 title(c,'m^-^1')
 ylabel('Wavelength (nm)')
-title({[mooring_name ' ' node ' ' 'Absorption'],'pre-deployment calibration offsets have not been applied to these data'})
+title({[platform_name ' ' node ' ' 'Absorption'],'pre-deployment calibration offsets have not been applied to these data'})
 datetick('x',1,'keeplimits')
 set(gca,'Layer','top')
 %
@@ -136,7 +136,7 @@ if tf_addDiscreteWavelengthTimeSeries
     
     subplot(211)
     plot(mtime, absChannels)
-    title({[mooring_name ' ' node ' ' 'Absorption Wavelengths'] ... 
+    title({[platform_name ' ' node ' ' 'Absorption Wavelengths'] ... 
         'pre-deployment calibration offsets have not been applied to these data'})
     ylabel('Absorption (m^-^1)')
     legend(split(waveChar(1:end-1),' '))
@@ -146,6 +146,6 @@ if tf_addDiscreteWavelengthTimeSeries
     datetick('x',1,'keeplimits')
     ylabel('Absorption (m^-^1)')
     legend(split(waveChar(1:end-1),' '))
-    title({[mooring_name ' ' node ' ' 'Beam Attenuation Wavelengths'] ...
+    title({[platform_name ' ' node ' ' 'Beam Attenuation Wavelengths'] ...
         'pre-deployment calibration offsets have not been applied to these data'})
 end

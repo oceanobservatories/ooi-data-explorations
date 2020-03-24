@@ -31,13 +31,13 @@ end_date='2019-01-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-mooring_name = 'CE01ISSM';
+platform_name = 'CE01ISSM';
 node = 'BUOY';
 instrument_class = 'FLORT';
 method = 'Telemetered';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -51,18 +51,18 @@ figure(1)
 subplot(211)
 plot(buoy_mtime,buoy_variables(3).data)
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(buoy_variables(3).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(buoy_variables(3).name,'_',' ')])
 ylabel(buoy_variables(3).units)
 
 %%
 %Specify metadata
-mooring_name = 'CE01ISSM';
+platform_name = 'CE01ISSM';
 node = 'NSIF';
 instrument_class = 'FLORT';
 method = 'RecoveredHost';
 
 %Get M2M URL
-[uframe_dataset_name,variables] = M2M_URLs(mooring_name,node,instrument_class,method);
+[uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
 %Make M2M Call
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
@@ -76,5 +76,5 @@ figure(1)
 subplot(212)
 plot(nsif_mtime,nsif_variables(3).data)
 datetick('x',1)
-title([mooring_name ' ' node ' ' strrep(nsif_variables(3).name,'_',' ')])
+title([platform_name ' ' node ' ' strrep(nsif_variables(3).name,'_',' ')])
 ylabel(nsif_variables(3).units)

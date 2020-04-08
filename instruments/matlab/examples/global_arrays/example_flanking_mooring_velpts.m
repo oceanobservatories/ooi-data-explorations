@@ -1,22 +1,23 @@
 %%
 % Platform:
     % Station Papa:
-	% GP03FLMA, GP03FLMB
+	% GP03FLMA, GP03FLMB, GP02HYPM
     %
 	% Irminger Sea:
-	% GI03FLMA, GI03FLMB
+	% GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM
     %
     % Southern Ocean:
-	% GS03FLMA, GS03FLMB
+	% GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM
     %
     % Argentine Basin:
-	% GA03FLMA, GA03FLMB
+	% GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM
 %Node:
-    % RISER
+    % RISER, BUOY, NSIF, PROFILER-U, PROFILER-L
 %Instrument Class:
-    % ADCP, CTD, DOSTA, FLORT, PHSEN, VELPT
+    % ADCP, CTD, DOSTA, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT
+	% WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier
 %Method:
-    % Telemetered, RecoveredHost, RecoveredInst
+    % Telemetered, RecoveredHost, RecoveredInst, RecoveredWFP
 %%
 close all
 clearvars
@@ -46,7 +47,7 @@ for ii = 1:4
     %Make M2M Call
     [nclist] = M2M_Call(uframe_dataset_name{ii},start_date,end_date,options);
     %Get Data
-    [gs03flma_velpt_variables{ii}, mtime, netcdfFilenames] = M2M_Data(variables, nclist);
+    [gi03flma_velpt_variables{ii}, mtime, netcdfFilenames] = M2M_Data(variables, nclist);
 end
 
 %%
@@ -63,15 +64,17 @@ for ii = 1:4
     %Make M2M Call
     [nclist] = M2M_Call(uframe_dataset_name{ii},start_date,end_date,options);
     %Get Data
-    [gs03flmb_velpt_variables{ii}, mtime, netcdfFilenames] = M2M_Data(variables, nclist);
+    [gi03flmb_velpt_variables{ii}, mtime, netcdfFilenames] = M2M_Data(variables, nclist);
 end
 
+%%
+%Plot data
 figure('units','normalized','outerposition',[0 0 1 1])
 subplot(211)
 hold on
 for i = 1:4
-    scatter((gs03flma_velpt_variables{1,i}(1).data)/60/60/24+datenum(1900,1,1),...
-        (gs03flma_velpt_variables{1,i}(9).data)*0.001,4,gs03flma_velpt_variables{1,i}(3).data,'filled')
+    scatter((gi03flma_velpt_variables{1,i}(1).data)/60/60/24+datenum(1900,1,1),...
+        (gi03flma_velpt_variables{1,i}(9).data)*0.001,4,gi03flma_velpt_variables{1,i}(3).data,'filled')
 end
 datetick('x',1,'keeplimits')
 ylabel('dbar')
@@ -79,15 +82,15 @@ ylim([1600 2800])
 set(gca, 'YDir','reverse')
 caxis([-.4 .4])
 c=colorbar;
-title(c,gs03flma_velpt_variables{1,i}(3).units)
+title(c,gi03flma_velpt_variables{1,i}(3).units)
 box on
 title('GI03FLMA Meridional Velocities','fontweight','normal')
 
 subplot(212)
 hold on
 for i = 1:4
-    scatter((gs03flmb_velpt_variables{1,i}(1).data)/60/60/24+datenum(1900,1,1),...
-        (gs03flmb_velpt_variables{1,i}(9).data)*0.001,4,gs03flmb_velpt_variables{1,i}(3).data,'filled')
+    scatter((gi03flmb_velpt_variables{1,i}(1).data)/60/60/24+datenum(1900,1,1),...
+        (gi03flmb_velpt_variables{1,i}(9).data)*0.001,4,gi03flmb_velpt_variables{1,i}(3).data,'filled')
 end
 datetick('x',1,'keeplimits')
 ylabel('dbar')
@@ -95,6 +98,6 @@ ylim([1600 2800])
 set(gca, 'YDir','reverse')
 caxis([-.4 .4])
 c=colorbar;
-title(c,gs03flmb_velpt_variables{1,i}(3).units)
+title(c,gi03flmb_velpt_variables{1,i}(3).units)
 box on
 title('GI03FLMB Meridional Velocities','fontweight','normal')

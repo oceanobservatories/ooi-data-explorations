@@ -1,22 +1,23 @@
 %%
 % Platform:
     % Station Papa:
-	% GP03FLMA, GP03FLMB
+	% GP03FLMA, GP03FLMB, GP02HYPM
     %
 	% Irminger Sea:
-	% GI03FLMA, GI03FLMB
+	% GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM
     %
     % Southern Ocean:
-	% GS03FLMA, GS03FLMB
+	% GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM
     %
     % Argentine Basin:
-	% GA03FLMA, GA03FLMB
+	% GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM
 %Node:
-    % RISER
+    % RISER, BUOY, NSIF, PROFILER-U, PROFILER-L
 %Instrument Class:
-    % ADCP, CTD, DOSTA, FLORT, PHSEN, VELPT
+    % ADCP, CTD, DOSTA, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT
+	% WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier
 %Method:
-    % Telemetered, RecoveredHost, RecoveredInst
+    % Telemetered, RecoveredHost, RecoveredInst, RecoveredWFP
 %%
 close all
 clearvars
@@ -96,6 +97,8 @@ for ii = 60:75
     end
 end
 
+%%
+%Plot data
 figure('units','normalized','outerposition',[0 0 1 1])
 subplot(211)
 hold on

@@ -38,12 +38,12 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2015-09-01T00:00:00.000Z';
-end_date='2015-10-31T23:59:59.000Z';
+start_date='2016-06-01T00:00:00.000Z';
+end_date='2016-07-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-platform_name = 'GSGL486';
+platform_name = 'GSPG566';
 node = 'GLIDER';
 instrument_class = 'CTD';
 method = 'RecoveredHost';
@@ -60,15 +60,27 @@ method = 'RecoveredHost';
 
 %Example plot
 figure
+subplot(211)
 scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(2).data,'filled')
-caxis([4 6])
+caxis([5 7])
 c=colorbar;
 title(c,ctd_variables(2).units)
 set(gca, 'YDir','reverse')
 ylabel(ctd_variables(5).units)
-ylim([-10 1000])
+ylim([-2 210])
 datetick('x',1)
 title([platform_name ' ' strrep(ctd_variables(2).name,'_',' ')])
+box on
+subplot(212)
+scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(3).data,'filled')
+caxis([34 34.4])
+c=colorbar;
+title(c,ctd_variables(3).units)
+set(gca, 'YDir','reverse')
+ylabel(ctd_variables(5).units)
+ylim([-2 210])
+datetick('x',1)
+title([platform_name ' ' strrep(ctd_variables(3).name,'_',' ')])
 box on
 
 figure

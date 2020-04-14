@@ -2,15 +2,23 @@
 % Platform:
     % Station Papa:
 	% GP03FLMA, GP03FLMB, GP02HYPM
+	% GPGL276, GPGL361, GPGL362, GPGL363, GPGL364, GPGL365, GPGL453, GPGL523, GPGL525, GPGL537, GPGL469
+	% GPPG514, GPPG515, GPPG575, GPPG576
     %
 	% Irminger Sea:
 	% GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM
+	% GIGL463, GIGL469, GIGL477, GIGL478, GIGL484, GIGL485, GIGL486, GIGL493, GIGL495, GIGL559, GIGL453, GIGL525, GIGL560
+	% GIPG528, GIPG564, GIPG577, GIPG581
     %
     % Southern Ocean:
 	% GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM
+    % GSGL484, GSGL485, GSGL486, GSGL524, GSGL560, GSGL561
+	% GSPG565, GSPG566
     %
     % Argentine Basin:
 	% GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM
+	% GAGL364, GAGL470, GAGL493, GAGL494, GAGL495, GAGL496, GAGL538
+	% GAPG562, GAPG563, GAPG578, GAPG580
 %Node:
     % RISER, BUOY, NSIF, PROFILER-U, PROFILER-L
 %Instrument Class:
@@ -43,7 +51,7 @@ method = 'RecoveredInst';
 %Get M2M URL
 [uframe_dataset_name,variables] = M2M_URLs(platform_name,node,instrument_class,method);
 
-for ii = 1:4
+for ii = 1:2
     %Make M2M Call
     [nclist] = M2M_Call(uframe_dataset_name{ii},start_date,end_date,options);
     %Get Data

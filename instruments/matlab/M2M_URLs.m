@@ -21200,7 +21200,7 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GI01SUMO/RII11/02-DOSTAD031/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
     uframe_dataset_name{2} = 'GI01SUMO/RII11/02-DOSTAD032/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
     uframe_dataset_name{3} = 'GI01SUMO/RII11/02-DOSTAD033/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
-	var_list(1).name = 'time';
+    var_list(1).name = 'time';
     var_list(2).name = 'dosta_analog_tc_oxygen';
     var_list(3).name = 'dosta_analog_optode_temperature';
     var_list(1).data = [];
@@ -21528,7 +21528,7 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GA01SUMO/RII11/02-DOSTAD031/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
     uframe_dataset_name{2} = 'GA01SUMO/RII11/02-DOSTAD032/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
     uframe_dataset_name{3} = 'GA01SUMO/RII11/02-DOSTAD033/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
-	var_list(1).name = 'time';
+    var_list(1).name = 'time';
     var_list(2).name = 'dosta_analog_tc_oxygen';
     var_list(3).name = 'dosta_analog_optode_temperature';
     var_list(1).data = [];
@@ -21856,7 +21856,7 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GS01SUMO/RII11/02-DOSTAD031/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
     uframe_dataset_name{2} = 'GS01SUMO/RII11/02-DOSTAD032/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
     uframe_dataset_name{3} = 'GS01SUMO/RII11/02-DOSTAD033/telemetered/dosta_abcdjm_ctdbp_p_dcl_instrument';
-	var_list(1).name = 'time';
+    var_list(1).name = 'time';
     var_list(2).name = 'dosta_analog_tc_oxygen';
     var_list(3).name = 'dosta_analog_optode_temperature';
     var_list(1).data = [];
@@ -24722,7 +24722,7 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'BUOY') && strcmp(instrum
     uframe_dataset_name = 'GS01SUMO/SBD12/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
-    var_list(1).units = 'seconds since 1900-01-01';	
+    var_list(1).units = 'seconds since 1900-01-01';
 elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'BUOY') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI01SUMO/SBD12/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
@@ -24968,7 +24968,7 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'GS01SUMO/RID16/01-OPTAAD000/recovered_host/optaa_dj_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(1).data = [];
-    var_list(1).units = 'seconds since 1900-01-01';	
+    var_list(1).units = 'seconds since 1900-01-01';
 elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI01SUMO/RID16/01-OPTAAD000/telemetered/optaa_dj_dcl_instrument';
     var_list(1).name = 'time';
@@ -25856,7 +25856,7 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS02HYPM/WFP02/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -26010,7 +26010,7 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS02HYPM/WFP03/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -26164,7 +26164,7 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA02HYPM/WFP02/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -26318,7 +26318,7 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA02HYPM/WFP03/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -26472,7 +26472,7 @@ elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI02HYPM/WFP02/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -26626,7 +26626,7 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP02HYPM/WFP02/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -26780,7 +26780,7 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/kg';
     var_list(3).units = 'umol/l';
-    var_list(4).units = 'dbar';	
+    var_list(4).units = 'dbar';
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'VEL3D') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP02HYPM/WFP03/05-VEL3DL000/telemetered/vel3d_l_wfp_instrument';
     var_list(1).name = 'time';
@@ -32541,7 +32541,7 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -32560,19 +32560,19 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -32589,7 +32589,7 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -32608,19 +32608,19 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -32638,8 +32638,8 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/PG566/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -32655,8 +32655,8 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/PG566/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -32672,8 +32672,8 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/PG566/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -32689,8 +32689,8 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/PG565/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -32797,7 +32797,7 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -32816,19 +32816,19 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -32845,7 +32845,7 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -32864,19 +32864,19 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -32894,8 +32894,8 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/PG565/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -32911,8 +32911,8 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/PG565/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -32928,8 +32928,8 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/PG565/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -32944,9 +32944,9 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(5).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
-	var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(3).units = 'dbar';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG562/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33053,7 +33053,7 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33072,19 +33072,19 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -33101,7 +33101,7 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33120,19 +33120,19 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -33150,8 +33150,8 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG562/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -33167,8 +33167,8 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG562/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33184,8 +33184,8 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG562/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33201,8 +33201,8 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG563/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33309,7 +33309,7 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33328,19 +33328,19 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -33357,7 +33357,7 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33376,19 +33376,19 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -33406,8 +33406,8 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG563/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -33423,8 +33423,8 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG563/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33440,8 +33440,8 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG563/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33457,8 +33457,8 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG578/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33565,7 +33565,7 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33584,19 +33584,19 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -33613,7 +33613,7 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33632,19 +33632,19 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -33662,8 +33662,8 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG578/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -33679,8 +33679,8 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG578/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33696,8 +33696,8 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG578/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33713,8 +33713,8 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG580/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33821,7 +33821,7 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33840,19 +33840,19 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -33869,7 +33869,7 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -33888,19 +33888,19 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -33918,8 +33918,8 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG580/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -33935,8 +33935,8 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG580/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33952,8 +33952,8 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG580/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -33969,8 +33969,8 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG514/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34077,7 +34077,7 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34096,19 +34096,19 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -34125,7 +34125,7 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34144,19 +34144,19 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -34174,8 +34174,8 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG514/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -34191,8 +34191,8 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG514/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34208,8 +34208,8 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG514/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34225,8 +34225,8 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG515/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34333,7 +34333,7 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34352,19 +34352,19 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -34381,7 +34381,7 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34400,19 +34400,19 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -34430,8 +34430,8 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG515/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -34447,8 +34447,8 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG515/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34464,8 +34464,8 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG515/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34481,8 +34481,8 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG575/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34589,7 +34589,7 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34608,19 +34608,19 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -34637,7 +34637,7 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34656,19 +34656,19 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -34686,8 +34686,8 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG575/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -34703,8 +34703,8 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG575/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34720,8 +34720,8 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG575/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34737,8 +34737,8 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG576/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34845,7 +34845,7 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34864,19 +34864,19 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -34893,7 +34893,7 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -34912,19 +34912,19 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -34942,8 +34942,8 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG576/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -34959,8 +34959,8 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG576/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34976,8 +34976,8 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG576/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -34993,8 +34993,8 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG528/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35101,7 +35101,7 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35120,19 +35120,19 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -35149,7 +35149,7 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35168,19 +35168,19 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -35198,8 +35198,8 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG528/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -35215,8 +35215,8 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG528/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35232,8 +35232,8 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG528/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35249,8 +35249,8 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG564/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35357,7 +35357,7 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35376,19 +35376,19 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -35405,7 +35405,7 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35424,19 +35424,19 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -35454,8 +35454,8 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG564/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -35471,8 +35471,8 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG564/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35488,8 +35488,8 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG564/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35505,8 +35505,8 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG577/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35613,7 +35613,7 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35632,19 +35632,19 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -35661,7 +35661,7 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35680,19 +35680,19 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -35710,8 +35710,8 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG577/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -35727,8 +35727,8 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG577/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35744,8 +35744,8 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG577/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35761,8 +35761,8 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG581/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
@@ -35869,7 +35869,7 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35888,19 +35888,19 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredHost')
@@ -35917,7 +35917,7 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(9).name = 'sci_bb3slo_b532_units';
     var_list(10).name = 'flort_o_bback_b532_total';
     var_list(11).name = 'sci_bb3slo_b660_units';
-	var_list(12).name = 'flort_o_bback_b660_total';
+    var_list(12).name = 'flort_o_bback_b660_total';
     var_list(13).name = 'int_ctd_pressure';
     var_list(14).name = 'lat';
     var_list(15).name = 'lon';
@@ -35936,19 +35936,19 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(13).data = [];
     var_list(14).data = [];
     var_list(15).data = [];
-	var_list(1).units = 'seconds since 1900-01-01';
+    var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'm-1';
     var_list(3).units = 'ug/L';
     var_list(4).units = 'm-1 sr-1';
     var_list(5).units = 'm-1';
     var_list(6).units = 'ppb';
-	var_list(7).units = 'm-1 sr-1';
+    var_list(7).units = 'm-1 sr-1';
     var_list(8).units = 'm-1';
     var_list(9).units = 'm-1 sr-1';
     var_list(10).units = 'm-1';
     var_list(11).units = 'm-1 sr-1';
     var_list(12).units = 'm-1';
-	var_list(13).units = 'dbar';
+    var_list(13).units = 'dbar';
     var_list(14).units = 'degree_north';
     var_list(15).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Telemetered')
@@ -35966,8 +35966,8 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'PARAD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG581/06-PARADM000/recovered_host/parad_m_glider_recovered';
     var_list(1).name = 'time';
@@ -35983,8 +35983,8 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol photons m-2 s-1';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG581/05-NUTNRM000/telemetered/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -36000,8 +36000,8 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'NUTNR') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG581/05-NUTNRM000/recovered_host/nutnr_m_glider_instrument';
     var_list(1).name = 'time';
@@ -36017,8 +36017,8 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'umol/L';
     var_list(3).units = 'dbar';
-	var_list(4).units = 'degree_north';
-	var_list(5).units = 'degree_east';
+    var_list(4).units = 'degree_north';
+    var_list(5).units = 'degree_east';
 else
     error('Illegal platform_name, node, instrument_class, method or combination thereof.');
 end

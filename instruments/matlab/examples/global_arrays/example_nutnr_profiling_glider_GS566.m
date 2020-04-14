@@ -38,14 +38,14 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2015-09-01T00:00:00.000Z';
-end_date='2015-10-31T23:59:59.000Z';
+start_date='2016-06-01T00:00:00.000Z';
+end_date='2016-07-31T23:59:59.000Z';
 
 %%
 %Specify metadata
-platform_name = 'GSGL486';
+platform_name = 'GSPG566';
 node = 'GLIDER';
-instrument_class = 'CTD';
+instrument_class = 'NUTNR';
 method = 'RecoveredHost';
 
 %Get M2M URL
@@ -55,26 +55,26 @@ method = 'RecoveredHost';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
-%[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[ctd_variables, ctd_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+%[nutnr_variables, nutnr_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
+[nutnr_variables, nutnr_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 %Example plot
 figure
-scatter(ctd_mtime,ctd_variables(5).data,5,ctd_variables(2).data,'filled')
-caxis([4 6])
+scatter(nutnr_mtime,nutnr_variables(3).data,5,nutnr_variables(2).data,'filled')
+caxis([22 28])
 c=colorbar;
-title(c,ctd_variables(2).units)
+title(c,nutnr_variables(2).units)
 set(gca, 'YDir','reverse')
-ylabel(ctd_variables(5).units)
-ylim([-10 1000])
+ylabel(nutnr_variables(3).units)
+ylim([-2 210])
 datetick('x',1)
-title([platform_name ' ' strrep(ctd_variables(2).name,'_',' ')])
+title([platform_name ' ' strrep(nutnr_variables(2).name,'_',' ')])
 box on
 
 figure
-scatter(ctd_variables(8).data,ctd_variables(7).data,4,ctd_mtime,'filled')
-ylabel([ctd_variables(7).name])
-xlabel([ctd_variables(8).name])
+scatter(nutnr_variables(5).data,nutnr_variables(4).data,4,nutnr_mtime,'filled')
+ylabel([nutnr_variables(4).name])
+xlabel([nutnr_variables(5).name])
 c=colorbar;
 title(c,'time')
 title([platform_name ' ' start_date ' ' '--' ' ' end_date])

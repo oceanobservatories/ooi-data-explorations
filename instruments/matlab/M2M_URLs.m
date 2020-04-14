@@ -11587,6 +11587,22 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrum
     var_list(17).units = 'm/s';
     var_list(18).units = 'm/s';
     var_list(19).units = 'g/kg';
+    %FDCHP
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'Telemetered')
+    uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/telemetered/fdchp_a_dcl_instrument';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredHost')
+    uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/recovered_host/fdchp_a_dcl_instrument_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredInst')
+    uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/recovered_inst/fdchp_a_instrument_recovered';
+    var_list(1).name = 'time';
+    var_list(1).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
     %WAVSS
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD12/05-WAVSSA000/telemetered/wavss_a_dcl_statistics';

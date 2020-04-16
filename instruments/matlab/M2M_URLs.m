@@ -6006,7 +6006,8 @@ elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
 elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
-    uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    %uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
     var_list(3).name = 'fluorometric_chlorophyll_a';
@@ -6052,7 +6053,8 @@ elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
 elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
-    uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    %uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
     var_list(3).name = 'fluorometric_chlorophyll_a';
@@ -6483,7 +6485,8 @@ elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'dbar';
 elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
-    uframe_dataset_name = 'CE02SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    %uframe_dataset_name = 'CE02SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    uframe_dataset_name = 'CE02SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
     var_list(3).name = 'fluorometric_chlorophyll_a';
@@ -6506,7 +6509,8 @@ elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
 elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'RecoveredCSPP')
-    uframe_dataset_name = 'CE07SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    %uframe_dataset_name = 'CE07SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_dj_cspp_instrument_recovered';
+    uframe_dataset_name = 'CE07SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
     var_list(3).name = 'fluorometric_chlorophyll_a';
@@ -12022,22 +12026,6 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'BUOY') && strcmp(instrum
     var_list(2).units = 'uatm';
     var_list(3).units = 'uatm';
     var_list(4).units = 'mol m-2 s-1';
-    %FDCHP
-elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredInst')
-    uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/recovered_inst/fdchp_a_instrument_recovered';
-    var_list(1).name = 'time';
-    var_list(1).data = [];
-    var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'Telemetered')
-    uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/telemetered/fdchp_a_dcl_instrument';
-    var_list(1).name = 'time';
-    var_list(1).data = [];
-    var_list(1).units = 'seconds since 1900-01-01';
-elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'FDCHP') && strcmp(method,'RecoveredHost')
-    uframe_dataset_name = 'CP01CNSM/SBD12/08-FDCHPA000/recovered_host/fdchp_a_dcl_instrument_recovered';
-    var_list(1).name = 'time';
-    var_list(1).data = [];
-    var_list(1).units = 'seconds since 1900-01-01';
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'METBK1-hr') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/SBD11/06-METBKA000/telemetered/metbk_hourly';
     var_list(1).name = 'met_timeflx';

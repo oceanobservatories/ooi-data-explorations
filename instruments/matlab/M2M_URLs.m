@@ -5886,7 +5886,7 @@ elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrume
     var_list(2).units = 'degC';
     var_list(3).units = 'uatm';
 elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'ADCP') && strcmp(method,'Streamed')
-    uframe_dataset_name = 'CE02SHBP/LJ01D/05-ADCPTB104/streamed/adcp_velocity_earth';
+    uframe_dataset_name = 'CE02SHBP/LJ01D/05-ADCPTB104/streamed/adcp_velocity_beam';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
     var_list(3).name = 'heading';
@@ -5912,7 +5912,7 @@ elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrume
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
 elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'ADCP') && strcmp(method,'Streamed')
-    uframe_dataset_name = 'CE04OSBP/LJ01C/05-ADCPSI103/streamed/adcp_velocity_earth';
+    uframe_dataset_name = 'CE04OSBP/LJ01C/05-ADCPSI103/streamed/adcp_velocity_beam';
     var_list(1).name = 'time';
     var_list(2).name = 'bin_depths';
     var_list(3).name = 'heading';

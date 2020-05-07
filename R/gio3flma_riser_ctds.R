@@ -1,5 +1,5 @@
-#Description
-#This script will request data from all of the riser CTDs on the Global Irminger Flanking A Mooring between June 01, 2018 and June 02,2018.
+#Desciption
+#This script will request data from all of the riser CTD on the Global Irminger Flanking A Mooring between June 01, 2018 and June 02,2018.
 #It does not consider efficiency when issuing data requests to OOINet.
 #It will make a request and then check to see if the data has been made available before moving on to request the next dataset.
 

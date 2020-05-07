@@ -6,7 +6,7 @@
 #install.packages("ncdf4")
 #install.packages("devtools")
 require(devtools)
-install_github("IanTBlack/ooim2mr")
+install_github("oceanobservatories/ooim2mr")
 
 #Required packages.
 require(ooim2mr)
@@ -20,8 +20,9 @@ require(ggplot2)
 require(RColorBrewer)
 
 ###----------CHANGE ME---------------###
-user = "OOIAPI-BCJPAYP2KUVXFX"   #OOI API Username
-token = "D3HV2X0XH1O"  #OOI API Token
+user = "YOUR-OOI-API-USER-HERE"   #OOI API Username
+token = "YOUR-OOI-API-TOKEN-HERE"  #OOI API Token
+
 site = 'CE02SHSP'
 node = 'PROFILER'
 instrument = 'DOSTA'

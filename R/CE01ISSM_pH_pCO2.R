@@ -30,8 +30,12 @@
 # site = 'RS03AXPS', node = 'PROFILER' (Axial Base Profiler - 5 to 200m)
 
 
+#Remove old packages. You can remove these lines if you have already removed the old packages.
+remove.packages("ooirtest")
+remove.packages("ooim2mr")
+
+
 # Install required packages. You can comment out this section if you've already installed them.
-try({remove.packages("ooirtest")})  #Remove the old OOI R repo. May throw an error.
 pkgs <- c('devtools','httr','ncdf4','lubridate','seacarb') #Packages to install.
 for (pkg in pkgs){
   install.packages(pkg)
@@ -40,7 +44,7 @@ for (pkg in pkgs){
 
 #Install the ooim2mr package.
 require(devtools)  #Load the devtools package so that we can install the OOI R repo from GitHub.
-install_github("IanTBlack/ooim2mr")  #Install the new build of the OOI R repo.
+install_github("oceanobservatories/ooim2mr")  #Install the new build of the OOI R repo.
 detach("package:devtools",unload=TRUE)  #Unload the devtools package because it might interfere with the seacarb package.
 
 
@@ -56,13 +60,13 @@ require(seacarb)  #For people good at chemistry.
 
 
 #Set the directory to save data to.
-path = "C:/Users/Ian/Desktop/test"  #Change this to match a format for your operating system.
+path = "DATA DIRECTORY"  #Change this to match a format for your operating system.
 setwd(path) #Set the working directory. Data folders will be added to this path further down the script.
 
 
 #Define OOINet credentials.
-user = 'OOIAPI-BCJPAYP2KUVXFX'  #OOI.CSPP@gmail.com username
-token = 'D3HV2X0XH1O'  #OOI.CSPP@gmail.com token
+user = "YOUR-OOI-API-USER-HERE"   #OOI API Username
+token = "YOUR-OOI-API-TOKEN-HERE"  #OOI API Token
 
 
 #Set default information for requests.
@@ -74,7 +78,7 @@ stop_date = '2019-09-30'  #Stop date of data request.
 
 
 #Create request urls.
-pH_url = ooi_create_url(site,node,'pH',method,start_date = start_date,stop_date = stop_date) #This URL will request pH data from the CE01ISSM NSIF between May 01 and Sept 30, 2019. 
+pH_url = ooi_create_url(site,node,'pH',method,start_date = start_date,stop_date = stop_date) #This URL will request pH data from the CE01ISSM NSIF between May 01 and Sept 30, 2019.
 pCO2_url = ooi_create_url(site,node,'pCO2',method,start_date = start_date,stop_date = stop_date)
 CTD_url = ooi_create_url(site,node,'CTD',method,start_date = start_date,stop_date = stop_date)
 
@@ -87,12 +91,12 @@ CTD_r = ooi_submit_request(CTD_url,user,token)
 
 #Get the OpenDAP urls.
 pH_opendap = ooi_get_location(pH_r,drop_paired = TRUE)  #Don't use paired CTD data because it is filled with NaNs. Download the CTD data separately.
-pCO2_opendap = ooi_get_location(pCO2_r,drop_paired = TRUE) 
+pCO2_opendap = ooi_get_location(pCO2_r,drop_paired = TRUE)
 CTD_opendap = ooi_get_location(CTD_r,drop_paired = TRUE)
 
 
 #Download data. If running on MacOS or Linux, you can bypass this section and input OpenDAP urls directly into the ooi_get_data function.
-pH_path = sprintf('%s%s',path,'/pH') 
+pH_path = sprintf('%s%s',path,'/pH')
 dir.create(pH_path) #Create a subfolder for pH data.
 pH_files = ooi_download_data(pH_opendap,directory = pH_path) #Download the data.
 
@@ -131,7 +135,7 @@ CTD_data$dt = round_date(as.POSIXct(CTD_data$time, tz = 'UTC', origin = '1900-01
 CTD_data = aggregate(CTD_data,by=list(hour = CTD_data$dt),FUN=mean)
 
 
-#Merge data by nearest neighbor. 
+#Merge data by nearest neighbor.
 CTD_table = data.table(CTD_data)  #Convert dataframes to datatables so they can be merged easily.
 pH_table = data.table(pH_data)
 pCO2_table = data.table(pCO2_data)
@@ -146,16 +150,16 @@ data = data[,c('hour','ctdbp_seawater_pressure','ctdbp_seawater_temperature','pr
 
 
 #Drop rows that contain nulls and missing values. Missing values can cause the carb function to fail.
-data <- na.omit(data) 
+data <- na.omit(data)
 data <- data[complete.cases(data),]
 
 #Run data through the carb function.
 #Flag 21 for carb function is for PCO2 and pH respectively. See pg. 24 of seacarb manual.
-sw_carb_sys = carb(flag = 21, 
+sw_carb_sys = carb(flag = 21,
                    var1 = data$pco2_seawater,
                    var2 = data$phsen_abcdef_ph_seawater,  #phsen_abcdef_ph_seawater is named this way because the API was written by computer scientists and not oceanographers.
                    S = data$practical_salinity,
-                   T = data$ctdbp_seawater_temperature, 
+                   T = data$ctdbp_seawater_temperature,
                    P = data$ctdbp_seawater_pressure/10) #Pressure must be in bars. OOI pressure is generally in decibars.
 
 datetime = data$hour  #Pull the datetime from the data.

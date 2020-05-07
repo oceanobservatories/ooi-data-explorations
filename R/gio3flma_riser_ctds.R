@@ -13,8 +13,9 @@ require(httr)
 require(ncdf4)
 require(ooim2mr)
 
-user = ""
-token = ""
+user = "YOUR-OOI-API-USER-HERE"   #OOI API Username
+token = "YOUR-OOI-API-TOKEN-HERE"  #OOI API Token
+
 
 #Request mooring information. The following function returns a list of lists that contains the node, instrument, and stream metatdata associated with the requested mooring.
 mooring = ooi_site_info('GI03FLMA', user, token )

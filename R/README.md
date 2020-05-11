@@ -10,6 +10,8 @@ You can install it using devtools.
 devtools::install_github("oceanobservatories/ooim2mr")
 ```
 
+For information about the functions, please visit the above link.
+
 For bug and issue reporting, please utilize the [repository issue tracker](https://github.com/oceanobservatories/ooim2mr/issues).
 
 For functionality requests, please submit a helpdesk ticket to help@oceanobservatories.org with ooim2mr in the subject line. 

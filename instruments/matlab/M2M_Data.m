@@ -105,8 +105,9 @@ for i = 1:length(nclist)
     if opendap
         source = char(nc_urls(i));    % char required for R2018a (or use {i})
     else
+        options = weboptions('Timeout',Inf);
         source = websave( ...
-            netcdfFilenames(i), strrep(nc_urls{i,1}, 'dodsC', 'fileServer'));
+            netcdfFilenames(i), strrep(nc_urls{i,1}, 'dodsC', 'fileServer'),options);
         % char(source) *not* required for R2018a
     end
     %.. first variable is always time; pull it out of the following

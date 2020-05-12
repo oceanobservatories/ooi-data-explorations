@@ -1,22 +1,31 @@
 %%
 % Platform:
     % Station Papa:
-	% GP03FLMA, GP03FLMB
+	% GP03FLMA, GP03FLMB, GP02HYPM
+	% GPGL276, GPGL361, GPGL362, GPGL363, GPGL364, GPGL365, GPGL453, GPGL523, GPGL525, GPGL537, GPGL469
+	% GPPG514, GPPG515, GPPG575, GPPG576
     %
 	% Irminger Sea:
-	% GI03FLMA, GI03FLMB, GI01SUMO
+	% GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM
+	% GIGL463, GIGL469, GIGL477, GIGL478, GIGL484, GIGL485, GIGL486, GIGL493, GIGL495, GIGL559, GIGL453, GIGL525, GIGL560
+	% GIPG528, GIPG564, GIPG577, GIPG581
     %
     % Southern Ocean:
-	% GS03FLMA, GS03FLMB
+	% GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM
+    % GSGL484, GSGL485, GSGL486, GSGL524, GSGL560, GSGL561
+	% GSPG565, GSPG566
     %
     % Argentine Basin:
-	% GA03FLMA, GA03FLMB
+	% GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM
+	% GAGL364, GAGL470, GAGL493, GAGL494, GAGL495, GAGL496, GAGL538
+	% GAPG562, GAPG563, GAPG578, GAPG580
 %Node:
-    % RISER
+    % RISER, BUOY, NSIF, PROFILER-U, PROFILER-L
 %Instrument Class:
-    % ADCP, CTD, DOSTA, FLORT, PHSEN, VELPT
+    % ADCP, CTD, DOSTA, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT
+	% WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier
 %Method:
-    % Telemetered, RecoveredHost, RecoveredInst
+    % Telemetered, RecoveredHost, RecoveredInst, RecoveredWFP
 %%
 close all
 clearvars
@@ -33,7 +42,7 @@ start_date='2016-01-01T00:00:00.000Z';
 end_date='2018-12-30T23:59:59.000Z';
 
 %%
-%Specify metadata for Irminger Sea Flanking Mooring A
+%Specify metadata for Irminger Sea surface mooring 
 platform_name = 'GI01SUMO';
 node = 'RISER';
 instrument_class = 'CTD';
@@ -50,7 +59,8 @@ for ii = 1:13
     [gi01sumo_ctd_variables{ii}, mtime, netcdfFilenames] = M2M_Data(variables, nclist);
 end
 
-%% Plot seawater temperature data
+%%
+%Plot seawater temperature data
 figure('units','normalized','outerposition',[0 0 1 1])
 subplot(211)
 hold on

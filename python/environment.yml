@@ -1,0 +1,39 @@
+name: ooi
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python>=3.5
+  - argcomplete
+  - beautifulsoup4
+  - chest
+  - configobj
+  - geos
+  - gsw
+  - hdf4
+  - h5netcdf
+  - jupyterlab
+  - libnetcdf
+  - munch>=2.1.0
+  - netcdf4
+  - nodejs
+  - nose
+  - numexpr
+  - numpy
+  - pip
+  - pocean-core
+  - pyasn1
+  - pyaxiom
+  - pygc
+  - pyIGRF
+  - pyncml
+  - scipy
+  - simplejson
+  - sockjs-tornado
+  - tqdm
+  - xarray
+  - yaml
+  - pip:
+    - https://bitbucket.org/ooicgsn/pyseas/get/develop.zip
+    - https://bitbucket.org/ooicgsn/cgsn-parsers/get/master.zip
+    - https://bitbucket.org/ooicgsn/cgsn-processing/get/master.zip

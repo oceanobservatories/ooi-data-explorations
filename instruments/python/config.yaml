@@ -1,4 +1,0 @@
-base_dir:
-  raw_base: '/home/ooiuser/data/raw'
-  json_base: '/home/ooiuser/data/testing/mi'
-  m2m_base: '/home/ooiuser/data/testing/m2m'

@@ -1,7 +1,28 @@
 # ooi-data-explorations
-Explorations of Ocean Observatories Initiative Datasets
+Explorations of Ocean Observatories Initiative Datasets via MATLAB, Python, R, and Julia.
 
-## Instrument Classes
+### matlab
+This subfolder contains a downloadable matlab toolbox that consists of three primary functions for requesting and accessing OOI data.
+Installation instructions can be found in the README in that folder.
+
+### python
+This subfolder contains a downloadable python package that consists of functions that can request, download, and clean up OOI datasets.
+Installation instructions can be found in the README in that folder.
+
+### R
+This subfolder contains a series of examples that utilizer the ooim2mr package.
+Links to the R package and installation instructions can be found in the README in that folder.
+
+### Julia
+This subfolder contains a working set of functions that allows Julia users to download OOI data via the OOI M2M interface.
+
+
+## OOI Nomenclature
+
+### OOI Sites
+A comprehensive list of OOI assets can be found [here](https://oceanobservatories.org/site-list/).
+
+### Instrument Classes
 [**ADCPT**](https://oceanobservatories.org/instrument-series/adcpta/) - Teledyne RDI - WorkHorse  
 [**CTDBP**](https://oceanobservatories.org/instrument-series/ctdbpc/) - SBE - 16plusV2  
 [**DOSTA**](https://oceanobservatories.org/instrument-series/dostad/) - Aanderaa - Optode 4831  

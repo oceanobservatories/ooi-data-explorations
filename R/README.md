@@ -1,16 +1,16 @@
-# OOI R Examples
+# OOI Data Explorations with R
 
 These examples utilize the [ooim2mr](https://github.com/oceanobservatories/ooim2mr) package available through GitHub.
 
-
-You can install it using devtools.
+You can install the ooim2mr package using devtools.
 
 ```
 #install.packages("devtools")
 devtools::install_github("oceanobservatories/ooim2mr")
 ```
 
-For information about the functions, please visit the above link.
+Detailed information about function usage is available [here](https://github.com/oceanobservatories/ooim2mr).
+
 
 For bug and issue reporting, please utilize the [repository issue tracker](https://github.com/oceanobservatories/ooim2mr/issues).
 

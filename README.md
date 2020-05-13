@@ -10,7 +10,7 @@ This subfolder contains a downloadable python package that consists of functions
 Installation instructions can be found in the README in that folder.
 
 ### R
-This subfolder contains a series of examples that utilizer the ooim2mr package.
+This subfolder contains a series of examples that utilize the ooim2mr package.
 Links to the R package and installation instructions can be found in the README in that folder.
 
 ### Julia

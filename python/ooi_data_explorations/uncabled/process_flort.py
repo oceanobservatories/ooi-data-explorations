@@ -3,7 +3,7 @@
 import numpy as np
 import os
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     update_dataset, CONFIG, ENCODINGS
 
 # load configuration settings

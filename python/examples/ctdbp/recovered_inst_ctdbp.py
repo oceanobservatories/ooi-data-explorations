@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 
-from python.ooi_data_explorations.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, \
+from ooi_data_explorations.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, \
     m2m_collect, update_dataset, CONFIG, ENCODINGS
-from python.ooi_data_explorations.uncabled.process_ctdbp import ctdbp_instrument
+from ooi_data_explorations.uncabled.process_ctdbp import ctdbp_instrument
 
 
 def main():

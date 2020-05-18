@@ -5,7 +5,7 @@ import os
 import re
 import xarray as xr
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG, ENCODINGS
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below

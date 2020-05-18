@@ -14,7 +14,7 @@ from ooi_data_explorations.common import list_nodes, list_sensors, list_methods,
 # deliberately non-inclusive of all possible nodes, as some are either specific to control systems or have data not
 # readily accessed through the M2M system.
 ASSEMBLY = {
-    'surface_buoy': ['SBD11', 'SBD12', 'SBD17'],
+    'buoy': ['SBD11', 'SBD12', 'SBD17'],
     'midwater': ['PC01A', 'PC01B', 'PC03A', 'RID16', 'RID26', 'RID27', 'RII01', 'RII11', 'RIM01', 'RIS01'],
     'seafloor': [
         'LJ01A', 'LJ01B', 'LJ01C', 'LJ01D', 'LJ03A', 'MFD35', 'MFD37', 'MJ01A', 'MJ01B', 'MJ03A', 'MJ03B',
@@ -36,7 +36,30 @@ ASSEMBLY = {
 # further distinguish between them. 
 SUBASSEMBLY = {
     'nsif': ['RID16', 'RID26', 'RID27'],
-    'riser': ['RII01', 'RII11', 'RIM01', 'RIS01']
+    'riser': ['RII01', 'RII11', 'RIM01'],
+    'sphere': ['RIS01'],
+    '200m': ['PC01A', 'PC01B', 'PC03A'],
+    'mfn': ['MFD35', 'MFD37'],
+    'bep': ['LJ01C', 'LJ01D'],
+    'low-power': ['LJ01A', 'LJ01B', 'LJ03A'],
+    'medium-power': ['MJ01A', 'MJ01B', 'MJ03A', 'MJ03B', 'MJ03C', 'MJ03D', 'MJ03E', 'MJ03F'],
+    'coastal-glider': [
+        'GL247', 'GL276', 'GL311', 'GL312', 'GL319', 'GL320', 'GL326', 'GL327', 'GL335', 'GL336', 'GL339', 'GL340',
+        'GL361', 'GL362', 'GL363', 'GL364', 'GL365', 'GL374', 'GL375', 'GL376', 'GL379', 'GL380', 'GL381', 'GL382',
+        'GL383', 'GL384', 'GL386', 'GL387', 'GL388', 'GL389', 'GL514',
+    ],
+    'global-glider': [
+        'GL453', 'GL469', 'GL470', 'GL477', 'GL478', 'GL484', 'GL485', 'GL486', 'GL493', 'GL494', 'GL495', 'GL496',
+        'GL523', 'GL524', 'GL525', 'GL537', 'GL538', 'GL559', 'GL560', 'GL561'
+    ],
+    'profiling-glider': [
+        'PG514', 'PG515', 'PG528', 'PG562', 'PG563', 'PG564', 'PG565', 'PG566', 'PG575', 'PG578', 'PG580', 'PG583'
+    ],
+    'cspp': ['SP001'],
+    'coastal-wfp': ['WFP01'],
+    'global-wfp': ['WFP02', 'WFP03'],
+    'cabled-wfp': ['DP01A', 'DP01B', 'DP03A'],
+    'shallow-profiler': ['SF01A', 'SF01B', 'SF03A']
 }
 
 # List of allowed methods (there are some called bad_*, ignoring those)
@@ -61,24 +84,26 @@ STREAM_EXCLUDES = [
     'vadcp_5thbeam_pd0_beam_parsed', 'nutnr_a_test'
 ]
 
+
 # grab the entire OOI vocabulary dictionary
 def get_vocabulary():
-    '''
-    Based on the site, node and sensor name download the vocabulary record defining this sensor.
+    """
+    Uses the an API call to grab the entire vocabulary dictionary for all OOI sites, nodes and sensors
 
-    :param site: Site name to query
     :return: json object with the site-node-sensor specific vocabulary
-    '''
+    """
     r = requests.get(BASE_URL + '12586/vocab', auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
         return None
 
+
 VOCAB = get_vocabulary()
 
+
 def add_site(site, url_file):
-    '''
+    """
     For an OOI site, assemble a curated list of all the instruments and data streams that are available for data
     explorations. This file will create a YAML file per site. Additional HITL work is required to further clean-up and
     check the list, and pruning streams and methods down to the core set of science sensors. The results of this work
@@ -87,7 +112,7 @@ def add_site(site, url_file):
     :param site: OOI 8 character site designation (e.g. CE01ISSM)
     :param url_file: data file to save the results in.
     :return: None, creates the data file.
-    '''
+    """
     sp = '  '  # create an explicit two-space indent string for the YAML file
     # open the YAML file to store the results
     with open(url_file, 'w') as f:
@@ -125,9 +150,9 @@ def add_site(site, url_file):
                 f.write('{sp}- type: {assembly}\n'.format(sp=sp * 2, assembly=assembly))
                 f.write('{sp}name: {name}\n'.format(sp=sp * 3, name=node_vocab['tocL3']))
                 # if we need to further distinguish, add the assembly code name
-                for k, v in SUBASSEMBLY.items():
-                     if n in v:
-                         f.write('{sp}subassembly: {name}\n'.format(sp=sp * 3, name=k))
+                for l, w in SUBASSEMBLY.items():
+                    if n in w:
+                        f.write('{sp}subassembly: {name}\n'.format(sp=sp * 3, name=l))
                 f.write('{sp}instrument:\n'.format(sp=sp * 3))
                 sensors = list_sensors(site, n)
                 sensors = filter_stream(sensors, SENSOR_EXCLUDES)   # remove sensors of no interest
@@ -162,20 +187,21 @@ def add_site(site, url_file):
                             streams = filter_stream(streams, STREAM_EXCLUDES)
                             if len(streams) == 1:
                                 f.write('{sp}{method}: {streams}\n'.format(sp=sp*6, method=method,
-                                                                               streams=streams[0]))
+                                                                           streams=streams[0]))
                             else:
                                 f.write('{sp}{method}:\n'.format(sp=sp*6, method=method))
                                 for stream in streams:
                                     f.write('{sp}- {stream}\n'.format(sp=sp*7, stream=stream))
 
+
 def filter_stream(streams, excludes):
-    '''
+    """
     Uses a list of keywords to remove sensors or streams from the list returned by OOI Net.
 
     :param streams: list of sensor or streams returned from OOI Net
     :param excludes: list of keywords to use in pruning the list
     :return: a cleaned, pruned list
-    '''
+    """
     clean = []
     for stream in streams:
         if not any(sub in stream for sub in excludes):

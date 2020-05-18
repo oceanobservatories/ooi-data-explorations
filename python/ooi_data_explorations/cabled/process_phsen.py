@@ -4,9 +4,9 @@ import numpy as np
 import os
 import xarray as xr
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
     dt64_epoch, update_dataset, CONFIG, ENCODINGS
-from instruments import PHSEN
+from ooi_data_explorations.uncabled.process_phsen import PHSEN
 
 
 def phsen_streamed(ds):

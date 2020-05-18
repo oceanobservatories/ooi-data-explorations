@@ -3,7 +3,7 @@ CE01ISSM:
   array: Coastal Endurance
   name: Oregon Inshore Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
       - class: mopak
@@ -55,6 +55,7 @@ CE01ISSM:
           telemetered: flort_sample
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: optaa
           instrument_name: Spectrophotometer
@@ -163,6 +164,7 @@ CE01ISSM:
             telemetered: spkir_abj_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -243,9 +245,6 @@ CE01ISSM:
             recovered_host: phsen_abcdef_dcl_instrument_recovered
             recovered_inst: phsen_abcdef_instrument
             telemetered: phsen_abcdef_dcl_instrument
-    - type: seafloor
-      name: Seafloor Multi-Function Node (MFN)
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -297,7 +296,8 @@ CE01ISSP:
   name: Oregon Inshore Surface Piercing Profiler Mooring
   assembly:
     - type: profiler
-      name: Surface Piercing Profiler
+      name: Coastal Surface Piercing Profiler
+      subassembly: cspp
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -391,7 +391,7 @@ CE02SHSM:
   array: Coastal Endurance
   name: Oregon Shelf Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -432,9 +432,6 @@ CE02SHSM:
             telemetered:
               - metbk_a_dcl_instrument
               - metbk_hourly
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: pco2a
           instrument_name: pCO2 Air-Sea
           instrument_model: pCO2-pro
@@ -475,6 +472,7 @@ CE02SHSM:
             telemetered: fdchp_a_dcl_instrument
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (600kHz)
@@ -535,9 +533,6 @@ CE02SHSM:
           stream:
             recovered_host: spkir_abj_dcl_instrument_recovered
             telemetered: spkir_abj_dcl_instrument
-    - type: midwater
-      name: Near Surface Instrument Frame
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -588,7 +583,8 @@ CE02SHSP:
   name: Oregon Shelf Surface Piercing Profiler Mooring
   assembly:
     - type: profiler
-      name: Surface Piercing Profiler
+      name: Coastal Surface Piercing Profiler
+      subassembly: cspp
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -682,6 +678,7 @@ CE02SHBP:
   assembly:
     - type: seafloor
       name: Cabled Benthic Experiment Package
+      subassembly: bep
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (300kHz)
@@ -760,7 +757,7 @@ CE04OSSM:
   array: Coastal Endurance
   name: Oregon Offshore Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -801,9 +798,6 @@ CE04OSSM:
             telemetered:
               - metbk_a_dcl_instrument
               - metbk_hourly
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: pco2a
           instrument_name: pCO2 Air-Sea
           instrument_model: pCO2-pro
@@ -832,6 +826,7 @@ CE04OSSM:
             telemetered: wavss_a_dcl_statistics
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (300kHz)
@@ -892,9 +887,6 @@ CE04OSSM:
           stream:
             recovered_host: spkir_abj_dcl_instrument_recovered
             telemetered: spkir_abj_dcl_instrument
-    - type: midwater
-      name: Near Surface Instrument Frame
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -946,6 +938,7 @@ CE04OSBP:
   assembly:
     - type: seafloor
       name: Cabled Benthic Experiment Package
+      subassembly: bep
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -1026,6 +1019,7 @@ CE04OSPS:
   assembly:
     - type: midwater
       name: 200m Platform
+      subassembly: 200m
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -1069,6 +1063,7 @@ CE04OSPS:
             streamed: pco2w_a_sami_data_record
     - type: profiler
       name: Shallow Profiler
+      subassembly: shallow-profiler
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -1175,7 +1170,8 @@ CE04OSPD:
   name: Oregon Offshore Cabled Deep Profiler Mooring
   assembly:
     - type: profiler
-      name: Wire-Following Profiler
+      name: Cabled Wire-Following Profiler
+      subassembly: cabled-wfp
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -1238,6 +1234,7 @@ CE05MOAS:
   assembly:
     - type: glider
       name: Coastal Glider 247
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1297,6 +1294,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 311
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1356,6 +1354,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 312
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1415,6 +1414,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 319
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1474,6 +1474,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 320
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1533,6 +1534,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 326
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1592,6 +1594,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 327
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1651,6 +1654,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 381
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1710,6 +1714,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 382
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1769,6 +1774,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 383
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1828,6 +1834,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 384
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1887,6 +1894,7 @@ CE05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Coastal Glider 386
+      subassembly: coastal-glider
       instrument:
         - class: parad
           instrument_name: Photosynthetically Available Radiation
@@ -1948,7 +1956,7 @@ CE06ISSM:
   array: Coastal Endurance
   name: Washington Inshore Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -2000,6 +2008,7 @@ CE06ISSM:
             telemetered: flort_sample
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: optaa
           instrument_name: Spectrophotometer
@@ -2108,6 +2117,7 @@ CE06ISSM:
             telemetered: spkir_abj_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -2188,9 +2198,6 @@ CE06ISSM:
             recovered_host: phsen_abcdef_dcl_instrument_recovered
             recovered_inst: phsen_abcdef_instrument
             telemetered: phsen_abcdef_dcl_instrument
-    - type: seafloor
-      name: Seafloor Multi-Function Node (MFN)
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -2242,7 +2249,8 @@ CE06ISSP:
   name: Washington Inshore Surface Piercing Profiler Mooring
   assembly:
     - type: profiler
-      name: Surface Piercing Profiler
+      name: Coastal Surface Piercing Profiler
+      subassembly: cspp
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -2336,7 +2344,7 @@ CE07SHSM:
   array: Coastal Endurance
   name: Washingtom Shelf Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -2377,9 +2385,6 @@ CE07SHSM:
             telemetered:
               - metbk_a_dcl_instrument
               - metbk_hourly
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: pco2a
           instrument_name: pCO2 Air-Sea
           instrument_model: pCO2-pro
@@ -2408,6 +2413,7 @@ CE07SHSM:
             telemetered: wavss_a_dcl_statistics
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (600kHz)
@@ -2468,9 +2474,6 @@ CE07SHSM:
           stream:
             recovered_host: spkir_abj_dcl_instrument_recovered
             telemetered: spkir_abj_dcl_instrument
-    - type: midwater
-      name: Near Surface Instrument Frame
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -2518,6 +2521,7 @@ CE07SHSM:
             telemetered: dosta_abcdjm_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -2588,9 +2592,6 @@ CE07SHSM:
             recovered_host: phsen_abcdef_dcl_instrument_recovered
             recovered_inst: phsen_abcdef_instrument
             telemetered: phsen_abcdef_dcl_instrument
-    - type: seafloor
-      name: Seafloor Multi-Function Node (MFN)
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -2642,7 +2643,8 @@ CE07SHSP:
   name: Oregon Shelf Surface Piercing Profiler Mooring
   assembly:
     - type: profiler
-      name: Surface Piercing Profiler
+      name: Coastal Surface Piercing Profiler
+      subassembly: cspp
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -2734,7 +2736,7 @@ CE09OSSM:
   array: Coastal Endurance
   name: Washington Offshore Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -2775,9 +2777,6 @@ CE09OSSM:
             telemetered:
               - metbk_a_dcl_instrument
               - metbk_hourly
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: pco2a
           instrument_name: pCO2 Air-Sea
           instrument_model: pCO2-pro
@@ -2806,6 +2805,7 @@ CE09OSSM:
             telemetered: wavss_a_dcl_statistics
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (300kHz)
@@ -2866,9 +2866,6 @@ CE09OSSM:
           stream:
             recovered_host: spkir_abj_dcl_instrument_recovered
             telemetered: spkir_abj_dcl_instrument
-    - type: midwater
-      name: Near Surface Instrument Frame
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -2916,6 +2913,7 @@ CE09OSSM:
             telemetered: dosta_abcdjm_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -2986,9 +2984,6 @@ CE09OSSM:
             recovered_host: phsen_abcdef_dcl_instrument_recovered
             recovered_inst: phsen_abcdef_instrument
             telemetered: phsen_abcdef_dcl_instrument
-    - type: seafloor
-      name: Seafloor Multi-Function Node (MFN)
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S Deep
@@ -3040,7 +3035,8 @@ CE09OSPM:
   name: Washington Offshore Profiler Mooring
   assembly:
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3103,6 +3099,7 @@ CP01CNPM:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150 kHz)
@@ -3117,7 +3114,8 @@ CP01CNPM:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3178,7 +3176,7 @@ CP01CNSM:
   array: Coastal Pioneer
   name: Central Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -3262,6 +3260,7 @@ CP01CNSM:
             telemetered: fdchp_a_dcl_instrument
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: velpt
           instrument_name: Single Point Velocity Meter
@@ -3357,6 +3356,7 @@ CP01CNSM:
             telemetered: dosta_abcdjm_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -3468,7 +3468,8 @@ CP01CNSP:
   name: Central Surface Piercing Profiler Mooring
   assembly:
     - type: profiler
-      name: Surface Piercing Profiler
+      name: Coastal Surface Piercing Profiler
+      subassembly: cspp
       instrument:
         - class: optaa
           instrument_name: Spectrophotometer
@@ -3562,6 +3563,7 @@ CP02PMCI:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150 kHz)
@@ -3576,7 +3578,8 @@ CP02PMCI:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3639,6 +3642,7 @@ CP02PMCO:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150 kHz)
@@ -3653,7 +3657,8 @@ CP02PMCO:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3716,6 +3721,7 @@ CP02PMUI:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150 kHz)
@@ -3730,7 +3736,8 @@ CP02PMUI:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3793,6 +3800,7 @@ CP02PMUO:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -3807,7 +3815,8 @@ CP02PMUO:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3870,6 +3879,7 @@ CP03ISPM:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150 kHz)
@@ -3884,7 +3894,8 @@ CP03ISPM:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -3945,7 +3956,7 @@ CP03ISSM:
   array: Coastal Pioneer
   name: Inshore Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -3991,6 +4002,7 @@ CP03ISSM:
               - pco2a_a_dcl_instrument_water
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: velpt
           instrument_name: Single Point Velocity Meter
@@ -4088,6 +4100,7 @@ CP03ISSM:
             telemetered: dosta_abcdjm_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -4199,7 +4212,8 @@ CP03ISSP:
   name: Inshore Surface Piercing Profiler Mooring
   assembly:
     - type: profiler
-      name: Surface Piercing Profiler
+      name: Coastal Surface Piercing Profiler
+      subassembly: cspp
       instrument:
         - class: optaa
           instrument_name: Spectrophotometer
@@ -4287,6 +4301,7 @@ CP04OSPM:
   assembly:
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -4301,7 +4316,8 @@ CP04OSPM:
             recovered_inst: adcp_velocity_earth
             telemetered: adcps_jln_stc_instrument
     - type: profiler
-      name: Wire-Following Profiler
+      name: Coastal Wire-Following Profiler
+      subassembly: coastal-wfp
       instrument:
         - class: vel3d
           instrument_name: 3-D Single Point Velocity Meter
@@ -4362,7 +4378,7 @@ CP04OSSM:
   array: Coastal Pioneer
   name: Offshore Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -4408,6 +4424,7 @@ CP04OSSM:
               - pco2a_a_dcl_instrument_water
     - type: midwater
       name: Near Surface Instrument Frame
+      subassembly: nsif
       instrument:
         - class: velpt
           instrument_name: Single Point Velocity Meter
@@ -4503,6 +4520,7 @@ CP04OSSM:
             telemetered: dosta_abcdjm_dcl_instrument
     - type: seafloor
       name: Seafloor Multi-Function Node (MFN)
+      subassembly: mfn
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -4616,6 +4634,7 @@ CP05MOAS:
   assembly:
     - type: glider
       name: Coastal Glider 335
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -4675,6 +4694,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 336
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -4734,6 +4754,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 339
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -4793,6 +4814,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 340
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -4852,6 +4874,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 374
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -4911,6 +4934,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 375
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -4970,6 +4994,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 376
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5029,6 +5054,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 379
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5088,6 +5114,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 380
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5147,6 +5174,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 387
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5206,6 +5234,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 388
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5265,6 +5294,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 389
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5324,6 +5354,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Coastal Glider 514
+      subassembly: coastal-glider
       instrument:
         - class: adcpa
           instrument_name: Velocity Profiler (600kHz)
@@ -5383,6 +5414,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 564
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -5452,6 +5484,7 @@ CP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 583
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -5653,7 +5686,7 @@ GA01SUMO:
   array: Global Argentine Basin
   name: Apex Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -5720,9 +5753,6 @@ GA01SUMO:
             recovered_host: nutnr_b_dcl_full_instrument_recovered
             recovered_inst: nutnr_b_instrument_recovered
             telemetered: nutnr_b_dcl_full_instrument
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -6208,6 +6238,7 @@ GA02HYPM:
   assembly:
     - type: midwater
       name: 160 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: ctdmo
           instrument_name: CTD
@@ -6222,7 +6253,8 @@ GA02HYPM:
             recovered_inst: ctdmo_ghqr_instrument_recovered
             telemetered: ctdmo_ghqr_sio_mule_instrument
     - type: profiler
-      name: Wire-Following Profiler Upper
+      name: Global Wire-Following Profiler Upper
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6269,7 +6301,8 @@ GA02HYPM:
             recovered_wfp: vel3d_l_wfp_instrument_recovered
             telemetered: vel3d_l_wfp_instrument
     - type: profiler
-      name: Wire-Following Profiler Lower
+      name: Global Wire-Following Profiler Lower
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6321,6 +6354,7 @@ GA03FLMA:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -6358,6 +6392,7 @@ GA03FLMA:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -6521,6 +6556,7 @@ GA03FLMB:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -6557,6 +6593,7 @@ GA03FLMB:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -6720,6 +6757,7 @@ GA05MOAS:
   assembly:
     - type: glider
       name: Open Ocean Glider 364
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6753,6 +6791,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 470
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6786,6 +6825,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 493
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6822,6 +6862,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 494
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6855,6 +6896,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 495
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6888,6 +6930,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 496
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6921,6 +6964,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 538
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -6957,6 +7001,7 @@ GA05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Profiling Glider 562
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -7020,6 +7065,7 @@ GA05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 563
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -7083,6 +7129,7 @@ GA05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 578
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -7146,6 +7193,7 @@ GA05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 580
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -7215,7 +7263,7 @@ GI01SUMO:
   array: Global Irminger Sea
   name: Apex Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -7286,9 +7334,6 @@ GI01SUMO:
               - suna_dcl_recovered
               - nutnr_b_dcl_full_instrument
               - nutnr_b_dcl_conc_instrument
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -7772,6 +7817,7 @@ GI02HYPM:
   assembly:
     - type: midwater
       name: 160 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: ctdmo
           instrument_name: CTD
@@ -7786,7 +7832,8 @@ GI02HYPM:
             recovered_inst: ctdmo_ghqr_instrument_recovered
             telemetered: ctdmo_ghqr_sio_mule_instrument
     - type: profiler
-      name: Wire-Following Profiler Upper
+      name: Global Wire-Following Profiler Upper
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -7838,6 +7885,7 @@ GI03FLMA:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -7875,6 +7923,7 @@ GI03FLMA:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -8038,6 +8087,7 @@ GI03FLMB:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -8075,6 +8125,7 @@ GI03FLMB:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -8238,6 +8289,7 @@ GI05MOAS:
   assembly:
     - type: glider
       name: Open Ocean Glider 363
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8274,6 +8326,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 453
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8307,6 +8360,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 469
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8340,6 +8394,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 363
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8373,6 +8428,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 478
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8406,6 +8462,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 484
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8439,6 +8496,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 485
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8472,6 +8530,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 493
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8505,6 +8564,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 495
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8538,6 +8598,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 525
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8571,6 +8632,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 559
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8607,6 +8669,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 560
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8640,6 +8703,7 @@ GI05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Profiling Glider 515
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -8703,6 +8767,7 @@ GI05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 528
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -8774,6 +8839,7 @@ GP02HYPM:
   assembly:
     - type: midwater
       name: 160 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: ctdmo
           instrument_name: CTD
@@ -8788,7 +8854,8 @@ GP02HYPM:
             recovered_inst: ctdmo_ghqr_instrument_recovered
             telemetered: ctdmo_ghqr_sio_mule_instrument
     - type: profiler
-      name: Wire-Following Profiler Upper
+      name: Global Wire-Following Profiler Upper
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8835,7 +8902,8 @@ GP02HYPM:
             recovered_wfp: vel3d_l_wfp_instrument_recovered
             telemetered: vel3d_l_wfp_instrument
     - type: profiler
-      name: Wire-Following Profiler Lower
+      name: Global Wire-Following Profiler Lower
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -8887,6 +8955,7 @@ GP03FLMA:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -8924,6 +8993,7 @@ GP03FLMA:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -9087,6 +9157,7 @@ GP03FLMB:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -9124,6 +9195,7 @@ GP03FLMB:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -9287,6 +9359,7 @@ GP05MOAS:
   assembly:
     - type: glider
       name: Open Ocean Glider 276
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9323,6 +9396,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 361
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9356,6 +9430,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 362
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9389,6 +9464,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 363
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9425,6 +9501,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 364
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9461,6 +9538,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 365
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9497,6 +9575,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 453
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9530,6 +9609,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 469
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9566,6 +9646,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 523
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9602,6 +9683,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 525
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9638,6 +9720,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 537
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -9674,6 +9757,7 @@ GP05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Profiling Glider 514
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -9719,6 +9803,7 @@ GP05MOAS:
             telemetered: nutnr_m_glider_instrument
     - type: glider
       name: Profiling Glider 515
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -9764,6 +9849,7 @@ GP05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 575
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -9834,7 +9920,7 @@ GS01SUMO:
   array: Global Southern Ocean
   name: Apex Surface Mooring
   assembly:
-    - type: surface_buoy
+    - type: buoy
       name: Surface Buoy
       instrument:
         - class: mopak
@@ -9918,9 +10004,6 @@ GS01SUMO:
             telemetered:
               - suna_dcl_recovered
               - nutnr_b_dcl_full_instrument
-    - type: surface_buoy
-      name: Surface Buoy
-      instrument:
         - class: optaa
           instrument_name: Spectrophotometer
           instrument_model: AC-S
@@ -10424,6 +10507,7 @@ GS02HYPM:
   assembly:
     - type: midwater
       name: 160 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: ctdmo
           instrument_name: CTD
@@ -10438,7 +10522,8 @@ GS02HYPM:
             recovered_inst: ctdmo_ghqr_instrument_recovered
             telemetered: ctdmo_ghqr_sio_mule_instrument
     - type: profiler
-      name: Wire-Following Profiler Upper
+      name: Global Wire-Following Profiler Upper
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -10485,7 +10570,8 @@ GS02HYPM:
             recovered_wfp: vel3d_l_wfp_instrument_recovered
             telemetered: vel3d_l_wfp_instrument
     - type: profiler
-      name: Wire-Following Profiler Lower
+      name: Global Wire-Following Profiler Lower
+      subassembly: global-wfp
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -10537,6 +10623,7 @@ GS03FLMA:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -10574,6 +10661,7 @@ GS03FLMA:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -10737,6 +10825,7 @@ GS03FLMB:
   assembly:
     - type: midwater
       name: 30 m Subsurface Sphere
+      subassembly: sphere
       instrument:
         - class: dosta
           instrument_name: Dissolved Oxygen
@@ -10774,6 +10863,7 @@ GS03FLMB:
             telemetered: flort_sample
     - type: midwater
       name: Mooring Riser
+      subassembly: riser
       instrument:
         - class: adcps
           instrument_name: Velocity Profiler (75 kHz)
@@ -10937,6 +11027,7 @@ GS05MOAS:
   assembly:
     - type: glider
       name: Open Ocean Glider 484
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -10970,6 +11061,7 @@ GS05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 485
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -11003,6 +11095,7 @@ GS05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 486
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -11039,6 +11132,7 @@ GS05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 524
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -11072,6 +11166,7 @@ GS05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 560
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -11108,6 +11203,7 @@ GS05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Open Ocean Glider 561
+      subassembly: global-glider
       instrument:
         - class: flord
           instrument_name: 2-Wavelength Fluorometer
@@ -11141,6 +11237,7 @@ GS05MOAS:
             telemetered: ctdgv_m_glider_instrument
     - type: glider
       name: Profiling Glider 565
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -11208,6 +11305,7 @@ GS05MOAS:
             telemetered: parad_m_glider_instrument
     - type: glider
       name: Profiling Glider 566
+      subassembly: profiling-glider
       instrument:
         - class: ctdgv
           instrument_name: CTD
@@ -11278,7 +11376,8 @@ RS01SBPD:
   name: Oregon Slope Base Deep Profiler Mooring
   assembly:
     - type: profiler
-      name: Wire-Following Profiler
+      name: Cabled Wire-Following Profiler
+      subassembly: cabled-wfp
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11341,6 +11440,7 @@ RS01SLBS:
   assembly:
     - type: seafloor
       name: Low-Power JBox (LJ01A)
+      subassembly: low-power
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11384,6 +11484,7 @@ RS01SLBS:
             streamed: do_stable_sample
     - type: seafloor
       name: Medium-Power JBox (MJ01A)
+      subassembly: medium-power
       instrument:
         - class: prest
           instrument_name: Tidal Seafloor Pressure
@@ -11411,6 +11512,7 @@ RS01SBPS:
   assembly:
     - type: midwater
       name: 200m Platform
+      subassembly: 200m
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11478,6 +11580,7 @@ RS01SBPS:
             streamed: flort_d_data_record
     - type: profiler
       name: Shallow Profiler
+      subassembly: shallow-profiler
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11585,6 +11688,7 @@ RS01SUM1:
   assembly:
     - type: seafloor
       name: Low-Power JBox (LJ01B)
+      subassembly: low-power
       instrument:
         - class: prest
           instrument_name: Tidal Seafloor Pressure
@@ -11612,6 +11716,7 @@ RS03ASHS:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03B)
+      subassembly: medium-power
       instrument:
         - class: tmpsf
           instrument_name: Diffuse Vent Fluid 3-D Temperature Array
@@ -11654,7 +11759,8 @@ RS03AXPD:
   name: Axial Base Deep Profiler Mooring
   assembly:
     - type: profiler
-      name: Wire-Following Profiler
+      name: Cabled Wire-Following Profiler
+      subassembly: cabled-wfp
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11717,6 +11823,7 @@ RS03AXPS:
   assembly:
     - type: midwater
       name: 200m Platform
+      subassembly: 200m
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11782,6 +11889,7 @@ RS03AXPS:
             streamed: flort_d_data_record
     - type: profiler
       name: Shallow Profiler
+      subassembly: shallow-profiler
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11889,6 +11997,7 @@ RS03AXBS:
   assembly:
     - type: seafloor
       name: Low-Power JBox (LJ03A)
+      subassembly: low-power
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11932,6 +12041,7 @@ RS03AXBS:
             streamed: do_stable_sample
     - type: seafloor
       name: Medium-Power JBox (MJ03A)
+      subassembly: medium-power
       instrument:
         - class: prest
           instrument_name: Tidal Seafloor Pressure
@@ -11959,6 +12069,7 @@ RS03CCAL:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03F)
+      subassembly: medium-power
       instrument:
         - class: botpt
           instrument_name: Bottom Pressure and Tilt
@@ -11982,6 +12093,7 @@ RS03ECAL:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03E)
+      subassembly: medium-power
       instrument:
         - class: botpt
           instrument_name: Bottom Pressure and Tilt
@@ -12005,6 +12117,7 @@ RS03INT1:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03C)
+      subassembly: medium-power
       instrument:
         - class: d1000
           instrument_name: Temperature Sensor
@@ -12042,6 +12155,7 @@ RS03INT2:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03D)
+      subassembly: medium-power
       instrument:
         - class: botpt
           instrument_name: Bottom Pressure and Tilt

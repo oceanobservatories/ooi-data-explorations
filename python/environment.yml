@@ -3,7 +3,7 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python>=3.5
+  - python>=3.6
   - argcomplete
   - beautifulsoup4
   - chest
@@ -27,6 +27,7 @@ dependencies:
   - pygc
   - pyIGRF
   - pyncml
+  - pytz
   - scipy
   - simplejson
   - sockjs-tornado

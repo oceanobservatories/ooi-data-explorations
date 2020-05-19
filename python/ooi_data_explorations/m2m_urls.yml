@@ -1019,7 +1019,7 @@ CE04OSPS:
   assembly:
     - type: midwater
       name: 200m Platform
-      subassembly: 200m
+      subassembly: 200m_platform
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -1171,7 +1171,7 @@ CE04OSPD:
   assembly:
     - type: profiler
       name: Cabled Wire-Following Profiler
-      subassembly: cabled-wfp
+      subassembly: deep-profiler
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11377,7 +11377,7 @@ RS01SBPD:
   assembly:
     - type: profiler
       name: Cabled Wire-Following Profiler
-      subassembly: cabled-wfp
+      subassembly: deep-profiler
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11440,7 +11440,7 @@ RS01SLBS:
   assembly:
     - type: seafloor
       name: Low-Power JBox (LJ01A)
-      subassembly: low-power
+      subassembly: low-pwr-jbox
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11484,7 +11484,7 @@ RS01SLBS:
             streamed: do_stable_sample
     - type: seafloor
       name: Medium-Power JBox (MJ01A)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: prest
           instrument_name: Tidal Seafloor Pressure
@@ -11512,7 +11512,7 @@ RS01SBPS:
   assembly:
     - type: midwater
       name: 200m Platform
-      subassembly: 200m
+      subassembly: 200m_platform
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11688,7 +11688,7 @@ RS01SUM1:
   assembly:
     - type: seafloor
       name: Low-Power JBox (LJ01B)
-      subassembly: low-power
+      subassembly: low-pwr-jbox
       instrument:
         - class: prest
           instrument_name: Tidal Seafloor Pressure
@@ -11716,7 +11716,7 @@ RS03ASHS:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03B)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: tmpsf
           instrument_name: Diffuse Vent Fluid 3-D Temperature Array
@@ -11760,7 +11760,7 @@ RS03AXPD:
   assembly:
     - type: profiler
       name: Cabled Wire-Following Profiler
-      subassembly: cabled-wfp
+      subassembly: deep-profiler
       instrument:
         - class: ctdpf
           instrument_name: CTD
@@ -11823,7 +11823,7 @@ RS03AXPS:
   assembly:
     - type: midwater
       name: 200m Platform
-      subassembly: 200m
+      subassembly: 200m_platform
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -11997,7 +11997,7 @@ RS03AXBS:
   assembly:
     - type: seafloor
       name: Low-Power JBox (LJ03A)
-      subassembly: low-power
+      subassembly: low-pwr-jbox
       instrument:
         - class: adcpt
           instrument_name: Velocity Profiler (150kHz)
@@ -12041,7 +12041,7 @@ RS03AXBS:
             streamed: do_stable_sample
     - type: seafloor
       name: Medium-Power JBox (MJ03A)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: prest
           instrument_name: Tidal Seafloor Pressure
@@ -12069,7 +12069,7 @@ RS03CCAL:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03F)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: botpt
           instrument_name: Bottom Pressure and Tilt
@@ -12093,7 +12093,7 @@ RS03ECAL:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03E)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: botpt
           instrument_name: Bottom Pressure and Tilt
@@ -12117,7 +12117,7 @@ RS03INT1:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03C)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: d1000
           instrument_name: Temperature Sensor
@@ -12155,7 +12155,7 @@ RS03INT2:
   assembly:
     - type: seafloor
       name: Medium-Power JBox (MJ03D)
-      subassembly: medium-power
+      subassembly: medium-pwr-jbox
       instrument:
         - class: botpt
           instrument_name: Bottom Pressure and Tilt

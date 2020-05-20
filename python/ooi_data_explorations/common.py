@@ -416,11 +416,6 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     else:
         end_date = ''
 
-    # Check if using the default credentials
-    if AUTH_DEFAULT:
-        warnings.warn(('Using default access credentials, please configure a .netrc file with the '
-                       'appropriate credentials for the machine ooinet.oceanobservatories.org'), UserWarning)
-
     options = begin_date + end_date + '&format=application/netcdf'
     r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,
                      auth=(AUTH[0], AUTH[2]))

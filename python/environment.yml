@@ -28,6 +28,7 @@ dependencies:
   - pyIGRF
   - pyncml
   - pytz
+  - pyYAML
   - scipy
   - simplejson
   - sockjs-tornado

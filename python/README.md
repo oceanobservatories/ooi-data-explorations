@@ -54,7 +54,7 @@ git clone https://github.com/oceanobservatories/ooi-data-explorations.git
 cd ooi-data-explorations/python
 
 # configure the OOI python environment
-conda create env -f environment.yml
+conda env create -f environment.yml
 conda activate ooi
 
 # install the package as a local development package

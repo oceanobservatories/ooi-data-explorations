@@ -4,8 +4,8 @@ import numpy as np
 import os
 import re
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 
 def pco2a_datalogger(ds, burst=False):
@@ -219,7 +219,7 @@ def main(argv=None):
     pco2a = update_dataset(pco2a, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

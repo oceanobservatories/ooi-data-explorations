@@ -1,5 +1,7 @@
 # OOI Data Explorations with Python
 
+## Overview
+
 The python code provided here was developed primarily as a toolset for myself, as an OOI Data Team member, to 
 facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc that I need to perform as 
 part of my day-to-day work. I am providing this code to the larger community in the hopes that it will be of some use 
@@ -9,7 +11,26 @@ the user workspace as an [xarray](http://xarray.pydata.org/en/stable/) dataset, 
 depending on how you call it. There are examples below of how to setup and use the package, with more example notebooks 
 and scripts available in the examples directory.
 
-## Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)
+If you have any comments, questions or issues, please don't hesitate to 
+[let us know]((https://github.com/oceanobservatories/ooi-data-explorations/issues)).
+
+## Table of Contents
+
+* [Installation](#installation)
+    * [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anacondaminiconda)
+    * [Setup Access Credentials](#access-credentials)
+    * [Download and Install OOI Data Explorations](#obtaining-the-code-and-configuring-the-environment) 
+* [Usage](#usage)
+    * [M2M Terminology](#m2m-terminology)
+    * [Requesting As-Is (Mostly) Data](#requesting-as-is-mostly-data)
+    * [Simplifying the As-Is Requests](#simplifying-the-as-is-requests)
+        * [YAML Structure](#yaml-structure)
+        * [Simplified Request](#simplified-request)
+    * [Requesting Processed Data](#requesting-processed-data)
+
+## Installation
+
+### Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)
 
 In order to use the python code in this repository, you will need to setup your computer with the proper tools. There
 are several examples out there on how to this, so I'll avoid reinventing the wheel here. One of the best 
@@ -29,36 +50,13 @@ Note, for Windows users only, if you already have Anaconda/Miniconda installed o
 uninstall/reinstall as described in the [tutorial](https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).
 You can leave everything as-is. However, you do need to link Git Bash to Anaconda (or Miniconda); this happens
 automagically if you follow the sequence in the tutorial by installing Git Bash before Anaconda. If you already have 
-Anaconda installed, however, from the bash terminal add the following code to your `.bash_profile` file in your home 
+Anaconda installed, however, from the bash terminal add the following code to `.bash_profile` file in your home 
 directory (assuming you installed Anaconda in your home directory, which is the default):
 
 ```shell script
 cd ~
 echo ". ${HOME}/Anaconda3/etc/profile.d/conda.sh" >> ~/.bash_profile
 source .bash_profile
-```
-
-### Obtaining the Code and Configuring the Environment
-
-If you followed the tutorial above to configure Bash, Git and Anaconda on your system, the next few steps should 
-proceed easily. With the basic processing tools in place, now you need to copy the python code to the local machine, 
-setup a virtual environment, install a development copy of the code, and get access credentials in place.
-
-From the bash terminal, clone the ooi-data-explorations code to your local machine:
-
-```shell script
-# download the ooi-data-explorations code
-mkdir -p ~/Documents/GitHub
-cd ~/Documents/GitHub
-git clone https://github.com/oceanobservatories/ooi-data-explorations.git
-cd ooi-data-explorations/python
-
-# configure the OOI python environment
-conda env create -f environment.yml
-conda activate ooi
-
-# install the package as a local development package
-pip install -e . 
 ```
 
 ### Access Credentials
@@ -89,12 +87,36 @@ machine ooinet.oceanobservatories.org
 EOT
 ```
 
-## Using the Tools
+### Obtaining the Code and Configuring the Environment
 
-The code is available in the [ooi_data_explorations](ooi_data_explorations/) directory with examples (both scripts
-and notebooks) in the [examples](examples/) directory. The python code has been developed and used with both Python 3.6
+With the basic processing tools and access credentials in place, you need to copy the python code to your machine, 
+setup a virtual environment, and install a development copy of the code.
+
+From the bash terminal, clone the ooi-data-explorations code to your local machine:
+
+```shell script
+# download the ooi-data-explorations code
+mkdir -p ~/Documents/GitHub
+cd ~/Documents/GitHub
+git clone https://github.com/oceanobservatories/ooi-data-explorations.git
+cd ooi-data-explorations/python
+
+# configure the OOI python environment
+conda env create -f environment.yml
+conda activate ooi
+
+# install the package as a local development package
+pip install -e . 
+```
+
+## Usage
+
+The code is available in the [ooi_data_explorations](ooi_data_explorations) directory with examples (both scripts
+and notebooks) in the [examples](examples) directory. The python code has been developed and used with both Python 3.6
 and 3.7 on Windows and Linux machines. They are configured in a granular fashion to allow users to access the data in
 a few different ways.
+
+### M2M Terminology
 
 Before using these functions, it is important to understand how requests to the 
 [OOI M2M API](https://oceanobservatories.org/ooi-m2m-interface/) are structured. A request is built around the 
@@ -129,7 +151,7 @@ and series [defined](https://oceanobservatories.org/instruments/) on the OOI web
 Stream names are all lowercase. Streams are mostly associated with the data delivery methods and there may be more than
 one stream per method.
 
-### Request Unmodified (Mostly, Kinda) Data
+### Requesting As-Is (Mostly) Data
 
 The core functions used to request and download data are `m2m_request` and `m2m_collect`, located in the 
 [`common.py`](ooi_data_explorations/common.py) module. From those two functions, you can pretty much create your own 
@@ -172,14 +194,14 @@ if not os.path.exists(out_path):
     os.makedirs(out_path)
 
 # setup the output file
-out_file = ('%s.%s.%s.%s.%s.nc' % (site.lower(), node.lower(), sensor.lower(), method, stream))
+out_file = ('%s.%s.%s.%s.%s.nc' % (site, node, sensor, method, stream))
 nc_out = os.path.join(out_path, out_file)
 
 # save the data to disk
 data.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf')
 ```
 
-### Request Unmodified, Somewhat De-Obfuscated Data
+### Simplifying the As-Is Requests
 
 Users really only need to use `m2m_request` and `m2m_collect` for the data requests. However, the user needs to
 explicitly know all of the details and terms from above. Outside of OOI (and even inside of OOI), the terminology used
@@ -190,8 +212,10 @@ functionality in the Matlab and R utilities, I've organized a subset of all of t
 data request. The YAML structure removes from consideration all so-called engineering sensors and instruments that 
 cannot be accessed through the API (e.g. cameras or bio-accoustic sonar), as well as most of the non-science streams 
 (engineering or metadata streams). The idea is to cover the most common needs, rather than all possible cases. Users can
-still access any data set desired, but you will need to use the example from above to explicitly call any stream not
-represented in the YAML structure.
+still access any data set desired, but you will need to use the [method from above](#requesting-as-is-mostly-data) to 
+explicitly call any stream not represented in the YAML structure.
+
+#### YAML Structure
 
 The YAML structure I've created uses the OOI site codes as-is. It simplifies the node designation by taking the 100+
 nodes and groups them according to an assembly type indicating where co-located sensors can be found. There are 6 
@@ -225,6 +249,8 @@ an assembly. For example the Global surface moorings have a midwater chain of 10
 line. If you do not specify the aggregation flag, you will only get the first of those 10 CTDs. If, however, you set the
 aggregation flag to `0`, you will get all of them in a data set with a variable added called `sensor_count`, so you can
 distinguish between them. Conversely, you can request a specific instrument by using its sequential number.
+
+#### Simplified Request
 
 At the end of the day, users need to know the site, assembly, instrument class and data delivery method. Somewhat
 simpler than the full site, node, sensor, method, and stream name, and hopefully more meaningful. Additionally, any
@@ -277,7 +303,7 @@ data_04 = data_request(site, assembly, instrument, method, start=start, stop=sto
 data_05 = data_request(site, assembly, instrument, method, start=start, stop=stop, aggregate=5)
 ```
 
-### Request Processed and Modified Data
+### Requesting Processed Data
 
 For most individuals, the above code should satisfy your needs. For some, like myself, the data simply is not
 properly organized, named or fully processed enough to be really useful. The process_*.py modules in the cabled and
@@ -298,5 +324,5 @@ Additionally, some of the instrument data is collected in bursts (e.g. every 15 
 can make some of the data sets fairly large. By applying a median average to each of the bursts, the size of the data
 set can be reduced to a more workable form, and the point-to-point variability in each burst can be smoothed. Burst 
 averaging is optional. Most of these functions are set to run from the command line. Examples of how these are run
-can be found in the [examples directory](examples/). Bash scripts to automate downloading date using these processing
+can be found in the [examples directory](examples). Bash scripts to automate downloading date using these processing
 scripts are in the [utilities/harvesters](utilities/harvesters) directory.

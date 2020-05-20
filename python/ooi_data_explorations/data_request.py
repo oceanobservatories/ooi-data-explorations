@@ -54,9 +54,6 @@ def filter_urls(site, assembly, instrument, method):
                     node.append(instrmt.node)
                     sensor.append(instrmt.sensor)
                     stream.append(instrmt.stream.get(method))
-        else:
-            # if no assembly found, raise an error
-            raise SyntaxError('Unknown assembly type: %s' % assembly)
 
     # check to see if we were able to find the system of interest
     if not stream:

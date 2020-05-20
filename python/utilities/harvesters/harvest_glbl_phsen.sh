@@ -11,12 +11,12 @@
 # C. Wingard, 2019-07-22 -- Initial code
 
 # set the base directory python command for all subsequent processing
-cd /home/ooiuser/code/ooi-data-explorations
-PYTHON="python -m python.ooi_data_explorations.uncabled.request_phsen"
+conda activate ooi
+PYTHON="python -m ooi_data_explorations.uncabled.request_phsen"
 
 ### GA01SUMO ###
 BASE_FLAGS="-s GA01SUMO -n RII11 -sn 02-PHSENE041"
-BASE_FILE="ga01sumo/imm/phsen/20m/ga01sumo.imm.phsen.20m"
+BASE_FILE="${HOME}/ooidata/m2m/ga01sumo/imm/phsen/20m/ga01sumo.imm.phsen.20m"
 for i in $(seq -f "%02g" 1 3); do
 	$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.phsen_abcdef_imodem_instrument.nc"
 	$PYTHON $BASE_FLAGS -mt recovered_host -st phsen_abcdef_imodem_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.phsen_abcdef_imodem_instrument_recovered.nc"
@@ -24,7 +24,7 @@ for i in $(seq -f "%02g" 1 3); do
 done
 
 BASE_FLAGS="-s GA01SUMO -n RII11 -sn 02-PHSENE042"
-BASE_FILE="ga01sumo/imm/phsen/100m/ga01sumo.imm.phsen.100m"
+BASE_FILE="${HOME}/ooidata/m2m/ga01sumo/imm/phsen/100m/ga01sumo.imm.phsen.100m"
 for i in $(seq -f "%02g" 1 3); do
 	$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.phsen_abcdef_imodem_instrument.nc"
 	$PYTHON $BASE_FLAGS -mt recovered_host -st phsen_abcdef_imodem_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.phsen_abcdef_imodem_instrument_recovered.nc"
@@ -43,7 +43,7 @@ done
 
 ### GI01SUMO ###
 BASE_FLAGS="-s GI01SUMO -n RII11 -sn 02-PHSENE041"
-BASE_FILE="gi01sumo/imm/phsen/20m/gi01sumo.imm.phsen.20m"
+BASE_FILE="${HOME}/ooidata/m2m/gi01sumo/imm/phsen/20m/gi01sumo.imm.phsen.20m"
 for i in $(seq -f "%02g" 1 5); do
 	$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.phsen_abcdef_imodem_instrument.nc"
 	$PYTHON $BASE_FLAGS -mt recovered_host -st phsen_abcdef_imodem_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.phsen_abcdef_imodem_instrument_recovered.nc"
@@ -53,7 +53,7 @@ done
 $PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp 6 -o "$BASE_FILE.deploy12.telemetered.phsen_abcdef_imodem_instrument.nc"
 
 BASE_FLAGS="-s GI01SUMO -n RII11 -sn 02-PHSENE042"
-BASE_FILE="gi01sumo/imm/phsen/100m/gi01sumo.imm.phsen.100m"
+BASE_FILE="${HOME}/ooidata/m2m/gi01sumo/imm/phsen/100m/gi01sumo.imm.phsen.100m"
 for i in $(seq -f "%02g" 1 5); do
 	$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.phsen_abcdef_imodem_instrument.nc"
 	$PYTHON $BASE_FLAGS -mt recovered_host -st phsen_abcdef_imodem_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.phsen_abcdef_imodem_instrument_recovered.nc"
@@ -84,7 +84,7 @@ done
 
 ### GS01SUMO ###
 BASE_FLAGS="-s GS01SUMO -n RII11 -sn 02-PHSENE041"
-BASE_FILE="gs01sumo/imm/phsen/20m/gs01sumo.imm.phsen.20m"
+BASE_FILE="${HOME}/ooidata/m2m/gs01sumo/imm/phsen/20m/gs01sumo.imm.phsen.20m"
 for i in $(seq -f "%02g" 1 3); do
 	$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.phsen_abcdef_imodem_instrument.nc"
 	$PYTHON $BASE_FLAGS -mt recovered_host -st phsen_abcdef_imodem_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.phsen_abcdef_imodem_instrument_recovered.nc"
@@ -94,7 +94,7 @@ done
 $PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp 4 -o "$BASE_FILE.deploy12.telemetered.phsen_abcdef_imodem_instrument.nc"
 
 BASE_FLAGS="-s GS01SUMO -n RII11 -sn 02-PHSENE042"
-BASE_FILE="gs01sumo/imm/phsen/100m/gs01sumo.imm.phsen.100m"
+BASE_FILE="${HOME}/ooidata/m2m/gs01sumo/imm/phsen/100m/gs01sumo.imm.phsen.100m"
 for i in $(seq -f "%02g" 1 3); do
 	$PYTHON $BASE_FLAGS -mt telemetered -st phsen_abcdef_imodem_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.phsen_abcdef_imodem_instrument.nc"
 	$PYTHON $BASE_FLAGS -mt recovered_host -st phsen_abcdef_imodem_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.phsen_abcdef_imodem_instrument_recovered.nc"

@@ -6,7 +6,6 @@
     M2M interface
 """
 import argparse
-import binascii
 import collections
 import netrc
 import numpy as np
@@ -16,11 +15,8 @@ import requests
 import sys
 import time
 import xarray as xr
-import warnings
-import yaml
 
 from bs4 import BeautifulSoup
-from pathlib import Path
 from tqdm import tqdm
 
 from requests.adapters import HTTPAdapter

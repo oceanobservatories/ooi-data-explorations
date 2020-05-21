@@ -156,7 +156,7 @@ def phsen_datalogger(ds):
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
     ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'phsen_abcdef_signal_intensity_434',
-                  'phsen_abcdef_signal_intensity_578', 'dcl_controller_timestamp', 'provenance'])
+                  'phsen_abcdef_signal_intensity_578', 'dcl_controller_timestamp'])
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -252,7 +252,7 @@ def phsen_instrument(ds):
     #   record_time == internal_timestamp == time, redundant so can remove both
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp', 'provenance'])
+    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp'])
 
     # rename some of the variables for better clarity
     rename = {
@@ -338,7 +338,7 @@ def phsen_imodem(ds):
     #   phsen_abcdef_signal_intensity_578, part of the light measurements array, redundant so can remove
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'internal_timestamp', 'provenance',
+    ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'internal_timestamp',
                   'phsen_abcdef_signal_intensity_434', 'phsen_abcdef_signal_intensity_578'])
 
     # rename some of the variables for better clarity

@@ -89,7 +89,7 @@ def flort_datalogger(ds, burst=True):
     #   pressure_depth == variable assigned if this was a flort on a CSPP, but with moorings
     #   seawater_scattering_coefficient == can safely be ignored, expert users can calculate if they want.
     ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'provenance', 'measurement_wavelength_beta',
+    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'pressure_depth',
                   'seawater_scattering_coefficient'])
 
@@ -184,7 +184,7 @@ def flort_instrument(ds):
     #   pressure_depth == variable assigned if this was a flort on a CSPP, but with moorings
     #   seawater_scattering_coefficient == can safely be ignored, expert users can calculate if they want.
     ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'provenance', 'measurement_wavelength_beta',
+    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'pressure_depth',
                   'seawater_scattering_coefficient'])
 

@@ -27,7 +27,7 @@ def phsen_streamed(ds):
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
     ds = ds.drop(['checksum', 'record_type', 'record_length', 'signal_intensity_434',
-                  'signal_intensity_578', 'provenance'])
+                  'signal_intensity_578'])
 
     # convert the internal_timestamp values from a datetime64[ns] object to a floating point number with the time in
     # seconds, replacing the internal_timestamp with the record_time (the internal_timestamp is incorrectly set in the

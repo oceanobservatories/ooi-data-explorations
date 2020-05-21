@@ -42,7 +42,7 @@ def pco2a_datalogger(ds, burst=False):
     #   relative_humidity
     #   barometric_pressure
     #   precipitation
-    shared = ['date_time_string', 'dcl_controller_timestamp', 'provenance']
+    shared = ['date_time_string', 'dcl_controller_timestamp']
     if 'supply_voltage' in ds.variables:
         # ... because it is in the telemetered, but not the recovered_host ...
         shared.append('supply_voltage')

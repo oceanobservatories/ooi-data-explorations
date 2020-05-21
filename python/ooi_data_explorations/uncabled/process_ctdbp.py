@@ -22,7 +22,7 @@ def ctdbp_datalogger(ds, burst=False):
     #   date_time_string = internal_timestamp, redundant so can remove
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['dcl_controller_timestamp', 'date_time_string', 'provenance'])
+    ds = ds.drop(['dcl_controller_timestamp', 'date_time_string'])
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -101,7 +101,7 @@ def ctdbp_instrument(ds, burst=False):
     #   internal_timestamp == time, redundant so can remove
     #   conductivity_qc_*, pressure_qc_* == raw measurements, no QC tests should be run
     ds = ds.reset_coords()
-    ds = ds.drop(['ctd_time', 'internal_timestamp', 'provenance', 'conductivity_qc_executed', 'conductivity_qc_results',
+    ds = ds.drop(['ctd_time', 'internal_timestamp', 'conductivity_qc_executed', 'conductivity_qc_results',
                   'pressure_qc_executed', 'pressure_qc_results'])
 
     # rename some of the variables for better clarity, two blocks to keep from stepping on ourselves

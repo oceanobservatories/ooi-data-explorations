@@ -44,7 +44,7 @@ try:
     if AUTH is None:
         raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
 except FileNotFoundError as e:
-    raise OSError(e, os.strerror(e), os.path.expanduser('~'))
+    raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
 
 # setup a default location to save the data
 home = os.path.expanduser('~')
@@ -63,6 +63,7 @@ ENCODINGS = {
     'lat': {'_FillValue': None},
     'z': {'_FillValue': None}
 }
+
 
 # Sensor Information
 def list_sites():
@@ -249,7 +250,7 @@ def get_sensor_information(site, node, sensor, deploy):
     :return: json object with the site-node-sensor-deployment specific sensor metadata
     """
     r = SESSION.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy),
-                     auth=(AUTH[0], AUTH[2]))
+                    auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -414,7 +415,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
 
     options = begin_date + end_date + '&format=application/netcdf'
     r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,
-                     auth=(AUTH[0], AUTH[2]))
+                    auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         data = r.json()
     else:
@@ -516,7 +517,8 @@ def process_file(catalog_file):
 
     ds = ds.swap_dims({'obs': 'time'})
     ds = ds.reset_coords()
-    keys = ['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp']
+    keys = ['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp',
+            'preferred_timestamp']
     for key in keys:
         if key in ds.variables:
             ds = ds.drop_vars(key)
@@ -722,6 +724,7 @@ def inputs(argv=None):
     args = parser.parse_args(argv)
 
     return args
+
 
 def dr_inputs(argv=None):
     """

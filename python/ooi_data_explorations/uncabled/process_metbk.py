@@ -75,7 +75,7 @@ def metbk_datalogger(ds, burst=False):
     #   met_latnflx_minute
     #   met_netlirr_minute
     #   met_sensflx_minute
-    ds = ds.drop(['dcl_controller_timestamp', 'provenance', 'internal_timestamp', 'met_barpres',
+    ds = ds.drop(['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres',
                   'met_windavg_mag_corr_east', 'met_windavg_mag_corr_north', 'met_netsirr', 'met_salsurf',
                   'met_spechum', 'ct_depth', 'met_current_direction', 'met_current_speed', 'met_relwind_direction',
                   'met_relwind_speed', 'met_heatflx_minute', 'met_latnflx_minute', 'met_netlirr_minute',

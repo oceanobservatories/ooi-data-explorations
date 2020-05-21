@@ -517,8 +517,8 @@ def process_file(catalog_file):
 
     ds = ds.swap_dims({'obs': 'time'})
     ds = ds.reset_coords()
-    keys = ['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp',
-            'preferred_timestamp']
+    keys = ['obs', 'id', 'provenance', 'driver_timestamp', 'ingestion_timestamp',
+            'port_timestamp', 'preferred_timestamp']
     for key in keys:
         if key in ds.variables:
             ds = ds.drop_vars(key)

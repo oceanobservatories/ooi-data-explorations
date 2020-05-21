@@ -10,6 +10,7 @@
 # C. Wingard, 2019-12-12 -- Initial code
 
 # set the base directory python command for all subsequent processing
+. $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 conda activate ooi
 PYTHON="python -m ooi_data_explorations.cabled.process_phsen"
 
@@ -17,7 +18,7 @@ PYTHON="python -m ooi_data_explorations.cabled.process_phsen"
 BASE_FLAGS="-s CE02SHBP -n LJ01D -sn 10-PHSEND103"
 BASE_FILE="${HOME}/ooidata/m2m/ce02shbp/seafloor/phsen/ce02shbp.seafloor.phsen"
 for i in $(seq -f "%02g" 1 6); do
-	$PYTHON $BASE_FLAGS -mt streamed -st phsen_data_record -dp $i -o "$BASE_FILE.deploy$i.streamed.phsen_data_record.nc"
+  $PYTHON $BASE_FLAGS -mt streamed -st phsen_data_record -dp $i -o "$BASE_FILE.deploy$i.streamed.phsen_data_record.nc"
 done
 
 ### CE04OSBP ###

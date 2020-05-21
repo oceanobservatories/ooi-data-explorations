@@ -11,6 +11,7 @@
 # C. Wingard, 2019-07-22 -- Initial code
 
 # set the base directory python command for all subsequent processing
+. $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 conda activate ooi
 PYTHON="python -m ooi_data_explorations.uncabled.process_ctdbp"
 

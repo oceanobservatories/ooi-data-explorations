@@ -12,7 +12,7 @@
 
 # set the base directory python command for all subsequent processing
 conda activate ooi
-PYTHON="python -m ooi_data_explorations.uncabled.request_metbk"
+PYTHON="python -m ooi_data_explorations.uncabled.process_metbk"
 
 ### CE02SHSM ###
 BASE_FLAGS="-s CE02SHSM -n SBD11 -sn 06-METBKA000"

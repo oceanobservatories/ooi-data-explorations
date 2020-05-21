@@ -12,7 +12,7 @@
 
 # set the base directory python command for all subsequent processing
 conda activate ooi
-PYTHON="python -m ooi_data_explorations.uncabled.request_phsen"
+PYTHON="python -m ooi_data_explorations.uncabled.process_phsen"
 
 ### CE01ISSM ###
 BASE_FLAGS="-s CE01ISSM -n RID16 -sn 06-PHSEND000"

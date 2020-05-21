@@ -12,7 +12,7 @@
 
 # set the base directory python command for all subsequent processing
 conda activate ooi
-PYTHON="python -m ooi_data_explorations.uncabled.request_pco2a"
+PYTHON="python -m ooi_data_explorations.uncabled.process_pco2a"
 
 ### CE02SHSM ###
 BASE_FLAGS="-s CE02SHSM -n SBD12 -sn 04-PCO2AA000"

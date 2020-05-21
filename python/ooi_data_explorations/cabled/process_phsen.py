@@ -89,7 +89,8 @@ def phsen_streamed(ds):
     }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
                'blanks': np.arange(0, 4).astype('int32')
                })
-    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
+    ds = ds.drop(['ph_light_measurements', 'reference_light_measurements',
+                  'ph_light_measurements_dim_0', 'reference_light_measurements_dim_0'])
 
     # merge the data sets back together
     ds = ds.merge(ph)

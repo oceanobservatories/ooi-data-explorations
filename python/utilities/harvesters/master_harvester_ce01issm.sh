@@ -15,14 +15,14 @@ SENSOR="06-CTDBPC000"
 STREAM="ctdbp_cdef_dcl_instrument"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # FLORT
 INSTRMT="flort"
 SENSOR="06-FLORTD000"
 STREAM="flort_sample"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # VELPT
 # MOPAK
 
@@ -36,14 +36,14 @@ SENSOR="03-CTDBPC000"
 STREAM="ctdbp_cdef_dcl_instrument"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # FLORT
 INSTRMT="flort"
 SENSOR="02-FLORTD000"
 STREAM="flort_sample"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # DOSTA
 # FLORT
 # NUTNR
@@ -55,7 +55,7 @@ SENSOR="06-PHSEND000"
 STREAM="phsen_abcdef_dcl_instrument"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # SPKIR
 # VELPT
 
@@ -71,7 +71,7 @@ SENSOR="06-PHSEND000"
 STREAM="phsen_abcdef_dcl_instrument"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # PRESF
 # VEL3D
 
@@ -82,7 +82,7 @@ SENSOR="03-CTDBPC000"
 STREAM="ctdbp_cdef_dcl_instrument"
 FILE="${SITE,,}/$LOCATE/$INSTRMT/${SITE,,}.$LOCATE.$INSTRMT.deploy$DEPLOY.$METHOD.$STREAM.nc"
 FLAGS="-s $SITE -n $NODE -sn $SENSOR -mt $METHOD -st $STREAM -dp $DEPLOY"
-python -m ooi_data_explorations.uncabled.request_$INSTRMT $FLAGS -o $FILE
+python -m ooi_data_explorations.uncabled.process_$INSTRMT $FLAGS -o $FILE
 # DOSTA
 # OPTAA
 # ZPLSC

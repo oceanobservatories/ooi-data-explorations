@@ -12,7 +12,7 @@
 
 # set the base directory python command for all subsequent processing
 conda activate ooi
-PYTHON="python -m ooi_data_explorations.uncabled.request_ctdbp"
+PYTHON="python -m ooi_data_explorations.uncabled.process_ctdbp"
 
 ### CE01ISSM ###
 BASE_FLAGS="-s CE01ISSM -n SBD17 -sn 06-CTDBPC000"

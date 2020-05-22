@@ -14,6 +14,7 @@ import re
 import requests
 import sys
 import time
+import warnings
 import xarray as xr
 
 from bs4 import BeautifulSoup
@@ -473,7 +474,11 @@ def m2m_collect(data, tag='.*\\.nc$'):
     m2m = frames[0]
     if len(frames) > 1:
         for i in range(1, len(frames)):
-            m2m = m2m.merge(frames[i])
+            try:
+                m2m = m2m.merge(frames[i])
+            except:
+                message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
+                warnings.warn(message)
 
         m2m = m2m.sortby('time')
         m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)

@@ -338,8 +338,12 @@ def phsen_imodem(ds):
     #   phsen_abcdef_signal_intensity_578, part of the light measurements array, redundant so can remove
     #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'internal_timestamp',
-                  'phsen_abcdef_signal_intensity_434', 'phsen_abcdef_signal_intensity_578'])
+    for variable in ['passed_checksum', 'record_type', 'record_time', 'internal_timestamp',
+                     'phsen_abcdef_signal_intensity_434', 'phsen_abcdef_signal_intensity_578']:
+        try:
+            ds = ds.drop_vars(variable)
+        except:
+            pass
 
     # rename some of the variables for better clarity
     rename = {

@@ -3,8 +3,8 @@
 import numpy as np
 import os
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+    get_vocabulary, update_dataset, ENCODINGS
 
 # load configuration settings
 ATTRS = dict({
@@ -73,23 +73,23 @@ ATTRS = dict({
 
 def flort_datalogger(ds, burst=True):
     """
-    Takes flort data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value.
+    Takes flort data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
 
     :param ds: initial flort data set downloaded from OOI via the M2M system
     :param burst: resample the data to the defined time interval
-    :return: cleaned up data set
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = meaningless, should never have been created
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
+    #   suspect_timestamp = not used
     #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   pressure_depth == variable assigned if this was a flort on a CSPP, but with moorings
-    #   seawater_scattering_coefficient == can safely be ignored, expert users can calculate if they want.
+    #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
+    #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'provenance', 'measurement_wavelength_beta',
+    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'pressure_depth',
                   'seawater_scattering_coefficient'])
 
@@ -169,22 +169,23 @@ def flort_datalogger(ds, burst=True):
 
 def flort_instrument(ds):
     """
-    Takes flort data recorded by the Sea-Bird Electronics SBE16Plus used in the CGSN/EA moorings and cleans up the
-    data set to make it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping
-    some parameters that are of no use/value.
+    Takes flort data recorded by the Sea-Bird Electronics SBE16Plus used in the
+    CGSN/EA moorings and cleans up the data set to make it more user-friendly.
+    Primary task is renaming parameters and dropping some that are of limited
+    use. Additionally, re-organize some of the variables to permit better
+    assessments of the data.
 
     :param ds: initial flort data set downloaded from OOI via the M2M system
-    :return: cleaned up data set
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = meaningless, should never have been created
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
+    #   suspect_timestamp = not used
     #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   pressure_depth == variable assigned if this was a flort on a CSPP, but with moorings
-    #   seawater_scattering_coefficient == can safely be ignored, expert users can calculate if they want.
+    #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
+    #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'provenance', 'measurement_wavelength_beta',
+    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'pressure_depth',
                   'seawater_scattering_coefficient'])
 
@@ -267,7 +268,7 @@ def main(argv=None):
     flort = update_dataset(flort, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

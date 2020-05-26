@@ -2,25 +2,34 @@
 # -*- coding: utf-8 -*-
 import os
 import numpy as np
+import pytz
 import xarray as xr
+import dateutil.parser as parser
 
 from ooi_data_explorations import M2M_URLS
-from ooi_data_explorations.common import inputs, m2m_request, m2m_collect, get_deployment_dates
+from ooi_data_explorations.common import dr_inputs, m2m_request, m2m_collect, get_deployment_dates
 
 
 def filter_urls(site, assembly, instrument, method):
     """
-    Takes the master M2M dictionary, used to construct URLs for data requests, and searches for the instrument
-    of interest as defined by the site code, assembly type, instrument class, and data delivery method to return
-    the OOI specific site, node and stream names needed to request the data.
+    Takes the M2M_URLS dictionary and searches for the instrument of interest
+    as defined by the site code, assembly type, instrument class, and data
+    delivery method to return the OOI specific site, node and stream names
+    needed to request the data.
 
-    :param site: OOI eight letter site code (e.g. CE04OSPS for the Oregon Offshore Shallow Profiler)
-    :param assembly: Assembly grouping name (e.g. midwater for the 200 m Platform)
-    :param instrument: The instrument class name (e.g. phsen for the SAMI2-pH sensor)
-    :param method: The data delivery method (e.g. streamed for cabled streaming data)
+    :param site: OOI eight letter site code (e.g. CE04OSPS for the Oregon
+        Offshore Shallow Profiler)
+    :param assembly: Assembly grouping name (e.g. midwater for the 200 m
+        Platform)
+    :param instrument: The instrument class name (e.g. phsen for the
+        SAMI2-pH sensor)
+    :param method: The data delivery method (e.g. streamed for cabled
+        streaming data)
+
     :return node: The OOI specific node code(s) for the assembly
     :return sensor: The OOI specific sensor code(s) for the instrument class
-    :return stream: The OOI specific stream name(s) for the site, node, sensor and delivery method combination
+    :return stream: The OOI specific stream name(s) for the site, node, sensor
+        and delivery method combination
     """
     # Use the site, assembly, instrument, and data delivery method to determine the OOI specific site, node, sensor,
     # method and stream
@@ -32,10 +41,6 @@ def filter_urls(site, assembly, instrument, method):
     m2m_urls = M2M_URLS.get(site.upper())
     if not m2m_urls:
         raise SyntaxError('Unknown site code: %s' % site)
-
-    # make sure the correct assembly grouping was used
-    if assembly not in ['surface_buoy', 'midwater', 'nsif', 'riser', 'seafloor', 'auv', 'glider', 'profiler']:
-        raise SyntaxError('Unknown assembly type: %s' % assembly)
 
     # make sure the correct data delivery method was specified
     if method not in ['streamed', 'telemetered', 'recovered_host', 'recovered_inst', 'recovered_cspp', 'recovered_wfp']:
@@ -61,13 +66,34 @@ def filter_urls(site, assembly, instrument, method):
 
 def data_request(site, assembly, instrument, method, **kwargs):
     """
+    Requests data via the OOI M2M API using the site code, assembly type,
+    instrument class and data delivery method as defined in the m2m_urls.yml to
+    construct the OOI specific data request.
 
-    :param site:
-    :param assembly:
-    :param instrument:
-    :param method:
-    :param kwargs:
-    :return:
+    :param site: OOI site code as an 8 character string
+    :param assembly: The assembly type where the instrument is located
+    :param instrument: the OOI instrument class name for the instrument of
+        interest
+    :param method: The data delivery method for the system of interest
+    :param kwargs: Takes the following optional keyword arguments:
+
+        start: Starting date/time for the data request in a dateutil.parser
+            recognizable form. If ``None``, the default, the beginning of the
+            data record will be used
+        stop: Ending date/time for the data request in a dateutil.parser
+            recognizable form If ``None``, the default, the end of the data
+            record will be used
+        deploy: Use the deployment number, entered as an integer, to set the
+            starting and ending dates If ``None``, the default, the starting
+            and ending dates are used. If you enter both, the deployment number
+            will take priority in setting the start and end dates
+        aggregate: In cases where more than one instance of an instrument class
+            is part of an assembly, will collect all of the data if the integer
+            value entered is ``0``, or the specific instance of the instrument
+            is requested if any value greater than ``0`` is used. If ``None``,
+            the default, the first instance of an instrument will be used.
+
+    :return data: Returns the request data as an xarray dataset for further analysis
     """
     # setup inputs to the function, make sure case is correct
     site = site.upper()
@@ -93,13 +119,27 @@ def data_request(site, assembly, instrument, method, **kwargs):
             if key == 'aggregate':
                 aggregate = value
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
-    if not deploy or (start and stop):
-        raise SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-
     # use the assembly, instrument and data delivery methods to find the system of interest
     node, sensor, stream = filter_urls(site, assembly, instrument, method)
+
+    # check the formatting of the start and end dates. We need to be able to parse and convert to an ISO format.
+    if start:
+        # check the formatting of the start date string and convert to the ISO format used by the M2M API
+        try:
+            start = parser.parse(start)
+            start = start.astimezone(pytz.utc)
+            start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        except parser.ParserError:
+            raise SyntaxError('Formatting of the starting date string needs to be in a recognizable format')
+
+    if stop:
+        # check the formatting of the stop date string and convert to the ISO format used by the M2M API
+        try:
+            stop = parser.parse(stop)
+            stop = stop.astimezone(pytz.utc)
+            stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        except parser.ParserError:
+            raise SyntaxError('Formatting of the ending date string needs to be in a recognizable format')
 
     if deploy:
         # Determine start and end dates based on the deployment number
@@ -116,17 +156,20 @@ def data_request(site, assembly, instrument, method, **kwargs):
     else:
         stream = stream[0]
 
-    # Request the data for download
-    tag = ('.*{instrument}.*\\.nc$'.format(instrument=instrument.upper()))
-    data = None
-    if aggregate and len(node) > 1:
-        print('There are multiple instances of the instrument %s under %s-%s.' % (instrument, site, assembly))
+    tag = ('.*{instrument}.*\\.nc$'.format(instrument=instrument.upper()))  # set regex tag to use when downloading
+    data = None     # setup the default data set
+
+    # check if there are multiple instances of this instrument class on the assembly
+    if len(node) > 1:
+        print('There are multiple instances of the instrument %s under %s-%s.' % (instrument, site.lower(), assembly))
+
+    # check if we are aggregating the multiple instruments into a single data set
+    if isinstance(aggregate, int):
         if aggregate == 0:
             # request all of the instruments associated with this site, assembly, instrument and method
-            print(('Requesting all %d instances of this instrument. Data sets will\n' +
-                   'be concatenated and a new variable called ''sensor_count''\n' +
-                   'will be added to help distinguish the instruments for later\n' +
-                   'processing.') % len(node))
+            print(('Requesting all %d instances of this instrument. Data sets will be concatenated\n'
+                   'and a new variable called `sensor_count` will be added to help distinguish the \n'
+                   'instruments for later processing.') % len(node))
             for i in range(len(node)):
                 r = m2m_request(site, node[i], sensor[i], method, stream, start, stop)
                 if r:
@@ -165,33 +208,60 @@ def data_request(site, assembly, instrument, method, **kwargs):
 
 
 def main(argv=None):
-    """'''
-
-    :param argv:
-    :return:
     """
-    args = inputs(argv)
+    CLI interface to the data_request function. Requests data via the OOI M2M
+    API using the site code, assembly type, instrument class and data delivery
+    method as defined in the m2m_urls.yml to construct the OOI specific data
+    request.
+
+    :param argv: Command line inputs used by the function are:
+
+        site (-s, --site): OOI site code as an 8 character string (required)
+        assembly (-a, --assembly): Assembly or subassembly type where the
+            instrument is located (required)
+        instrument (-i, --instrument): OOI instrument class name for the
+            instrument of interest (required)
+        method (-m, --method): The data delivery method for the system of
+            interest (required)
+        outfile (-o, --outfile): An absolute or relative path and file name
+            for where the resulting data should be saved as a NetCDF file
+            (required)
+
+        start (-bt, --beginDT): Starting or beginning date/time for the data
+            request in a dateutil.parser recognizable form. If ``None``, the
+            default, the beginning of the data record will be used (optional)
+        stop (-et, --endDT): Ending date/time for the data request in a
+            dateutil.parser recognizable form If ``None``, the default, the end
+            date of the data record will be used (optional)
+        deploy (-dp, --deploy): Use the deployment number, entered as an
+            integer, to set the beginning and ending dates If ``None``, the
+            default, the beginning and ending dates are used. If you enter
+            both, the deployment number will take priority in setting the start
+            and end dates (optional)
+        aggregate (-ag, --aggregate): In cases where more than one instance of
+            an instrument class is part of an assembly, collect all of the data
+            if the integer value entered is ``0``, or the specific instance of
+            the instrument is requested if any value greater than ``0`` is
+            used. If ``None``, the default, the first instance of an instrument
+            will be requested. (optional)
+
+    :return: Saves the data to disk as a NetCDF file.
+    """
+    args = dr_inputs(argv)
     site = args.site
     assembly = args.assembly
     instrument = args.instrument
     method = args.method
+    outfile = os.path.abspath(args.outfile)
     deploy = args.deploy
     start = args.start
     stop = args.stop
     aggregate = args.aggregate
-    outfile = args.outfile
-
-    if not deploy or (start and stop):
-        return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
 
     # request the data
-    if deploy:
-        data = data_request(site, assembly, instrument, method, deploy=deploy, aggregate=aggregate)
-    else:
-        data = data_request(site, assembly, instrument, method, start=start, stop=stop, aggregate=aggregate)
+    data = data_request(site, assembly, instrument, method, start=start, stop=stop, deploy=deploy, aggregate=aggregate)
 
     # save the data to disk
-    outfile = os.path.abspath(outfile)
     if not os.path.exists(os.path.dirname(outfile)):
         os.makedirs(os.path.dirname(outfile))
 

@@ -6,7 +6,6 @@
     M2M interface
 """
 import argparse
-import binascii
 import collections
 import netrc
 import numpy as np
@@ -15,12 +14,10 @@ import re
 import requests
 import sys
 import time
-import xarray as xr
 import warnings
-import yaml
+import xarray as xr
 
 from bs4 import BeautifulSoup
-from pathlib import Path
 from tqdm import tqdm
 
 from requests.adapters import HTTPAdapter
@@ -41,32 +38,24 @@ VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Inform
 STREAM_URL = '12575/stream/byname/'                          # Stream Information
 PARAMETER_URL = '12575/parameter/'                           # Parameter Information
 
-# setup default access credentials
-auth = [b'4f4f494150492d38353341334c41365149334c3632', b'5759414e3839573558345a30515a']
-AUTH = [str(binascii.unhexlify(auth[0]), 'ascii'), str(binascii.unhexlify(auth[1]), 'ascii')]
+# load the access credentials
 try:
-    nrc = netrc.netrc()  # best option is user has their own account
+    nrc = netrc.netrc()
     AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
     if AUTH is None:
-        warnings.warn(('No entry found for ooinet.oceanobservatories.org in the .netrc file, using default access ' +
-                       'credentials'), UserWarning)
-except FileNotFoundError:
-    warnings.warn('No .netrc file found in the home directory, using default access credentials.', UserWarning)
+        raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
+except FileNotFoundError as e:
+    raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
 
-wk_dir = os.getcwd()
-config_file = os.path.join(wk_dir, 'python', 'ooi_data_explorations', 'config.yaml')
-if os.path.isfile(config_file):
-    CONFIG = yaml.safe_load(open(config_file))
-else:
-    warnings.warn(('Unable to load configuration file. Data saved in user home directory under ooidata.'), UserWarning)
-    home = str(Path.home())
-    CONFIG = {
-        'base_dir': {
-            'raw_base': os.path.abspath(os.path.join(home, 'ooidata/raw')),
-            'json_base': os.path.abspath(os.path.join(home, 'ooidata/json')),
-            'm2m_base': os.path.abspath(os.path.join(home, 'ooidata/m2m'))
-        }
+# setup a default location to save the data
+home = os.path.expanduser('~')
+CONFIG = {
+    'base_dir': {
+        'raw_base': os.path.abspath(os.path.join(home, 'ooidata/raw')),
+        'json_base': os.path.abspath(os.path.join(home, 'ooidata/json')),
+        'm2m_base': os.path.abspath(os.path.join(home, 'ooidata/m2m'))
     }
+}
 
 # Default NetCDF encodings for CF compliance
 ENCODINGS = {
@@ -75,6 +64,7 @@ ENCODINGS = {
     'lat': {'_FillValue': None},
     'z': {'_FillValue': None}
 }
+
 
 # Sensor Information
 def list_sites():
@@ -261,7 +251,7 @@ def get_sensor_information(site, node, sensor, deploy):
     :return: json object with the site-node-sensor-deployment specific sensor metadata
     """
     r = SESSION.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor + '/' + str(deploy),
-                     auth=(AUTH[0], AUTH[2]))
+                    auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -426,7 +416,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
 
     options = begin_date + end_date + '&format=application/netcdf'
     r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,
-                     auth=(AUTH[0], AUTH[2]))
+                    auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         data = r.json()
     else:
@@ -484,7 +474,11 @@ def m2m_collect(data, tag='.*\\.nc$'):
     m2m = frames[0]
     if len(frames) > 1:
         for i in range(1, len(frames)):
-            m2m = m2m.merge(frames[i])
+            try:
+                m2m = m2m.merge(frames[i])
+            except:
+                message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
+                warnings.warn(message)
 
         m2m = m2m.sortby('time')
         m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
@@ -528,7 +522,8 @@ def process_file(catalog_file):
 
     ds = ds.swap_dims({'obs': 'time'})
     ds = ds.reset_coords()
-    keys = ['obs', 'id', 'driver_timestamp', 'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp']
+    keys = ['obs', 'id', 'provenance', 'driver_timestamp', 'ingestion_timestamp',
+            'port_timestamp', 'preferred_timestamp']
     for key in keys:
         if key in ds.variables:
             ds = ds.drop_vars(key)
@@ -724,12 +719,39 @@ def inputs(argv=None):
     parser.add_argument("-sn", "--sensor", dest="sensor", type=str, required=True)
     parser.add_argument("-mt", "--method", dest="method", type=str, required=True)
     parser.add_argument("-st", "--stream", dest="stream", type=str, required=True)
-    parser.add_argument("-dp", "--deploy", dest="deploy", type=int, required=False)
-    parser.add_argument("-bt", "--beginDT", dest="start", type=str, required=False)
-    parser.add_argument("-et", "--endDT", dest="stop", type=str, required=False)
-    parser.add_argument("-ag", "--aggregate", dest="aggregate", type=int, required=False)
+    parser.add_argument("-dp", "--deploy", dest="deploy", type=int)
+    parser.add_argument("-bt", "--beginDT", dest="start", type=str)
+    parser.add_argument("-et", "--endDT", dest="stop", type=str)
     parser.add_argument("-ba", "--burst_average", dest="burst", default=False, action='store_true')
     parser.add_argument("-o", "--outfile", dest="outfile", type=str, required=True)
+
+    # parse the input arguments and create a parser object
+    args = parser.parse_args(argv)
+
+    return args
+
+
+def dr_inputs(argv=None):
+    """
+    Sets the input arguments that would be passed to the data_request main
+    module.
+    """
+    if argv is None:
+        argv = sys.argv[1:]
+
+    # initialize argument parser
+    parser = argparse.ArgumentParser(description="""Request and obtain data from the OOI M2M system""")
+
+    # assign input arguments.
+    parser.add_argument("-s", "--site", dest="site", type=str, required=True)
+    parser.add_argument("-a", "--assembly", dest="assembly", type=str, required=True)
+    parser.add_argument("-i", "--instrument", dest="instrument", type=str, required=True)
+    parser.add_argument("-m", "--method", dest="method", type=str, required=True)
+    parser.add_argument("-o", "--outfile", dest="outfile", type=str, required=True)
+    parser.add_argument("-dp", "--deploy", dest="deploy", type=int)
+    parser.add_argument("-bt", "--beginDT", dest="start", type=str)
+    parser.add_argument("-et", "--endDT", dest="stop", type=str)
+    parser.add_argument("-ag", "--aggregate", dest="aggregate", type=int)
 
     # parse the input arguments and create a parser object
     args = parser.parse_args(argv)

@@ -7,5 +7,4 @@ pandas==1.0.3
 gsw==3.3.1
 requests==2.23.0
 beautifulsoup4==4.9.0
-instruments==0.1.dev0
 PyYAML==5.3.1

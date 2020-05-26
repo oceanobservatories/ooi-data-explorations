@@ -3,26 +3,26 @@
 import numpy as np
 import os
 
-from ..common import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, dt64_epoch, \
-    update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 
 def ctdbp_datalogger(ds, burst=False):
     """
-    Takes ctdbp data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value.
+    Takes ctdbp data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly. Primary task is
+    renaming the alphabet soup parameter names and dropping some parameters
+    that are of no use/value.
 
     :param ds: initial ctdbp data set downloaded from OOI via the M2M system
     :param burst: resample the data to the defined time interval
-    :return: cleaned up data set
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   dcl_controller_timestamp == time, redundant so can remove
     #   date_time_string = internal_timestamp, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['dcl_controller_timestamp', 'date_time_string', 'provenance'])
+    ds = ds.drop(['dcl_controller_timestamp', 'date_time_string'])
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -101,7 +101,7 @@ def ctdbp_instrument(ds, burst=False):
     #   internal_timestamp == time, redundant so can remove
     #   conductivity_qc_*, pressure_qc_* == raw measurements, no QC tests should be run
     ds = ds.reset_coords()
-    ds = ds.drop(['ctd_time', 'internal_timestamp', 'provenance', 'conductivity_qc_executed', 'conductivity_qc_results',
+    ds = ds.drop(['ctd_time', 'internal_timestamp', 'conductivity_qc_executed', 'conductivity_qc_results',
                   'pressure_qc_executed', 'pressure_qc_results'])
 
     # rename some of the variables for better clarity, two blocks to keep from stepping on ourselves
@@ -227,7 +227,7 @@ def main(argv=None):
     ctdbp = update_dataset(ctdbp, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

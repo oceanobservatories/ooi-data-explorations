@@ -4,30 +4,32 @@ import numpy as np
 import os
 import xarray as xr
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG, ENCODINGS
-from instruments import PHSEN
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
+from ooi_data_explorations.uncabled.process_phsen import PHSEN
 
 
 def phsen_streamed(ds):
     """
-    Takes PHSEN data streamed from instruments deployed by the Regional Cabled Array and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
+    Takes PHSEN data streamed from instruments deployed by the Regional Cabled
+    Array and cleans up the data set to make it more user-friendly. Primary
+    task is renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some of the variables to permit better assessments
+    of the data.
 
-    :param ds: initial PHSEN data set recorded by the data logger system and downloaded from OOI via the M2M system
+    :param ds: initial PHSEN data set recorded by the data logger system and
+        downloaded from OOI via the M2M system
     :return: cleaned up and reorganized data set
     """
     # drop some of the variables:
-    #   checksum == meaningless
-    #   record_type == there is only one, don't need this
-    #   record_length == meaningless
+    #   checksum == not used
+    #   record_type == not used
+    #   record_length == not used
     #   signal_intensity_434, part of the light measurements array, redundant so can remove
     #   signal_intensity_578, part of the light measurements array, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
     ds = ds.drop(['checksum', 'record_type', 'record_length', 'signal_intensity_434',
-                  'signal_intensity_578', 'provenance'])
+                  'signal_intensity_578'])
 
     # convert the internal_timestamp values from a datetime64[ns] object to a floating point number with the time in
     # seconds, replacing the internal_timestamp with the record_time (the internal_timestamp is incorrectly set in the
@@ -89,7 +91,8 @@ def phsen_streamed(ds):
     }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
                'blanks': np.arange(0, 4).astype('int32')
                })
-    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
+    ds = ds.drop(['ph_light_measurements', 'reference_light_measurements',
+                  'ph_light_measurements_dim_0', 'reference_light_measurements_dim_0'])
 
     # merge the data sets back together
     ds = ds.merge(ph)
@@ -159,7 +162,7 @@ def main(argv=None):
     phsen = update_dataset(phsen, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

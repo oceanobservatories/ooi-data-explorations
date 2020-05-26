@@ -4,34 +4,27 @@ import numpy as np
 import os
 import re
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 
 def pco2a_datalogger(ds, burst=False):
     """
-    Takes pco2a data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner data set
-    with the key parameters of interest.
+    Takes pco2a data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly. Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
 
-    The PCO2A data is poorly handled in the OOI system. The instrument reports burst measurements (9 samples) from the
-    air and  water portions every hour, approximately at the top of the hour. OOI artificially splits these burst
-    measurements apart into two separate streams requiring users to really jump through some hoops to get to the data
-    of interest back together. This module is really the first step needed to put the data back together. Additionally,
-    for each stream, air or water, there are a bunch of extraneous parameters added from the upstream processing that
-    really shouldn't be here. Those are removed.
-
-    :param ds: initial pco2a data set for the air measurements downloaded from OOI via the M2M system
+    :param ds: initial pco2a data set for the air measurements downloaded from
+        OOI via the M2M system
     :param burst: resample the data to an hourly, burst averaged time interval
-    :return: cleaned up data set
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   ### OOI generated parameters
     #   date_time_string == internal_timestamp, redundant so can remove
     #   dcl_controller_timestamp == time, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
-    #   supply_voltage == we asked for it to be removed, never ingested, but it was anyway. Deleting it.
+    #   supply_voltage == not used
     #   ### Data products from upstream processing used to calculate the normalized 10 m wind, but are not needed
     #   eastward_velocity
     #   northward_velocity
@@ -42,7 +35,7 @@ def pco2a_datalogger(ds, burst=False):
     #   relative_humidity
     #   barometric_pressure
     #   precipitation
-    shared = ['date_time_string', 'dcl_controller_timestamp', 'provenance']
+    shared = ['date_time_string', 'dcl_controller_timestamp']
     if 'supply_voltage' in ds.variables:
         # ... because it is in the telemetered, but not the recovered_host ...
         shared.append('supply_voltage')
@@ -219,7 +212,7 @@ def main(argv=None):
     pco2a = update_dataset(pco2a, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

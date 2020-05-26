@@ -5,8 +5,8 @@ import os
 import re
 import xarray as xr
 
-from instruments import inputs, m2m_collect, m2m_request, get_deployment_dates, get_vocabulary, \
-    dt64_epoch, update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below
 PHSEN = {
@@ -139,24 +139,25 @@ PHSEN = {
 
 def phsen_datalogger(ds):
     """
-    Takes PHSEN data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
+    Takes PHSEN data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly. Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
 
-    :param ds: initial PHSEN data set recorded by the data logger system and downloaded from OOI via the M2M system
+    :param ds: initial PHSEN data set recorded by the data logger system and
+        downloaded from OOI via the M2M system
     :return: cleaned up and reorganized data set
     """
     # drop some of the variables:
-    #   passed_checksum == if it didn't, we wouldn't have a record, deleting
-    #   record_type == there is only one, don't need this
-    #   record_time == internal_timestamp, redundant so can remove
+    #   passed_checksum == not used
+    #   record_type == not used
+    #   record_time == not used
     #   dcl_controller_timestamp == time, redundant so can remove
     #   phsen_abcdef_signal_intensity_434, part of the light measurements array, redundant so can remove
     #   phsen_abcdef_signal_intensity_578, part of the light measurements array, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
     ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'phsen_abcdef_signal_intensity_434',
-                  'phsen_abcdef_signal_intensity_578', 'dcl_controller_timestamp', 'provenance'])
+                  'phsen_abcdef_signal_intensity_578', 'dcl_controller_timestamp'])
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -214,7 +215,9 @@ def phsen_datalogger(ds):
     }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
                'blanks': np.arange(0, 4).astype('int32')
                })
-    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
+    ds = ds.drop(['phsen_abcdef_signal_intensity_434_dim_0', 'phsen_abcdef_signal_intensity_578_dim_0',
+                  'reference_light_measurements_dim_0', 'spectrum', 'light_measurements',
+                  'reference_light_measurements'])
 
     # merge the data sets back together
     ds = ds.merge(ph)
@@ -238,19 +241,21 @@ def phsen_datalogger(ds):
 
 def phsen_instrument(ds):
     """
-    Takes PHSEN data recorded by internally by the instrument, and cleans up the data set to make it more
-    user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
-    of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
+    Takes PHSEN data recorded by internally by the instrument, and cleans up
+    the data set to make it more user-friendly. Primary task is renaming
+    parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
 
-    :param ds: initial PHSEN data set recorded internally by the instrument and downloaded from OOI via the M2M system
+
+    :param ds: initial PHSEN data set recorded internally by the instrument and
+        downloaded from OOI via the M2M system
     :return: cleaned up data set
     """
     # drop some of the variables:
-    #   record_type == there is only one, don't need this
+    #   record_type == not used
     #   record_time == internal_timestamp == time, redundant so can remove both
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp', 'provenance'])
+    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp'])
 
     # rename some of the variables for better clarity
     rename = {
@@ -296,7 +301,8 @@ def phsen_instrument(ds):
     }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
                'blanks': np.arange(0, 4).astype('int32')
                })
-    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
+    ds = ds.drop(['light_measurements', 'reference_light_measurements', 'spectrum',
+                  'reference_light_measurements_dim_0'])
 
     # merge the data sets back together
     ds = ds.merge(ph)
@@ -320,23 +326,29 @@ def phsen_instrument(ds):
 
 def phsen_imodem(ds):
     """
-    Takes PHSEN data recorded by over the inductive modem line, and cleans up the data set to make it more
-    user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
-    of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
+    Takes PHSEN data recorded by over the inductive modem line, and cleans up
+    the data set to make it more user-friendly. Primary task is renaming
+    parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
 
-    :param ds: initial PHSEN data set recorded internally by the instrument and downloaded from OOI via the M2M system
+
+    :param ds: initial PHSEN data set recorded internally by the instrument and
+        downloaded from OOI via the M2M system
     :return: cleaned up data set
     """
     # drop some of the variables:
-    #   passed_checksum == useless, if it didn't we wouldn't have any data
-    #   record_type == there is only one, don't need this
+    #   passed_checksum == not used
+    #   record_type == not used
     #   record_time == internal_timestamp == time, redundant so can remove both
     #   phsen_abcdef_signal_intensity_434, part of the light measurements array, redundant so can remove
     #   phsen_abcdef_signal_intensity_578, part of the light measurements array, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
-    ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'internal_timestamp', 'provenance',
-                  'phsen_abcdef_signal_intensity_434', 'phsen_abcdef_signal_intensity_578'])
+    for variable in ['passed_checksum', 'record_type', 'record_time', 'internal_timestamp',
+                     'phsen_abcdef_signal_intensity_434', 'phsen_abcdef_signal_intensity_578']:
+        try:
+            ds = ds.drop_vars(variable)
+        except:
+            pass
 
     # rename some of the variables for better clarity
     rename = {
@@ -382,7 +394,8 @@ def phsen_imodem(ds):
     }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
                'blanks': np.arange(0, 4).astype('int32')
                })
-    ds = ds.drop(['light_measurements', 'reference_light_measurements'])
+    ds = ds.drop(['light_measurements', 'reference_light_measurements', 'spectrum',
+                  'reference_light_measurements_dim_0'])
 
     # merge the data sets back together
     ds = ds.merge(ph)
@@ -458,7 +471,7 @@ def main(argv=None):
     phsen = update_dataset(phsen, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(os.path.join(CONFIG['base_dir']['m2m_base'], args.outfile))
+    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 

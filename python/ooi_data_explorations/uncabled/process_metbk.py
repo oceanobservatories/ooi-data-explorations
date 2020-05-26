@@ -10,16 +10,18 @@ from gsw.conversions import SP_from_C
 
 def metbk_hourly(ds):
     """
-    Takes METBK hourly averaged bulk flux estimates from the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner data set
-    with the key parameters of interest.
+    Takes METBK hourly averaged bulk flux estimates from the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly. Primary task is
+    renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some of the variables to permit better
+    assessments of the data.
 
-    :param ds: initial metbk hourly averaged data set downloaded from OOI via the M2M system
-    :return: cleaned up data set
+    :param ds: initial metbk hourly averaged data set downloaded from OOI via
+        the M2M system
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
-    #   met_timeflx == time, redundant, thus removed
+    #   met_timeflx == time, redundant,
     #   ### Data products from upstream processing used to calculate hourly flux measurements. Remove from here to
     #   ### keep this data set clean. Will obtain the 1 minute source data from a separate stream.
     #   eastward_velocity
@@ -45,19 +47,19 @@ def metbk_hourly(ds):
 
 def metbk_datalogger(ds, burst=False):
     """
-    Takes METBK data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Secondary task, and probably more important, is to restructure the data into a cleaner data set
-    with the key parameters of interest.
+    Takes METBK data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some of the variables to permit better
+    assessments of the data.
 
     :param ds: initial metbk data set downloaded from OOI via the M2M system
-    :return: cleaned up data set
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   date_time_string == internal_timestamp, redundant so can remove
     #   dcl_controller_timestamp == time, redundant so can remove
     #   internal_timestamp == doesn't exist, always empty so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     #   ### Data products from downstream processing used to calculate hourly flux measurements. Remove from here to
     #   ### keep this data set clean. Will obtain hourly flux data from a different stream.
     #   met_barpres

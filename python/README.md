@@ -305,15 +305,15 @@ data_05 = data_request(site, assembly, instrument, method, start=start, stop=sto
 
 ### Requesting Processed Data
 
-For most individuals, the above code should satisfy your needs. For some, like myself, the data simply is not
-properly organized, named or fully processed enough to be really useful. The process_*.py modules in the cabled and
-uncabled directories represent an attempt on my part to rework the data sets into more useful forms before conducting
-any further work. Primarily, these re-works are for my own use, but they are available for others to use. The primary
-steps are:
+For most individuals, the above code should satisfy your needs. For some of the data QC tasks I work through, the data
+needs organizational reworks, renaming or different processing to fit within my workflow. The process_*.py modules in
+the [cabled](ooi_data_explorations/cabled) and [uncabled](ooi_data_explorations/uncabled) directories represent an 
+attempt on my part to rework the data sets into more useful forms before conducting any further work. Primarily, these 
+re-works are for my own use, but they are available for others to use. The primary steps are:
 
-* Deleting certain variables that are of limited or no use to the actual data set.
-* Renaming the alphabet soup parameter names to more meaningful, user friendly names (the original OOI names are
-preserved as a variable level attribute termed `ooinet_variable_name`).
+* Deleting certain variables that are of no use to my needs (helps to reduce file sizes)
+* Renaming some parameters to more consistent names (across and within datasets). The original OOI names are preserved 
+as variable level attributes termed `ooinet_variable_name`.
 * Resetting the QC parameters to use the `flag_mask` and `flag_meaning` attributes from the 
 [CF Metadata conventions](http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#flags).
 * Reseting incorrectly set units and other attributes for some of the variables.

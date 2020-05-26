@@ -11,20 +11,22 @@ from ooi_data_explorations.uncabled.process_phsen import PHSEN
 
 def phsen_streamed(ds):
     """
-    Takes PHSEN data streamed from instruments deployed by the Regional Cabled Array and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value. Additionally, re-organize some of the variables to permit better assessments of the data.
+    Takes PHSEN data streamed from instruments deployed by the Regional Cabled
+    Array and cleans up the data set to make it more user-friendly. Primary
+    task is renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some of the variables to permit better assessments
+    of the data.
 
-    :param ds: initial PHSEN data set recorded by the data logger system and downloaded from OOI via the M2M system
+    :param ds: initial PHSEN data set recorded by the data logger system and
+        downloaded from OOI via the M2M system
     :return: cleaned up and reorganized data set
     """
     # drop some of the variables:
-    #   checksum == meaningless
-    #   record_type == there is only one, don't need this
-    #   record_length == meaningless
+    #   checksum == not used
+    #   record_type == not used
+    #   record_length == not used
     #   signal_intensity_434, part of the light measurements array, redundant so can remove
     #   signal_intensity_578, part of the light measurements array, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
     ds = ds.drop(['checksum', 'record_type', 'record_length', 'signal_intensity_434',
                   'signal_intensity_578'])

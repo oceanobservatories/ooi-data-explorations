@@ -9,18 +9,18 @@ from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_d
 
 def ctdbp_datalogger(ds, burst=False):
     """
-    Takes ctdbp data recorded by the data loggers used in the CGSN/EA moorings and cleans up the data set to make
-    it more user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that
-    are of no use/value.
+    Takes ctdbp data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly. Primary task is
+    renaming the alphabet soup parameter names and dropping some parameters
+    that are of no use/value.
 
     :param ds: initial ctdbp data set downloaded from OOI via the M2M system
     :param burst: resample the data to the defined time interval
-    :return: cleaned up data set
+    :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   dcl_controller_timestamp == time, redundant so can remove
     #   date_time_string = internal_timestamp, redundant so can remove
-    #   provenance == better to access with direct call to OOI M2M api, it doesn't work well in this format
     ds = ds.reset_coords()
     ds = ds.drop(['dcl_controller_timestamp', 'date_time_string'])
 

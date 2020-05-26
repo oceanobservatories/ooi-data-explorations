@@ -46,8 +46,15 @@ the tools you would need, and then some, are installed with Anaconda. You can fo
 and all of the code in this project will work, but I recommend using Anaconda instead of Miniconda. There are several 
 other things you may end up wanting to do with the tools available in Anaconda.
 
-Note, for Windows users only, if you already have Anaconda/Miniconda installed on your machine, you do not need to 
-uninstall/reinstall as described in the [tutorial](https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).
+Additionally, you do not need to install Bash or Git for the code to work. You can 
+[directly download the code](https://github.com/oceanobservatories/ooi-data-explorations/archive/master.zip),
+use a text editor to [setup access credentials](#access-credentials), and/or use the Anaconda Prompt or a terminal of
+your choice instead of the examples given below. I am trying to be OS independent, thus the examples below assume you
+are using some form of bash. Adjust as you need and see fit. 
+
+Note, for Windows users only and assuming you are using Git Bash, if you already have Anaconda/Miniconda installed on
+your machine, you do not need to uninstall/reinstall as described in the 
+[tutorial](https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).
 You can leave everything as-is. However, you do need to link Git Bash to Anaconda (or Miniconda); this happens
 automagically if you follow the sequence in the tutorial by installing Git Bash before Anaconda. If you already have 
 Anaconda installed, however, from the bash terminal add the following code to `.bash_profile` file in your home 
@@ -72,9 +79,9 @@ web page) to login to the portal.
 * Copy and save the following data from the user profile: API Username and API Token.
 
 The python code uses the [netrc](https://docs.python.org/3.6/library/netrc.html) utility to obtain your access 
-credentials. Users need to create a `.netrc` file in their home directory to store these access credentials. From the 
-bash terminal (replacing the `<API Username>` and `<API Token>` below with your credentials from the 
-[OOI Data Portal](https://ooinet.oceanobservatories.org)):
+credentials. Users need to create a `.netrc` file in their home directory to store these access credentials. Using
+either a text editor or the bash terminal, create the `.netrc` file (replacing the `<API Username>` and `<API Token>` 
+in the example below with your credentials from the [OOI Data Portal](https://ooinet.oceanobservatories.org)):
 
 ```shell script
 cd ~

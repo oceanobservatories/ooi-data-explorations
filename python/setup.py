@@ -15,12 +15,12 @@ setup(
     ),
     long_description = readme(),
     classifiers = [
-        'Development Status:: 1 - Planning',
-        'License :: OSI Approved:: MIT License',
-        'Programming Language:: Python:: 3:: ONLY',
-        'Operating System:: OS Independent',
-        'Intended Audience:: Science/Research',
-        'Topic:: Scientific/Engineering'
+        'Development Status :: 1 - Planning',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3 :: ONLY',
+        'Operating System :: OS Independent',
+        'Intended Audience :: Science/Research',
+        'Topic :: Scientific/Engineering'
     ],
     keywords = [
         'Ocean Observatories Initiative', 'Regional Cabled Array',

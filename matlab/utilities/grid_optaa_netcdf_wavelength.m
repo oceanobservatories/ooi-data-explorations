@@ -11,6 +11,10 @@ function grid_optaa_netcdf_wavelength(infile, outfile)
 %.. 12-dec-2019 desiderio added tf_isnan construction at program end so that
 %..                       interpolations won't fail when the OOINET netcdf
 %..                       wavelength variables contain NaN values (!).
+%.. 21-may-2020 desiderio 
+%..             trapped out empty sets in the interp1 call for cases where
+%..             all optaa vars are Nans (in these cases the CTD vars are
+%..             not Nans).
 %
 %
 %.. infile  = 'revamped' uframe OPTAA netcdf filename (nsif, mfn, or cspp);
@@ -99,7 +103,10 @@ end
 %.. by design the ncwriteschema function *appends* schema to the file,
 %.. if it exists; in this code we want a completely new file.
 if isfile(outfile)
-    error('New file exists; it MUST be removed for code to work properly.');
+    action2take = 'Either remove or rename it, or use a different outfilename.';
+    disp(' ');
+    error('Outfilename ''%s'' exists as ''%s''\n%s\n\n\n', ...
+        outfile, which(outfile), action2take);
 end
 %.. create empty netcdf file with new schema.
 ncwriteschema(outfile, schema);
@@ -148,6 +155,9 @@ for ii = 1:length(varname)
         error('Could not assign ''a'' or ''c'' to a 2D spectral variable.');
     end
     %.. interpolate
+    %.. .. trap out empty sets
+    if isempty(wvl), break, end
+    if isempty(tmp), continue, end
     tmp = interp1(wvl, tmp, gridded_wavelengths');
     %.. write out
     ncwrite(outfile, varname{ii}, tmp);

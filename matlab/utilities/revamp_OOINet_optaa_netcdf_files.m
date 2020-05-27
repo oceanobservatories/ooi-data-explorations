@@ -1,17 +1,26 @@
-function revamp_OOINet_optaa_netcdf_files(infilename, outfilename, blankingTimeSec, tf_addSpectral1D)
+function schema = revamp_OOINet_optaa_netcdf_files(infilename, outfilename, blankingTimeSec, tf_addSpectral1D)
 %.. 13-dec-2018 desiderio Matlab 2018b initial code
-%.. 12-dec-2019 desiderio Matlab 2018b
+%.. 12-dec-2019 desiderio
 %..             (a) added tf_isnan construction at program end so that
 %..                 interpolations won't fail when the OOINET netcdf
 %..                 wavelength variables contain NaN values (!).
 %..             (b) exclude warm-up time in burst median calculation.
-%.. 13-dec-2019 desiderio Matlab 2018b 
+%.. 13-dec-2019 desiderio
 %..             added switches to control median filtering and spectral1D variables
 %..             (a) burstMedian filtering can be disabled, or enabled with a 
 %..                 default or user-supplied blanking time.
 %..             (b) a switch has been added to control whether spectral 1D time
 %..                 series (akin to ac-9 data) are to be added.
-%.. 17-dec-2019 desiderio Matlab 2018b added 660nm to spectral1D wavelength set
+%.. 17-dec-2019 desiderio added 660nm to spectral1D wavelength set
+%.. 22-may-2020 desiderio
+%..             BEP netcdf varname seawater_temperature changed to temperature
+%.. 27-may-2020 desiderio
+%..             (a) trapped out case where blanking time >= burst time would result
+%..                 in index out of bounds error.
+%..             (b) fixed mechanism of singleton dimension elimination after median
+%..                 filtering for case when nbin = 1: squeeze.m results in column
+%..                 vector instead of rowvector when size(array) = [1 1 N] so it
+%..                 was replaced with filteredArray assignment statements
 %
 %.. USAGE (DEFAULTS)
 %
@@ -198,6 +207,7 @@ vars2keep = {
     'practical_salinity'
     'pressure_depth'
     'salinity'
+    'seawater_temperature'
     'temp'
     'temperature'
     'time'
@@ -206,18 +216,20 @@ vars2keep = {
     };
 %.. variables to be renamed in outfile
 oldVariableName = {
-    'external_temp_raw'     % both
-    'internal_temp_raw'     % both
+    'external_temp_raw'     % all
+    'internal_temp_raw'     % all
     'on_seconds'            % cspp name
-    'practical_salinity'    % surface mooring name
+    'practical_salinity'    % bep and surface mooring name
+    'seawater_temperature'  % bep name
     'temp'                  % surface mooring name
     };
 newVariableName = {
     'external_acs_temperature_counts' 
     'internal_acs_temperature_counts'
-    'elapsed_run_time'      % surface mooring name
+    'elapsed_run_time'      % bep and surface mooring name
     'salinity'              % cspp name
     'temperature'           % cspp name        
+    'temperature'           % (twice to change both bep and surface mooring)        
     };
 
 schema = ncinfo(infilename);
@@ -423,11 +435,15 @@ if ~strcmp(outfilename(end-2:end), '.nc')
     outfilename = [outfilename '.nc'];
 end
 %.. MAKE SURE THAT THIS FILE DOES NOT ALREADY EXIST!
-%.. by design the ncwriteschema function *appends* schema to the file,
-%.. if it exists; in this code we want a completely new file.
+%.. by design the ncwriteschema function *appends* schema to the file, if it
+%.. exists; in this code we want a completely new file.
 if isfile(outfilename)
-    error('New file exists; it MUST be removed for code to work properly.');
+    action2take = 'Either remove or rename it, or use a different outfilename.';
+    disp(' ');
+    error('Outfilename ''%s'' exists as ''%s''\n%s\n\n\n', ...
+        outfilename, which(outfilename), action2take);
 end
+
 %.. create empty netcdf file with new schema.
 ncwriteschema(outfilename, schema);
 %****************************************************************************
@@ -478,7 +494,7 @@ else    % .............. BURST MEDIAN FILTERING ........................
     nbins = length(burstsize);
     %.. set up 'blanking' - how many points to skip till the acs is warmed up.
     timeBetweenPoints = nanmedian(dt);  % [seconds]
-    nptsToSkip        = ceil(blankingTimeSec/timeBetweenPoints);
+    nptsToSkip        = floor(blankingTimeSec/timeBetweenPoints) + 1;
     %.. nptsToSkip=0 is OK, 1:0=[];
     %.. as an array index this stride results in no action.
     
@@ -506,26 +522,31 @@ else    % .............. BURST MEDIAN FILTERING ........................
     data_array(isinf(data_array(:))) = nan;
     
     %.. set up for fast median filtering
-    arr2filter = NaN(nbins*binsize, nvars);
+    arr2filter = NaN(binsize*nbins, nvars);
     for ii = 1:nbins
         arr2filter( (ii-1)*binsize+1:(ii-1)*binsize+burstsize(ii), :) = ...
             data_array(endpoint(ii)+1:endpoint(ii)+burstsize(ii), :);
     end
     
     arr2filter = reshape(arr2filter, binsize, nbins, nvars);
+    if nptsToSkip >= binsize
+        error('blankingTimeSec is too long wrt burst time in median filtering operation.')
+    end
     arr2filter(1:nptsToSkip, :, :) = [];  % exclude data at the start of the burst
-    arr2filter = squeeze(nanmedian(arr2filter, 1));
+    arr2filter = nanmedian(arr2filter, 1);
+    filteredArray(1:nbins, 1:nvars) = arr2filter;
     %.. write out burst median filtered 1D variables
     for ii = 1:nvars
         varname = schema.Variables(idx_var1D_to_filter(ii)).Name;
-        ncwrite(outfilename, varname, arr2filter(:, ii));
+        ncwrite(outfilename, varname, filteredArray(:, ii));
     end
     
+    clearvars arr2filter filteredArray
     %.. MEDIAN FILTER 2D VARIABLES
     %.. process the 2D data variables one at a time
     nvars = length(idx_var2D);
     for jj = 1:nvars
-        arr2filter = NaN(nbins*binsize, nwvl_acs);
+        arr2filter = NaN(binsize*nbins, nwvl_acs);
         varname = schema.Variables(idx_var2D(jj)).Name;
         %.. transpose data array so that time changes by row number
         data_array = ncread(infilename, varname)';
@@ -537,9 +558,10 @@ else    % .............. BURST MEDIAN FILTERING ........................
         end
         arr2filter = reshape(arr2filter, binsize, nbins, nwvl_acs);
         arr2filter(1:nptsToSkip, :, :) = [];  % exclude data at start of the burst
-        arr2filter = squeeze(nanmedian(arr2filter, 1));
+        arr2filter = nanmedian(arr2filter, 1);
+        filteredArray(1:nbins, 1:nwvl_acs) = arr2filter;
         %.. write out burst median filtered 2D variable
-        ncwrite(outfilename, varname, arr2filter');
+        ncwrite(outfilename, varname, filteredArray');
     end
 end  % tf_burstMedian
 

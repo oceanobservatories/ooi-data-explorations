@@ -1,12 +1,24 @@
 function variables = M2M_OPTAA(netcdfFilenames, tf_addDiscreteWavelengthTimeSeries)
 
+%.. matlab does not overwrite nc schema files, it appends to them, so
+%.. that the temporary file must not exist when this code is executed
+temporaryFile = 'dummy.nc';
+
 netcdfFilenames = string(netcdfFilenames);  % so that character vector will work
 ooifile = netcdfFilenames(contains(netcdfFilenames, 'OPTAA'));
 gridded_file = strcat('processed_', ooifile);
+
+%.. make sure that the temporary file does not exist from a premature
+%.. termination of a previous execution of this code.
+if isfile(temporaryFile)
+    delete(temporaryFile)
+end
+
 for i = 1:length(ooifile)
-    revamp_OOINet_optaa_netcdf_files(ooifile{i},'dummy.nc',[],tf_addDiscreteWavelengthTimeSeries);
-    grid_optaa_netcdf_wavelength('dummy.nc',gridded_file{i});
-    delete('dummy.nc')
+    revamp_OOINet_optaa_netcdf_files(ooifile{i}, temporaryFile, [], ...
+        tf_addDiscreteWavelengthTimeSeries);
+    grid_optaa_netcdf_wavelength(temporaryFile, gridded_file{i});
+    delete(temporaryFile)
 end
 
 %Read in wavelengths

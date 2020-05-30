@@ -21,6 +21,10 @@ function schema = revamp_OOINet_optaa_netcdf_files(infilename, outfilename, blan
 %..                 filtering for case when nbin = 1: squeeze.m results in column
 %..                 vector instead of rowvector when size(array) = [1 1 N] so it
 %..                 was replaced with filteredArray assignment statements
+%.. 29-may-2020 desiderio
+%..             formerly when the number of points in a burst was less than the number 
+%..             of blanking points a time value of nan resulted. now replaces these 
+%..             values of nan with times derived from unblanked data.
 %
 %.. USAGE (DEFAULTS)
 %
@@ -137,7 +141,6 @@ function schema = revamp_OOINet_optaa_netcdf_files(infilename, outfilename, blan
 %.. encountered this code will throw a runtime execution error. To date the
 %.. uframe netcdf files encountered have not used this datatype and instead
 %.. have used NC_CHAR.
-
 
 minSleepTimeBetweenBurstsSec = 300;
 %************************************************************************
@@ -506,11 +509,16 @@ else    % .............. BURST MEDIAN FILTERING ........................
         find(ismember({schema.Variables.Name}, var_doNotFilter));
     idx_var1D_to_filter = setdiff(idx_var1D, idx_var_not_to_filter);
     nvars = length(idx_var1D_to_filter);
+    
+    %.. track the names of the 1D filtered variables
+    var1D_filtered_new_names(1:nvars) = {''};
     %.. read in 1D data from infile and place in a data array
     data_array = NaN(npts, nvars);
     for ii = 1:nvars
-        %.. if necessary change new varnames back to old to read in data
         varname = schema.Variables(idx_var1D_to_filter(ii)).Name;
+        %.. save it here to make sure new names are saved
+        var1D_filtered_new_names{ii} = varname;  
+        %.. if necessary change new varnames back to old to read in data
         tf = ismember(newVariableName, varname);  % tf is a logical vector
         if any(tf)
             varname = oldVariableName{tf};
@@ -520,28 +528,38 @@ else    % .............. BURST MEDIAN FILTERING ........................
     
     %.. change infinities, which are often not compatible with netcdf tools, to nan
     data_array(isinf(data_array(:))) = nan;
-    
     %.. set up for fast median filtering
     arr2filter = NaN(binsize*nbins, nvars);
     for ii = 1:nbins
         arr2filter( (ii-1)*binsize+1:(ii-1)*binsize+burstsize(ii), :) = ...
             data_array(endpoint(ii)+1:endpoint(ii)+burstsize(ii), :);
     end
-    
     arr2filter = reshape(arr2filter, binsize, nbins, nvars);
+
+    %.. trap out the following situation which would result in no valid data at all.
     if nptsToSkip >= binsize
         error('blankingTimeSec is too long wrt burst time in median filtering operation.')
     end
-    arr2filter(1:nptsToSkip, :, :) = [];  % exclude data at the start of the burst
+    %.. if the number of points in a bin happens to be less than the number of blanking 
+    %.. points to be deleted then the associated time value will be nan. Replace these
+    %.. values, if they occur, with median filtered time values from the unblanked data.
+    tf_time = strcmpi(var1D_filtered_new_names, 'time');  % will only be one time variable
+    unblanked_median_time = nanmedian(arr2filter(:, :, tf_time), 1);
+    
+    arr2filter(1:nptsToSkip, :, :) = [];  % exclude data to be blanked at burst starts
     arr2filter = nanmedian(arr2filter, 1);
     filteredArray(1:nbins, 1:nvars) = arr2filter;
+    %.. find locations of nans in the median filtered blanked time record
+    tf_timeNans = isnan(filteredArray(:, tf_time));
+    %.. replace them with values from the median filtered unblanked time record
+    filteredArray(tf_timeNans, tf_time) = unblanked_median_time(tf_timeNans);
+    
     %.. write out burst median filtered 1D variables
     for ii = 1:nvars
-        varname = schema.Variables(idx_var1D_to_filter(ii)).Name;
-        ncwrite(outfilename, varname, filteredArray(:, ii));
+        ncwrite(outfilename, var1D_filtered_new_names{ii}, filteredArray(:, ii));
     end
-    
     clearvars arr2filter filteredArray
+
     %.. MEDIAN FILTER 2D VARIABLES
     %.. process the 2D data variables one at a time
     nvars = length(idx_var2D);

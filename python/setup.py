@@ -1,9 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from os import path
 from setuptools import setup, find_packages
 
-
-def readme():
-    with open('README.md') as f:
-        return f.read()
+# read the contents of the README file
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 
 setup(
@@ -13,7 +16,8 @@ setup(
         'Collection of python processing modules for requesting data '
         'from the OOI M2M system'
     ),
-    long_description = readme(),
+    long_description = long_description,
+    long_description_content_type = 'text/markdown',
     classifiers = [
         'Development Status :: 1 - Planning',
         'License :: OSI Approved :: MIT License',

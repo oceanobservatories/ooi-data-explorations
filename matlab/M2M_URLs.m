@@ -10947,7 +10947,7 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/3B-OPTAAD105/streamed/optaa_sample';
     var_list(1).name = 'time';
-    var_list(2).name = 'pressure';
+    var_list(2).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(1).units = 'seconds since 1900-01-01';

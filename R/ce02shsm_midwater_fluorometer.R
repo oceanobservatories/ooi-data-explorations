@@ -32,7 +32,7 @@ method = 'recovered_host'
 start_date = '2019-06-01'
 stop_date = '2019-06-30'
 drop_paired = TRUE
-simplify_data = TRUE
+simplify_data = FALSE
 ###---------------------------------###
 
 

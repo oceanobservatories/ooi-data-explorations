@@ -29,7 +29,7 @@ stream = "metbk_a_dcl_instrument"
 start_date = '2019-06-01'
 stop_date = '2019-06-01'
 drop_paired = TRUE
-simplify_data = TRUE
+simplify_data = FALSE
 ###---------------------------------###
 
 

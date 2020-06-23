@@ -30,7 +30,7 @@ method = 'recovered_cspp'
 start_date = '2019-01-01'
 stop_date = '2019-12-31'
 drop_paired = TRUE
-simplify_data = TRUE
+simplify_data = FALSE
 ####---------------------------------###
 
 
@@ -48,7 +48,7 @@ data = data.frame(lol[['data']]) #Organize the data so it is easier on the eyes.
 varunits = data.frame(lol[['variables_units']])  #Offers a table of the variables and associated units.
 
 data$time = as.POSIXct(data$profiler_timestamp,tz='UTC',origin='1970-01-01')  #Convert time to something understandable. profiler_timestamp is a common value among CSPP sensors.
-data = data[(data$pressure_depth<max_depth & data$pressure_depth>min_depth),]  #Only keep values that are between the max and min depth determined through the ooi_site_depth() function.
+data = data[(data$pressure<max_depth & data$pressure>min_depth),]  #Only keep values that are between the max and min depth determined through the ooi_site_depth() function.
 
 
 #-------------------------------------#
@@ -59,7 +59,7 @@ myPalette <- colorRampPalette(rev(brewer.pal(11, "Spectral")))
 sc <- scale_colour_gradientn(colours = myPalette(100), limits=c(0, 300))
 
 
-oxy_plot = ggplot(data,aes(time,pressure_depth,colour = dissolved_oxygen)) +
+oxy_plot = ggplot(data,aes(time,pressure,colour = dissolved_oxygen)) +
   geom_point() +
   scale_y_reverse() +
   sc +

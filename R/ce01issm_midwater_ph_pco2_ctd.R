@@ -110,15 +110,15 @@ CTD_files = ooi_download_data(CTD_opendap,directory = CTD_path)
 
 
 #Bring data into the workspace.
-pH_lol = ooi_get_data(pH_files,simplify_data= TRUE)  #Merge data from multiple NetCDFs and drop data products that are confusing or generally useless.
+pH_lol = ooi_get_data(pH_files,simplify_data= FALSE)  #Merge data from multiple NetCDFs and drop data products that are confusing or generally useless.
 pH_data = data.frame(pH_lol[['data']])  #The first list of the ooi_get_data return is always the data.
 pH_vars = data.frame(pH_lol[['variables_units']]) #The second list of the ooi_get_data return is always a list of variables and units.
 
-pCO2_lol = ooi_get_data(pCO2_files,simplify_data = TRUE)
+pCO2_lol = ooi_get_data(pCO2_files,simplify_data = FALSE)
 pCO2_data = data.frame(pCO2_lol[['data']])
 pCO2_vars = data.frame(pCO2_lol[['variables_units']])
 
-CTD_lol = ooi_get_data(CTD_files,simplify_data = TRUE)
+CTD_lol = ooi_get_data(CTD_files,simplify_data = FALSE)
 CTD_data = data.frame(CTD_lol[['data']])
 CTD_vars = data.frame(CTD_lol[['variables_units']])
 

@@ -80,7 +80,7 @@ files = data.frame(files)  #Put the filenames into a data.frame.
 data = list()
 for (id in ctd_id){  #For each CTD id.
   ctd <- toString(files[grep(id, files[, "files"]),])  #Identify which files have data for that CTD.
-  hold =  ooi_get_data(ctd,simplify_data = TRUE)
+  hold =  ooi_get_data(ctd,simplify_data = FALSE)
   data[id] = list(hold)  #Bring that data into the workspace so that we get a list of lists of data.
 }
 

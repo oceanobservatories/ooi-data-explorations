@@ -17,6 +17,8 @@ function [uframe_dataset_name, var_list] = M2M_URLs(platform_name,node,instrumen
 %.. 2020-04-05: CMRisien. Added Global profiler mooring streams.
 %.. 2020-04-10: CMRisien. Added Global open ocean glider streams.
 %.. 2020-04-14: CMRisien. Added Global profiler glider streams.
+%.. 2020-06-18: RADesiderio. Changed CE01ISSP and CE06ISSP telemetered flort streams to 'flort_sample'.
+%.. 2020-06-18: RADesiderio. Added CE04OSPS OPTAA stream.
 %
 %.. Explicitly construct UFrame dataset names
 %MOPAK
@@ -5983,7 +5985,7 @@ elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrume
     var_list(1).units = 'seconds since 1900-01-01';
     %CSPP Data below
 elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
-    uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/telemetered/flort_dj_cspp_instrument';
+    uframe_dataset_name = 'CE01ISSP/SP001/08-FLORTJ000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
     var_list(3).name = 'fluorometric_chlorophyll_a';
@@ -6030,7 +6032,7 @@ elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(6).units = 'm-1';
     var_list(7).units = 'dbar';
 elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Telemetered')
-    uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/telemetered/flort_dj_cspp_instrument';
+    uframe_dataset_name = 'CE06ISSP/SP001/08-FLORTJ000/telemetered/flort_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'seawater_scattering_coefficient';
     var_list(3).name = 'fluorometric_chlorophyll_a';
@@ -10942,6 +10944,14 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(2).units = 'degC';
     var_list(3).units = 'unitless';
     var_list(4).units = 'dbar';
+elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'OPTAA') && strcmp(method,'Streamed')
+    uframe_dataset_name = 'CE04OSPS/SF01B/3B-OPTAAD105/streamed/optaa_sample';
+    var_list(1).name = 'time';
+    var_list(2).name = 'int_ctd_pressure';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'dbar';
 elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'PARAD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/3C-PARADA102/streamed/parad_sa_sample';
     var_list(1).name = 'time';

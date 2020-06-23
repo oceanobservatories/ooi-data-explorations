@@ -1,3 +1,6 @@
+%.. 2019-12-18: CMRisien. original code: example_spkir.m
+%.. 2020-06-15: RADesiderio. added logic so that calls to profiler data are not median filtered.
+%.. this function will be renamed to example_spkir_mooring in a future pull request
 %%
 % Platform:
     % Endurance Array:
@@ -26,15 +29,15 @@ options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',..
     ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
 
 %.. set time period of interest
-start_date='2019-03-01T00:00:00.000Z';
-end_date='2019-05-31T23:59:59.000Z';
+start_date = '2019-03-01T00:00:00.000Z';
+end_date   = '2019-05-31T23:59:59.999Z';
 
 %%
 %Specify metadata
-platform_name = 'CE02SHSM';
-node = 'NSIF';
+platform_name    = 'CE02SHSM';
+node             = 'NSIF';
 instrument_class = 'SPKIR';
-method = 'RecoveredHost';
+method           = 'RecoveredHost';
 
 %Get M2M URL
 [uframe_dataset_name,variables]=M2M_URLs(platform_name,node,instrument_class,method);
@@ -43,12 +46,18 @@ method = 'RecoveredHost';
 [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options);
 
 %Get Data
+%.. download netcdf files (3rd argument false) for M2M_SPKIR
 [~, ~, netcdfFilenames] = M2M_Data(variables, nclist, false);
 
-%%
 %Process SPKIR Data
-[spkir_variables] = M2M_SPKIR(netcdfFilenames);
+if strcmpi(node, 'PROFILER')
+    tf_medianFilter = false;
+else
+    tf_medianFilter = true;
+end
+[spkir_variables] = M2M_SPKIR(netcdfFilenames, tf_medianFilter);
 
+%%
 %Plot the data
 %.. time series of all wavelength channels
 figure('units','normalized','outerposition',[0 0 1 1])

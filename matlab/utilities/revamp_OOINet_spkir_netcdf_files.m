@@ -6,7 +6,8 @@ function revamp_OOINet_spkir_netcdf_files(infile, outfile)
 %
 %.. infile  = uframe SPKIR netcdf filename
 %.. outfile = name of output netcdf file
-%.. 20-dec-2019 desiderio renamed function to revamp_OOINet_spkir_netcdf_files.m
+%.. 20-dec-2019 desiderio. renamed function to revamp_OOINet_spkir_netcdf_files.m
+%.. 19-jun-2020 desiderio. added 'pressure' to the vars2keep array. 
 
 %.. operates on SPKIR (Satlantic OCR-507) UFrame netcdf files
 %.. (1) deletes extraneous dimensions
@@ -29,14 +30,6 @@ function revamp_OOINet_spkir_netcdf_files(infile, outfile)
 %.. uframe netcdf files encountered have not used this datatype and instead
 %.. have used NC_CHAR.
 
-%.. for development and diagnostics
-% clear all  %#ok
-% ncpath = 'D:\desisoft\MATLAB\source\OOI\m2m\netcdf_files\spkir\';
-% name = ['deployment0008_CE01ISSM-RID16-08-SPKIRB000-telemetered-spkir_' ...
-%     'abj_dcl_instrument_20171012T183016.719000-20180323T083303.691000.nc'];
-% infile  = [ncpath name];
-% outfile = 'R:\newfile.nc';
-
 %************************************************************************
 %***** CONDITION DIMENSIONS AND VARIABLES FROM INPUT NETCDF FILE ********
 %************************************************************************
@@ -53,9 +46,10 @@ old_wavelength_dim_name = 'spectra';
 new_wavelength_dim_name = 'wavelength';
 
 %.. variables (uframe names) to keep from infile. note that while 'spectra'
-%.. .. is specified as a dimension, it is not a variable.
-%.. for generality, two cspp variables are listed which are not in nsif
-%.. .. files: they are 'int_ctd_pressure' and 'pressure_depth'.
+%.. is specified as a dimension, it is not a variable.
+%.. .. for generality, three variable names are listed which have not been
+%.. .. in nsif files but have been present at various times in cspp files:
+%.. .. they are 'int_ctd_pressure', 'pressure_depth', and 'pressure'.
 %.. 'spkir_abj_cspp_downwelling_vector' is used in both cspp and nsif files.
 vars2keep = {
     'channel_array'
@@ -63,6 +57,7 @@ vars2keep = {
     'internal_temperature'
     'lat'
     'lon'
+    'pressure'
     'pressure_depth'
     'spkir_abj_cspp_downwelling_vector'
     'time'

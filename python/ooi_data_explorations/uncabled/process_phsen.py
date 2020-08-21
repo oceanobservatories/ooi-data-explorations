@@ -9,7 +9,7 @@ from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_d
     get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below
-PHSEN = {
+ATTRS = {
     'unique_id': {
         'long_name': 'Instrument Unique ID',
         'comment': ('One byte checksum summary of the instrument serial number, name, calibration date and firmware ' +
@@ -224,8 +224,8 @@ def phsen_datalogger(ds):
 
     # reset some of the variable attributes, and ...
     for v in ds.variables:  # variable level attributes
-        if v in PHSEN:
-            ds[v].attrs = PHSEN[v]
+        if v in ATTRS.keys():
+            ds[v].attrs = ATTRS[v]
 
     # ... add the renamed information
     for key, value in rename.items():
@@ -309,8 +309,8 @@ def phsen_instrument(ds):
 
     # reset some of the variable attributes, and ...
     for v in ds.variables:  # variable level attributes
-        if v in PHSEN:
-            ds[v].attrs = PHSEN[v]
+        if v in ATTRS.keys():
+            ds[v].attrs = ATTRS[v]
 
     # ... add the renamed information
     for key, value in rename.items():
@@ -402,8 +402,8 @@ def phsen_imodem(ds):
 
     # reset some of the variable attributes, and ...
     for v in ds.variables:  # variable level attributes
-        if v in PHSEN:
-            ds[v].attrs = PHSEN[v]
+        if v in ATTRS.keys():
+            ds[v].attrs = ATTRS[v]
 
     # ... add the renamed information
     for key, value in rename.items():

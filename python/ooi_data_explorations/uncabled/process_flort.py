@@ -249,7 +249,7 @@ def main(argv=None):
 
     # Valid request, start downloading the data
     if deploy:
-        flort = m2m_collect(r, '.*deployment%04d.*FLORT.*\\.nc$')
+        flort = m2m_collect(r, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
     else:
         flort = m2m_collect(r, '.*FLORT.*\\.nc$')
 

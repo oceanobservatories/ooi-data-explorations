@@ -305,7 +305,7 @@ def main(argv=None):
 
     # Valid request, start downloading the data
     if deploy:
-        dosta = m2m_collect(r, '.*deployment%04d.*DOSTA.*\\.nc$')
+        dosta = m2m_collect(r, ('.*deployment%04d.*DOSTA.*\\.nc$' % deploy))
     else:
         dosta = m2m_collect(r, '.*DOSTA.*\\.nc$')
 

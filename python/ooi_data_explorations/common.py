@@ -520,6 +520,14 @@ def process_file(catalog_file):
     if not ds:
         return None
 
+    # address error in how the *_qartod_executed variables are set
+    qartod_pattern = re.compile(r'^.+_qartod_executed.+$')
+    for v in ds.variables:
+        if qartod_pattern.match(v):
+            # the shape of the QARTOD executed should compare to the provenance variable
+            if ds[v].shape[0] != ds['provenance'].shape[0]:
+                ds = ds.drop_vars(v)
+
     ds = ds.swap_dims({'obs': 'time'})
     ds = ds.reset_coords()
     keys = ['obs', 'id', 'provenance', 'driver_timestamp', 'ingestion_timestamp',
@@ -723,6 +731,7 @@ def inputs(argv=None):
     parser.add_argument("-bt", "--beginDT", dest="start", type=str)
     parser.add_argument("-et", "--endDT", dest="stop", type=str)
     parser.add_argument("-ba", "--burst_average", dest="burst", default=False, action='store_true')
+    parser.add_argument("-t", "--type", dest="sensor_type", type=str, required=False)
     parser.add_argument("-o", "--outfile", dest="outfile", type=str, required=True)
 
     # parse the input arguments and create a parser object

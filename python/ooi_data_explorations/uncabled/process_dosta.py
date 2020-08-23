@@ -41,7 +41,7 @@ ATTRS = {
         'long_name': 'Calibrated Phase Difference',
         'units': 'degrees',
         'comment': ('The optode measures oxygen by exciting a special platinum porphyrin complex embedded in a '
-                    'gas permeable foil with modulated blue light. The Optode measures the phase shift of the '
+                    'gas permeable foil with modulated blue light. The optode measures the phase shift of the '
                     'returned red light. By linearizing and temperature compensating, with an incorporated '
                     'temperature sensor, the absolute O2 concentration can be determined.'),
         'data_product_identifier': 'DOCONCS-VLT_L0',
@@ -96,8 +96,9 @@ ATTRS = {
         'standard_name': 'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
         'units': 'umol L-1',
         'comment': ('Mole concentration of dissolved oxygen per unit volume, also known as Molarity, as measured by '
-                    'an optode oxygen sensor. Compares to the estimated_oxygen_concentration, but recomputed using '
-                    'the calibrated phase and optode thermistor temperature via the Stern-Volmer-Uchida equation.'),
+                    'an optode oxygen sensor. Compares to the oxygen_concentration computed on-board the sensor, '
+                    'but is recomputed using factory calibration coefficients, the calibrated phase values and '
+                    'the optode thermistor temperature via the Stern-Volmer-Uchida equation.'),
         'data_product_identifier': 'DOCONCS_L1'
     },
     'oxygen_concentration_corrected': {

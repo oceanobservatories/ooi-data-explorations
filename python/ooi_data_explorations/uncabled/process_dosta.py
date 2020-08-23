@@ -313,7 +313,7 @@ def main(argv=None):
         exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
         raise SystemExit(exit_text)
 
-    if sensor_type in ['solo', 'ctdbp']:
+    if not sensor_type in ['solo', 'ctdbp']:
         exit_text = 'You need to specify the type of DOSTA in order to process: solo or ctdbp'
         raise SystemExit(exit_text)
 
@@ -322,9 +322,10 @@ def main(argv=None):
         dosta = dosta_datalogger(dosta, burst)
 
     if sensor_type == 'ctdbp':
-        if method in ['telemetered', 'recoverd_host']:
+        if method in ['telemetered', 'recovered_host']:
             dosta = dosta_ctdbp_datalogger(dosta)
-
+        else:
+            dosta = dosta_ctdbp_instrument(dosta)
 
     vocab = get_vocabulary(site, node, sensor)[0]
     dosta = update_dataset(dosta, vocab['maxdepth'])

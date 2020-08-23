@@ -8,25 +8,25 @@ from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_d
 
 ATTRS = {
     'raw_oxygen_concentration': {
-        'long_name': 'Raw Dissolved Oxygen',
+        'long_name': 'Raw Dissolved Oxygen Concentration',
         'units': 'counts',
-        'comment': ('Raw dissolved oxygen concentration measurement reported in counts. Converted to the estimated '
-                    'dissolved oxygen concentration by dividing by 10000 and subtracting 10.'),
+        'comment': ('The dissolved oxygen concentration measurement reported in counts. Converted to a dissolved '
+                    'oxygen concentration measurement reported in umols/L by dividing by 10000 and subtracting 10.'),
         'data_product_identifier': 'DOCONCS-CNT_L0',
     },
-    'estimated_oxygen_concentration': {
-        'long_name': 'Estimated Dissolved Oxygen Concentration',
+    'oxygen_concentration': {
+        'long_name': 'Dissolved Oxygen Concentration',
         'standard_name': 'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
         'units': 'umol L-1',
         'comment': ('Mole concentration of dissolved oxygen per unit volume, also known as Molarity, as measured by '
-                    'an optode oxygen sensor. Computed onboard the sensor using internal calibration coefficients.'),
+                    'an optode oxygen sensor. Computed on-board the sensor using internal calibration coefficients.'),
         'data_product_identifier': 'DOCONCS_L1',
     },
-    'estimated_oxygen_saturation': {
-        'long_name': 'Estimated Dissolved Oxygen Saturation',
+    'oxygen_saturation': {
+        'long_name': 'Dissolved Oxygen Saturation',
         'units': 'percent',
         'comment': ('Oxygen saturation is the percentage of dissolved oxygen relative to the absolute solubility of '
-                    'oxygen at a particular water temperature. Computed onboard the sensor using internal calibration '
+                    'oxygen at a particular water temperature. Computed on-board the sensor using internal calibration '
                     'coefficients.'),
     },
     'optode_temperature': {
@@ -91,7 +91,7 @@ ATTRS = {
         'data_product_identifier': 'PRACSAL_L2'
     },
     # --> derived values
-    'oxygen_concentration': {
+    'svu_oxygen_concentration': {
         'long_name': 'Dissolved Oxygen Concentration',
         'standard_name': 'mole_concentration_of_dissolved_molecular_oxygen_in_sea_water',
         'units': 'umol L-1',
@@ -138,9 +138,11 @@ def dosta_datalogger(ds, burst=False):
 
     # rename some of the variables for better clarity
     rename = {
-        'dosta_abcdjm_cspp_tc_oxygen': 'oxygen_concentration',
-        'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
-        'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'estimated_oxygen_concentration': 'oxygen_concentration',
+        'estimated_oxygen_saturation': 'oxygen_saturation',
+        'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
+        'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
+        'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
@@ -206,9 +208,9 @@ def dosta_ctdbp_datalogger(ds):
 
     # rename some of the variables for better clarity
     rename = {
-        'dosta_ln_optode_oxygen': 'estimated_oxygen_concentration',
-        'dosta_ln_optode_oxygen_qc_executed': 'estimated_oxygen_concentration_qc_executed',
-        'dosta_ln_optode_oxygen_qc_results': 'estimated_oxygen_concentration_qc_results',
+        'dosta_ln_optode_oxygen': 'oxygen_concentration',
+        'dosta_ln_optode_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
+        'dosta_ln_optode_oxygen_qc_results': 'oxygen_concentration_qc_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
@@ -248,9 +250,9 @@ def dosta_ctdbp_instrument(ds):
     # rename some of the variables for better clarity
     rename = {
         'oxygen': 'raw_oxygen_concentration',
-        'ctd_tc_oxygen': 'estimated_oxygen_concentration',
-        'ctd_tc_oxygen_qc_executed': 'estimated_oxygen_concentration_qc_executed',
-        'ctd_tc_oxygen_qc_results': 'estimated_oxygen_concentration_qc_results',
+        'ctd_tc_oxygen': 'oxygen_concentration',
+        'ctd_tc_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
+        'ctd_tc_oxygen_qc_results': 'oxygen_concentration_qc_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',

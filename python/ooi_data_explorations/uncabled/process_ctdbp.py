@@ -209,7 +209,7 @@ def main(argv=None):
 
     # Valid request, start downloading the data
     if deploy:
-        ctdbp = m2m_collect(r, '.*deployment%04d.*CTDBP.*\\.nc$')
+        ctdbp = m2m_collect(r, ('.*deployment%04d.*CTDBP.*\\.nc$' % deploy))
     else:
         ctdbp = m2m_collect(r, '.*CTDBP.*\\.nc$')
 

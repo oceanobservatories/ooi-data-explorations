@@ -123,8 +123,7 @@ def flort_datalogger(ds, burst=True):
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'temp': 'temperature',
-        'practical_salinity': 'salinity',
+        'temp': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -250,7 +249,7 @@ def main(argv=None):
 
     # Valid request, start downloading the data
     if deploy:
-        flort = m2m_collect(r, '.*deployment%04d.*FLORT.*\\.nc$')
+        flort = m2m_collect(r, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
     else:
         flort = m2m_collect(r, '.*FLORT.*\\.nc$')
 

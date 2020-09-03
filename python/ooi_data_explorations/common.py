@@ -520,12 +520,12 @@ def process_file(catalog_file):
     if not ds:
         return None
 
-    # address error in how the *_qartod_executed variables are set
-    qartod_pattern = re.compile(r'^.+_qartod_executed.+$')
+    # addresses error in how the *_qartod_executed variables are set
+    qartod_pattern = re.compile(r'^.+_qartod_executed$')
     for v in ds.variables:
         if qartod_pattern.match(v):
-            # the shape of the QARTOD executed should compare to the provenance variable
-            if ds[v].shape[0] != ds['provenance'].shape[0]:
+            # the shape of the QARTOD executed variables should compare to the provenance variable
+            if ds[v].shape != ds['provenance'].shape:
                 ds = ds.drop_vars(v)
 
     ds = ds.swap_dims({'obs': 'time'})

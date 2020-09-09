@@ -338,20 +338,24 @@ def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
 
 
 # Annotations and Vocabulary Information
-def get_annotations(site, node, sensor, start, stop=None, method=None, stream=None):
+def get_annotations(site, node, sensor):
     """
-    TODO
+    Uses the site, node and sensor designators to obtain the annotation records
+    for the instrument. The annotations represent the HITL QC efforts on the
+    part of the OOI data teams, and as such provide a great deal of valuable
+    information about the instrument of interest.
 
-    :param site:
-    :param node:
-    :param sensor:
-    :param start:
-    :param stop:
-    :param method:
-    :param stream:
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
     :return:
     """
-    pass
+    r = SESSION.get(BASE_URL + ANNO_URL + 'find?beginDT=0&refdes=' + site + '-' + node + '-' + sensor,
+                    auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_vocabulary(site, node, sensor):
@@ -470,20 +474,26 @@ def m2m_collect(data, tag='.*\\.nc$'):
     if not frames:
         return None
 
-    # merge the frames into a single data set, preserving global attributes from the first file if more than one
+    # merge the frames into a single data set, preserving global attributes from the first file if more than one.
     m2m = frames[0]
     if len(frames) > 1:
-        for i in range(1, len(frames)):
-            try:
-                m2m = m2m.merge(frames[i])
-            except:
-                message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
-                warnings.warn(message)
+        try:
+            # concatenation handles 99% of the cases
+            m2m = xr.concat(frames, dim='time')
+        except ValueError:  # unless there are missing variables ...
+            for i in range(1, len(frames)):
+                try:
+                    # merging will address most of the remaining cases
+                    m2m = m2m.merge(frames[i])
+                except ValueError:
+                    # but sometimes there just really is something wrong with a dataset
+                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
+                    warnings.warn(message)
 
-        m2m = m2m.sortby('time')
-        m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
-        m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
-        m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+    m2m = m2m.sortby('deployment')
+    m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
+    m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
+    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
 
     return m2m
 

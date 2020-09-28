@@ -66,6 +66,22 @@ ENCODINGS = {
 }
 
 
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
+
+
+class InputError(Error):
+    """Exception raised for errors in the input.
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message):
+        self.message = message
+
+
 # Sensor Information
 def list_sites():
     """
@@ -193,32 +209,32 @@ def get_stream_information(stream):
 # Asset Information
 def get_asset_by_uid(uid):
     """
-    TODO
+    Returns all asset information for a given unique asset identifier or
+    UID. Results are interchangeable with get_asset_by_asset_id.
 
-    :param uid:
-    :return:
+    :param uid: unique asset identifier (UID), e.g. CGINS-DOSTAD-00134
+    :return: asset information for the identified UID
     """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '?uid=' + uid, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_asset_by_asset_id(asset_id):
     """
-    TODO
+    Returns all asset information for a given OOI asset identifier or
+    assetId. Results are interchangeable with get_asset_by_uid.
 
-    :param asset_id:
-    :return:
+    :param asset_id: OOI asset identifier (assetId), e.g. 1352
+    :return: asset information for the identified assetId
     """
-    pass
-
-
-def get_asset_by_serial(serial_number):
-    """
-    TODO
-
-    :param serial_number:
-    :return:
-    """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '/' + str(asset_id), auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 # Deployment Information
@@ -305,36 +321,64 @@ def get_deployment_dates(site, node, sensor, deploy):
 # Calibration Information
 def get_calibrations_by_uid(uid):
     """
-    TODO
+    Returns all calibration information for a given unique asset identifier or
+    UID. Results are interchangeable with get_calibrations_by_asset_id.
 
-    :param uid:
-    :return:
+    :param uid: unique asset identifier (UID), e.g. CGINS-DOSTAD-00134
+    :return: calibration information for the identified UID
     """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '/cal?uid=' + uid, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_calibrations_by_asset_id(asset_id):
     """
-    TODO
+    Returns all calibration information for a given OOI asset identifier or
+    assetId. Results are interchangeable with get_calibrations_by_uid.
 
-    :param asset_id:
-    :return:
+    :param asset_id: OOI asset identifier (assetId), e.g. 1352
+    :return: calibration information for the identified assetId
     """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '/cal?assetid=' + str(asset_id), auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
     """
-    TODO
+    Returns a list of deployments with calibration information for the
+    reference designator specified by the site, node and sensor names.
+    Specifying a start and stop date can be used to limit the response
+    to a specific deployment(s).
 
-    :param site:
-    :param node:
-    :param sensor:
-    :param start:
-    :param stop:
-    :return:
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :param start: Start time for data request (Optional, default is beginning
+        of record)
+    :param stop: Stop time for data request (Optional, default is through the
+        end of the record)
+    :return: calibration information for sensor(s) deployed at the specified
+        reference designator
     """
-    pass
+    if start and stop:
+        r = SESSION.get(BASE_URL + ASSET_URL + '/cal?refdes=' + site + '-' + node + '-' + sensor + '&beginDT=' +
+                        start + '&endDT=' + stop, auth=(AUTH[0], AUTH[2]))
+    elif not start and not stop:
+        r = SESSION.get(BASE_URL + ASSET_URL + '/cal?refdes=' + site + '-' + node + '-' + sensor,
+                        auth=(AUTH[0], AUTH[2]))
+    else:
+        raise InputError('You must specify both start and stop time, or leave both of those fields empty.')
+
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 # Annotations and Vocabulary Information

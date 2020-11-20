@@ -35,6 +35,7 @@ dependencies:
   - sockjs-tornado
   - tqdm
   - xarray
+  - xlrd
   - yaml
   - pip:
     - https://bitbucket.org/ooicgsn/pyseas/get/develop.zip

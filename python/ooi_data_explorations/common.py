@@ -66,6 +66,22 @@ ENCODINGS = {
 }
 
 
+class Error(Exception):
+    """Base class for exceptions in this module."""
+    pass
+
+
+class InputError(Error):
+    """Exception raised for errors in the input.
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message):
+        self.message = message
+
+
 # Sensor Information
 def list_sites():
     """
@@ -193,32 +209,32 @@ def get_stream_information(stream):
 # Asset Information
 def get_asset_by_uid(uid):
     """
-    TODO
+    Returns all asset information for a given unique asset identifier or
+    UID. Results are interchangeable with get_asset_by_asset_id.
 
-    :param uid:
-    :return:
+    :param uid: unique asset identifier (UID), e.g. CGINS-DOSTAD-00134
+    :return: asset information for the identified UID
     """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '?uid=' + uid, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_asset_by_asset_id(asset_id):
     """
-    TODO
+    Returns all asset information for a given OOI asset identifier or
+    assetId. Results are interchangeable with get_asset_by_uid.
 
-    :param asset_id:
-    :return:
+    :param asset_id: OOI asset identifier (assetId), e.g. 1352
+    :return: asset information for the identified assetId
     """
-    pass
-
-
-def get_asset_by_serial(serial_number):
-    """
-    TODO
-
-    :param serial_number:
-    :return:
-    """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '/' + str(asset_id), auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 # Deployment Information
@@ -305,53 +321,85 @@ def get_deployment_dates(site, node, sensor, deploy):
 # Calibration Information
 def get_calibrations_by_uid(uid):
     """
-    TODO
+    Returns all calibration information for a given unique asset identifier or
+    UID. Results are interchangeable with get_calibrations_by_asset_id.
 
-    :param uid:
-    :return:
+    :param uid: unique asset identifier (UID), e.g. CGINS-DOSTAD-00134
+    :return: calibration information for the identified UID
     """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '/cal?uid=' + uid, auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_calibrations_by_asset_id(asset_id):
     """
-    TODO
+    Returns all calibration information for a given OOI asset identifier or
+    assetId. Results are interchangeable with get_calibrations_by_uid.
 
-    :param asset_id:
-    :return:
+    :param asset_id: OOI asset identifier (assetId), e.g. 1352
+    :return: calibration information for the identified assetId
     """
-    pass
+    r = SESSION.get(BASE_URL + ASSET_URL + '/cal?assetid=' + str(asset_id), auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
     """
-    TODO
+    Returns a list of deployments with calibration information for the
+    reference designator specified by the site, node and sensor names.
+    Specifying a start and stop date can be used to limit the response
+    to a specific deployment(s).
 
-    :param site:
-    :param node:
-    :param sensor:
-    :param start:
-    :param stop:
-    :return:
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
+    :param start: Start time for data request (Optional, default is beginning
+        of record)
+    :param stop: Stop time for data request (Optional, default is through the
+        end of the record)
+    :return: calibration information for sensor(s) deployed at the specified
+        reference designator
     """
-    pass
+    if start and stop:
+        r = SESSION.get(BASE_URL + ASSET_URL + '/cal?refdes=' + site + '-' + node + '-' + sensor + '&beginDT=' +
+                        start + '&endDT=' + stop, auth=(AUTH[0], AUTH[2]))
+    elif not start and not stop:
+        r = SESSION.get(BASE_URL + ASSET_URL + '/cal?refdes=' + site + '-' + node + '-' + sensor,
+                        auth=(AUTH[0], AUTH[2]))
+    else:
+        raise InputError('You must specify both start and stop time, or leave both of those fields empty.')
+
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 # Annotations and Vocabulary Information
-def get_annotations(site, node, sensor, start, stop=None, method=None, stream=None):
+def get_annotations(site, node, sensor):
     """
-    TODO
+    Uses the site, node and sensor designators to obtain the annotation records
+    for the instrument. The annotations represent the HITL QC efforts on the
+    part of the OOI data teams, and as such provide a great deal of valuable
+    information about the instrument of interest.
 
-    :param site:
-    :param node:
-    :param sensor:
-    :param start:
-    :param stop:
-    :param method:
-    :param stream:
+    :param site: Site name to query
+    :param node: Node name to query
+    :param sensor: Sensor name to query
     :return:
     """
-    pass
+    r = SESSION.get(BASE_URL + ANNO_URL + 'find?beginDT=0&refdes=' + site + '-' + node + '-' + sensor,
+                    auth=(AUTH[0], AUTH[2]))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    else:
+        return None
 
 
 def get_vocabulary(site, node, sensor):
@@ -470,20 +518,26 @@ def m2m_collect(data, tag='.*\\.nc$'):
     if not frames:
         return None
 
-    # merge the frames into a single data set, preserving global attributes from the first file if more than one
+    # merge the frames into a single data set, preserving global attributes from the first file if more than one.
     m2m = frames[0]
     if len(frames) > 1:
-        for i in range(1, len(frames)):
-            try:
-                m2m = m2m.merge(frames[i])
-            except:
-                message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
-                warnings.warn(message)
+        try:
+            # concatenation handles 99% of the cases
+            m2m = xr.concat(frames, dim='time')
+        except ValueError:  # unless there are missing variables ...
+            for i in range(1, len(frames)):
+                try:
+                    # merging will address most of the remaining cases
+                    m2m = m2m.merge(frames[i])
+                except ValueError:
+                    # but sometimes there just really is something wrong with a dataset
+                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
+                    warnings.warn(message)
 
-        m2m = m2m.sortby('time')
-        m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
-        m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
-        m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+    m2m = m2m.sortby('deployment')
+    m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
+    m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
+    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
 
     return m2m
 
@@ -520,12 +574,12 @@ def process_file(catalog_file):
     if not ds:
         return None
 
-    # address error in how the *_qartod_executed variables are set
-    qartod_pattern = re.compile(r'^.+_qartod_executed.+$')
+    # addresses error in how the *_qartod_executed variables are set
+    qartod_pattern = re.compile(r'^.+_qartod_executed$')
     for v in ds.variables:
         if qartod_pattern.match(v):
-            # the shape of the QARTOD executed should compare to the provenance variable
-            if ds[v].shape[0] != ds['provenance'].shape[0]:
+            # the shape of the QARTOD executed variables should compare to the provenance variable
+            if ds[v].shape != ds['provenance'].shape:
                 ds = ds.drop_vars(v)
 
     ds = ds.swap_dims({'obs': 'time'})

@@ -18,19 +18,19 @@ class Climatology():
     climatology = Climatology()
     climatology.fit(pco2_dataset, "pco2_seawater")
     climatology.make_qcConfig()
-    climatology.qcConfig = {'qartod': {'climatology': {'config': 
-        [{'tspan': [0, 1], 'vspan': [7.27, 16.57], 'period': 'month'},
-         {'tspan': [1, 2], 'vspan': [5.96, 15.26], 'period': 'month'},
-         {'tspan': [2, 3], 'vspan': [4.83, 14.13], 'period': 'month'},
-         {'tspan': [3, 4], 'vspan': [4.17, 13.47], 'period': 'month'},
-         {'tspan': [4, 5], 'vspan': [4.18, 13.48], 'period': 'month'},
-         {'tspan': [5, 6], 'vspan': [4.83, 14.13], 'period': 'month'},
-         {'tspan': [6, 7], 'vspan': [5.97, 15.27], 'period': 'month'},
-         {'tspan': [7, 8], 'vspan': [7.28, 16.58], 'period': 'month'},
-         {'tspan': [8, 9], 'vspan': [8.41, 17.71], 'period': 'month'},
-         {'tspan': [9, 10], 'vspan': [9.06, 18.36], 'period': 'month'},
-         {'tspan': [10, 11], 'vspan': [9.06, 18.36], 'period': 'month'},
-         {'tspan': [11, 12], 'vspan': [8.4, 17.7], 'period': 'month'}]}}}"""
+    climatology.qcConfig = {'qartod': {'climatology': {'config':
+        [{'tspan': [0, 1], 'vspan': [347.24, 511.88], 'period': 'month'},
+         {'tspan': [1, 2], 'vspan': [321.59, 486.23], 'period': 'month'},
+         {'tspan': [2, 3], 'vspan': [313.65, 478.29], 'period': 'month'},
+         {'tspan': [3, 4], 'vspan': [325.54, 490.18], 'period': 'month'},
+         {'tspan': [4, 5], 'vspan': [354.08, 518.72], 'period': 'month'},
+         {'tspan': [5, 6], 'vspan': [391.63, 556.27], 'period': 'month'},
+         {'tspan': [6, 7], 'vspan': [428.12, 592.76], 'period': 'month'},
+         {'tspan': [7, 8], 'vspan': [453.77, 618.41], 'period': 'month'},
+         {'tspan': [8, 9], 'vspan': [461.71, 626.35], 'period': 'month'},
+         {'tspan': [9, 10], 'vspan': [449.82, 614.46], 'period': 'month'},
+         {'tspan': [10, 11], 'vspan': [421.28, 585.92], 'period': 'month'},
+         {'tspan': [11, 12], 'vspan': [383.73, 548.37], 'period': 'month'}]}}}"""
 
     def resample(self, ds, param, period):
         """Resample a data variable from the dataset to the desired period.

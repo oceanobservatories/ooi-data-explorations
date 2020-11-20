@@ -16,9 +16,9 @@ class Climatology():
     -------
     from qartod.climatology import Climatology
     climatology = Climatology()
-    climatology.fit(ds, "pco2_seawater")
+    climatology.fit(pco2_dataset, "pco2_seawater")
     climatology.make_qcConfig()
-    climatology.qcConfig = {'qartod': {'climatology': {'config':
+    climatology.qcConfig = {'qartod': {'climatology': {'config': 
         [{'tspan': [0, 1], 'vspan': [7.27, 16.57], 'period': 'month'},
          {'tspan': [1, 2], 'vspan': [5.96, 15.26], 'period': 'month'},
          {'tspan': [2, 3], 'vspan': [4.83, 14.13], 'period': 'month'},

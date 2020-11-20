@@ -48,10 +48,7 @@ def calc_regression_climatology(time_series, freq=1/12, lin_trend=False):
     # Build the linear coefficients as a stacked array (this is the matrix A)
     if lin_trend:
         arr0 = np.ones(N)
-        arr1 = np.sin(2*np.pi*f*t)
-        arr2 = np.cos(2*np.pi*f*t)
-        arr3 = np.sin(4*np.pi*f*t)
-        arr4 = np.cos(4*np.pi*f*t)
+        git
         x = np.stack([arr0, arr1, arr2, arr3, arr4, t])
     else:
         arr0 = np.ones(N)

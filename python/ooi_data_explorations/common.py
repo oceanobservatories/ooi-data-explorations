@@ -16,6 +16,8 @@ import sys
 import time
 import warnings
 import xarray as xr
+import datetime
+import pandas as pd
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -43,7 +45,8 @@ try:
     nrc = netrc.netrc()
     AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
     if AUTH is None:
-        raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
+        raise RuntimeError(
+            'No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
 except FileNotFoundError as e:
     raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
 
@@ -135,7 +138,8 @@ def list_methods(site, node, sensor):
     :param sensor: Sensor name to query
     :return: list of the data delivery methods associated with this site, node and sensor
     """
-    r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' +
+                    node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -153,7 +157,8 @@ def list_streams(site, node, sensor, method):
     :return: list of the data streams associated with this site, node, sensor and data delivery method
     """
     # Determine the streams associated with the delivery method available for this sensor
-    r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method, auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' +
+                    sensor + '/' + method, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -170,7 +175,8 @@ def list_metadata(site, node, sensor):
     :param sensor: Sensor name to query
     :return: dictionary with the parameters and available time ranges available for the sensor
     """
-    r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/metadata', auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' +
+                    sensor + '/metadata', auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -247,7 +253,8 @@ def list_deployments(site, node, sensor):
     :param sensor: Sensor name to query
     :return: list of the deployments of this site, node and sensor combination
     """
-    r = SESSION.get(BASE_URL + DEPLOY_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + DEPLOY_URL + site + '/' +
+                    node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -281,7 +288,8 @@ def get_sensor_history(uid):
     :param uid: unique asset identifier (UID)
     :return: json object with the asset and calibration information
     """
-    r = SESSION.get(BASE_URL + ASSET_URL + '/deployments/' + uid + '?editphase=ALL', auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + ASSET_URL + '/deployments/' +
+                    uid + '?editphase=ALL', auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -304,13 +312,15 @@ def get_deployment_dates(site, node, sensor, deploy):
 
     # use the metadata to extract the start and end times for the deployment
     if data:
-        start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStartTime'] / 1000.))
+        start = time.strftime('%Y-%m-%dT%H:%M:%S.000Z',
+                              time.gmtime(data[0]['eventStartTime'] / 1000.))
     else:
         return None, None
 
     if data[0]['eventStopTime']:
         # check to see if there is a stop time for the deployment, if so use it ...
-        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(data[0]['eventStopTime'] / 1000.))
+        stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z',
+                             time.gmtime(data[0]['eventStopTime'] / 1000.))
     else:
         # ... otherwise use the current time as this is an active deployment
         stop = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(time.time()))
@@ -373,7 +383,8 @@ def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
         r = SESSION.get(BASE_URL + ASSET_URL + '/cal?refdes=' + site + '-' + node + '-' + sensor,
                         auth=(AUTH[0], AUTH[2]))
     else:
-        raise InputError('You must specify both start and stop time, or leave both of those fields empty.')
+        raise InputError(
+            'You must specify both start and stop time, or leave both of those fields empty.')
 
     if r.status_code == requests.codes.ok:
         return r.json()
@@ -394,12 +405,143 @@ def get_annotations(site, node, sensor):
     :param sensor: Sensor name to query
     :return:
     """
-    r = SESSION.get(BASE_URL + ANNO_URL + 'find?beginDT=0&refdes=' + site + '-' + node + '-' + sensor,
-                    auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + ANNO_URL + 'find?beginDT=0&refdes=' + site + '-'
+                    + node + '-' + sensor, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
         return None
+
+
+def add_annotation_qc_flags(ds, annotations):
+    """
+    Add the annotation qc flags to a dataset as a data variable. From the
+    annotations, add the QARTOD flags to the dataset for each relevant data
+    variable in the annotations.
+
+    :param ds: Xarray dataset object containing the OOI data for a given
+        reference designator-method-stream
+    :param annotations: Pandas dataframe object which contains the annotations
+        to add to the dataset
+
+    :return ds: The input xarray dataset with the annotation qc flags added as a
+        named variable to the dataset.
+    """
+    # First, add a local function to convert times
+    def convert_time(ms):
+        if ms is None:
+            return None
+        else:
+            return datetime.datetime.utcfromtimestamp(ms/1000)
+
+    # ---------------------------------------------------------------------------------------
+    # First, check the type of the annotations to determine if needed to put into a dataframe
+    if type(annotations) is list or type(annotations) is dict:
+        annotations = pd.DataFrame(annotations)
+
+    # Convert the flags to QARTOD flags
+    codes = {
+        None: 0,
+        'pass': 1,
+        'not_evaluated': 2,
+        'suspect': 3,
+        'fail': 4,
+        'not_operational': 9,
+        'not_available': 9,
+        'pending_ingest': 9
+    }
+    annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
+
+    # ------------------------------------------
+    # Filter only for annotations which apply to the dataset
+    stream = ds.attrs["stream"]
+    stream_mask = annotations["stream"].apply(lambda x: True if x == stream or x is None else False)
+    annotations = annotations[stream_mask]
+
+    # Explode the annotations so each parameter is hit for each
+    # annotation
+    annotations = annotations.explode(column="parameters")
+
+    # Get the unique parameters and their associated variable name
+    stream_annos = {}
+    for pid in annotations["parameters"].unique():
+        if np.isnan(pid):
+            param_name = "rollup"
+        else:
+            pid = str(pid)
+            param_info = get_parameter_information(pid)
+            param_name = param_info["name"]
+        stream_annos.update({param_name: pid})
+
+    # ----------------------------------------------------------------------
+    # Next, get the flags associated with each parameter or all parameters
+    flags_dict = {}
+
+    for key in stream_annos.keys():
+        # Get the pid and associated name
+        pid_name = key
+        pid = stream_annos.get(key)
+
+        # Get the annotations associated with the pid
+        if np.isnan(pid):
+            pid_annos = annotations[annotations["parameters"].isna()]
+        else:
+            pid_annos = annotations[annotations["parameters"] == pid]
+
+        pid_annos = pid_annos.sort_values(by="qcFlag")
+
+        # Create an array of flags to begin setting the qc-values
+        pid_flags = pd.Series(np.zeros(ds.time.values.shape),
+                              index=ds.time.values)
+
+        # For each index, set the qcFlag for each respective time period
+        for ind in pid_annos.index:
+            beginDT = pid_annos["beginDT"].loc[ind]
+            endDT = pid_annos["endDT"].loc[ind]
+            qcFlag = pid_annos["qcFlag"].loc[ind]
+            # Convert the time to actual datetimes
+            beginDT = convert_time(beginDT)
+            if endDT is None or np.isnan(endDT):
+                endDT = datetime.datetime.now()
+            else:
+                endDT = convert_time(endDT)
+            # Set the qcFlags for the given time range
+            pid_flags[(pid_flags.index > beginDT) & (pid_flags.index < endDT)] = qcFlag
+
+        # Save the results
+        flags_dict.update({pid_name: pid_flags})
+
+    # --------------------
+    # Create a rollup flag
+    rollup_flags = flags_dict.get("rollup")
+    for key in flags_dict:
+        flags = np.max([rollup_flags, flags_dict.get(key)], axis=0)
+        rollup_flags = pd.Series(flags, index=rollup_flags.index)
+    # Replace the "All" with the rollup results
+    flags_dict["rollup"] = rollup_flags
+
+    # --------------------
+    # Add the flag results to the dataset for key in flags_dict
+    for key in flags_dict.keys():
+        # Generate a variable name
+        var_name = "_".join((key.lower(), "annotations", "qc", "results"))
+
+        # Next, build the attributes dictionary
+        if key.lower() == "rollup":
+            comment = "These qc flags are a rollup summary which represents a Human-in-the-loop (HITL) assessment of the data quality for all applicable data variables in the dataset."
+        else:
+            comment = f"These qc flags represent a Human-in-the-loop (HITL) assessment of the data quality for the specific data variable {key}."
+        long_name = f"{key} qc_flag"
+        attrs = {
+            "comment": comment,
+            "long_name": long_name
+        }
+
+        # Now add to the dataset
+        flags = xr.DataArray(flags_dict.get(key), dims="time", attrs=attrs)
+        ds[var_name] = flags
+
+    return ds
 
 
 def get_vocabulary(site, node, sensor):
@@ -411,7 +553,8 @@ def get_vocabulary(site, node, sensor):
     :param sensor: Sensor name to query
     :return: json object with the site-node-sensor specific vocabulary
     """
-    r = SESSION.get(BASE_URL + VOCAB_URL + site + '/' + node + '/' + sensor, auth=(AUTH[0], AUTH[2]))
+    r = SESSION.get(BASE_URL + VOCAB_URL + site + '/' + node +
+                    '/' + sensor, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
         return r.json()
     else:
@@ -440,7 +583,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     """
     Request data from OOINet for a particular instrument (as defined by the reference designator), delivery method
     and stream name via the M2M system. Optionally, can bound the data with a beginning and ending date and time range.
-    This method formulates an asynchronous request. 
+    This method formulates an asynchronous request.
 
     :param site: Site designator, extracted from the first part of the reference designator
     :param node: Node designator, extracted from the second part of the reference designator
@@ -531,13 +674,15 @@ def m2m_collect(data, tag='.*\\.nc$'):
                     m2m = m2m.merge(frames[i])
                 except ValueError:
                     # but sometimes there just really is something wrong with a dataset
-                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(i+1, len(frames))
+                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(
+                        i+1, len(frames))
                     warnings.warn(message)
 
     m2m = m2m.sortby('deployment')
     m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
     m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
-    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (
+        np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
 
     return m2m
 
@@ -592,7 +737,8 @@ def process_file(catalog_file):
     ds = ds.sortby('time')
 
     # clear-up some global attributes we will no longer be using
-    keys = ['DODS.strlen', 'DODS.dimName', 'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
+    keys = ['DODS.strlen', 'DODS.dimName',
+            'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
     for key in keys:
         if key in ds.attrs:
             del(ds.attrs[key])
@@ -708,7 +854,8 @@ def update_dataset(ds, depth):
                 ancillary = re.sub('_qc_executed', '', v)
                 ds[v].attrs['ancillary_variables'] = ancillary
                 if 'standard_name' in ds[ancillary].attrs:
-                    ds[v].attrs['standard_name'] = ds[ancillary].attrs['standard_name'] + ' qc_tests_executed'
+                    ds[v].attrs['standard_name'] = ds[ancillary].attrs['standard_name'] + \
+                        ' qc_tests_executed'
 
             if results_pattern.match(v):    # *_qc_results variables
                 ds[v].attrs['flag_masks'] = flag_masks
@@ -773,7 +920,8 @@ def inputs(argv=None):
         argv = sys.argv[1:]
 
     # initialize argument parser
-    parser = argparse.ArgumentParser(description="""Request and obtain data from the OOI M2M system""")
+    parser = argparse.ArgumentParser(
+        description="""Request and obtain data from the OOI M2M system""")
 
     # assign input arguments.
     parser.add_argument("-s", "--site", dest="site", type=str, required=True)
@@ -803,7 +951,8 @@ def dr_inputs(argv=None):
         argv = sys.argv[1:]
 
     # initialize argument parser
-    parser = argparse.ArgumentParser(description="""Request and obtain data from the OOI M2M system""")
+    parser = argparse.ArgumentParser(
+        description="""Request and obtain data from the OOI M2M system""")
 
     # assign input arguments.
     parser.add_argument("-s", "--site", dest="site", type=str, required=True)

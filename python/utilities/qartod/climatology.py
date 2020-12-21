@@ -177,8 +177,8 @@ class Climatology():
                 val = val.mean()
 
             # Get the min/max values
-            vmin = np.round(val-self.sigma*3, 2)
-            vmax = np.round(val+self.sigma*3, 2)
+            vmin = np.floor((val-self.sigma*3)*100)/100
+            vmax = np.ceil((val+self.sigma*3)*100)/100
 
             # Record the results
             tspan = [month-1, month]

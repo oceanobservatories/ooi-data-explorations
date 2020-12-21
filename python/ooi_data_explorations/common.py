@@ -414,25 +414,18 @@ def get_annotations(site, node, sensor):
 
 
 def add_annotation_qc_flags(ds, annotations):
-    """Add the annotation qc flags to a dataset as a data variable.
+    """
+    Add the annotation qc flags to a dataset as a data variable. From the
+    annotations, add the QARTOD flags to the dataset for each relevant data
+    variable in the annotations.
 
-    From the annotations, add the QARTOD flags to the dataset for
-    each relevant data variable in the annotations.
-
-    Parameters
-    ----------
-    ds: (xarray.DataSet)
-        The xarray dataset containing the OOI data for a given
+    :param ds: Xarray dataset object containing the OOI data for a given
         reference designator-method-stream
-    annotations: (pandas.DataFrame)
-        A dataframe with contains the annotations to add to the
-        dataset
+    :param annotations: Pandas dataframe object which contains the annotations
+        to add to the dataset
 
-    Returns
-    -------
-    ds: (xarray.DataSet)
-        The input xarray dataset with the annotation qc flags
-        added as a named variable to the dataset.
+    :return ds: The input xarray dataset with the annotation qc flags added as a
+        named variable to the dataset.
     """
     # First, add a local function to convert times
     def convert_time(ms):
@@ -462,8 +455,7 @@ def add_annotation_qc_flags(ds, annotations):
     # ------------------------------------------
     # Filter only for annotations which apply to the dataset
     stream = ds.attrs["stream"]
-    stream_mask = annotations["stream"].apply(lambda x: True if x == stream
-                                              or x is None else False)
+    stream_mask = annotations["stream"].apply(lambda x: True if x == stream or x is None else False)
     annotations = annotations[stream_mask]
 
     # Explode the annotations so each parameter is hit for each

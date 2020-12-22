@@ -72,8 +72,8 @@ def ctdbp_datalogger(ds, burst=False):
                                                                 'seawater_conductivity_qartod_results')
     ds['seawater_pressure'].attrs['ancillary_variables'] = ('seawater_pressure_qc_executed '
                                                             'seawater_pressure_qc_results '
-                                                            'seawater__pressure_qartod_executed '
-                                                            'seawater__pressure_qartod_results')
+                                                            'seawater_pressure_qartod_executed '
+                                                            'seawater_pressure_qartod_results')
     ds['practical_salinity'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature '
                                                              'seawater_pressure '
                                                              'practical_salinity_qc_executed '

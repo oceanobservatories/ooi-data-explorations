@@ -38,12 +38,21 @@ def ctdbp_datalogger(ds, burst=False):
 
     # rename some of the variables for better clarity
     rename = {
+        'conductivity': 'seawater_conductivity',
+        'conductivity_qc_executed': 'seawater_conductivity_qc_executed',
+        'conductivity_qc_results': 'seawater_conductivity_qc_results',
+        'conductivity_qartod_executed': 'seawater_conductivity_qartod_executed',
+        'conductivity_qartod_results': 'seawater_conductivity_qartod_results',
         'temp': 'seawater_temperature',
         'temp_qc_executed': 'seawater_temperature_qc_executed',
         'temp_qc_results': 'seawater_temperature_qc_results',
         'temp_qartod_results': 'seawater_temperature_qartod_results',
-        'conductivity_qartod_results': 'seawater_conductivity_qartod_results',
+        'temp_qartod_executed': 'seawater_temperature_qartod_executed',
+        'pressure': 'seawater_pressure',
+        'pressure_qc_executed': 'seawater_pressure_qc_executed',
+        'pressure_qc_results': 'seawater_pressure_qc_results',
         'pressure_qartod_results': 'seawater_pressure_qartod_results',
+        'pressure_qartod_executed': 'seawater_pressure_qartod_executed'
     }
     ds = ds.rename(rename)
     for key, value in rename.items():
@@ -55,16 +64,21 @@ def ctdbp_datalogger(ds, burst=False):
     # ancillary_variables attribute set incorrectly (should be a space separated list) for certain variables
     ds['seawater_temperature'].attrs['ancillary_variables'] = ('seawater_temperature_qc_executed '
                                                                'seawater_temperature_qc_results '
+                                                               'seawater_temperature_qartod_executed '
                                                                'seawater_temperature_qartod_results')
     ds['seawater_conductivity'].attrs['ancillary_variables'] = ('seawater_conductivity_qc_executed '
                                                                 'seawater_conductivity_qc_results '
+                                                                'seawater_conductivity_qartod_executed '
                                                                 'seawater_conductivity_qartod_results')
     ds['seawater_pressure'].attrs['ancillary_variables'] = ('seawater_pressure_qc_executed '
                                                             'seawater_pressure_qc_results '
-                                                            'seawater__pressure_qartod_results')
+                                                            'seawater_pressure_qartod_executed '
+                                                            'seawater_pressure_qartod_results')
     ds['practical_salinity'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature '
-                                                             'seawater_pressure practical_salinity_qc_executed '
+                                                             'seawater_pressure '
+                                                             'practical_salinity_qc_executed '
                                                              'practical_salinity_qc_results '
+                                                             'practical_salinity_qartod_executed '
                                                              'practical_salinity_qartod_results')
     ds['density'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature seawater_pressure '
                                                   'lat lon density_qc_executed density_qc_results')
@@ -120,17 +134,20 @@ def ctdbp_instrument(ds, burst=False):
         'ctdbp_seawater_conductivity': 'seawater_conductivity',
         'ctdbp_seawater_conductivity_qc_executed': 'seawater_conductivity_qc_executed',
         'ctdbp_seawater_conductivity_qc_results': 'seawater_conductivity_qc_results',
+        'ctdbp_seawater_conductivity_qartod_executed': 'seawater_conductivity_qartod_executed',
         'ctdbp_seawater_conductivity_qartod_results': 'seawater_conductivity_qartod_results',
         'temperature': 'raw_seawater_temperature',
         'ctdbp_seawater_temperature': 'seawater_temperature',
         'ctdbp_seawater_temperature_qc_executed': 'seawater_temperature_qc_executed',
         'ctdbp_seawater_temperature_qc_results': 'seawater_temperature_qc_results',
+        'ctdbp_seawater_temperature_qartod_executed': 'seawater_temperature_qartod_executed',
         'ctdbp_seawater_temperature_qartod_results': 'seawater_temperature_qartod_results',
         'pressure_temp': 'raw_pressure_temperature',
         'pressure': 'raw_seawater_pressure',
         'ctdbp_seawater_pressure': 'seawater_pressure',
         'ctdbp_seawater_pressure_qc_executed': 'seawater_pressure_qc_executed',
         'ctdbp_seawater_pressure_qc_results': 'seawater_pressure_qc_results',
+        'ctdbp_seawater_pressure_qartod_executed': 'seawater_pressure_qartod_executed',
         'ctdbp_seawater_pressure_qartod_results': 'seawater_pressure_qartod_results',
     }
     ds = ds.rename(rename)
@@ -162,18 +179,22 @@ def ctdbp_instrument(ds, burst=False):
     ds['seawater_temperature'].attrs['ancillary_variables'] = ('raw_seawater_temperature '
                                                                'seawater_temperature_qc_executed '
                                                                'seawater_temperature_qc_results '
+                                                               'seawater_temperature_qartod_executed '
                                                                'seawater_temperature_qartod_results')
     ds['seawater_conductivity'].attrs['ancillary_variables'] = ('raw_seawater_conductivity '
                                                                 'seawater_conductivity_qc_executed '
                                                                 'seawater_conductivity_qc_results '
+                                                                'seawater_conductivity_qartod_executed '
                                                                 'seawater_conductivity_qartod_results')
     ds['seawater_pressure'].attrs['ancillary_variables'] = ('raw_seawater_pressure raw_pressure_temperature '
                                                             'seawater_pressure_qc_executed '
                                                             'seawater_pressure_qc_results'
+                                                            'seawater_pressure_qartod_executed '
                                                             'seawater_pressure_qartod_results')
     ds['practical_salinity'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature '
                                                              'seawater_pressure practical_salinity_qc_executed '
                                                              'practical_salinity_qc_results '
+                                                             'practical_salinity_qartod_executed '
                                                              'practical_salinity_qartod_results')
     ds['density'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature seawater_pressure '
                                                   'lat lon density_qc_executed density_qc_results')

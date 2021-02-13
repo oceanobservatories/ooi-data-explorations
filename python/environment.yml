@@ -6,6 +6,7 @@ dependencies:
   - python>=3.7
   - argcomplete
   - beautifulsoup4
+  - bottleneck
   - chest
   - configobj
   - geos

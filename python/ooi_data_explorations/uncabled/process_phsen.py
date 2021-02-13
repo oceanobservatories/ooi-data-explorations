@@ -132,9 +132,74 @@ ATTRS = {
         # 'units': ''    # deliberately left blank, no units for this value
         'ancillary_variables': ('blank_refrnc_434 blank_signal_434 blank_refrnc_578 blank_signal_578 ' +
                                 'reference_434 signal_434 reference_578 signal_578 thermistor_temperature ' +
-                                'practical_salinity')
+                                'practical_salinity seawater_ph_quality_flag')
+    },
+    'seawater_ph_quality_flag': {
+        'long_name': 'Seawater pH Quality Flag',
+        'comment': ('Quality assessment of the seawater pH based on assessments of the raw values used to calculate '
+                    'the pH. Levels used to indicate failed quality are pulled from the vendor code. Suspect values '
+                    'are flagged based on past instrument performance.'),
+        'standard_name': 'sea_water_ph_reported_on_total_scale status_flag',
+        'flag_values': np.array([1, 2, 3, 4, 9], dtype=np.int32),
+        'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing_data',
+        # 'units': ''    # deliberately left blank, no units for this value
+        'ancillary_variables': 'blank_signal_434 blank_signal_578 signal_434 signal_578 seawater_ph'
     }
 }
+
+
+def quality_checks(ds):
+    """
+    Assessment of the raw data and the calculated seawater pH for quality,
+    using QARTOD flags to indicate the quality of the seawater pH. QARTOD
+    quality flags are:
+
+        1 = Pass
+        2 = Not Evaluated
+        3 = Suspect or of High Interest
+        4 = Fail
+        9 = Missing Data
+
+    :param ds: xarray dataset with the raw signal data and the calculated
+               seawater pH
+    :return qc_flag: array of flag values indicating seawater pH quality
+    """
+    max_bits = 4096                               # max measurement value
+    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+
+    # test the blank measurements -- blank measurements either too high (saturated signal) or too low.
+    m434 = (ds.blank_signal_434 > max_bits - max_bits / 20) | (ds.blank_signal_434 < max_bits / 12)
+    m578 = (ds.blank_signal_578 > max_bits - max_bits / 20) | (ds.blank_signal_578 < max_bits / 12)
+    m = np.any([m434.any(axis=1), m578.any(axis=1)], axis=0)
+    qc_flag[m] = 4
+
+    # test the intensity measurements -- intensity measurements either too high (saturated signal) or unreasonably low.
+    m434 = (ds.signal_434 > max_bits - max_bits / 20) | (ds.signal_434 < 5)
+    m578 = (ds.signal_578 > max_bits - max_bits / 20) | (ds.signal_578 < 5)
+    m = np.any([m434.any(axis=1), m578.any(axis=1)], axis=0)
+    qc_flag[m] = 4
+
+    # test for flat intensity measurements -- flat intensity measurements (usually indicates pump isn't working or the
+    # flow cell is otherwise obstructed).
+    m434 = ds.signal_434.std(axis=1) < 60
+    m578 = ds.signal_578.std(axis=1) < 60
+    m = np.any([m434, m578], axis=0)
+    qc_flag[m] = 4
+
+    # test for out of range pH values -- sensor range set to 6.9 and 9.0, user range set to 7.4 and 8.6
+    m = (ds.seawater_ph.values < 6.9) | (ds.seawater_ph.values > 9.0)   # from vendor code
+    qc_flag[m] = 4
+    m = (ds.seawater_ph.values < 7.4) | (ds.seawater_ph.values > 8.6)   # from real-world expectations
+    qc_flag[m] = 3
+
+    # test for low raw signal values, below which the algorithm for calculating pH will start to fail as the signal to
+    # noise ratio becomes too small.
+    m434 = ds.signal_434 < 200
+    m578 = ds.signal_578 < 200
+    m = np.any([m434.any(axis=1), m578.any(axis=1)], axis=0)
+    qc_flag[m] = 3
+
+    return qc_flag
 
 
 def phsen_datalogger(ds):
@@ -222,6 +287,9 @@ def phsen_datalogger(ds):
     # merge the data sets back together
     ds = ds.merge(ph)
 
+    # test data quality
+    ds['seawater_ph_quality_flag'] = quality_checks(ds)
+
     # reset some of the variable attributes, and ...
     for v in ds.variables:  # variable level attributes
         if v in ATTRS.keys():
@@ -306,6 +374,9 @@ def phsen_instrument(ds):
 
     # merge the data sets back together
     ds = ds.merge(ph)
+
+    # test data quality
+    ds['seawater_ph_quality_flag'] = quality_checks(ds)
 
     # reset some of the variable attributes, and ...
     for v in ds.variables:  # variable level attributes
@@ -399,6 +470,9 @@ def phsen_imodem(ds):
 
     # merge the data sets back together
     ds = ds.merge(ph)
+
+    # test data quality
+    ds['seawater_ph_quality_flag'] = quality_checks(ds)
 
     # reset some of the variable attributes, and ...
     for v in ds.variables:  # variable level attributes

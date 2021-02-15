@@ -173,11 +173,11 @@ def main(argv=None):
         ds.temperature.plot()
 
         # save the combined and resampled data to disk
-        out_file = os.path.abspath(outfile)
-        if not os.path.exists(os.path.dirname(out_file)):
-            os.makedirs(os.path.dirname(out_file))
+        outfile = os.path.join(data_directory, outfile)
+        if not os.path.exists(os.path.dirname(outfile)):
+            os.makedirs(os.path.dirname(outfile))
 
-        ds.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf')
+        ds.to_netcdf(outfile, mode='w', format='NETCDF4', engine='h5netcdf')
 
 
 if __name__ == '__main__':

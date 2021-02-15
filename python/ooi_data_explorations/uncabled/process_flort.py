@@ -103,9 +103,7 @@ def flort_datalogger(ds, burst=True):
             'data_product_identifier': 'TEMPWAT_L1',
             'long_name': 'Seawater Temperature',
             'standard_name': 'sea_water_temperature',
-            'units': 'degree_Celsius',
-            'instrument': 'CE01ISSM-RID16-03-CTDBPC000',
-            'stream': 'ctdbp_cdef_dcl_instrument'
+            'units': 'degree_Celsius'
         }
 
         ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
@@ -116,9 +114,7 @@ def flort_datalogger(ds, burst=True):
             'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
                         'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
                         'of the data set.'),
-            'data_product_identifier': 'PRACSAL_L2',
-            'instrument': 'CE01ISSM-RID16-03-CTDBPC000',
-            'stream': 'ctdbp_cdef_dcl_instrument'
+            'data_product_identifier': 'PRACSAL_L2'
         }
 
     # lots of renaming here to get a better defined data set with cleaner attributes

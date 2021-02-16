@@ -14,6 +14,7 @@
 . $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 conda activate ooi
 PYTHON="python -m ooi_data_explorations.uncabled.process_nutnr"
+COMBINE="python -m ooi_data_explorations.combine_data"
 
 ### CE01ISSM ###
 BASE_FLAGS="-s CE01ISSM -n RID16 -sn 07-NUTNRB000"
@@ -21,6 +22,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce01issm/nsif/nutnr/ce01issm.nsif.nutnr"
 for i in $(seq -f "%02g" 8 13); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.suna_dcl_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE02SHSM ###
@@ -29,6 +31,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce02shsm/nsif/nutnr/ce02shsm.nsif.nutnr"
 for i in $(seq -f "%02g" 7 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.suna_dcl_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE04OSSM ###
@@ -37,6 +40,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce04ossm/nsif/nutnr/ce04ossm.nsif.nutnr"
 for i in $(seq -f "%02g" 6 10); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.suna_dcl_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE06ISSM ###
@@ -45,6 +49,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce06issm/nsif/nutnr/ce06issm.nsif.nutnr"
 for i in $(seq -f "%02g" 8 12); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.suna_dcl_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE07SHSM ###
@@ -53,6 +58,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce07shsm/nsif/nutnr/ce07shsm.nsif.nutnr"
 for i in $(seq -f "%02g" 7 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.suna_dcl_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE09OSSM ###
@@ -61,4 +67,5 @@ BASE_FILE="${HOME}/ooidata/m2m/ce09ossm/nsif/nutnr/ce09ossm.nsif.nutnr"
 for i in $(seq -f "%02g" 7 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.suna_dcl_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done

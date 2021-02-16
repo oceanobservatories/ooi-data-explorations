@@ -14,6 +14,7 @@
 . $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 conda activate ooi
 PYTHON="python -m ooi_data_explorations.uncabled.process_flort"
+COMBINE="python -m ooi_data_explorations.combine_data"
 
 ### CE01ISSM ###
 BUOY_FLAGS="-s CE01ISSM -n SBD17 -sn 06-FLORTD000"
@@ -24,9 +25,11 @@ for i in $(seq -f "%02g" 1 13); do
     $PYTHON $BUOY_FLAGS -mt telemetered -st flort_sample -dp $i -o "$BUOY_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $BUOY_FLAGS -mt recovered_host -st flort_sample -dp $i -o "$BUOY_FILE.deploy$i.recovered_host.flort_sample.nc"
     $PYTHON $BUOY_FLAGS -mt recovered_inst -st flort_sample -dp $i -o "$BUOY_FILE.deploy$i.recovered_inst.flort_sample.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BUOY_FILE)" -o "$BUOY_FILE.deploy$i.combined.nc"
 
     $PYTHON $NSIF_FLAGS -mt telemetered -st flort_sample -ba -dp $i -o "$NSIF_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $NSIF_FLAGS -mt recovered_host -st flort_sample -ba -dp $i -o "$NSIF_FILE.deploy$i.recovered_host.flort_sample.nc"
+    $COMBINE -t -rh -d "$(dirname $NSIF_FILE)" -o "$NSIF_FILE.deploy$i.combined.nc"
 done
 
 ### CE02SHSM ###
@@ -35,6 +38,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce02shsm/nsif/flort/ce02shsm.nsif.flort"
 for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.flort_sample.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE04OSSM ###
@@ -43,6 +47,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce04ossm/nsif/flort/ce04ossm.nsif.flort"
 for i in $(seq -f "%02g" 1 10); do
     $PYTHON $BASE_FLAGS -mt telemetered -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.flort_sample.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE06ISSM ###
@@ -54,9 +59,11 @@ for i in $(seq -f "%02g" 1 12); do
     $PYTHON $BUOY_FLAGS -mt telemetered -st flort_sample -dp $i -o "$BUOY_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $BUOY_FLAGS -mt recovered_host -st flort_sample -dp $i -o "$BUOY_FILE.deploy$i.recovered_host.flort_sample.nc"
     $PYTHON $BUOY_FLAGS -mt recovered_inst -st flort_sample -dp $i -o "$BUOY_FILE.deploy$i.recovered_inst.flort_sample.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BUOY_FILE)" -o "$BUOY_FILE.deploy$i.combined.nc"
 
     $PYTHON $NSIF_FLAGS -mt telemetered -st flort_sample -ba -dp $i -o "$NSIF_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $NSIF_FLAGS -mt recovered_host -st flort_sample -ba -dp $i -o "$NSIF_FILE.deploy$i.recovered_host.flort_sample.nc"
+    $COMBINE -t -rh -d "$(dirname $NSIF_FILE)" -o "$NSIF_FILE.deploy$i.combined.nc"
 done
 
 ### CE07SHSM ###
@@ -65,6 +72,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce07shsm/nsif/flort/ce07shsm.nsif.flort"
 for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.flort_sample.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE09OSSM ###
@@ -73,4 +81,5 @@ BASE_FILE="${HOME}/ooidata/m2m/ce09ossm/nsif/flort/ce09ossm.nsif.flort"
 for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.flort_sample.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st flort_sample -ba -dp $i -o "$BASE_FILE.deploy$i.recovered_host.flort_sample.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done

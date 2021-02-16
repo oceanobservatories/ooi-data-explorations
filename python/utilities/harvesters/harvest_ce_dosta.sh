@@ -14,6 +14,7 @@
 . $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 conda activate ooi
 PYTHON="python -m ooi_data_explorations.uncabled.process_dosta"
+COMBINE="python -m ooi_data_explorations.combine_data"
 
 ### CE01ISSM ###
 BASE_FLAGS="-s CE01ISSM -n RID16 -sn 03-DOSTAD000"
@@ -22,6 +23,7 @@ for i in $(seq -f "%02g" 1 13); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_ctdbp_dcl_instrument -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_ctdbp_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_ctdbp_dcl_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_ctdbp_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st dosta_abcdjm_ctdbp_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.dosta_abcdjm_ctdbp_instrument_recovered.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 BASE_FLAGS="-s CE01ISSM -n MFD37 -sn 03-DOSTAD000"
@@ -30,6 +32,7 @@ for i in $(seq -f "%02g" 1 13); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_ctdbp_dcl_instrument -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_ctdbp_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_ctdbp_dcl_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_ctdbp_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st dosta_abcdjm_ctdbp_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.dosta_abcdjm_ctdbp_instrument_recovered.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE02SHSM ###
@@ -38,6 +41,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce02shsm/nsif/dosta/ce02shsm.nsif.dosta"
 for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_dcl_instrument -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_dcl_instrument_recovered -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_dcl_instrument_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE04OSSM ###
@@ -46,6 +50,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce04ossm/nsif/dosta/ce04ossm.nsif.dosta"
 for i in $(seq -f "%02g" 1 10); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_dcl_instrument -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_dcl_instrument_recovered -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_dcl_instrument_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE06ISSM ###
@@ -55,6 +60,7 @@ for i in $(seq -f "%02g" 1 12); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_ctdbp_dcl_instrument -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_ctdbp_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_ctdbp_dcl_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_ctdbp_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st dosta_abcdjm_ctdbp_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.dosta_abcdjm_ctdbp_instrument_recovered.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 BASE_FLAGS="-s CE06ISSM -n MFD37 -sn 03-DOSTAD000"
@@ -63,6 +69,7 @@ for i in $(seq -f "%02g" 1 12); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_ctdbp_dcl_instrument -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_ctdbp_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_ctdbp_dcl_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_ctdbp_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st dosta_abcdjm_ctdbp_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.dosta_abcdjm_ctdbp_instrument_recovered.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE07SHSM ###
@@ -71,6 +78,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce07shsm/nsif/dosta/ce07shsm.nsif.dosta"
 for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_dcl_instrument -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_dcl_instrument_recovered -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_dcl_instrument_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 BASE_FLAGS="-s CE07SHSM -n MFD37 -sn 03-DOSTAD000"
@@ -79,6 +87,7 @@ for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_ctdbp_dcl_instrument -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_ctdbp_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_ctdbp_dcl_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_ctdbp_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st dosta_abcdjm_ctdbp_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.dosta_abcdjm_ctdbp_instrument_recovered.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE09OSSM ###
@@ -87,6 +96,7 @@ BASE_FILE="${HOME}/ooidata/m2m/ce09ossm/nsif/dosta/ce09ossm.nsif.dosta"
 for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_dcl_instrument -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_dcl_instrument_recovered -t solo -dp $i -ba -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_dcl_instrument_recovered.nc"
+    $COMBINE -t -rh -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 BASE_FLAGS="-s CE09OSSM -n MFD37 -sn 03-DOSTAD000"
@@ -95,4 +105,5 @@ for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st dosta_abcdjm_ctdbp_dcl_instrument -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.telemetered.dosta_abcdjm_ctdbp_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st dosta_abcdjm_ctdbp_dcl_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_host.dosta_abcdjm_ctdbp_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st dosta_abcdjm_ctdbp_instrument_recovered -t ctdbp -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.dosta_abcdjm_ctdbp_instrument_recovered.nc"
+    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done

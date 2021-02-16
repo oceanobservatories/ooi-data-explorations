@@ -164,7 +164,7 @@ def quality_checks(ds):
                seawater pH
     :return qc_flag: array of flag values indicating seawater pH quality
     """
-    max_bits = 4096                               # max measurement value
+    max_bits = 4096                                # max measurement value
     qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
     # test the blank measurements -- blank measurements either too high (saturated signal) or too low.
@@ -290,12 +290,12 @@ def phsen_datalogger(ds):
     # test data quality
     ds['seawater_ph_quality_flag'] = quality_checks(ds)
 
-    # reset some of the variable attributes, and ...
-    for v in ds.variables:  # variable level attributes
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
 
-    # ... add the renamed information
+    # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
@@ -378,12 +378,12 @@ def phsen_instrument(ds):
     # test data quality
     ds['seawater_ph_quality_flag'] = quality_checks(ds)
 
-    # reset some of the variable attributes, and ...
-    for v in ds.variables:  # variable level attributes
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
 
-    # ... add the renamed information
+    # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
@@ -474,12 +474,12 @@ def phsen_imodem(ds):
     # test data quality
     ds['seawater_ph_quality_flag'] = quality_checks(ds)
 
-    # reset some of the variable attributes, and ...
-    for v in ds.variables:  # variable level attributes
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
 
-    # ... add the renamed information
+    # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 

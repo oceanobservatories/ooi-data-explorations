@@ -152,10 +152,10 @@ def dosta_datalogger(ds, burst=False):
     }
     ds = ds.rename(rename)
 
-    # reset variable attributes using dictionary above
-    for v in ds.variables:
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
@@ -164,8 +164,7 @@ def dosta_datalogger(ds, burst=False):
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
         burst = ds
-        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
-        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -220,10 +219,10 @@ def dosta_ctdbp_datalogger(ds):
     }
     ds = ds.rename(rename)
 
-    # reset variable attributes using dictionary above
-    for v in ds.variables:
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
@@ -262,10 +261,10 @@ def dosta_ctdbp_instrument(ds):
     }
     ds = ds.rename(rename)
 
-    # reset variable attributes using dictionary above
-    for v in ds.variables:
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():

@@ -35,7 +35,7 @@ ATTRS = {
                     'based on the ultraviolet (UV) absorption characteristics of the components of seawater (including '
                     'dissolved nitrate). The raw spectral measurements, between 217 and 240 nm, are used to calculate '
                     'the nitrate concentrations.'),
-        'data_product_identifier': 'NITROPT_L0', 
+        'data_product_identifier': 'NITROPT_L0',
         'units': 'counts'
     },
     'wavelength_index': {
@@ -151,6 +151,7 @@ def nutnr_datalogger(ds, burst=True):
     ds['nitrate_concentration'].attrs['units'] = 'umol L-1'
     ds['corrected_nitrate_concentration'].attrs['units'] = 'umol L-1'
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
+    ds['serial_number'] = ds['serial_number'].astype('int32')
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
@@ -165,6 +166,12 @@ def nutnr_datalogger(ds, burst=True):
 
         # save the newly average data
         ds = burst
+
+    # and reset some of the data types
+    data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
+                  'raw_spectral_measurements']
+    for v in data_types:
+        ds[v] = ds[v].astype('int32')
 
     return ds
 

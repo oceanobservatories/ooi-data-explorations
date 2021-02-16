@@ -134,21 +134,20 @@ def flort_datalogger(ds, burst=True):
         'optical_backscatter_qc_results': 'bback_qc_results',
     }
     ds = ds.rename(rename)
-    for key, value in rename.items():   # bulk attribute update...
-        if value in ATTRS.keys():
-            ds[value].attrs = ATTRS[value]
-        ds[value].attrs['ooinet_variable_name'] = key
-    # ...and for cdom
-    ds['fluorometric_cdom'].attrs = ATTRS['fluorometric_cdom']
 
-    # correct incorrect units
-    ds['temperature'].attrs['units'] = 'degree_Celsius'
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
         burst = ds
-        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
-        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -186,8 +185,7 @@ def flort_instrument(ds):
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'ctdbp_seawater_temperature': 'temperature',
-        'practical_salinity': 'salinity',
+        'ctdbp_seawater_temperature': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -202,12 +200,15 @@ def flort_instrument(ds):
         'optical_backscatter_qc_results': 'bback_qc_results',
     }
     ds = ds.rename(rename)
-    for key, value in rename.items():   # bulk attribute update...
-        if value in ATTRS.keys():
-            ds[value].attrs = ATTRS[value]
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
-    # ...and for cdom
-    ds['fluorometric_cdom'].attrs = ATTRS['fluorometric_cdom']
 
     return ds
 

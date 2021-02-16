@@ -839,9 +839,13 @@ def update_dataset(ds, depth):
     qc_pattern = re.compile(r'^.+_qc_.+$')
     executed_pattern = re.compile(r'^.+_qc_executed$')
     results_pattern = re.compile(r'^.+_qc_results$')
+    qartod_results = re.compile(r'^.+_qartod_results$')
     flag_masks = np.array([1, 2, 4, 8, 16, 32, 64, 128], dtype=np.uint8)
     for v in ds.variables:
-        if qc_pattern.match(v):     # update QC variables
+        if qartod_results.match(v):  # make sure set as integer
+            ds[v] = ds[v].astype('int32')
+
+        if qc_pattern.match(v):      # update QC variables
             ds[v] = (('station', 'time'), [[np.uint8(x) for x in ds[v].values[0]]])
             ds[v].attrs['long_name'] = re.sub('Qc', 'QC', re.sub('_', ' ', v.title()))
 
@@ -879,6 +883,12 @@ def update_dataset(ds, depth):
         'axis': 'T',
         'calendar': 'gregorian'
     })
+
+    # convert all float64 values to float32
+    for v in ds.variables:
+        if v not in ['time', 'internal_timestamp']:
+            if ds[v].dtype is np.dtype('float64'):
+                ds[v] = ds[v].astype('float32')
 
     # return the data set for further work
     return ds

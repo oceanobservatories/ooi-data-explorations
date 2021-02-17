@@ -19,6 +19,7 @@ function [uframe_dataset_name, var_list] = M2M_URLs(platform_name,node,instrumen
 %.. 2020-04-14: CMRisien. Added Global profiler glider streams.
 %.. 2020-06-18: RADesiderio. Changed CE01ISSP and CE06ISSP telemetered flort streams to 'flort_sample'.
 %.. 2020-06-18: RADesiderio. Added CE04OSPS OPTAA stream.
+%.. 2020-07-13: CMRisien. Added RS01SBPS CTD and FLORT streams.
 %
 %.. Explicitly construct UFrame dataset names
 %MOPAK
@@ -644,6 +645,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -652,6 +655,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -660,6 +665,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID26/01-ADCPTC000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -670,6 +677,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -678,6 +687,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -686,6 +697,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID26/01-ADCPTA000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -696,6 +709,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -704,6 +719,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -712,6 +729,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID26/01-ADCPTC000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -722,6 +741,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -730,6 +751,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -738,6 +761,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -748,6 +773,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -756,6 +783,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -764,6 +793,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -774,6 +805,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -782,6 +815,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -790,6 +825,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD35/04-ADCPTC000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -800,6 +837,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -808,6 +847,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -816,6 +857,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD35/04-ADCPSJ000/telemetered/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -826,6 +869,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -834,6 +879,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -842,6 +889,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
     %ZPLSC
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD37/07-ZPLSCC000/telemetered/zplsc_c_instrument';
@@ -2848,6 +2897,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2856,6 +2907,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -2864,6 +2917,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID26/01-ADCPTC000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -2874,6 +2929,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2882,6 +2939,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -2890,6 +2949,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID26/01-ADCPTA000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -2900,6 +2961,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2908,6 +2971,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -2916,6 +2981,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID26/01-ADCPTC000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -2926,6 +2993,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2934,6 +3003,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -2942,6 +3013,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -2952,6 +3025,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2960,6 +3035,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -2968,6 +3045,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -2978,6 +3057,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2986,6 +3067,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -2994,6 +3077,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD35/04-ADCPTC000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -3004,6 +3089,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3012,6 +3099,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -3020,6 +3109,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD35/04-ADCPSJ000/recovered_host/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -3030,6 +3121,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3038,6 +3131,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -3046,6 +3141,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
     %WAVSS
 elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'WAVSS_Stats') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/SBD12/05-WAVSSA000/recovered_host/wavss_a_dcl_statistics_recovered';
@@ -4624,6 +4721,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4632,6 +4731,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4640,6 +4741,8 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/RID26/01-ADCPTC000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4650,6 +4753,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4658,6 +4763,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4666,6 +4773,8 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/RID26/01-ADCPTA000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4676,6 +4785,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4684,6 +4795,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4692,6 +4805,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/RID26/01-ADCPTC000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4702,6 +4817,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4710,6 +4827,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4718,6 +4837,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/04-ADCPTM000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4728,6 +4849,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4736,6 +4859,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4744,6 +4869,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/04-ADCPTM000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4754,6 +4881,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4762,6 +4891,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4770,6 +4901,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/04-ADCPTC000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4780,6 +4913,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4788,6 +4923,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4796,6 +4933,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ADCP') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/04-ADCPSJ000/recovered_inst/adcp_velocity_earth';
     var_list(1).name = 'time';
@@ -4806,6 +4945,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).name = 'eastward_seawater_velocity';
     var_list(7).name = 'northward_seawater_velocity';
     var_list(8).name = 'upward_seawater_velocity';
+    var_list(9).name = 'percent_good_3beam';
+    var_list(10).name = 'percent_good_4beam';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4814,6 +4955,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).data = [];
     var_list(7).data = [];
     var_list(8).data = [];
+    var_list(9).data = [];
+    var_list(10).data = [];
     var_list(1).units = 'seconds since 1900-01-01';
     var_list(2).units = 'meters';
     var_list(3).units = 'deci-degrees';
@@ -4822,6 +4965,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(6).units = 'm/s';
     var_list(7).units = 'm/s';
     var_list(8).units = 'm/s';
+    var_list(9).units = 'percent';
+    var_list(10).units = 'percent';
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'ZPLSC') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD37/07-ZPLSCC000/recovered_inst/zplsc_echogram_data';
     var_list(1).name = 'time';
@@ -10764,6 +10909,26 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrum
     var_list(6).units = 'Hz';
     var_list(7).units = 'Hz';
     var_list(8).units = '1';
+elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
+    uframe_dataset_name = 'RS01SBPS/SF01A/2A-CTDPFA102/streamed/ctdpf_sbe43_sample';
+    var_list(1).name = 'time';
+    var_list(2).name = 'seawater_temperature';
+    var_list(3).name = 'practical_salinity';
+    var_list(4).name = 'density';
+    var_list(5).name = 'seawater_pressure';
+    var_list(6).name = 'seawater_conductivity';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(4).data = [];
+    var_list(5).data = [];
+    var_list(6).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'degC';
+    var_list(3).units = 'unitless';
+    var_list(4).units = 'kg/m3';
+    var_list(5).units = 'dbar';
+    var_list(6).units = 'S/m';
 elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/2A-CTDPFA107/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';
@@ -10873,7 +11038,30 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(4).name = 'fluorometric_cdom';
     var_list(5).name = 'total_volume_scattering_coefficient';
     var_list(6).name = 'optical_backscatter';
-    var_list(7).name = 'int_ctd_pressure';
+    var_list(7).name = 'pressure';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(4).data = [];
+    var_list(5).data = [];
+    var_list(6).data = [];
+    var_list(7).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'm-1';
+    var_list(3).units = 'ug/L';
+    var_list(4).units = 'ppb';
+    var_list(5).units = 'm-1 sr-1';
+    var_list(6).units = 'm-1';
+    var_list(7).units = 'dbar';
+elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'FLORT') && strcmp(method,'Streamed')
+    uframe_dataset_name = 'RS01SBPS/SF01A/3A-FLORTD101/streamed/flort_d_data_record';
+    var_list(1).name = 'time';
+    var_list(2).name = 'seawater_scattering_coefficient';
+    var_list(3).name = 'fluorometric_chlorophyll_a';
+    var_list(4).name = 'fluorometric_cdom';
+    var_list(5).name = 'total_volume_scattering_coefficient';
+    var_list(6).name = 'optical_backscatter';
+    var_list(7).name = 'pressure';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];

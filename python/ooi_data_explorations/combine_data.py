@@ -12,6 +12,8 @@ import os
 import sys
 import xarray as xr
 
+from ooi_data_explorations.common import dt64_epoch
+
 
 def combine_datasets(tdata, rhdata, ridata, resample_time):
     """
@@ -24,9 +26,9 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     record via median averaging. The resulting merged and resampled data set is
     returned for further analysis.
 
-    :param tdata: telemetered data as an xarray data set
-    :param rhdata: recovered host data as an xarray data set
-    :param ridata: recovered instrument data as xarray data set
+    :param tdata: telemetered data as an xarray data set or None if no data available
+    :param rhdata: recovered host data as an xarray data set or None if no data available
+    :param ridata: recovered instrument data as xarray data set or None if no data available
     :param resample_time: The resampling time period in minutes
     :return ds: The combined and resampled data set
     """
@@ -78,15 +80,26 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
 
     # resample the dataset onto a common time record
     itime = '{:d}Min'.format(resample_time)
-    gtime = '{:d}Min'.format(resample_time * 2)
+    gtime = '{:d}Min'.format(resample_time * 3)
     ds = ds.sortby('time')
     avg = ds.resample(time=itime, keep_attrs=True).median()
     avg = avg.interpolate_na(dim='time', max_gap=gtime)
 
+    # reset the time record to seconds since 1970
+    avg['time'] = dt64_epoch(avg.time)
+
     # add the attributes back into the data set
     avg.attrs = ds.attrs
     for v in avg.variables:
-        avg[v].attrs = ds[v].attrs
+        if v != 'time':
+            avg[v] = avg[v].astype(ds[v].dtype)
+            avg[v].attrs = ds[v].attrs
+
+    avg.time.attrs['long_name'] = 'Time'
+    avg.time.attrs['standard_name'] = 'time'
+    avg.time.attrs['axis'] = 'T'
+    avg.time.attrs['units'] = 'seconds since 1970-01-01 00:00:00 0:00'
+    avg.time.attrs['calendar'] = 'gregorian'
 
     return avg
 
@@ -111,7 +124,7 @@ def inputs(argv=None):
     parser.add_argument("-rh", "--recovered_host", dest="rhost", default=False, action='store_true')
     parser.add_argument("-ri", "--recovered_inst", dest="rinst", default=False, action='store_true')
     parser.add_argument("-dp", "--deployment", dest="deploy", type=int, required=True)
-    parser.add_argument("-it", "--resample_time", dest="intgr", type=int, required=True)
+    parser.add_argument("-rt", "--resample_time", dest="resample", type=int, required=True)
     parser.add_argument("-o", "--outfile", dest="outfile", type=str, required=True)
 
     # parse the input arguments and create a parser object
@@ -141,7 +154,7 @@ def main(argv=None):
     recovered_host = args.rhost
     recovered_inst = args.rinst
     deployment = args.deploy
-    resample_time = args.intgr
+    resample_time = args.resample
     outfile = args.outfile
 
     # load the data from the different data delivery methods
@@ -170,7 +183,6 @@ def main(argv=None):
     if tdata or rhdata or ridata:
         # combine the data sets
         ds = combine_datasets(tdata, rhdata, ridata, resample_time)
-        ds.temperature.plot()
 
         # save the combined and resampled data to disk
         outfile = os.path.join(data_directory, outfile)

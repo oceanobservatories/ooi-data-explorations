@@ -14,7 +14,6 @@
 . $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh
 conda activate ooi
 PYTHON="python -m ooi_data_explorations.uncabled.process_pco2w"
-COMBINE="python -m ooi_data_explorations.combine_data"
 
 ### CE01ISSM ###
 BASE_FLAGS="-s CE01ISSM -n RID16 -sn 05-PCO2WB000"
@@ -23,7 +22,6 @@ for i in $(seq -f "%02g" 1 13); do
     $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
-    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 BASE_FLAGS="-s CE01ISSM -n MFD35 -sn 05-PCO2WB000"
@@ -32,7 +30,6 @@ for i in $(seq -f "%02g" 1 13); do
     $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
-    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE06ISSM ###
@@ -42,7 +39,6 @@ for i in $(seq -f "%02g" 1 12); do
     $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
-    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 BASE_FLAGS="-s CE06ISSM -n MFD35 -sn 05-PCO2WB000"
@@ -51,7 +47,6 @@ for i in $(seq -f "%02g" 1 12); do
     $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
-    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE07SHSM ###
@@ -61,7 +56,6 @@ for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
-    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done
 
 ### CE09OSSM ###
@@ -71,5 +65,4 @@ for i in $(seq -f "%02g" 1 11); do
     $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
     $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
     $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
-    $COMBINE -t -rh -ri -d "$(dirname $BASE_FILE)" -o "$BASE_FILE.deploy$i.combined.nc"
 done

@@ -90,8 +90,7 @@ def flort_datalogger(ds, burst=True):
     #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'pressure_depth',
-                  'seawater_scattering_coefficient'])
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
 
     # check for data from a co-located CTD, if not present add with appropriate attributes
     if 'temp' not in ds.variables:
@@ -138,7 +137,8 @@ def flort_datalogger(ds, burst=True):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
@@ -180,12 +180,11 @@ def flort_instrument(ds):
     #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'pressure_depth',
-                  'seawater_scattering_coefficient'])
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'ctdbp_seawater_temperature': 'seawater_temperature',
+        'temp': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -204,7 +203,8 @@ def flort_instrument(ds):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():

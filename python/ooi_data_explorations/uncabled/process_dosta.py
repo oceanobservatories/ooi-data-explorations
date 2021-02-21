@@ -155,7 +155,8 @@ def dosta_datalogger(ds, burst=False):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
@@ -222,7 +223,8 @@ def dosta_ctdbp_datalogger(ds):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
@@ -264,7 +266,8 @@ def dosta_ctdbp_instrument(ds):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():

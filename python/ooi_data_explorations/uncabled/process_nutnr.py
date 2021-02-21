@@ -137,7 +137,8 @@ def nutnr_datalogger(ds, burst=True):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():

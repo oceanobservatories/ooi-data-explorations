@@ -293,7 +293,8 @@ def phsen_datalogger(ds):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
@@ -381,7 +382,8 @@ def phsen_instrument(ds):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
@@ -477,7 +479,8 @@ def phsen_imodem(ds):
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            ds[key].attrs[atk] = atv
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():

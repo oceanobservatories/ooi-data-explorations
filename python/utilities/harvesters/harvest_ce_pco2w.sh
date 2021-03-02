@@ -19,34 +19,34 @@ PYTHON="python -m ooi_data_explorations.uncabled.process_pco2w"
 BASE_FLAGS="-s CE01ISSM -n RID16 -sn 05-PCO2WB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce01issm/nsif/pco2w/ce01issm.nsif.pco2w"
 for i in $(seq -f "%02g" 1 13); do
-	$PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
 done
 
 BASE_FLAGS="-s CE01ISSM -n MFD35 -sn 05-PCO2WB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce01issm/seafloor/pco2w/ce01issm.seafloor.pco2w"
 for i in $(seq -f "%02g" 1 13); do
-	$PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
 done
 
 ### CE06ISSM ###
 BASE_FLAGS="-s CE06ISSM -n RID16 -sn 05-PCO2WB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce06issm/nsif/pco2w/ce06issm.nsif.pco2w"
 for i in $(seq -f "%02g" 1 12); do
-	$PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
 done
 
 BASE_FLAGS="-s CE06ISSM -n MFD35 -sn 05-PCO2WB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce06issm/seafloor/pco2w/ce06issm.seafloor.pco2w"
 for i in $(seq -f "%02g" 1 12); do
-	$PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
-	$PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt telemetered -st pco2w_abc_dcl_instrument -dp $i -o "$BASE_FILE.deploy$i.telemetered.pco2w_abc_dcl_instrument.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_host -st pco2w_abc_dcl_instrument_recovered -dp $i -o "$BASE_FILE.deploy$i.recovered_host.pco2w_abc_dcl_instrument_recovered.nc"
+    $PYTHON $BASE_FLAGS -mt recovered_inst -st pco2w_abc_instrument -dp $i -o "$BASE_FILE.deploy$i.recovered_inst.pco2w_abc_instrument.nc"
 done
 
 ### CE07SHSM ###

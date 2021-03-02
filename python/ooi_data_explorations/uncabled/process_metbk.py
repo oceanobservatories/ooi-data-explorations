@@ -116,8 +116,7 @@ def metbk_datalogger(ds, burst=False):
 
     if burst:   # re-sample the data to a 15 minute interval using a median average
         burst = ds
-        burst['time'] = burst['time'] - np.timedelta64(450, 's')    # center time windows for 15 minute bursts
-        burst = burst.resample(time='15Min', keep_attrs=True, skipna=True).median()
+        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...

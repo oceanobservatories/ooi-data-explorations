@@ -231,12 +231,13 @@ def pco2w_datalogger(ds):
     for v in data_types:
         ds[v] = ds[v].astype('float32')
 
-    # reset some of the variable attributes, and ...
-    for v in ds.variables:  # variable level attributes
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
-    # ... add the renamed information
+    # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
@@ -312,12 +313,13 @@ def pco2w_instrument(ds):
     for v in data_types:
         ds[v] = ds[v].astype('float32')
 
-    # reset some of the variable attributes, and ...
-    for v in ds.variables:  # variable level attributes
-        if v in ATTRS.keys():
-            ds[v].attrs = ATTRS[v]
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
-    # ... add the renamed information
+    # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 

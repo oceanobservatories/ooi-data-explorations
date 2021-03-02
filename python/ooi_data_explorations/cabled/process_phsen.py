@@ -6,7 +6,7 @@ import xarray as xr
 
 from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
     get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
-from ooi_data_explorations.uncabled.process_phsen import PHSEN
+from ooi_data_explorations.uncabled.process_phsen import ATTRS, quality_checks
 
 
 def phsen_streamed(ds):
@@ -97,12 +97,15 @@ def phsen_streamed(ds):
     # merge the data sets back together
     ds = ds.merge(ph)
 
-    # reset some of the variable attributes, and ...
-    for v in ds.variables:  # variable level attributes
-        if v in PHSEN:
-            ds[v].attrs = PHSEN[v]
+    # test data quality
+    ds['seawater_ph_quality_flag'] = quality_checks(ds)
 
-    # ... add the renamed information
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 

@@ -12,9 +12,9 @@ from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_d
 ATTRS = {
     'unique_id': {
         'long_name': 'Instrument Unique ID',
-        'comment': ('One byte checksum summary of the instrument serial number, name, calibration date and firmware ' +
-                    'version serving as a proxy for a unique ID. While identified as the instrument unique ID, it is ' +
-                    'possible for more than one instrument to have the same checksum summary. Thus, the uniqueness ' +
+        'comment': ('One byte checksum summary of the instrument serial number, name, calibration date and firmware '
+                    'version serving as a proxy for a unique ID. While identified as the instrument unique ID, it is '
+                    'possible for more than one instrument to have the same checksum summary. Thus, the uniqueness '
                     'of this value should be considered with a certain degree of caution.'),
         # 'units': ''    # deliberately left blank, no units for this value
     },
@@ -30,70 +30,70 @@ ATTRS = {
     },
     'blank_refrnc_434': {
         'long_name': 'DI Blank Reference Intensity at 434 nm',
-        'comment': ('Optical absorbance reference intensity at 434 nm. Measured with deionized water. Reference and ' +
-                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower ' +
-                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from ' +
+        'comment': ('Optical absorbance reference intensity at 434 nm. Measured with deionized water. Reference and '
+                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower '
+                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from '
                     'the reference_light_measurements variable in the Data Portal sourced data file.'),
         'units': 'counts',
         '_FillValue': -9999999,
     },
     'blank_signal_434': {
         'long_name': 'DI Blank Signal Intensity at 434 nm',
-        'comment': ('Optical absorbance signal intensity at 434 nm. Measured with deionized water. Reference and ' +
-                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower ' +
-                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from ' +
+        'comment': ('Optical absorbance signal intensity at 434 nm. Measured with deionized water. Reference and '
+                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower '
+                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from '
                     'the reference_light_measurements variable in the Data Portal sourced data file.'),
         'units': 'counts',
         '_FillValue': -9999999,
     },
     'blank_refrnc_578': {
         'long_name': 'DI Blank Reference Intensity at 578 nm',
-        'comment': ('Optical absorbance reference intensity at 578 nm. Measured with deionized water. Reference and ' +
-                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower ' +
-                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from ' +
+        'comment': ('Optical absorbance reference intensity at 578 nm. Measured with deionized water. Reference and '
+                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower '
+                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from '
                     'the reference_light_measurements variable in the Data Portal sourced data file.'),
         'units': 'counts',
         '_FillValue': -9999999,
     },
     'blank_signal_578': {
         'long_name': 'DI Blank Signal Intensity at 578 nm',
-        'comment': ('Optical absorbance signal intensity at 578 nm. Measured with deionized water. Reference and ' +
-                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower ' +
-                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from ' +
+        'comment': ('Optical absorbance signal intensity at 578 nm. Measured with deionized water. Reference and '
+                    'signal intensities range between 0 and 4096. Values should be greater than ~1500. Lower '
+                    'intensities will result in higher noise in the absorbance and pH measurements. Obtained from '
                     'the reference_light_measurements variable in the Data Portal sourced data file.'),
         'units': 'counts',
         '_FillValue': -9999999,
     },
     'reference_434': {
         'long_name': 'Reference Intensity at 434 nm',
-        'comment': ('Optical absorbance reference intensity at 434 nm. Reference and signal intensities range ' +
-                    'between 0 and 4096. Values should be greater than ~1500. Lower intensities will result in ' +
-                    'higher noise in the absorbance and pH measurements. Obtained from the light_measurements' +
+        'comment': ('Optical absorbance reference intensity at 434 nm. Reference and signal intensities range '
+                    'between 0 and 4096. Values should be greater than ~1500. Lower intensities will result in '
+                    'higher noise in the absorbance and pH measurements. Obtained from the light_measurements'
                     'variable in the Data Portal sourced data file.'),
         'units': 'counts'
     },
     'signal_434': {
         'long_name': 'Signal Intensity at 434 nm',
-        'comment': ('Optical absorbance signal intensity at 434 nm. Reference and signal intensities range between 0 ' +
-                    'and 4096. Values should be greater than ~1500. Lower intensities will result in higher noise in ' +
-                    'the absorbance and pH measurements. Obtained from the light_measurements variable in the Data ' +
+        'comment': ('Optical absorbance signal intensity at 434 nm. Reference and signal intensities range between 0 '
+                    'and 4096. Values should be greater than ~1500. Lower intensities will result in higher noise in '
+                    'the absorbance and pH measurements. Obtained from the light_measurements variable in the Data '
                     'Portal sourced data file.'),
         'data_product_identifier': 'PH434SI_L0',
         'units': 'counts'
     },
     'reference_578': {
         'long_name': 'Reference Intensity at 578 nm',
-        'comment': ('Optical absorbance reference intensity at 578 nm. Reference and signal intensities range ' +
-                    'between 0 and 4096. Values should be greater than ~1500. Lower intensities will result in ' +
-                    'higher noise in the absorbance and pH measurements. Obtained from the light_measurements ' +
+        'comment': ('Optical absorbance reference intensity at 578 nm. Reference and signal intensities range '
+                    'between 0 and 4096. Values should be greater than ~1500. Lower intensities will result in '
+                    'higher noise in the absorbance and pH measurements. Obtained from the light_measurements '
                     'variable in the Data Portal sourced data file.'),
         'units': 'counts'
     },
     'signal_578': {
         'long_name': 'Signal Intensity at 578 nm',
-        'comment': ('Optical absorbance signal intensity at 578 nm. Reference and signal intensities range between 0 ' +
-                    'and 4096. Values should be greater than ~1500. Lower intensities will result in higher noise in ' +
-                    'the absorbance and pH measurements. Obtained from the light_measurements variable in the Data ' +
+        'comment': ('Optical absorbance signal intensity at 578 nm. Reference and signal intensities range between 0 '
+                    'and 4096. Values should be greater than ~1500. Lower intensities will result in higher noise in '
+                    'the absorbance and pH measurements. Obtained from the light_measurements variable in the Data '
                     'Portal sourced data file.'),
         'data_product_identifier': 'PH578SI_L0',
         'units': 'counts'
@@ -110,28 +110,28 @@ ATTRS = {
     },
     'raw_battery_voltage': {
         'long_name': 'Raw Battery Voltage',
-        'comment': ('Raw internal battery voltage measured in counts. May actually reflect external voltage if ' +
+        'comment': ('Raw internal battery voltage measured in counts. May actually reflect external voltage if '
                     'external power is applied'),
         'units': 'counts'
     },
     'thermistor_temperature': {
         'long_name': 'Thermistor Temperature',
-        'comment': ('Thermistor temperature refers to the internal instrument temperature of the pH sensor, as ' +
-                    'measured by the thermistor. It is used to determine salinity and temperature dependent molar ' +
-                    'absorptivities in the seawater sample in order to make an accurate pH estimation. This ' +
+        'comment': ('Thermistor temperature refers to the internal instrument temperature of the pH sensor, as '
+                    'measured by the thermistor. It is used to determine salinity and temperature dependent molar '
+                    'absorptivities in the seawater sample in order to make an accurate pH estimation. This '
                     'variable represents the thermistor temperature measured at the end of the measurement cycle'),
         'units': 'degrees_Celsius',
         'ancillary_variables': 'raw_thermistor_end'
     },
     'seawater_ph': {
         'long_name': 'Seawater pH',
-        'comment': ('pH is a measurement of the concentration of hydrogen ions in a solution. pH ranges from acidic ' +
+        'comment': ('pH is a measurement of the concentration of hydrogen ions in a solution. pH ranges from acidic '
                     'to basic on a scale from 0 to 14 with 7 being neutral.'),
         'standard_name': 'sea_water_ph_reported_on_total_scale',
         'data_product_identifier': 'PHWATER_L2',
         # 'units': ''    # deliberately left blank, no units for this value
-        'ancillary_variables': ('blank_refrnc_434 blank_signal_434 blank_refrnc_578 blank_signal_578 ' +
-                                'reference_434 signal_434 reference_578 signal_578 thermistor_temperature ' +
+        'ancillary_variables': ('blank_refrnc_434 blank_signal_434 blank_refrnc_578 blank_signal_578 '
+                                'reference_434 signal_434 reference_578 signal_578 thermistor_temperature '
                                 'practical_salinity seawater_ph_quality_flag')
     },
     'seawater_ph_quality_flag': {
@@ -143,22 +143,25 @@ ATTRS = {
         'flag_values': np.array([1, 2, 3, 4, 9], dtype=np.int32),
         'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing_data',
         # 'units': ''    # deliberately left blank, no units for this value
-        'ancillary_variables': 'blank_signal_434 blank_signal_578 signal_434 signal_578 seawater_ph'
+        'ancillary_variables': ('blank_signal_434 blank_signal_578 signal_434 reference_434 signal_578 '
+                                'reference_578 seawater_ph')
     }
 }
 
 
 def quality_checks(ds):
     """
-    Assessment of the raw data and the calculated seawater pH for quality,
-    using QARTOD flags to indicate the quality of the seawater pH. QARTOD
-    quality flags are:
+    Assessment of the raw data and the calculated seawater pH for quality
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
 
         1 = Pass
-        2 = Not Evaluated
         3 = Suspect or of High Interest
         4 = Fail
-        9 = Missing Data
+
+    Suspect flags are set based on experience with the instrument and the data
+    produced by it. Failed flags are based on code provided by the vendor. The
+    final flag value represents the worst case assessment of the data quality.
 
     :param ds: xarray dataset with the raw signal data and the calculated
                seawater pH
@@ -167,37 +170,49 @@ def quality_checks(ds):
     max_bits = 4096                                # max measurement value
     qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
-    # test the blank measurements -- blank measurements either too high (saturated signal) or too low.
+    # test suspect indicator signals -- values starting to get too low for a good calculation
+    m434 = ds.signal_434 < max_bits / 12  # value based on what would be considered too low for blanks
+    m578 = ds.signal_578 < max_bits / 12  # value based on what would be considered too low for blanks
+    m = np.any([m434.all(axis=1), m578.all(axis=1)], axis=0)
+    qc_flag[m] = 3
+
+    # test suspect flat indicator signals -- indicates pump might be starting to fail or otherwise become obstructed.
+    m434 = ds.signal_434.std(axis=1) < 180  # test level is 3x the fail level
+    m578 = ds.signal_578.std(axis=1) < 180  # test level is 3x the fail level
+    m = np.any([m434, m578], axis=0)
+    qc_flag[m] = 3
+
+    # test for suspect pH values -- user range set to 7.4 and 8.6
+    m = (ds.seawater_ph.values < 7.4) | (ds.seawater_ph.values > 8.6)   # from real-world expectations
+    qc_flag[m] = 3
+
+    # test for suspect reference measurements -- erratic reference measurements, with larger than usual variability.
+    m434 = ds.reference_434.std(axis=1) > 10  # value based on 5x of normal standard deviations
+    m578 = ds.reference_578.std(axis=1) > 10  # value based on 5x of normal standard deviations
+    m = np.any([m434, m578], axis=0)
+    qc_flag[m] = 3
+
+    # test for failed blank measurements -- blank measurements either too high (saturated signal) or too low.
     m434 = (ds.blank_signal_434 > max_bits - max_bits / 20) | (ds.blank_signal_434 < max_bits / 12)
     m578 = (ds.blank_signal_578 > max_bits - max_bits / 20) | (ds.blank_signal_578 < max_bits / 12)
-    m = np.any([m434.any(axis=1), m578.any(axis=1)], axis=0)
+    m = np.any([m434.all(axis=1), m578.all(axis=1)], axis=0)
     qc_flag[m] = 4
 
-    # test the intensity measurements -- intensity measurements either too high (saturated signal) or unreasonably low.
+    # test for failed intensity measurements -- intensity measurements either too high (saturated signal) or too low.
     m434 = (ds.signal_434 > max_bits - max_bits / 20) | (ds.signal_434 < 5)
     m578 = (ds.signal_578 > max_bits - max_bits / 20) | (ds.signal_578 < 5)
-    m = np.any([m434.any(axis=1), m578.any(axis=1)], axis=0)
+    m = np.any([m434.all(axis=1), m578.all(axis=1)], axis=0)
     qc_flag[m] = 4
 
-    # test for flat intensity measurements -- flat intensity measurements (usually indicates pump isn't working or the
-    # flow cell is otherwise obstructed).
+    # test for flat intensity measurements -- indicates pump isn't working or the flow cell is otherwise obstructed.
     m434 = ds.signal_434.std(axis=1) < 60
     m578 = ds.signal_578.std(axis=1) < 60
     m = np.any([m434, m578], axis=0)
     qc_flag[m] = 4
 
-    # test for out of range pH values -- sensor range set to 6.9 and 9.0, user range set to 7.4 and 8.6
-    m = (ds.seawater_ph.values < 6.9) | (ds.seawater_ph.values > 9.0)   # from vendor code
+    # test for out of range pH values -- sensor range set to 6.9 and 9.0
+    m = (ds.seawater_ph.values < 6.9) | (ds.seawater_ph.values > 9.0)
     qc_flag[m] = 4
-    m = (ds.seawater_ph.values < 7.4) | (ds.seawater_ph.values > 8.6)   # from real-world expectations
-    qc_flag[m] = 3
-
-    # test for low raw signal values, below which the algorithm for calculating pH will start to fail as the signal to
-    # noise ratio becomes too small.
-    m434 = ds.signal_434 < 200
-    m578 = ds.signal_578 < 200
-    m = np.any([m434.any(axis=1), m578.any(axis=1)], axis=0)
-    qc_flag[m] = 3
 
     return qc_flag
 

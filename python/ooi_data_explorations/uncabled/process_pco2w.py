@@ -326,6 +326,73 @@ def pco2w_instrument(ds):
     return ds
 
 
+def quality_checks(ds):
+    """Assessment of the raw data and the calculated seawater pCO2 for quality
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
+        1 = Pass
+        3 = Suspect or of High Interest
+        4 = Fail
+    Suspect flags are set based on ranges provided by the vendor. The final
+    flag represents the worst case assessment of the data quality.
+
+    :param ds: An xarray dataSet of the PCO2W data which has been
+        reformated using the pco2w_instrument function.
+    :return: An xarray dataArray containing the values indicating quality
+        of the raw intensity measurements for the PCO2W
+    """
+    qc_flags = ds.time.astype("int32") * 0 + 1
+
+    # Check the dark reference & signal values
+    refDark = (ds.dark_reference.mean(dim="duplicates") < 50) | (
+        ds.dark_reference.mean(dim="duplicates") > 200)
+    qc_flags[refDark] = 3
+    sigDark = (ds.dark_signal.mean(dim="duplicates") < 50) | (
+        ds.dark_signal.mean(dim="duplicates") > 200)
+    qc_flags[sigDark] = 3
+
+    # Check the 434 reference & signal values for suspect values
+    ref434 = (ds.reference_434.mean(dim="duplicates") < 1500)
+    qc_flags[ref434] = 3
+    sig434 = (ds.signal_434.mean(dim="duplicates") < 1500)
+    qc_flags[sig434] = 3
+
+    # Check the 620 nm reference & signal values for suspect values
+    ref620 = (ds.reference_620.mean(dim="duplicates") < 1500)
+    qc_flags[ref620] = 3
+    sig620 = (ds.signal_620.mean(dim="duplicates") < 1500)
+    qc_flags[ref620] = 3
+
+    # Check the 434 reference & signal values for bad values
+    ref434 = (ds.reference_434.mean(dim="duplicates") < 0) | (
+        ds.reference_434.mean(dim="duplicates") > 4096)
+    qc_flags[ref434] = 4
+    sig434 = (ds.signal_434.mean(dim="duplicates") < 0) | (
+        ds.signal_434.mean(dim="duplicates") > 4096)
+    qc_flags[sig434] = 4
+
+    # Check the 620 reference & signal values for bad values
+    ref620 = (ds.reference_620.mean(dim="duplicates") < 0) | (
+        ds.reference_620.mean(dim="duplicates") > 4096)
+    qc_flags[ref620] = 4
+    sig620 = (ds.signal_620.mean(dim="duplicates") < 0) | (
+        ds.signal_620.mean(dim="duplicates") > 4096)
+    qc_flags[sig620] = 4
+
+    # Add some attributes to the quality flags
+    qc_flags.attrs = {
+        "long_name": "Quality Flags",
+        "comment": ("Assessment of the raw light intensity measurment " +
+                    "data for quality using a subset of the QARTOD " +
+                    "to indicate quality. QARTOD flags used are: 1 = " +
+                    "Pass; 3 = Suspect; 4 = Fail. Suspect and Fail " +
+                    "flags are determined using ranges provided by the " +
+                    "vendor.")
+    }
+
+    return qc_flags
+
+
 def main(argv=None):
     # setup the input arguments
     args = inputs(argv)

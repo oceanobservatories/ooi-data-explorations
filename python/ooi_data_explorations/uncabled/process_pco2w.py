@@ -327,7 +327,8 @@ def pco2w_instrument(ds):
 
 
 def quality_checks(ds):
-    """Assessment of the raw data and the calculated seawater pCO2 for quality
+    """
+    Assessment of the raw data and the calculated seawater pCO2 for quality
     using a susbset of the QARTOD flags to indicate the quality. QARTOD
     flags used are:
         1 = Pass

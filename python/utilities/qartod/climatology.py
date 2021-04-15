@@ -58,6 +58,12 @@ class Climatology():
             * singular_values: The singular values of input matrix
         monthly_fit: (pandas.Series)
             The climatological expectation for each calendar month of a year
+            
+        Example
+        -------
+        from qartod.climatology import Climatology
+        climatology = Climatology()
+        climatology.fit(ctdbp_data, "ctdbp_seawater_temperature")
         """
         
         # Resample the data to monthly means

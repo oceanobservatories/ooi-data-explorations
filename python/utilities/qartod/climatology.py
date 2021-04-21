@@ -26,7 +26,10 @@ class Climatology():
         """
         
         da = ds[param].groupby(ds.time.dt.month).std()
-        self.monthly_std = pd.Series(da.values, index=da.month)       
+        self.monthly_std = pd.Series(da.values, index=da.month)
+        # Fill missing std values
+        ind = np.arange(1,13,1)
+        self.monthly_std = self.monthly_std.reindex(index=ind)
             
     def fit(self, ds, param):
         """Calculate the climatological fit and monthly standard deviations.

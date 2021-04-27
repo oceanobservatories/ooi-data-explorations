@@ -98,8 +98,9 @@ netcdfFilenames = netcdfFilenames(:, end);
 nclist = nclist(idx);
 
 %.. create a URL mapping of the files
+%.. adding #fillmismatch to nc_urls addresses the issue described at https://github.com/Unidata/netcdf-c/issues/1299
 thredds_url = "https://opendap.oceanobservatories.org/thredds/dodsC";
-nc_urls = strcat(thredds_url, "/", nclist);  % string array
+nc_urls = strcat(thredds_url, "/", nclist,"#fillmismatch");  % string array;
 
 for i = 1:length(nclist)
     if opendap

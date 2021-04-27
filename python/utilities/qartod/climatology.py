@@ -36,8 +36,7 @@ class Climatology():
         via OLS-regression. The climatological expected value for each month
         is then calculated from the regression coefficients using only the first
         two cycles from the harmonic fit. Finally, the standard deviation is
-        derived using the observations for a given month and the climatological
-        fit for that month as the expected value.
+        derived using all the observations for a given month.
         
         Parameters
         ----------

@@ -32,11 +32,11 @@ class Climatology():
         """Calculate the climatological fit and monthly standard deviations.
         
         Calculates the climatological fit for a time series. First, the data 
-        are binned by month and averaged. Next, a two-cycle harmonic is fitted
+        are binned by month and averaged. Next, a four-cycle harmonic is fitted
         via OLS-regression. The climatological expected value for each month
-        is then calculated from the regression coefficients. Finally, the 
-        standard deviation is derived using the observations for a given month
-        and the climatological fit for that month as the expected value.
+        is then calculated from the regression coefficients using only the first
+        two cycles from the harmonic fit. Finally, the standard deviation is
+        derived using all the observations for a given month.
         
         Parameters
         ----------
@@ -56,6 +56,7 @@ class Climatology():
             * residuals: Sums of residuals; squared Euclidean 2-norm
             * rank: rank of the input matrix
             * singular_values: The singular values of input matrix
+            * variance_explained: coefficient of determination, or R^2
         monthly_fit: (pandas.Series)
             The climatological expectation for each calendar month of a year
             
@@ -82,14 +83,19 @@ class Climatology():
         t_in = t_in[mask == False]
         n = len(t_in)
 
-        # Build the 2-cycle model
-        X = [np.ones(n), np.sin(2*np.pi*f*t_in), np.cos(2*np.pi*f*t_in), np.sin(4*np.pi*f*t_in), np.cos(4*np.pi*f*t_in)]
+        # build the four-cycle model
+        X = [np.ones(n), np.sin(2 * np.pi * f * t_in), np.cos(2 * np.pi * f * t_in),
+             np.sin(4 * np.pi * f * t_in), np.cos(4 * np.pi * f * t_in),
+             np.sin(6 * np.pi * f * t_in), np.cos(6 * np.pi * f * t_in),
+             np.sin(8 * np.pi * f * t_in), np.cos(8 * np.pi * f * t_in)]
+
         [beta, resid, rank, s] = np.linalg.lstsq(np.transpose(X), ts)
         self.regression = {
             "beta": beta,
             "residuals": resid,
             "rank": rank,
-            "singular_values": s
+            "singular_values": s,
+            "variance_explained": 1 - resid / sum((ts - ts.mean()) ** 2)
         }
 
         # Calculate the two-cycle fitted data

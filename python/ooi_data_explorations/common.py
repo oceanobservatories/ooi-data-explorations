@@ -6,7 +6,6 @@
     M2M interface
 """
 import argparse
-import collections
 import netrc
 import numpy as np
 import os
@@ -20,9 +19,9 @@ import datetime
 import pandas as pd
 
 from bs4 import BeautifulSoup
-from tqdm import tqdm
-
+from collections.abc import Mapping
 from requests.adapters import HTTPAdapter
+from tqdm import tqdm
 from urllib3.util import Retry
 
 # setup constants used to access the data from the different M2M interfaces
@@ -914,7 +913,7 @@ def dict_update(source, overrides):
     the same thread.
     """
     for key, value in overrides.items():
-        if isinstance(value, collections.Mapping) and value:
+        if isinstance(value, Mapping) and value:
             returned = dict_update(source.get(key, {}), value)
             source[key] = returned
         else:

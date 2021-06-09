@@ -3,7 +3,8 @@
 """
 @author Christopher Wingard
 @brief Calculates QARTOD test ranges and creates the resulting tables used by
-    the OOI QC lookup functions implementing the QARTOD testing.
+    the OOI QC lookup functions that are used in implementing the QARTOD
+    testing.
 """
 import numpy as np
 import pandas as pd
@@ -87,7 +88,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     # initialize the Climatology class
     clm = Climatology()
 
-    # create an empty pandas dataframe to hold the results
+    # create an empty panda dataframe and list to hold the results
     clm_lookup = pd.DataFrame()
     clm_tables = []
 
@@ -100,33 +101,12 @@ def process_climatology(ds, params, sensor_range, **kwargs):
         # create the formatted dictionary for the lookup tables
         qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], site, node, sensor, stream, source)
 
-        # append the dictionary to the dataframe
+        # append the dictionary to the dataframe and the table to the list
         clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
         clm_tables.append(clm_table)
 
     # return the results
     return clm_lookup, clm_tables
-
-
-def calc_gross_range(ds, param, sensor_range):
-    """
-    Simple function to calculate the user gross range values based on the
-    long-term average of the parameter(s) of interest plus/minus 3 standard
-    deviations (the statistical rule of three). The user range is used in the
-    QARTOD Gross Range test to set a suspect flag for data points that lie
-    outside of the defined range.
-
-    :param ds: xarray dataset with the parameter(s) of interest
-    :param param: list of the parameter names to calculate the ranges for
-    :param sensor_range: vendor specified sensor range, used to set the QARTOD
-        fail range portion of the Gross Range test
-    :return user_range: resulting user ranges, used to set the QARTOD suspect
-        range portion of the Gross Range test
-    """
-    gr = GrossRange(fail_min=sensor_range[0], fail_max=sensor_range[1])
-    gr.fit(ds, param, 3)
-    user_range = [gr.suspect_min, gr.suspect_max]
-    return user_range
 
 
 def format_gross_range(param, sensor_range, user_range, site, node, sensor, stream, source):
@@ -148,7 +128,7 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
     :param source: Notes or comments about how the Gross Range values were
         obtained
     :return qc_dict: dictionary with the sensor and user gross range values
-        added in the formatting expected by the QC lookup
+        added in the formatting expected by the QC lookup tables
     """
     # create the dictionary
     qc_dict = {
@@ -195,7 +175,9 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
         # calculate the user range
-        user_range = calc_gross_range(ds, param, sensor_range[idx])
+        gr = GrossRange(fail_min=sensor_range[idx][0], fail_max=sensor_range[idx][1])
+        gr.fit(ds, param, 3)
+        user_range = [gr.suspect_min, gr.suspect_max]
         # create the formatted dictionary
         qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
         # append the dictionary to the dataframe

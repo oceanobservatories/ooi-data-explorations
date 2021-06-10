@@ -635,6 +635,62 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     return data
 
 
+def gc_collect(dataset_id, tag='.*\\.nc$'):
+    """
+    Use a regex tag combined with the dataset ID to collect data from the OOI Gold Copy
+    THREDDS catalog. The collected data is gathered into an xarray dataset for further
+    processing.
+
+    :param dataset_id: dataset ID as a string
+    :param tag: regex tag to use in discriminating the data files, so we only collect the correct ones
+    :return: the collected data as an xarray dataset
+    """
+    # construct the THREDDS catalog URL based on the dataset ID
+    url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/'
+    url = url + dataset_id
+
+    # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
+    files = list_files(url, tag)
+
+    # Process the data files found above and concatenate into a single data set
+    print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
+    frames = []
+    with tqdm(total=len(files), desc='Waiting', file=sys.stdout) as bar:
+        for f in files:
+            frames.append(process_file(f, True))
+            bar.update()
+            bar.refresh()
+
+    if not frames:
+        return None
+
+    # merge the frames into a single data set, preserving global attributes from the first file if more than one.
+    m2m = frames[0]
+    if len(frames) > 1:
+        for idx, frame in enumerate(frames):
+            try:
+                # concatenation handles 99% of the cases
+                m2m = xr.concat([m2m, frame], dim='time')
+            except ValueError:
+                try:
+                    # try merging the data, usually one of the data files is missing a variable from a co-located
+                    # sensor that the system was unable to find
+                    _, index = np.unique(m2m['time'], return_index=True)
+                    m2m = m2m.isel(time=index)
+                    m2m = m2m.merge(frame, compat='override')
+                except ValueError:
+                    # something is just not right with this data file
+                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(idx + 1, len(frames))
+                    warnings.warn(message)
+
+    m2m = m2m.sortby(['deployment', 'time'])
+    m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
+    m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
+    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+
+    return m2m
+
+
 def m2m_collect(data, tag='.*\\.nc$'):
     """
     Use a regex tag combined with the results of the M2M data request to collect the data from the THREDDS catalog.
@@ -663,25 +719,26 @@ def m2m_collect(data, tag='.*\\.nc$'):
     # merge the frames into a single data set, preserving global attributes from the first file if more than one.
     m2m = frames[0]
     if len(frames) > 1:
-        try:
-            # concatenation handles 99% of the cases
-            m2m = xr.concat(frames, dim='time')
-        except ValueError:  # unless there are missing variables ...
-            for i in range(1, len(frames)):
+        for idx, frame in enumerate(frames):
+            try:
+                # concatenation handles 99% of the cases
+                m2m = xr.concat([m2m, frame], dim='time')
+            except ValueError:
                 try:
-                    # merging will address most of the remaining cases
-                    m2m = m2m.merge(frames[i])
+                    # try merging the data, usually one of the data files is missing a variable from a co-located
+                    # sensor that the system was unable to find
+                    _, index = np.unique(m2m['time'], return_index=True)
+                    m2m = m2m.isel(time=index)
+                    m2m = m2m.merge(frame, compat='override')
                 except ValueError:
-                    # but sometimes there just really is something wrong with a dataset
-                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(
-                        i+1, len(frames))
+                    # something is just not right with this data file
+                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(idx + 1, len(frames))
                     warnings.warn(message)
 
-    m2m = m2m.sortby('deployment')
+    m2m = m2m.sortby(['deployment', 'time'])
     m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
     m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
-    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (
-        np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
 
     return m2m
 
@@ -700,7 +757,7 @@ def list_files(url, tag='.*\\.nc$'):
     return [node.get('href') for node in soup.find_all('a', text=pattern)]
 
 
-def process_file(catalog_file):
+def process_file(catalog_file, gc=False):
     """
     Function to download one of the NetCDF files as an xarray data set, convert to time as the appropriate dimension
     instead of obs, and drop the extraneous timestamp variables (these were originally not intended to be exposed to
@@ -711,7 +768,10 @@ def process_file(catalog_file):
         file to an xarray data set.
     :return: downloaded data in an xarray dataset.
     """
-    dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
+    if gc:
+        dods_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/dodsC/'
+    else:
+        dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
     ds = xr.load_dataset(url + '#fillmismatch')
 

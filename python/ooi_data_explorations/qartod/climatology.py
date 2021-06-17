@@ -100,7 +100,7 @@ class Climatology():
              np.sin(6 * np.pi * f * t_in), np.cos(6 * np.pi * f * t_in),
              np.sin(8 * np.pi * f * t_in), np.cos(8 * np.pi * f * t_in)]
 
-        [beta, resid, rank, s] = np.linalg.lstsq(np.transpose(X), ts)
+        [beta, resid, rank, s] = np.linalg.lstsq(np.transpose(X), ts, rcond=-1)
         self.regression = {
             "beta": beta,
             "residuals": resid,

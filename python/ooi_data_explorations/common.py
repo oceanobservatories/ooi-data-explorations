@@ -646,8 +646,8 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
     :return: the collected data as an xarray dataset
     """
     # construct the THREDDS catalog URL based on the dataset ID
-    url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/'
-    url = url + dataset_id
+    gc_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/'
+    url = gc_url + dataset_id
 
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
     files = list_files(url, tag)

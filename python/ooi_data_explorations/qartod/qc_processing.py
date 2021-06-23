@@ -3,8 +3,7 @@
 """
 @author Christopher Wingard
 @brief Calculates QARTOD test ranges and creates the resulting tables used by
-    the OOI QC lookup functions that are used in implementing the QARTOD
-    testing.
+    the OOI QC lookup functions to implement the QARTOD testing.
 """
 import numpy as np
 import pandas as pd
@@ -21,14 +20,19 @@ def identify_blocks(flags, time_step=None):
     time range of the preceding flagged point (default is 8 hours). This helps
     to limit cases of noisy data where the flagging is inconsistent.
 
-    There must be a minimum number of flagged points (defined as covering more
-    than 24 hours as the default) in order to create a block. Consecutive
+    There must be a minimum time range of flagged points (defined as covering
+    more than 24 hours as the default) in order to create a block. Consecutive
     blocks must be more than than the minimum time window apart, or they are
     combined into a single block.
 
-    :param flags:
-    :param time_step:
-    :return blocks:
+    :param flags: a boolean array of data points flagged as failing a QC
+        assessment
+    :param time_step: a two-value list of the minimum time range to use in
+        combining flagged points into a group, and the minimum range of a
+        group of flagged points to determine if a block should be created.
+        The defaults are 8 and 24 hours, respectively.
+    :return blocks: List of starting and ending dates and times defining
+        a block of flagged data.
     """
     # find blocks of consecutive points that span a time range greater than time_step[0]
     if time_step is None:
@@ -36,6 +40,8 @@ def identify_blocks(flags, time_step=None):
     diff = 0
     flg = False
     dates = []
+    start = None
+    stop = None
     for i in range(flags.size):
         # index through the boolean array until we find a flagged data point
         if flags.values[i] and not flg:
@@ -122,9 +128,9 @@ def create_annotations(site, node, sensor, blocks):
     :return output: Dictionary of the initial annotations for further review
     """
     # default text to use for the HITL annotation
-    fail_text = ('Based on a HITL review of the data, and automated quality assessments of the raw data, '
-                 'the data highlighted during this time period is considered bad and users should '
-                 'avoid using the data as part of any analysis.')
+    fail_text = ('Based on a HITL review and automated quality assessments of the data, the data highlighted '
+                 'during this time period is considered inaccurate and users should avoid using the data as '
+                 'part of any analysis.')
 
     # create the initial annotation dictionary structure
     output = {'id': [], 'subsite': [], 'node': [], 'sensor': [], 'method': [], 'stream': [], 'parameters': [],
@@ -158,9 +164,9 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Climatology lookup tables.
 
-    :param param: parameter name of the variable for the calculated user range
-    :param clm: results of the climatology test, used to create table
-    :param sensor_range:
+    :param param: parameter name of the variable for the calculated climatology
+    :param clm: results of the climatology test, used to create the table
+    :param sensor_range: list of vendor defined ranges for valid data
     :param site: Site designator, extracted from the first part of the reference
         designator
     :param node: Node designator, extracted from the second part of the reference
@@ -209,12 +215,26 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
 
 def process_climatology(ds, params, sensor_range, **kwargs):
     """
+    Using the data in an xarray dataset and a list of parameter(s), calculate
+    a monthly climatology for each parameter and create formatted outputs
+    that can be saved to the qc_lookup tables used by OOI for QARTOD testing
 
-    :param ds:
-    :param params:
-    :param sensor_range:
-    :param kwargs:
-    :return:
+    :param ds: dataset with the parameter(s) to use in developing a climatology
+    :param params: list of the parameter name(s) of the variable(s) used for
+        the calculated climatology
+    :param sensor_range: list of vendor defined ranges for valid data
+    :keyword site: Site designator, extracted from the first part of the
+        reference designator (optional input)
+    :keyword node: Node designator, extracted from the second part of the
+        reference designator (optional input)
+    :keyword sensor: Sensor designator, extracted from the third and fourth
+        part of the reference designator (optional input)
+    :keyword stream: Stream name that contains the data of interest
+        (optional input)
+    :return clm_lookup: a pandas Dataframe corresponding to the values used to
+        create the QARTOD lookup tables for the climatology test
+    :return clm_tables: list of formatted strings containing the values used to
+        define the monthly climatology test limits
     """
     # process the optional keyword arguments
     site = kwargs.get('site')
@@ -291,12 +311,25 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
 
 def process_gross_range(ds, params, sensor_range, **kwargs):
     """
+    Using the data in an xarray dataset and a list of parameter(s), calculate
+    a gross ranges (long term average plus/minus 3 standard deviations) for
+    each parameter and create formatted outputs that can be saved to the
+    qc_lookup tables used by OOI for QARTOD testing.
 
-    :param ds:
-    :param params:
-    :param sensor_range:
-    :param kwargs:
-    :return:
+    :param ds: dataset with the parameter(s) to use in developing a gross range
+    :param params: list of the parameter name(s) of the variable(s) used for
+        the calculated user portion of the gross range test
+    :param sensor_range: list of vendor defined ranges for valid data
+    :keyword site: Site designator, extracted from the first part of the
+        reference designator (optional input)
+    :keyword node: Node designator, extracted from the second part of the
+        reference designator (optional input)
+    :keyword sensor: Sensor designator, extracted from the third and fourth
+        part of the reference designator (optional input)
+    :keyword stream: Stream name that contains the data of interest
+        (optional input)
+    :return gross_range: a pandas Dataframe corresponding to the values used to
+        create the QARTOD lookup tables for the gross range test
     """
     # process the optional keyword arguments
     site = kwargs.get('site')

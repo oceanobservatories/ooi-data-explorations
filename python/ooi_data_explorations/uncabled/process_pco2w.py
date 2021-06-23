@@ -136,15 +136,24 @@ ATTRS = {
         'comment': ('Partial Pressure of CO2 in Seawater provides a measure of the amount of CO2 and HCO3 in seawater. '
                     'Specifically, it refers to the pressure that would be exerted by CO2 if all other gases were '
                     'removed. Partial pressure of a gas dissolved in seawater is understood as the partial pressure in '
-                    'air that the gas would exert in a hypothetical air volume in equilibrium with that seawater. '
-                    'NOTE: the following calibration coefficients in the parameterFunctionMap are deprecated: "ea434", '
-                    '"eb434", "ea620", "eb620". Those arguments are still present in the function declaration, but '
-                    'they are unused and can be supplied with an arbitrary fill value.'),
+                    'air that the gas would exert in a hypothetical air volume in equilibrium with that seawater.'),
         'data_product_identifier': 'PCO2WAT_L1',
         'units': 'uatm',
         'ancillary_variables': ('absorbance_ratio_434 absorbance_blank_434 absorbance_ratio_620 absorbance_blank_620 '
                                 'thermistor_temperature'),
     },
+    'pco2_seawater_quality_flag': {
+        'long_name': 'pCO2 SeaWater Quality Flag',
+        'comment': ('Quality assessment of the seawater pCO2 based on assessments of the raw values used to calculate '
+                    'the pCO2. Levels used to indicate suspect quality are pulled from the vendor code. Failed values '
+                    'are flagged based on reviews of past instrument performance.'),
+        'standard_name': 'partial_pressure_of_carbon_dioxide_in_sea_water status_flag',
+        'flag_values': np.array([1, 2, 3, 4, 9], dtype=np.int32),
+        'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing_data',
+        # 'units': ''    # deliberately left blank, no units for this value
+        'ancillary_variables': ('dark_signal' 'dark_reference' 'signal_434 reference_434 signal_620 '
+                                'reference_620 pco2_seawater' 'absorbance_blank_434' 'absorbance_blank_620')
+    }
 }
 
 
@@ -299,6 +308,9 @@ def pco2w_instrument(ds):
     # merge the data sets back together
     ds = ds.merge(data)
 
+    # test the data quality
+    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
+
     # calculate the battery voltage
     ds['battery_voltage'] = ds['raw_battery_voltage'] * 15. / 4096.
 
@@ -331,67 +343,79 @@ def quality_checks(ds):
     Assessment of the raw data and the calculated seawater pCO2 for quality
     using a susbset of the QARTOD flags to indicate the quality. QARTOD
     flags used are:
+
         1 = Pass
         3 = Suspect or of High Interest
         4 = Fail
-    Suspect flags are set based on ranges provided by the vendor. The final
-    flag represents the worst case assessment of the data quality.
+
+    Suspect flags are set based on the vendor documentation, and experience
+    with similar data from the SAMI-pH sensor. Failed flags are based on
+    experience with the data, especially how the blank measurements regularly
+    fail due to obstructed plumbing. The final flag represents the worst case
+    assessment of the data quality.
+
+    An important caveat is a recognition that the quality of the vendor
+    documentation is poor at best. There are obvious copy/paste errors and
+    inconsistencies between what the documentation describes and what the
+    instrument actually provides.
 
     :param ds: An xarray dataSet of the PCO2W data which has been
         reformated using the pco2w_instrument function.
     :return: An xarray dataArray containing the values indicating quality
         of the raw intensity measurements for the PCO2W
     """
-    qc_flags = ds.time.astype("int32") * 0 + 1
+    max_bits = 4096                                # max measurement value
+    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
-    # Check the dark reference & signal values
-    refDark = (ds.dark_reference.mean(dim="duplicates") < 50) | (
-        ds.dark_reference.mean(dim="duplicates") > 200)
-    qc_flags[refDark] = 3
-    sigDark = (ds.dark_signal.mean(dim="duplicates") < 50) | (
-        ds.dark_signal.mean(dim="duplicates") > 200)
-    qc_flags[sigDark] = 3
+    # test for suspect dark reference & signal values -- values based on vendor documentation
+    mRef = (ds.dark_reference < 50) | (ds.dark_reference > 200)
+    mSig = (ds.dark_signal < 50) | (ds.dark_signal > 200)
+    m = np.any([mRef.any(axis=1), mSig.any(axis=1)], axis=0)
+    qc_flag[m] = 3
 
-    # Check the 434 reference & signal values for suspect values
-    ref434 = (ds.reference_434.mean(dim="duplicates") < 1500)
-    qc_flags[ref434] = 3
-    sig434 = (ds.signal_434.mean(dim="duplicates") < 1500)
-    qc_flags[sig434] = 3
+    # test for suspect reference levels -- values based on vendor documentation
+    m434 = (ds.reference_434 > 4000) | (ds.reference_434 < 1500)
+    m620 = (ds.reference_620 > 4000) | (ds.reference_620 < 1500)
+    m = np.any([m434.any(axis=1), m620.any(axis=1)], axis=0)
+    qc_flag[m] = 3
 
-    # Check the 620 nm reference & signal values for suspect values
-    ref620 = (ds.reference_620.mean(dim="duplicates") < 1500)
-    qc_flags[ref620] = 3
-    sig620 = (ds.signal_620.mean(dim="duplicates") < 1500)
-    qc_flags[ref620] = 3
+    # test for suspect signal levels -- values based on vendor documentation and experience with the data
+    m434 = (ds.signal_434 > 4000) | (ds.signal_434 < 150)
+    m620 = (ds.signal_620 > 4000) | (ds.signal_620 < 150)
+    m = np.any([m434.any(axis=1), m620.any(axis=1)], axis=0)
+    qc_flag[m] = 3
 
-    # Check the 434 reference & signal values for bad values
-    ref434 = (ds.reference_434.mean(dim="duplicates") < 0) | (
-        ds.reference_434.mean(dim="duplicates") > 4096)
-    qc_flags[ref434] = 4
-    sig434 = (ds.signal_434.mean(dim="duplicates") < 0) | (
-        ds.signal_434.mean(dim="duplicates") > 4096)
-    qc_flags[sig434] = 4
+    # test for failed signal levels -- values based on experience with the SAMI-pH data
+    m = (ds.signal_434 < 5) | (ds.signal_620 < 5)
+    m = m.any(axis=1)
+    qc_flag[m] = 4
 
-    # Check the 620 reference & signal values for bad values
-    ref620 = (ds.reference_620.mean(dim="duplicates") < 0) | (
-        ds.reference_620.mean(dim="duplicates") > 4096)
-    qc_flags[ref620] = 4
-    sig620 = (ds.signal_620.mean(dim="duplicates") < 0) | (
-        ds.signal_620.mean(dim="duplicates") > 4096)
-    qc_flags[sig620] = 4
+    # test for clearly failed pCO2 values
+    m = ds.pco2_seawater > 4000
+    qc_flag[m] = 4
 
-    # Add some attributes to the quality flags
-    qc_flags.attrs = {
-        "long_name": "Quality Flags",
-        "comment": ("Assessment of the raw light intensity measurment " +
-                    "data for quality using a subset of the QARTOD " +
-                    "to indicate quality. QARTOD flags used are: 1 = " +
-                    "Pass; 3 = Suspect; 4 = Fail. Suspect and Fail " +
-                    "flags are determined using ranges provided by the " +
-                    "vendor.")
-    }
+    # test for low blank values
+    m = (ds.absorbance_blank_434 < 3000) | (ds.absorbance_blank_620 < 3000)
+    qc_flag[m] = 4
 
-    return qc_flags
+    # test for abrupt steps in the absorbance blanks -- indicates failure of the solenoid pumps to clear
+    # the reagent and/or DI water from the sample volume.
+    d434 = ds['time'].astype('int32') * 0
+    d434[1:] = ds.absorbance_blank_434.diff('time')
+    d620 = ds['time'].astype('int32') * 0
+    d620[1:] = ds.absorbance_blank_620.diff('time')
+    m = (np.abs(d434) > 2800) | (np.abs(d620) > 2800)
+    qc_flag[m] = 4
+
+    # test for abrupt steps in the pCO2 values -- indicates failure in one or more of the raw parameters
+    # used to calculate pCO2 (function uses combinations of ratios, any error in one or more of those
+    # ratios can explode the equation
+    dpco2 = ds['time'].astype('int32') * 0
+    dpco2[1:] = ds.pco2_seawater.diff('time')
+    m = np.abs(dpco2) > 1600
+    qc_flag[m] = 4
+
+    return qc_flag
 
 
 def main(argv=None):

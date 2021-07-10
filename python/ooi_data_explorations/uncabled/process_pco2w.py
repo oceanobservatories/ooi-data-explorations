@@ -48,8 +48,8 @@ ATTRS = {
         'ooinet_variable_name': 'light_measurements'
     },
     'signal_434': {
-        'long_name': 'Signal Intensity at 620 nm',
-        'comment': ('Optical absorbance signal intensity at 620 nm. Reference and signal intensities range '
+        'long_name': 'Signal Intensity at 434 nm',
+        'comment': ('Optical absorbance signal intensity at 434 nm . Reference and signal intensities range '
                     'between 0 and 4096. Values should be greater than ~1500. Lower intensities will result in '
                     'higher noise in the absorbance and pCO2 measurements. Obtained from the light_measurements'
                     'variable in the Data Portal sourced data file.'),
@@ -67,30 +67,30 @@ ATTRS = {
     },
     'signal_620': {
         'long_name': 'Signal Intensity at 620 nm',
-        'comment': ('Optical absorbance signal intensity at 620 nm. Reference and signal intensities range between 0 '
-                    'and 4096. Values should be greater than ~1500. Lower intensities will result in higher noise in '
-                    'the absorbance and pCO2 measurements. Obtained from the light_measurements variable in the Data '
-                    'Portal sourced data file.'),
+        'comment': ('Optical absorbance signal intensity at 620 nm . Reference and signal intensities range '
+                    'between 0 and 4096. Values should be greater than ~1500. Lower intensities will result in '
+                    'higher noise in the absorbance and pCO2 measurements. Obtained from the light_measurements'
+                    'variable in the Data Portal sourced data file.'),
         'units': 'counts',
         'ooinet_variable_name': 'light_measurements'
     },
     'absorbance_blank_434': {
         'long_name': 'Blank Optical Absorbance Ratio at 434 nm',
-        'comment': ('The Optical Absorbance ratio at 434 nm collected during the blank cycle (measured against in-situ '
-                    'seawater in the absence of reagent) and used to calculate the PCO2WAT data product. Values are '
-                    'updated approximately every 2-3 days.'),
+        'comment': ('The Optical Absorbance ratio at 434 nm collected during the blank cycle (measured with DI '
+                    'water in the absence of reagent) and used to calculate the PCO2WAT data product. Values are '
+                    'updated approximately every 2-3 days. Obtained from the light_measurements array in the '
+                    'instrument blank data set.'),
         'units': 'counts',
         'data_product_identifier': 'CO2ABS1-BLNK_L0',
-        'stream': 'pco2w_abc_dcl_instrument_blank'
     },
     'absorbance_blank_620': {
         'long_name': 'Blank Optical Absorbance Ratio at 620 nm',
-        'comment': ('The Optical Absorbance ratio at 620 nm collected during the blank cycle (measured against in-situ '
-                    'seawater in the absence of reagent) and used to calculate the PCO2WAT data product. Values are '
-                    'updated approximately every 2-3 days.'),
+        'comment': ('The Optical Absorbance ratio at 620 nm collected during the blank cycle (measured with DI '
+                    'water in the absence of reagent) and used to calculate the PCO2WAT data product. Values are '
+                    'updated approximately every 2-3 days. Obtained from the light_measurements array in the '
+                    'instrument blank data set.'),
         'units': 'counts',
         'data_product_identifier': 'CO2ABS2-BLNK_L0',
-        'stream': 'pco2w_abc_dcl_instrument_blank'
     },
     'absorbance_ratio_434': {
         'long_name': 'Optical Absorbance Ratio at 434 nm',
@@ -151,10 +151,79 @@ ATTRS = {
         'flag_values': np.array([1, 2, 3, 4, 9], dtype=np.int32),
         'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing_data',
         # 'units': ''    # deliberately left blank, no units for this value
-        'ancillary_variables': ('dark_signal' 'dark_reference' 'signal_434 reference_434 signal_620 '
-                                'reference_620 pco2_seawater' 'absorbance_blank_434' 'absorbance_blank_620')
+        'ancillary_variables': ('dark_signal dark_reference signal_434 blank_signal_343 reference_434 '
+                                'blank_reference_434 signal_620 blank_signal_620 reference_620 blank_reference_620 '
+                                'absorbance_blank_434 absorbance_blank_620 pco2_seawater')
     }
 }
+
+
+def quality_checks(ds):
+    """
+    Assessment of the raw data and the calculated seawater pCO2 for quality
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
+
+        1 = Pass
+        3 = Suspect or of High Interest
+        4 = Fail
+
+    Suspect flags are set based on the vendor documentation, and experience
+    with similar data from the SAMI-pH sensor. Failed flags are based on
+    experience with the data, especially how the blank measurements regularly
+    fail due to obstructed plumbing. The final flag represents the worst case
+    assessment of the data quality.
+
+    :param ds: An xarray data set of the PCO2W data which has been
+        reformatted using the pco2w_instrument or pcow2_datalogger functions.
+    :return: An xarray data array containing the values indicating quality
+        of the raw intensity measurements for the PCO2W
+    """
+    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+
+    # test for suspect dark reference & signal values -- values based on vendor documentation
+    mRef = (ds.dark_reference < 50) | (ds.dark_reference > 200)
+    mSig = (ds.dark_signal < 50) | (ds.dark_signal > 200)
+    m = np.any([mRef.any(axis=1), mSig.any(axis=1)], axis=0)
+    qc_flag[m] = 3
+
+    # test for suspect signal levels -- values based on vendor documentation
+    m = (ds.signal_434 > 4000) | (ds.signal_620 > 4000)
+    m = m.any(axis=1)
+    qc_flag[m] = 3
+
+    # test for failed signal levels -- values based on limits used with the SAMI-pH data
+    m = (ds.signal_434 < 5) | (ds.signal_620 < 5)
+    m = m.any(axis=1)
+    qc_flag[m] = 4
+
+    # test for clearly failed pCO2 values
+    m = ds.pco2_seawater > 4000
+    qc_flag[m] = 4
+
+    # test for failed absorbance blank ratio values (less than 20% of full scale)
+    scale = 16384 * 0.20
+    m = (ds.absorbance_blank_434 < scale) | (ds.absorbance_blank_620 < scale)
+    qc_flag[m] = 4
+
+    # test for abrupt steps in the absorbance blanks -- indicates failure of the solenoid pumps to clear
+    # the reagent and/or DI water from the sample volume.
+    d434 = ds['time'].astype('int32') * 0
+    d434[1:] = ds.absorbance_blank_434.diff('time')
+    d620 = ds['time'].astype('int32') * 0
+    d620[1:] = ds.absorbance_blank_620.diff('time')
+    m = (np.abs(d434) > 2800) | (np.abs(d620) > 2800)
+    qc_flag[m] = 4
+
+    # test for abrupt steps in the pCO2 values -- indicates failure in one or more of the raw parameters
+    # used to calculate pCO2 (function uses combinations of ratios, any error in one or more of those
+    # ratios can explode the equation)
+    dpco2 = ds['time'].astype('int32') * 0
+    dpco2[1:] = ds.pco2_seawater.diff('time')
+    m = np.abs(dpco2) > 1600
+    qc_flag[m] = 4
+
+    return qc_flag
 
 
 def pco2w_datalogger(ds):
@@ -336,86 +405,6 @@ def pco2w_instrument(ds):
         ds[value].attrs['ooinet_variable_name'] = key
 
     return ds
-
-
-def quality_checks(ds):
-    """
-    Assessment of the raw data and the calculated seawater pCO2 for quality
-    using a susbset of the QARTOD flags to indicate the quality. QARTOD
-    flags used are:
-
-        1 = Pass
-        3 = Suspect or of High Interest
-        4 = Fail
-
-    Suspect flags are set based on the vendor documentation, and experience
-    with similar data from the SAMI-pH sensor. Failed flags are based on
-    experience with the data, especially how the blank measurements regularly
-    fail due to obstructed plumbing. The final flag represents the worst case
-    assessment of the data quality.
-
-    An important caveat is a recognition that the quality of the vendor
-    documentation is poor at best. There are obvious copy/paste errors and
-    inconsistencies between what the documentation describes and what the
-    instrument actually provides.
-
-    :param ds: An xarray dataSet of the PCO2W data which has been
-        reformated using the pco2w_instrument function.
-    :return: An xarray dataArray containing the values indicating quality
-        of the raw intensity measurements for the PCO2W
-    """
-    max_bits = 4096                                # max measurement value
-    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
-
-    # test for suspect dark reference & signal values -- values based on vendor documentation
-    mRef = (ds.dark_reference < 50) | (ds.dark_reference > 200)
-    mSig = (ds.dark_signal < 50) | (ds.dark_signal > 200)
-    m = np.any([mRef.any(axis=1), mSig.any(axis=1)], axis=0)
-    qc_flag[m] = 3
-
-    # test for suspect reference levels -- values based on vendor documentation
-    m434 = (ds.reference_434 > 4000) | (ds.reference_434 < 1500)
-    m620 = (ds.reference_620 > 4000) | (ds.reference_620 < 1500)
-    m = np.any([m434.any(axis=1), m620.any(axis=1)], axis=0)
-    qc_flag[m] = 3
-
-    # test for suspect signal levels -- values based on vendor documentation and experience with the data
-    m434 = (ds.signal_434 > 4000) | (ds.signal_434 < 150)
-    m620 = (ds.signal_620 > 4000) | (ds.signal_620 < 150)
-    m = np.any([m434.any(axis=1), m620.any(axis=1)], axis=0)
-    qc_flag[m] = 3
-
-    # test for failed signal levels -- values based on experience with the SAMI-pH data
-    m = (ds.signal_434 < 5) | (ds.signal_620 < 5)
-    m = m.any(axis=1)
-    qc_flag[m] = 4
-
-    # test for clearly failed pCO2 values
-    m = ds.pco2_seawater > 4000
-    qc_flag[m] = 4
-
-    # test for low blank values
-    m = (ds.absorbance_blank_434 < 3000) | (ds.absorbance_blank_620 < 3000)
-    qc_flag[m] = 4
-
-    # test for abrupt steps in the absorbance blanks -- indicates failure of the solenoid pumps to clear
-    # the reagent and/or DI water from the sample volume.
-    d434 = ds['time'].astype('int32') * 0
-    d434[1:] = ds.absorbance_blank_434.diff('time')
-    d620 = ds['time'].astype('int32') * 0
-    d620[1:] = ds.absorbance_blank_620.diff('time')
-    m = (np.abs(d434) > 2800) | (np.abs(d620) > 2800)
-    qc_flag[m] = 4
-
-    # test for abrupt steps in the pCO2 values -- indicates failure in one or more of the raw parameters
-    # used to calculate pCO2 (function uses combinations of ratios, any error in one or more of those
-    # ratios can explode the equation
-    dpco2 = ds['time'].astype('int32') * 0
-    dpco2[1:] = ds.pco2_seawater.diff('time')
-    m = np.abs(dpco2) > 1600
-    qc_flag[m] = 4
-
-    return qc_flag
 
 
 def main(argv=None):

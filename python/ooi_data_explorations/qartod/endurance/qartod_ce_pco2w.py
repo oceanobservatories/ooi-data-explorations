@@ -47,14 +47,22 @@ def generate_qartod(site, node, sensor, cut_off):
     single data set from which QARTOD test limits for the gross range and
     climatology tests can be calculated.
 
-    :param site:
-    :param node:
-    :param sensor:
-    :param cut_off:
-    :return annotations:
-    :return gr_lookup:
-    :return clm_lookup:
-    :return clm_table:
+    :param site: Site designator, extracted from the first part of the
+        reference designator
+    :param node: Node designator, extracted from the second part of the
+        reference designator
+    :param sensor: Sensor designator, extracted from the third and fourth part
+        of the reference designator
+    :param cut_off: string formatted date to use as cut-off for data to add
+        to QARTOD test sets
+    :return annotations: Initial list of auto-generated HITL annotations as
+        a pandas dataframe
+    :return gr_lookup: CSV formatted strings to save to a csv file for the
+        QARTOD gross range lookup tables.
+    :return clm_lookup: CSV formatted strings to save to a csv file for the
+        QARTOD climatology lookup tables.
+    :return clm_table: CSV formatted strings to save to a csv file for the
+        QARTOD climatology range tables.
     """
     # load the recovered instrument data
     data = load_gc_thredds(site, node, sensor, 'pco2w_abc_instrument')
@@ -88,7 +96,7 @@ def generate_qartod(site, node, sensor, cut_off):
     data = data.sel(time=slice('2014-01-01T00:00:00', cut_off))
 
     # create the initial gross range entry
-    gr = process_gross_range(data, ['seawater_ph'], [6.9, 9.0], site=site, node=node, sensor=sensor)
+    gr = process_gross_range(data, ['pco2_seawater'], [200, 2000], site=site, node=node, sensor=sensor)
 
     # re-work gross entry for the different streams and parameter names
     gr_lookup = pd.DataFrame()
@@ -126,7 +134,7 @@ def main(argv=None):
     sensor = args.sensor
 
     # create the initial HITL annotation blocks, the QARTOD gross range and climatology lookup values, and
-    # the climatology table for the seawater_ph parameter
+    # the climatology table for the pco2_seawater parameter
     annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, "2021-01-01T00:00:00")
 
     # save the resulting annotations and qartod lookups and tables
@@ -149,7 +157,7 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source']
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
-    clm_tbl = '-'.join([site, node, sensor]) + '-seawater_ph.csv'
+    clm_tbl = '-'.join([site, node, sensor]) + '-pco2_seawater.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=csv_names)
     with open(os.path.join(out_path, clm_tbl), 'w') as clm:
         clm.write(clm_table[0])

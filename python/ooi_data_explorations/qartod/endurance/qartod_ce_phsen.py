@@ -82,14 +82,22 @@ def generate_qartod(site, node, sensor, cut_off):
     QARTOD test limits for the gross range and climatology tests can be
     calculated.
 
-    :param site:
-    :param node:
-    :param sensor:
-    :param cut_off:
-    :return annotations:
-    :return gr_lookup:
-    :return clm_lookup:
-    :return clm_table:
+    :param site: Site designator, extracted from the first part of the
+        reference designator
+    :param node: Node designator, extracted from the second part of the
+        reference designator
+    :param sensor: Sensor designator, extracted from the third and fourth part
+        of the reference designator
+    :param cut_off: string formatted date to use as cut-off for data to add
+        to QARTOD test sets
+    :return annotations: Initial list of auto-generated HITL annotations as
+        a pandas dataframe
+    :return gr_lookup: CSV formatted strings to save to a csv file for the
+        QARTOD gross range lookup tables.
+    :return clm_lookup: CSV formatted strings to save to a csv file for the
+        QARTOD climatology lookup tables.
+    :return clm_table: CSV formatted strings to save to a csv file for the
+        QARTOD climatology range tables.
     """
     # load and combine all of the data sources for the pH sensor
     data = combine_delivery_methods(site, node, sensor)

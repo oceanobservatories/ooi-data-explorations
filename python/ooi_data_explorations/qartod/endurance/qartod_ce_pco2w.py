@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 @author Christopher Wingard
-@brief Load the PHSEN data from the uncabled, Coastal Endurance Surface
+@brief Load the PCO2W data from the uncabled, Coastal Endurance Surface
     Moorings and processes the data to generate QARTOD Gross Range and
     Climatology test limits
 """
@@ -55,7 +55,7 @@ def generate_qartod(site, node, sensor, cut_off):
     # HITL annotations that can be combined with system annotations and pCO2 quality checks to create
     # a cleaned up data set prior to calculating the QARTOD test values
     fail = data.pco2_seawater_quality_flag.where(data.pco2_seawater_quality_flag == 4).notnull()
-    blocks = identify_blocks(fail, [24, 24])
+    blocks = identify_blocks(fail, [24, 96])
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor

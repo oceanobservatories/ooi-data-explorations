@@ -197,8 +197,12 @@ def quality_checks(ds):
     m = m.any(axis=1)
     qc_flag[m] = 4
 
-    # test for clearly failed pCO2 values
-    m = ds.pco2_seawater > 4000
+    # test for suspect pC02 values -- data falls outside the vendor calibration range
+    m = (ds.pco2_seawater < 200) | (ds.pco2_seawater > 2000)
+    qc_flag[m] = 3
+
+    # test for clearly failed pCO2 values -- data is 2x above or below the lower and upper limits
+    m = (ds.pco2_seawater < 100) | (ds.pco2_seawater > 4000)
     qc_flag[m] = 4
 
     # test for failed absorbance blank ratio values (less than 20% of full scale)

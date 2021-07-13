@@ -80,9 +80,11 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
 
     # resample the dataset onto a common time record
     itime = '{:d}Min'.format(resample_time)
+    btime = int(resample_time / 2)
+    loff = '{:d}Min'.format(btime)
     gtime = '{:d}Min'.format(resample_time * 3)
     ds = ds.sortby('time')
-    avg = ds.resample(time=itime).median(keep_attrs=True)
+    avg = ds.resample(time=itime, base=btime, loffset=loff, skipna=True).median(keep_attrs=True)
     avg = avg.interpolate_na(dim='time', max_gap=gtime)
 
     # add the attributes back into the data set

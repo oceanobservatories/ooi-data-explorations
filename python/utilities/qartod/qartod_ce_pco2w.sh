@@ -14,15 +14,15 @@ conda activate ooi
 PYTHON="python -m ooi_data_explorations.qartod.endurance.qartod_ce_pco2w"
 
 ### CE01ISSM ###
-$PYTHON -s CE01ISSM -n RID16 -sn 05-PCO2WB000 -mt "" -st "" -o ""
-$PYTHON -s CE01ISSM -n MFD35 -sn 05-PCO2WB000 -mt "" -st "" -o ""
+$PYTHON -s CE01ISSM -n RID16 -sn 05-PCO2WB000
+$PYTHON -s CE01ISSM -n MFD35 -sn 05-PCO2WB000
 
 ### CE06ISSM ###
-$PYTHON -s CE06ISSM -n RID16 -sn 05-PCO2WB000 -mt "" -st "" -o ""
-$PYTHON -s CE06ISSM -n MFD35 -sn 05-PCO2WB000 -mt "" -st "" -o ""
+$PYTHON -s CE06ISSM -n RID16 -sn 05-PCO2WB000
+$PYTHON -s CE06ISSM -n MFD35 -sn 05-PCO2WB000
 
 ### CE07SHSM ###
-$PYTHON -s CE07SHSM -n MFD35 -sn 05-PCO2WB000 -mt "" -st "" -o ""
+$PYTHON -s CE07SHSM -n MFD35 -sn 05-PCO2WB000
 
 ### CE09OSSM ###
-$PYTHON -s CE09OSSM -n MFD35 -sn 05-PCO2WB000 -mt "" -st "" -o ""
+$PYTHON -s CE09OSSM -n MFD35 -sn 05-PCO2WB000

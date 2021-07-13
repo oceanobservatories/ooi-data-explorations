@@ -9,34 +9,11 @@
 import os
 import pandas as pd
 
-from ooi_data_explorations.common import inputs, get_annotations, gc_collect, add_annotation_qc_flags
-from ooi_data_explorations.uncabled.process_pco2w import pco2w_instrument
+from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
+from ooi_data_explorations.combine_data import combine_datasets
+from ooi_data_explorations.uncabled.process_pco2w import pco2w_instrument, quality_checks
 from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
-    process_climatology
-
-
-def load_gc_thredds(site, node, sensor, method, stream):
-    """
-    Downloads all of the PHSEN data from the OOI Gold Copy THREDDS catalog,
-    combining the multiple deployments into a single xarray dataset.
-
-    :param site: Site designator, extracted from the first part of the
-        reference designator
-    :param node: Node designator, extracted from the second part of the
-        reference designator
-    :param sensor: Sensor designator, extracted from the third and fourth part
-        of the reference designator
-    :param method: Delivery method for the data (either telemetered,
-        recovered_host or recovered_inst)
-    :param stream: Stream name that contains the data of interest
-    :return data: All of the data, combined into a single dataset
-    """
-    # download the data from the Gold Copy THREDDS server
-    dataset_id = '-'.join([site, node, sensor, method, stream]) + '/catalog.html'
-    tag = '^(?!.*blank).*PCO2W.*nc$'
-    data = gc_collect(dataset_id, tag)
-
-    return data
+    process_climatology, inputs
 
 
 def generate_qartod(site, node, sensor, cut_off):
@@ -65,8 +42,14 @@ def generate_qartod(site, node, sensor, cut_off):
         QARTOD climatology range tables.
     """
     # load the recovered instrument data
-    data = load_gc_thredds(site, node, sensor, 'pco2w_abc_instrument')
+    data = load_gc_thredds(site, node, sensor, 'recovered_inst', 'pco2w_abc_instrument', '^(?!.*blank).*PCO2W.*nc$')
     data = pco2w_instrument(data)
+
+    # resample the data into a 3 hour, median averaged time series
+    data = combine_datasets(data, None, None, 180)
+
+    # recalculate the quality flags as averaging will alter them
+    data['pco2_seawater_quality_flag'] = quality_checks(data)
 
     # create a boolean array of the data marked as "fail" by the pCO2 quality checks and generate initial
     # HITL annotations that can be combined with system annotations and pCO2 quality checks to create
@@ -127,6 +110,10 @@ def generate_qartod(site, node, sensor, cut_off):
 
 
 def main(argv=None):
+    """
+    Download the PCO2W data from the Gold Copy THREDDS server and create the
+    QARTOD gross range and climatology test lookup tables.
+    """
     # setup the input arguments
     args = inputs(argv)
     site = args.site

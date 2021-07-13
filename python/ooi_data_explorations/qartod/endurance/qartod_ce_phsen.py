@@ -9,35 +9,11 @@
 import os
 import pandas as pd
 
-from ooi_data_explorations.common import inputs, get_annotations, gc_collect, add_annotation_qc_flags
+from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_phsen import phsen_datalogger, phsen_instrument, quality_checks
 from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
-    process_climatology
-
-
-def load_gc_thredds(site, node, sensor, method, stream):
-    """
-    Downloads all of the PHSEN data from the OOI Gold Copy THREDDS catalog,
-    combining the multiple deployments into a single xarray dataset.
-
-    :param site: Site designator, extracted from the first part of the
-        reference designator
-    :param node: Node designator, extracted from the second part of the
-        reference designator
-    :param sensor: Sensor designator, extracted from the third and fourth part
-        of the reference designator
-    :param method: Delivery method for the data (either telemetered,
-        recovered_host or recovered_inst)
-    :param stream: Stream name that contains the data of interest
-    :return data: All of the data, combined into a single dataset
-    """
-    # download the data from the Gold Copy THREDDS server
-    dataset_id = '-'.join([site, node, sensor, method, stream]) + '/catalog.html'
-    tag = '.*PHSEN.*\\.nc$'
-    data = gc_collect(dataset_id, tag)
-
-    return data
+    process_climatology, inputs
 
 
 def combine_delivery_methods(site, node, sensor):
@@ -54,15 +30,16 @@ def combine_delivery_methods(site, node, sensor):
     :return merged:
     """
     # download the telemetered data and re-process it to create a more useful and coherent data set
-    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'phsen_abcdef_dcl_instrument')
+    tag = '.*PHSEN.*\\.nc$'
+    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'phsen_abcdef_dcl_instrument', tag)
     telem = phsen_datalogger(telem)
 
     # download the recovered host data and re-process it to create a more useful and coherent data set
-    rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'phsen_abcdef_dcl_instrument_recovered')
+    rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'phsen_abcdef_dcl_instrument_recovered', tag)
     rhost = phsen_datalogger(rhost)
 
     # download the recovered instrument data and re-process it to create a more useful and coherent data set
-    rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'phsen_abcdef_instrument')
+    rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'phsen_abcdef_instrument', tag)
     rinst = phsen_instrument(rinst)
 
     # combine the three datasets into a single, merged time series resampled to a 3 hour interval time series
@@ -161,6 +138,10 @@ def generate_qartod(site, node, sensor, cut_off):
 
 
 def main(argv=None):
+    """
+    Download the PHSEN data from the Gold Copy THREDDS server and create the
+    QARTOD gross range and climatology test lookup tables.
+    """
     # setup the input arguments
     args = inputs(argv)
     site = args.site

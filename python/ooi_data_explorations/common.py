@@ -690,6 +690,33 @@ def m2m_collect(data, tag='.*\\.nc$'):
     return m2m
 
 
+def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$'):
+    """
+    Download data from the OOI Gold Copy THREDDS catalog, using the reference
+    designator parameters to select the catalog of interest and the regex tag
+    to select the NetCDF files of interest. In most cases, the default tag
+    can be used, however for instruments that require data from a co-located
+    sensor, a more detailed regex tag will be required to insure that only data
+    files from the instrument of interest are loaded.
+
+    :param site: Site designator, extracted from the first part of the
+        reference designator
+    :param node: Node designator, extracted from the second part of the
+        reference designator
+    :param sensor: Sensor designator, extracted from the third and fourth part
+        of the reference designator
+    :param method: Delivery method for the data (either telemetered,
+        recovered_host or recovered_inst)
+    :param stream: Stream name that contains the data of interest
+    :param tag: regex pattern to select the NetCDF files to download
+    :return data: All of the data, combined into a single dataset
+    """
+    # download the data from the Gold Copy THREDDS server
+    dataset_id = '-'.join([site, node, sensor, method, stream]) + '/catalog.html'
+    data = gc_collect(dataset_id, tag)
+    return data
+
+
 def gc_collect(dataset_id, tag='.*\\.nc$'):
     """
     Use a regex tag combined with the dataset ID to collect data from the OOI

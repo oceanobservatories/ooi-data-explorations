@@ -5,8 +5,10 @@
 @brief Calculates QARTOD test ranges and creates the resulting tables used by
     the OOI QC lookup functions to implement the QARTOD testing.
 """
+import argparse
 import numpy as np
 import pandas as pd
+import sys
 
 from ooi_data_explorations.qartod.climatology import Climatology
 from ooi_data_explorations.qartod.gross_range import GrossRange
@@ -355,3 +357,25 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
 
     # return the results
     return gross_range
+
+
+def inputs(argv=None):
+    """
+    Sets the main input arguments that will be used in the QC processing
+    """
+    if argv is None:
+        argv = sys.argv[1:]
+
+    # initialize argument parser
+    parser = argparse.ArgumentParser(
+        description="""Download and process instrument data to generate QARTOD lookup tables""")
+
+    # assign input arguments.
+    parser.add_argument("-s", "--site", dest="site", type=str, required=True)
+    parser.add_argument("-n", "--node", dest="node", type=str, required=True)
+    parser.add_argument("-sn", "--sensor", dest="sensor", type=str, required=True)
+
+    # parse the input arguments and create a parser object
+    args = parser.parse_args(argv)
+
+    return args

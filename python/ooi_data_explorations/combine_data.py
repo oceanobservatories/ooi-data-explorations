@@ -82,7 +82,7 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     itime = '{:d}Min'.format(resample_time)
     gtime = '{:d}Min'.format(resample_time * 3)
     ds = ds.sortby('time')
-    avg = ds.resample(time=itime, keep_attrs=True).median()
+    avg = ds.resample(time=itime).median(keep_attrs=True)
     avg = avg.interpolate_na(dim='time', max_gap=gtime)
 
     # add the attributes back into the data set

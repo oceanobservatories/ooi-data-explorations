@@ -479,7 +479,7 @@ def add_annotation_qc_flags(ds, annotations):
     for key in stream_annos.keys():
         # Get the pid and associated name
         pid_name = key
-        pid = stream_annos.get(key)
+        pid = pd.to_numeric(stream_annos.get(key), errors='coerce')
 
         # Get the annotations associated with the pid
         if np.isnan(pid):

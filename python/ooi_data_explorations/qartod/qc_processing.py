@@ -374,6 +374,7 @@ def inputs(argv=None):
     parser.add_argument("-s", "--site", dest="site", type=str, required=True)
     parser.add_argument("-n", "--node", dest="node", type=str, required=True)
     parser.add_argument("-sn", "--sensor", dest="sensor", type=str, required=True)
+    parser.add_argument("-co", "--cut_off", dest="cut_off", type=str, required=False)
 
     # parse the input arguments and create a parser object
     args = parser.parse_args(argv)

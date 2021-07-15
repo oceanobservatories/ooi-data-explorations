@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# qartod_ce_phsen.sh
+# qartod_ce_pco2w.sh
 #
-# Collect the phsen data from all of the OOI Coastal Endurance moorings to
+# Collect the PCO2W data from all of the OOI Coastal Endurance moorings to
 # calculate QARTOD test ranges and generate the different lookup values and
 # tables.
 #

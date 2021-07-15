@@ -142,7 +142,7 @@ def pco2a_datalogger(ds, burst=False):
     if burst:   # re-sample the data to a defined time interval using a median average
         burst = ds  # make a copy of the original dataset
         burst['time'] = burst['time'].dt.round('H')  # reset the time values to the nearest hour
-        burst = burst.resample(time='1H', keep_attrs=True, skipna=True).median()  # median average the hourly bursts
+        burst = burst.resample(time='1H', skipna=True).median(keep_attrs=True)  # median average the hourly bursts
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...

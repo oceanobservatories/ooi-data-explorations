@@ -6,8 +6,10 @@
     Moorings and processes the data to generate QARTOD Gross Range and
     Climatology test limits
 """
+import dateutil.parser as parser
 import os
 import pandas as pd
+import pytz
 import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
@@ -85,7 +87,7 @@ def generate_qartod(site, node, sensor, cut_off):
     water = combine_delivery_methods(site, node, sensor, 'water')
 
     # get the current system annotations for the sensor
-    annotations = get_annotations(site, sensor, node)
+    annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)
     if not annotations.empty:
         annotations = annotations.drop(columns=['@class'])
@@ -105,10 +107,21 @@ def generate_qartod(site, node, sensor, cut_off):
     water = water.where((water.partial_pressure_co2_ssw_annotations_qc_results < 3) &
                         (water.rollup_annotations_qc_results < 3))
 
-    # if a cut_off date was used, limit data to all data collected up to the cut_off date
+    # if a cut_off date was used, limit data to all data collected up to the cut_off date.
+    # otherwise, set the limit to the range of the downloaded data.
     if cut_off:
-        air = air.sel(time=slice('2014-01-01T00:00:00', cut_off))
-        water = water.sel(time=slice('2014-01-01T00:00:00', cut_off))
+        cut = parser.parse(cut_off)
+        cut = cut.astimezone(pytz.utc)
+        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
+        src_date = cut.strftime('%Y-%m-%d')
+    else:
+        cut = parser.parse(air.time_coverage_end)
+        cut = cut.astimezone(pytz.utc)
+        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
+        src_date = cut.strftime('%Y-%m-%d')
+
+    air = air.sel(time=slice('2014-01-01T00:00:00', end_date))
+    water = water.sel(time=slice('2014-01-01T00:00:00', end_date))
 
     # create the initial gross range entry
     data = xr.merge([air.partial_pressure_co2_atm, water.partial_pressure_co2_ssw])
@@ -127,8 +140,9 @@ def generate_qartod(site, node, sensor, cut_off):
     gr_lookup['stream'][2] = 'pco2a_a_dcl_instrument_air_recovered'
     gr_lookup['parameter'][3] = {'inp': 'partial_pressure_co2_ssw'}
     gr_lookup['stream'][3] = 'pco2a_a_dcl_instrument_water_recovered'
-    gr_lookup['source'] = ('Sensor min/max pulled from the vendor calibration ranges. The user min/max is the '
-                           'historical mean of all data collected through NOMINAL_DATE +/- 3 standard deviations.')
+    gr_lookup['source'] = ('Sensor min/max based on the vendor standard calibration range. '
+                           'The user min/max is the historical mean of all data collected '
+                           'up to {} +/- 3 standard deviations.'.format(src_date))
 
     # create and format the climatology lookups and tables for the air and water streams
     atm, atm_table = process_climatology(data, ['partial_pressure_co2_atm'], [0, 1000],
@@ -154,7 +168,7 @@ def generate_qartod(site, node, sensor, cut_off):
     clm_lookup = pd.DataFrame()
     clm_lookup = clm_lookup.append([atm_lookup, ssw_lookup])
 
-    return gr_lookup, clm_lookup, atm_table, ssw_table
+    return annotations, gr_lookup, clm_lookup, atm_table, ssw_table
 
 
 def main(argv=None):
@@ -171,13 +185,19 @@ def main(argv=None):
 
     # create the initial HITL annotation blocks, the QARTOD gross range and climatology lookup values, and
     # the climatology table for the pco2_seawater parameter
-    gr_lookup, clm_lookup, atm_table, ssw_table = generate_qartod(site, node, sensor, cut_off)
+    annotations, gr_lookup, clm_lookup, atm_table, ssw_table = generate_qartod(site, node, sensor, cut_off)
 
     # save the resulting annotations and qartod lookups and tables
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/pco2a')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
+
+    # save the annotations to a csv file for further processing
+    csv_names = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
+                 'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
+    anno_csv = '-'.join([site, node, sensor]) + '.quality_annotations.csv'
+    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=csv_names)
 
     # save the gross range values to a csv for further processing
     csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source']

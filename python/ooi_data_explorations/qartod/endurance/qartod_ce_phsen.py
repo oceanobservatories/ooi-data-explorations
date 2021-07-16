@@ -113,7 +113,7 @@ def generate_qartod(site, node, sensor, cut_off):
         end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
         src_date = cut.strftime('%Y-%m-%d')
     else:
-        cut = parser.parse(air.time_coverage_end)
+        cut = parser.parse(data.time_coverage_end)
         cut = cut.astimezone(pytz.utc)
         end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
         src_date = cut.strftime('%Y-%m-%d')

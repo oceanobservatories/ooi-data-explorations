@@ -6,8 +6,10 @@
     Moorings and processes the data to generate QARTOD Gross Range and
     Climatology test limits
 """
+import dateutil.parser as parser
 import os
 import pandas as pd
+import pytz
 
 from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
@@ -87,7 +89,7 @@ def generate_qartod(site, node, sensor, cut_off):
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
-    annotations = get_annotations(site, sensor, node)
+    annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)
     if not annotations.empty:
         annotations = annotations.drop(columns=['@class'])
@@ -103,8 +105,20 @@ def generate_qartod(site, node, sensor, cut_off):
     # clean-up the data, removing values that fail the pH quality checks or were marked as fail in the annotations
     data = data.where((data.seawater_ph_quality_flag != 4) & (data.rollup_annotations_qc_results != 4))
 
-    # limit data to all data collected upto a preset cut_off date
-    data = data.sel(time=slice("2014-01-01T00:00:00", cut_off))
+    # if a cut_off date was used, limit data to all data collected up to the cut_off date.
+    # otherwise, set the limit to the range of the downloaded data.
+    if cut_off:
+        cut = parser.parse(cut_off)
+        cut = cut.astimezone(pytz.utc)
+        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
+        src_date = cut.strftime('%Y-%m-%d')
+    else:
+        cut = parser.parse(data.time_coverage_end)
+        cut = cut.astimezone(pytz.utc)
+        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
+        src_date = cut.strftime('%Y-%m-%d')
+
+    data = data.sel(time=slice("2014-01-01T00:00:00", end_date))
 
     # create the initial gross range entry
     gr = process_gross_range(data, ['seawater_ph'], [6.9, 9.0], site=site, node=node, sensor=sensor)
@@ -118,8 +132,9 @@ def generate_qartod(site, node, sensor, cut_off):
     gr_lookup['stream'][1] = 'phsen_abcdef_dcl_instrument_recovered'
     gr_lookup['parameter'][2] = {'inp': 'phsen_abcdef_ph_seawater'}
     gr_lookup['stream'][2] = 'phsen_abcdef_instrument'
-    gr_lookup['source'] = ('Sensor min/max pulled from the vendor processing code. The user min/max is the historical '
-                           'mean of all data collected through NOMINAL_DATE +/- 3 standard deviations.')
+    gr_lookup['source'] = ('Sensor min/max based on the vendor standard calibration range. '
+                           'The user min/max is the historical mean of all data collected '
+                           'up to {} +/- 3 standard deviations.'.format(src_date))
 
     # create and format the climatology entry and table
     cll, clm_table = process_climatology(data, ['seawater_ph'], [6.9, 9.0], site=site, node=node, sensor=sensor)
@@ -147,13 +162,14 @@ def main(argv=None):
     site = args.site
     node = args.node
     sensor = args.sensor
+    cut_off = args.cut_off
 
     # create the initial HITL annotation blocks, the QARTOD gross range and climatology lookup values, and
     # the climatology table for the seawater_ph parameter
-    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, "2021-01-01T00:00:00")
+    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
     # save the resulting annotations and qartod lookups and tables
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/phsen')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)

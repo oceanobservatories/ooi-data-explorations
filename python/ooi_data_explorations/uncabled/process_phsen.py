@@ -295,9 +295,15 @@ def phsen_datalogger(ds):
     }, coords={'time': ds['time'], 'measurements': np.arange(0, 23).astype('int32'),
                'blanks': np.arange(0, 4).astype('int32')
                })
-    ds = ds.drop(['phsen_abcdef_signal_intensity_434_dim_0', 'phsen_abcdef_signal_intensity_578_dim_0',
-                  'reference_light_measurements_dim_0', 'spectrum', 'light_measurements',
+    ds = ds.drop(['reference_light_measurements_dim_0', 'spectrum', 'light_measurements',
                   'reference_light_measurements'])
+
+    # these two dimensional variables may or may not be present depending on how the data was requested.
+    # remove them if they do exist so we can merge different data sets together
+    maybe = ['phsen_abcdef_signal_intensity_434_dim_0', 'phsen_abcdef_signal_intensity_578_dim_0']
+    for k, v in ds.dims.items():
+        if k in maybe:
+            ds = ds.drop(k)
 
     # merge the data sets back together
     ds = ds.merge(ph)
@@ -387,6 +393,13 @@ def phsen_instrument(ds):
                })
     ds = ds.drop(['light_measurements', 'reference_light_measurements', 'spectrum',
                   'reference_light_measurements_dim_0'])
+
+    # these two dimensional variables may or may not be present depending on how the data was requested.
+    # remove them if they do exist so we can merge different data sets together
+    maybe = ['phsen_abcdef_signal_intensity_434_dim_0', 'phsen_abcdef_signal_intensity_578_dim_0']
+    for k, v in ds.dims.items():
+        if k in maybe:
+            ds = ds.drop(k)
 
     # merge the data sets back together
     ds = ds.merge(ph)

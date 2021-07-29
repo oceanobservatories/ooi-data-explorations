@@ -65,13 +65,17 @@ def generate_qartod(site, node, sensor, cut_off):
         QARTOD gross range lookup tables.
     :return clm_lookup: CSV formatted strings to save to a csv file for the
         QARTOD climatology lookup tables.
-    :return atm_table: CSV formatted strings to save to a csv file for the
-        QARTOD climatology range table for the atmospheric pCO2.
-    :return ssw_table: CSV formatted strings to save to a csv file for the
-        QARTOD climatology range table for the surface seawater pCO2.
+    :return clm_table: CSV formatted strings to save to a csv file for the
+        QARTOD climatology range table for the seafloor pressure and temperature.
     """
     # load the combined telemetered and recovered_host data for the data and water streams
     data = combine_delivery_methods(site, node, sensor)
+
+    # basic quality check on the pressure record to eliminate on deck measurements
+    qc_flag = data['time'].astype('int32') * 0 + 1   # default flag values, no errors
+    out_of_range = data.abs_seafloor_pressure.mean() - (data.abs_seafloor_pressure.std() * 5)
+    m = (data.abs_seafloor_pressure < out_of_range) | (data.presf_tide_pressure < out_of_range)
+    qc_flag[m] = 4
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -84,9 +88,9 @@ def generate_qartod(site, node, sensor, cut_off):
     # create an annotation-based quality flag
     data = add_annotation_qc_flags(data, annotations)
 
-    # clean-up the data, removing values that were marked as fail in the annotations, and all data collected
-    # after the cut off date
-    data = data.where(data.rollup_annotations_qc_results < 4)
+    # clean-up the data, removing values that were marked as fail either from the quality checks or in the
+    # annotations, and all data collected after the cut off date
+    data = data.where((qc_flag != 4) & (data.rollup_annotations_qc_results < 4))
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.

@@ -1,0 +1,103 @@
+---
+title: "Pioneer METBK Example"
+output: html_notebook
+---
+
+This R Notebook provides an example on how to access telemetered
+meteorological data from the Coastal Pioneer Offshore Surface Mooring 
+from the beginning of August 2021 to the current day.
+
+The first thing you need to do is grab your identifying information from your
+[OOINet](https://ooinet.oceanobservatories.org/) account.
+
+```{r}
+user = "redacted"
+token = "redacted"
+save_dir = "C:/Users/Ian/Desktop"
+```
+
+
+Now let's import the libraries we need. If you don't already have the ooim2mr 
+package installed, you can find installation instructions 
+on the OOI [GitHub](https://github.com/oceanobservatories/ooim2mr). You are
+encouraged to review the README, as it provides information about the
+little quirks within the ooim2mr package.
+
+```{r}
+library(ncdf4)  #This package helps us work with NetCDF files.
+library(httr)  #This packages allows us to submit data requests to OOINet.
+library(stringr) #This package helps parse the lookup table.
+library(jsonlite) #This packages helps us interpret responses from OOINet.
+library(ooim2mr) #This package lets us download and investigate OOI datasets.
+```
+
+
+Next, we need to generate a data request URL in a format that OOINet will accept.
+You can craft this manually if you know the reference designators and format. 
+Another option is to specify what parameters you want and to let the
+ooi_create_url function do all of the work for you. The ooi_create_url function
+uses an already compiled lookup table in the .rda format. It also uses
+grep to find what URL want if you supply partial strings as each parameter.
+
+```{r}
+site = "CP04OSSM"  #Coastal Pioneer Offshore Surface Mooring
+node = "surface"  #Alternatively, you can use the official OOI designator "SBD11".
+instrument = "06-METBKA000" #Alternatively, you can use simplified name "MET"
+method = "telemetered" #Alternatively, you can use "tele".
+stream = "metbk_a_dcl_instrument"
+start_date = "2021-08-01"
+
+url = ooi_create_url(site,node,instrument,method,stream,start_date = start_date)
+```
+
+Now that we have a data request URL, we can submit a request to OOINet, which
+will return a response from OOINet.
+
+```{r}
+response = ooi_submit_request(url,user,token)
+```
+
+Now that we know our request was successful, OOINet will start to compile the
+data we requested and put it into a curated file for us. The ooi_get_location 
+function will continually check the status of your request. Once the data is 
+ready to download the function returns a list of remote locations of the data.
+
+The majority of datasets are collected with reference to a nearby CTD. OOINet will 
+curate the CTD data for us too even though we didn't ask for it. 
+If you set the drop_paired function to False, you will also download CTD data. 
+If you then try to pass the remote locations to the ooi_download_data function 
+it will fail because the file dimensions are different. You would then have to piece
+together the locations manually from the list. However, by setting the drop_paired 
+parameter to TRUE, we are ensuring that we are only downloading METBK data.
+
+```{r}
+remote = ooi_get_location(response,drop_paired=TRUE)
+```
+
+Now that the data is available to download, we can download it to the save
+directory we specified earlier.
+
+```{r}
+local = ooi_download_data(remote,save_dir)
+```
+
+The return for the download function is the absolute path(s) of where the data is 
+located. We then take that path and then plug it into the ooi_get_data function 
+to bring the data into our Environment.
+
+```{r}
+data_vars = ooi_get_data(local,simplify_data=FALSE)
+```
+
+Now if you glance over at the data_vars object in your Environment you may notice
+that it says it has two elements. The first element contains the actual data as a list,
+the second element is a list that provides us with information about what variables there are and the units they are in.
+We can split data_vars into separate tables by assigning each to there own
+data.frame.
+
+```{r}
+data = data.frame(data_vars[['data']])
+variables = data.frame(data_vars[['variables_units']])
+```
+
+From here, you can inspect and manipulate the data to your heart's content.

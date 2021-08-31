@@ -15,11 +15,13 @@ import sys
 import time
 import warnings
 import xarray as xr
-import datetime
 import pandas as pd
 
 from bs4 import BeautifulSoup
 from collections.abc import Mapping
+from concurrent.futures import ProcessPoolExecutor
+from datetime import datetime, timezone
+from itertools import repeat
 from requests.adapters import HTTPAdapter
 from tqdm import tqdm
 from urllib3.util import Retry
@@ -431,9 +433,8 @@ def add_annotation_qc_flags(ds, annotations):
         if ms is None:
             return None
         else:
-            return datetime.datetime.utcfromtimestamp(ms/1000)
+            return datetime.utcfromtimestamp(ms/1000)
 
-    # ---------------------------------------------------------------------------------------
     # First, check the type of the annotations to determine if needed to put into a dataframe
     if type(annotations) is list or type(annotations) is dict:
         annotations = pd.DataFrame(annotations)
@@ -451,7 +452,6 @@ def add_annotation_qc_flags(ds, annotations):
     }
     annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
 
-    # ------------------------------------------
     # Filter only for annotations which apply to the dataset
     stream = ds.attrs["stream"]
     stream_mask = annotations["stream"].apply(lambda x: True if x == stream or x is None else False)
@@ -472,7 +472,6 @@ def add_annotation_qc_flags(ds, annotations):
             param_name = param_info["name"]
         stream_annos.update({param_name: pid})
 
-    # ----------------------------------------------------------------------
     # Next, get the flags associated with each parameter or all parameters
     flags_dict = {}
 
@@ -501,7 +500,7 @@ def add_annotation_qc_flags(ds, annotations):
             # Convert the time to actual datetimes
             beginDT = convert_time(beginDT)
             if endDT is None or np.isnan(endDT):
-                endDT = datetime.datetime.now()
+                endDT = datetime.now()
             else:
                 endDT = convert_time(endDT)
             # Set the qcFlags for the given time range
@@ -510,7 +509,6 @@ def add_annotation_qc_flags(ds, annotations):
         # Save the results
         flags_dict.update({pid_name: pid_flags})
 
-    # --------------------
     # Create a rollup flag
     rollup_flags = flags_dict.get("rollup")
     for key in flags_dict:
@@ -519,7 +517,6 @@ def add_annotation_qc_flags(ds, annotations):
     # Replace the "All" with the rollup results
     flags_dict["rollup"] = rollup_flags
 
-    # --------------------
     # Add the flag results to the dataset for key in flags_dict
     for key in flags_dict.keys():
         # Generate a variable name
@@ -527,9 +524,11 @@ def add_annotation_qc_flags(ds, annotations):
 
         # Next, build the attributes dictionary
         if key.lower() == "rollup":
-            comment = "These qc flags are a rollup summary which represents a Human-in-the-loop (HITL) assessment of the data quality for all applicable data variables in the dataset."
+            comment = ("These qc flags are a rollup summary which represents a Human-in-the-loop (HITL) "
+                       "assessment of the data quality for all applicable data variables in the dataset.")
         else:
-            comment = f"These qc flags represent a Human-in-the-loop (HITL) assessment of the data quality for the specific data variable {key}."
+            comment = f"These qc flags represent a Human-in-the-loop (HITL) assessment of the data quality for the " \
+                      f"specific data variable {key}. "
         long_name = f"{key} qc_flag"
         attrs = {
             "comment": comment,
@@ -580,18 +579,26 @@ def m2m_sync(site, node, sensor, method, stream, start=None, stop=None, paramete
 
 def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     """
-    Request data from OOINet for a particular instrument (as defined by the reference designator), delivery method
-    and stream name via the M2M system. Optionally, can bound the data with a beginning and ending date and time range.
-    This method formulates an asynchronous request.
+    Request data from OOINet for a particular instrument (as defined by the
+    reference designator), delivery method and stream name via the M2M system.
+    Optionally, can bound the data with a beginning and ending date and time
+    range. This method formulates an asynchronous request.
 
-    :param site: Site designator, extracted from the first part of the reference designator
-    :param node: Node designator, extracted from the second part of the reference designator
-    :param sensor: Sensor designator, extracted from the third and fourth part of the reference designator
-    :param method: Delivery method for the data (either telemetered, recovered_host, or recovered_inst)
+    :param site: Site designator, extracted from the first part of the
+        reference designator
+    :param node: Node designator, extracted from the second part of the
+        reference designator
+    :param sensor: Sensor designator, extracted from the third and fourth part
+        of the reference designator
+    :param method: Delivery method for the data (either telemetered,
+        recovered_host, or recovered_inst)
     :param stream: Stream name that contains the data of interest
-    :param start: Start time for data request (Optional, default is beginning of record)
-    :param stop: Stop time for data request (Optional, default is through the end of the record)
-    :return: The results of the data request detailing where the data is located for download
+    :param start: Start time for data request (Optional, default is beginning
+        of record)
+    :param stop: Stop time for data request (Optional, default is through the
+        end of the record)
+    :return data: The results of the data request detailing where the data is
+        located for download
     """
     # setup the beginning and ending date/time
     if start:
@@ -602,7 +609,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     if stop:
         end_date = '&endDT=' + stop
     else:
-        end_date = ''
+        end_date = '&endDT=' + datetime.now(timezone.utc).strftime("%Y%m%dT%H:%M:%S.000Z")
 
     options = begin_date + end_date + '&format=application/netcdf'
     r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,
@@ -652,40 +659,17 @@ def m2m_collect(data, tag='.*\\.nc$'):
     files = list_files(url, tag)
 
     # Process the data files found above and concatenate into a single data set
-    print('Downloading %d data file(s) from the OOI THREDSS catalog' % len(files))
-    frames = []
-    with tqdm(total=len(files), desc='Waiting', file=sys.stdout) as bar:
-        for f in files:
-            frames.append(process_file(f))
-            bar.update()
-            bar.refresh()
+    print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
+    with ProcessPoolExecutor(max_workers=10) as pool:
+        frames = list(tqdm(pool.map(process_file, files), total=len(files), desc='Downloading files', file=sys.stdout))
 
     if not frames:
+        message = "No data files were downloaded from the user''s M2M THREDDS server."
+        warnings.warn(message)
         return None
 
-    # merge the frames into a single data set, preserving global attributes from the first file if more than one.
-    m2m = frames[0]
-    if len(frames) > 1:
-        for idx, frame in enumerate(frames):
-            try:
-                # concatenation handles 99% of the cases
-                m2m = xr.concat([m2m, frame], dim='time')
-            except ValueError:
-                try:
-                    # try merging the data, usually one of the data files is missing a variable from a co-located
-                    # sensor that the system was unable to find
-                    _, index = np.unique(m2m['time'], return_index=True)
-                    m2m = m2m.isel(time=index)
-                    m2m = m2m.merge(frame, compat='override')
-                except ValueError:
-                    # something is just not right with this data file
-                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(idx + 1, len(frames))
-                    warnings.warn(message)
-
-    m2m = m2m.sortby(['deployment', 'time'])
-    m2m.attrs['time_coverage_start'] = ('%sZ' % m2m.time.min().values)
-    m2m.attrs['time_coverage_end'] = ('%sZ' % m2m.time.max().values)
-    m2m.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(m2m.time.diff('time').values).astype(float) / 1e9))
+    # merge the data frames into a single data set
+    m2m = merge_frames(frames)
 
     return m2m
 
@@ -735,52 +719,32 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
     files = list_files(url, tag)
 
-    # Process the data files found above and concatenate into a single data set
+    # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    frames = []
-    with tqdm(total=len(files), desc='Waiting', file=sys.stdout) as bar:
-        for f in files:
-            frames.append(process_file(f, True))
-            bar.update()
-            bar.refresh()
+    with ProcessPoolExecutor(max_workers=10) as pool:
+        frames = list(tqdm(pool.map(process_file, files, repeat(True)),
+                           total=len(files), desc='Downloading files', file=sys.stdout))
 
     if not frames:
+        message = "No data files were downloaded from the Gold Copy THREDDS server."
+        warnings.warn(message)
         return None
 
-    # merge the frames into a single data set, preserving global attributes from the first file if more than one.
-    gc = frames[0]
-    if len(frames) > 1:
-        for idx, frame in enumerate(frames):
-            try:
-                # concatenation handles 99% of the cases
-                gc = xr.concat([gc, frame], dim='time')
-            except ValueError:
-                try:
-                    # try merging the data, usually one of the data files is missing a variable from a co-located
-                    # sensor that the system was unable to find
-                    _, index = np.unique(gc['time'], return_index=True)
-                    gc = gc.isel(time=index)
-                    gc = gc.merge(frame, compat='override')
-                except ValueError:
-                    # something is just not right with this data file
-                    message = "Corrupted data in file {} of {}, skipping merge of this file".format(idx + 1, len(frames))
-                    warnings.warn(message)
-
-    gc = gc.sortby(['deployment', 'time'])
-    gc.attrs['time_coverage_start'] = ('%sZ' % gc.time.min().values)
-    gc.attrs['time_coverage_end'] = ('%sZ' % gc.time.max().values)
-    gc.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(gc.time.diff('time').values).astype(float) / 1e9))
+    # merge the data frames into a single data set
+    gc = merge_frames(frames)
 
     return gc
 
 
 def list_files(url, tag='.*\\.nc$'):
     """
-    Function to create a list of the NetCDF data files in the THREDDS catalog created by a request to the M2M system.
+    Function to create a list of the NetCDF data files in the THREDDS catalog
+    created by a request to the M2M system.
 
     :param url: URL to user's THREDDS catalog specific to a data request
     :param tag: regex pattern used to distinguish files of interest
-    :return: list of files in the catalog with the URL path set relative to the catalog
+    :return: list of files in the catalog with the URL path set relative to the
+        catalog
     """
     page = SESSION.get(url).text
     soup = BeautifulSoup(page, 'html.parser')
@@ -790,13 +754,19 @@ def list_files(url, tag='.*\\.nc$'):
 
 def process_file(catalog_file, gc=False):
     """
-    Function to download one of the NetCDF files as an xarray data set, convert to time as the appropriate dimension
-    instead of obs, and drop the extraneous timestamp variables (these were originally not intended to be exposed to
-    users and lead to confusion as to their meaning). The ID and provenance variables are better off obtained directly
-    from the M2M system via a different process. Having them included imposes unnecessary constraints on the processing.
+    Function to download one of the NetCDF files as an xarray data set, convert
+    to time as the appropriate dimension instead of obs, and drop the
+    extraneous timestamp variables (these were originally not intended to be
+    exposed to users and have lead to some confusion as to their meaning). The
+    ID and provenance variables are better off obtained directly from the M2M
+    system via a different process. Having them included imposes unnecessary
+    constraints on the processing, so they are also removed.
 
-    :param catalog_file: Unique file, referenced by a URL relative to the catalog, to download and convert the data
-        file to an xarray data set.
+    :param catalog_file: Unique file, referenced by a URL relative to the
+        catalog, to download and then convert into an xarray data set.
+    :param gc: Boolean flag to indicate whether the file is from the Gold
+        Copy THREDDS server (gc = True), or the user's M2M THREDDS catalog
+        (gc = False, default).
     :return: downloaded data in an xarray dataset.
     """
     if gc:
@@ -847,10 +817,87 @@ def process_file(catalog_file, gc=False):
     return ds
 
 
+def merge_frames(frames):
+    """
+    Merge the multiple data files downloaded from the M2M system or the Gold
+    Copy THREDDS server into a single xarray data set. Keep track of how many
+    files fail to merge.
+
+    :param frames: The data frames to concatenate/merge into a single data set
+    :return data: The final, merged data set
+    """
+    # merge the list of processed data frames into a single data set
+    nfiles = len(frames)
+    nframes = nfiles
+    bad_files = 0
+    if nframes > 1:
+        # try merging all of the frames into a single data set (some frames may be corrupted, and will be skipped)
+        data, fail = _frame_merger(frames[0], frames)
+
+        # if all of the files, except for the first one, failed that would suggest the first file is the problem.
+        # try the merge again, reset the starting frame to skip the first one.
+        if nframes - fail == 1:
+            data, fail = _frame_merger(frames[1], frames[1:])
+            nframes -= 1
+
+            # if we still can't merge the frames, then there probably is something more fundamentally wrong, and trying
+            # to account for it here is not going to be possible
+            if nframes - 1 - fail == 1:
+                message = f"Unable to merge the {len(frames)} files downloaded from the Gold Copy THREDDS server."
+                warnings.warn(message)
+                return None
+        else:
+            bad_files = nfiles - nframes + fail
+    else:
+        # there is just the one
+        data = frames[0]
+
+    if bad_files > 0:
+        message = "{} of the {} downloaded files failed to merge.".format(bad_files, nfiles)
+        warnings.warn(message)
+
+    data = data.sortby(['deployment', 'time'])
+    data.attrs['time_coverage_start'] = ('%sZ' % data.time.min().values)
+    data.attrs['time_coverage_end'] = ('%sZ' % data.time.max().values)
+    data.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(data.time.diff('time').values).astype(float) / 1e9))
+
+    return data
+
+
+def _frame_merger(data, frames):
+    """
+    Internal method used by merge_frames to enumerate through the frames,
+    trying to concatenate/merge the data frames together into a single
+    data set.
+
+    :param data: initial data frame to concatenate/merge with the other frames
+    :param frames: additional frames to add on to the initial data frame
+    :return data: the final concatenated/merged data set
+    :return fail: a count of the number of files that failed
+    """
+    fail = 0
+    for idx, frame in enumerate(frames[1:], start=2):
+        try:
+            # concatenation handles 99% of the cases
+            data = xr.concat([data, frame], dim='time')
+        except ValueError:
+            try:
+                # try merging the data, usually one of the data files is missing a variable from a co-located
+                # sensor that the system was unable to find
+                _, index = np.unique(data['time'], return_index=True)
+                data = data.isel(time=index)
+                data = data.merge(frame, compat='override')
+            except ValueError:
+                # something is just not right with this data file
+                fail += 1
+
+    return data, fail
+
+
 def update_dataset(ds, depth):
     """
-    Updates a data set with global and variable level metadata attributes and sets appropriate dimensions and
-    coordinate axes.
+    Updates a data set with global and variable level metadata attributes and
+    sets appropriate dimensions and coordinate axes.
 
     :param ds: Data set to update
     :param depth: instrument deployment depth
@@ -974,7 +1021,7 @@ def update_dataset(ds, depth):
         'calendar': 'gregorian'
     })
 
-    # convert all float64 values to float32
+    # convert all float64 values to float32 (except for the timestamps), helps minimize file size
     for v in ds.variables:
         if v not in ['time', 'internal_timestamp']:
             if ds[v].dtype is np.dtype('float64'):

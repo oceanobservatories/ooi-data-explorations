@@ -85,9 +85,14 @@ https://github.com/oceanobservatories/ion-functions/blob/master/ion_functions/da
 The simple fix now is to multiply returned velocity values by 1000 to get it back into to m/s.
 
 """
+import requests
+import re
+import time
+import pandas as pd
+import numpy as np
+import xarray as xr
 
-
-import requests, re, time, pandas as pd, numpy as np, xarray as xr
+from ooi_data_explorations.common import AUTH
 
 #CE01ISSP URLs
 CE01ISSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered'
@@ -156,8 +161,8 @@ class OOIM2M():
         m2m_url = url + timestring  #Combine the partial URL with the timespan to get a full url.
         return m2m_url
     
-    def make_request(m2m_url, user ='OOIAPI-BCJPAYP2KUVXFX', token = 'D3HV2X0XH1O'):    #Request data from UFRAME using the generated request URL.
-        request = requests.get(m2m_url,auth = (user,token))
+    def make_request(m2m_url):    #Request data from UFRAME using the generated request URL.
+        request = requests.get(m2m_url, auth=(AUTH[0], AUTH[2]))
         if request.status_code == requests.codes.ok:  #If the response is 200, then continue.
             print('Request successful.')
             return request

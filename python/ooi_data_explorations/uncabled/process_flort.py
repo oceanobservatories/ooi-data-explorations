@@ -3,8 +3,8 @@
 import numpy as np
 import os
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
-    get_vocabulary, update_dataset, ENCODINGS
+from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, get_vocabulary, \
+    update_dataset, ENCODINGS
 
 # load configuration settings
 ATTRS = dict({
@@ -225,36 +225,38 @@ def main(argv=None):
     stop = args.stop
     burst = args.burst
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        flort = m2m_collect(r, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
+        # download the data for the deployment
+        flort = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
+
+        # check to see if we downloaded any data
+        if not flort:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s\ndeployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
     else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s\nfrom %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
         flort = m2m_collect(r, '.*FLORT.*\\.nc$')
 
-    if not flort:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        # check to see if we downloaded any data
+        if not flort:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s\nfrom %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
 
-    # clean-up and reorganize
+    # clean-up and reorganize the data
     if method in ['telemetered', 'recovered_host']:
         flort = flort_datalogger(flort, burst)
     else:

@@ -26,6 +26,9 @@ from requests.adapters import HTTPAdapter
 from tqdm import tqdm
 from urllib3.util import Retry
 
+# filter future warnings for now
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
 # setup constants used to access the data from the different M2M interfaces
 SESSION = requests.Session()
 retry = Retry(connect=5, backoff_factor=0.5)
@@ -660,7 +663,7 @@ def m2m_collect(data, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate into a single data set
     print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
-    with ProcessPoolExecutor(max_workers=10) as pool:
+    with ProcessPoolExecutor(max_workers=5) as pool:
         frames = list(tqdm(pool.map(process_file, files), total=len(files), desc='Downloading files', file=sys.stdout))
 
     if not frames:
@@ -721,7 +724,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    with ProcessPoolExecutor(max_workers=10) as pool:
+    with ProcessPoolExecutor(max_workers=5) as pool:
         frames = list(tqdm(pool.map(process_file, files, repeat(True)),
                            total=len(files), desc='Downloading files', file=sys.stdout))
 

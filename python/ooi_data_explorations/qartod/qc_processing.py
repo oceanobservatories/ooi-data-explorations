@@ -301,8 +301,8 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
         'qcConfig': {
              'qartod': {
                  'gross_range_test': {
-                     'suspect_span': ['{}'.format(user_range[0]), '{}'.format(user_range[1])],
-                     'fail_span': ['{}'.format(sensor_range[0]), '{}'.format(sensor_range[1])]
+                     'suspect_span': user_range,
+                     'fail_span': sensor_range
                  }
              }
          },

@@ -744,12 +744,14 @@ def list_files(url, tag='.*\\.nc$'):
     Function to create a list of the NetCDF data files in the THREDDS catalog
     created by a request to the M2M system.
 
-    :param url: URL to user's THREDDS catalog specific to a data request
+    :param url: URL to a THREDDS catalog specific to a data request
     :param tag: regex pattern used to distinguish files of interest
     :return: list of files in the catalog with the URL path set relative to the
         catalog
     """
-    page = SESSION.get(url).text
+    with requests.session() as s:
+        page = s.get(url).text
+
     soup = BeautifulSoup(page, 'html.parser')
     pattern = re.compile(tag)
     return [node.get('href') for node in soup.find_all('a', text=pattern)]
@@ -971,6 +973,10 @@ def update_dataset(ds, depth):
     # update coordinate attributes for all variables
     for v in ds.variables:
         if v not in ['time', 'lat', 'lon', 'z', 'station']:
+            # remove older coordinates encoding if it exists
+            if 'coordinates' in ds[v].encoding.keys():
+                del ds[v].encoding['coordinates']
+            # add the new coordinates
             ds[v].attrs['coordinates'] = 'time lon lat z'
 
     # update some variable attributes to get somewhat closer to IOOS compliance, more importantly convert QC variables
@@ -991,7 +997,7 @@ def update_dataset(ds, depth):
 
             if executed_pattern.match(v):   # *_qc_executed variables
                 ds[v].attrs['flag_masks'] = flag_masks
-                ds[v].attrs['flag_meanings'] = ('global_range_test local_range_test spike_test poly_trend_test ' +
+                ds[v].attrs['flag_meanings'] = ('global_range_test local_range_test spike_test poly_trend_test '
                                                 'stuck_value_test gradient_test propogate_flags')
                 ds[v].attrs['comment'] = 'Automated QC tests executed for the associated named variable.'
 
@@ -1003,10 +1009,10 @@ def update_dataset(ds, depth):
 
             if results_pattern.match(v):    # *_qc_results variables
                 ds[v].attrs['flag_masks'] = flag_masks
-                ds[v].attrs['flag_meanings'] = ('global_range_test_passed local_range_test_passed spike_test_passed ' +
-                                                'poly_trend_test_passed stuck_value_test_passed gradient_test_passed ' +
+                ds[v].attrs['flag_meanings'] = ('global_range_test_passed local_range_test_passed spike_test_passed '
+                                                'poly_trend_test_passed stuck_value_test_passed gradient_test_passed '
                                                 'all_tests_passed')
-                ds[v].attrs['comment'] = ('QC result flags are set to true (1) if the test passed. Otherwise, if ' +
+                ds[v].attrs['comment'] = ('QC result flags are set to true (1) if the test passed. Otherwise, if '
                                           'the test failed or was not executed, the flag is set to false (0).')
 
                 ancillary = re.sub('_qc_results', '', v)

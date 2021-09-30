@@ -44,8 +44,6 @@ ctd = cspp_ctd(nc)  <<< Returns a pandas dataframe that contains datetime, press
 
 dosta = cspp_dosta(nc) <<< Returns a pandas dataframe that contains datetime, pressure, temperature, concentration, and estimated saturation. CTD data is also made available.
 
-flort = cspp_flort(nc) <<< Returns pandas dataframe that contains datetime, pressure, chlorophyll-a, cdom, and optical backscatter.
-
 nutnr = cspp_nutnr(nc) <<< Interpolates pressure for nitrate data using time and CTD pressure. Returns a pandas dataframe that contains datetime, pressure, and nitrate.
 
 par = cspp_parad(nc) <<< Returns a pandas dataframe that contains datetime, pressure, bulk photosynthetically active radiation.
@@ -69,11 +67,6 @@ cspp_optaa(nc) <<< Under development.
 find_site(nc) <<< Function that identifies the requested CSPP site and standard depth of that site. Used in removing bad pressure data. Called by data functions. Not generally called by the user.
 
 -----Notes/Issues-----
-Flort_sample is the stream name for CSPP fluorometer data. 
-However, when requests are made for this stream, only deployments 5 and greater are returned. 
-For deployments 1-4, the current stream is flort_dj_cspp_instrument_recovered. 
-OOI personnel are working to make flort_sample the stream that contains all data from all deployments.
-
 NUTNR data does not have pressure data associated with it in the raw files produces by the CSPP. 
 The function provided in this script interpolates based on time.
 Alternatively, the user can call the int_ctd_pressure variable.
@@ -99,7 +92,6 @@ CE01ISSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 CE01ISSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
 CE01ISSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/06-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE01ISSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/07-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE01ISSP_FLORT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_sample'
 CE01ISSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/10-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE01ISSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/05-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
 CE01ISSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/02-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
@@ -113,7 +105,6 @@ CE02SHSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 CE02SHSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
 CE02SHSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/05-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE02SHSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/06-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE02SHSP_FLORT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_sample'
 CE02SHSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/09-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE02SHSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/02-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
 CE02SHSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/01-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
@@ -127,7 +118,6 @@ CE06ISSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 CE06ISSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
 CE06ISSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/06-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE06ISSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/07-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE06ISSP_FLORT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/08-FLORTJ000/recovered_cspp/flort_sample'
 CE06ISSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/10-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE06ISSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/05-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
 CE06ISSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/02-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
@@ -141,7 +131,6 @@ CE07SHSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 CE07SHSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
 CE07SHSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/05-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE07SHSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/06-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE07SHSP_FLORT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/07-FLORTJ000/recovered_cspp/flort_sample'
 CE07SHSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/09-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE07SHSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/02-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
 CE07SHSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/01-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
@@ -284,38 +273,6 @@ class OOIM2M():
         print('DOSTA concentration in umol kg^-1.')   
         print('DOSTA estimated_saturation in %.')
         return data
-
-    def cspp_flort(nc):
-        site,depth = OOIM2M.find_site(nc)
-        dfnc = pd.DataFrame(data = {'location':nc})
-        flort = dfnc.loc[~dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]
-#        ctd = dfnc.loc[dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]
-        data = pd.DataFrame()
-        for remote in flort['location']:
-            dataset = xr.open_dataset(remote)
-            d = ({'datetime':dataset['time'], 
-                  'pressure':dataset['pressure_depth'], 
-                  'chla':dataset['fluorometric_chlorophyll_a'],
-                  'cdom':dataset['fluorometric_cdom'], 
-                  'obs':dataset['optical_backscatter']})
-            d = pd.DataFrame(data = d)        
-            data = pd.concat([data,d])
-        data = data[data.pressure < depth] #Remove obviously bad values.
-        data = data[data.pressure > 0]  
-        data  = data[data.chla > 0]
-        data = data[data.cdom > 0]
-        data = data[data.obs > 0]
-        data = data.dropna()  #Remove rows with any NaNs.
-        data = data.sort_values('datetime')  #Sort the data chronologically.
-        data = data.reset_index(drop=True)  #Reset the index.
-        print('FLORT data for ' + site + ' available.')
-        print('FLORT datetime in UTC.')
-        print('FLORT pressure in dbars.')
-        print('FLORT chl in ug L^-1.')
-        print('FLORT cdom in ppb.')
-        print('FLORT obs in m^-1.')
-        return data
-
 
     def cspp_par(nc):
         site,depth = OOIM2M.find_site(nc)
@@ -566,41 +523,6 @@ class OOIM2M():
         print('SPKIR pressure in dbars.')
         print('SPKIR channels in uW cm^-2 nm^-1.')
         return data   
-
-
-    
-    
-    
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ##Under development. The number of output wavelengths differs from ACS to ACS (and thus from profiler to profiler) in consecutive deployments. 
 ##This causes issues in concatenation of multiple deployments because arrays do not maintain the same shape. 

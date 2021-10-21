@@ -78,25 +78,28 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     else:
         return None
 
-    # resample the dataset onto a common time record
-    itime = '{:d}Min'.format(resample_time)
-    btime = int(resample_time / 2)
-    loff = '{:d}Min'.format(btime)
-    gtime = '{:d}Min'.format(resample_time * 3)
-    ds = ds.sortby('time')
-    avg = ds.resample(time=itime, base=btime, loffset=loff, skipna=True).median(keep_attrs=True)
-    avg = avg.interpolate_na(dim='time', max_gap=gtime)
+    # resample the dataset onto a common time record, if the resample time has been set
+    if resample_time:
+        itime = '{:d}Min'.format(resample_time)
+        btime = int(resample_time / 2)
+        loff = '{:d}Min'.format(btime)
+        gtime = '{:d}Min'.format(resample_time * 3)
+        ds = ds.sortby('time')
+        avg = ds.resample(time=itime, base=btime, loffset=loff, skipna=True).median(keep_attrs=True)
+        avg = avg.interpolate_na(dim='time', max_gap=gtime)
 
-    # add the attributes back into the data set
-    avg.attrs = ds.attrs
-    for v in avg.variables:
-        if v != 'time':
-            avg[v] = avg[v].astype(ds[v].dtype)
-            avg[v].attrs = ds[v].attrs
+        # add the attributes back into the data set
+        avg.attrs = ds.attrs
+        for v in avg.variables:
+            if v != 'time':
+                avg[v] = avg[v].astype(ds[v].dtype)
+                avg[v].attrs = ds[v].attrs
 
-    avg.time.attrs['long_name'] = 'Time'
-    avg.time.attrs['standard_name'] = 'time'
-    avg.time.attrs['axis'] = 'T'
+        avg.time.attrs['long_name'] = 'Time'
+        avg.time.attrs['standard_name'] = 'time'
+        avg.time.attrs['axis'] = 'T'
+    else:
+        avg = ds
 
     return avg
 

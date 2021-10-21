@@ -359,6 +359,59 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     return gross_range
 
 
+def parse_qc(ds):
+    """
+    Extract the QC test results from the different variables in the data set,
+    and create a new dataset with the QC test result variables explicitly
+    named.
+
+    This code comes from an example notebook developed by the OOI Data Team
+    for the 2018 Data Workshops. It has been adapted to use xarray instead
+    of pandas. As with the original tests, the QC values are True = pass and
+    False = fail. The original example, by Friedrich Knuth, and additional
+    information on the original OOI QC algorithms (replacing with QARTOD) can
+    be found at:
+
+    https://oceanobservatories.org/knowledgebase/interpreting-qc-variables-and-results/
+
+    :param ds: dataset with *_qc_executed and *_qc_results variables
+    :return: updated dataset with the *_qc_executed and *_qc_results
+        variables removed and replaced by explicitly named qc variables
+    """
+    # create a list of the variables that have had QC tests applied
+    vars = [x.split('_qc_results')[0] for x in ds.variables if 'qc_results' in x]
+    for var in vars:
+        # setup the qc result and executed variables and the new names
+        qc_result = var + '_qc_results'
+        qc_executed = var + '_qc_executed'
+        names = {
+            0: var + '_qc_globalrangetest',
+            1: var + '_qc_localrangetest',
+            2: var + '_qc_spiketest',
+            3: var + '_qc_polytrendtest',
+            4: var + '_qc_stuckvaluetest',
+            5: var + '_qc_gradienttest',
+            7: var + '_qc_propagateflags',
+        }
+
+        # use the qc_executed variable to determine which tests were run, and setup a bit mask
+        executed = np.bitwise_or.reduce(ds[qc_executed].values.astype('uint8'))
+        executed_bits = np.unpackbits(executed.astype('uint8'))
+
+        # for each test executed, assign the results to the explicitly named variables and create the variable
+        for index, value in enumerate(executed_bits[::-1]):
+            if value:
+                name = names.get(index)
+                mask = 2 ** index
+                values = (ds[qc_result].values.astype('uint8') & mask) > 0
+                ds[name] = ('time', values)
+
+        # remove the original qc variables
+        ds = ds.drop_vars([qc_executed, qc_result])
+
+    return ds
+
+
 def inputs(argv=None):
     """
     Sets the main input arguments that will be used in the QC processing

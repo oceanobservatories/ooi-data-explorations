@@ -211,7 +211,7 @@ def quality_checks(ds):
     qc_flag[m] = 4
 
     # test for out of range pH values -- sensor range set to 6.9 and 9.0
-    m = (ds.seawater_ph.values < 6.9) | (ds.seawater_ph.values > 9.0)
+    m = (ds.seawater_ph.values < 6.9) | (ds.seawater_ph.values > 9.0) | (np.isnan(ds.seawater_ph.values))
     qc_flag[m] = 4
 
     return qc_flag

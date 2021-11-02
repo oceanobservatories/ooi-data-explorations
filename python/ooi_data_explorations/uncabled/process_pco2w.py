@@ -82,6 +82,7 @@ ATTRS = {
                     'instrument blank data set.'),
         'units': 'counts',
         'data_product_identifier': 'CO2ABS1-BLNK_L0',
+        '_FillValue': -9999999
     },
     'absorbance_blank_620': {
         'long_name': 'Blank Optical Absorbance Ratio at 620 nm',
@@ -91,6 +92,7 @@ ATTRS = {
                     'instrument blank data set.'),
         'units': 'counts',
         'data_product_identifier': 'CO2ABS2-BLNK_L0',
+        '_FillValue': -9999999
     },
     'absorbance_ratio_434': {
         'long_name': 'Optical Absorbance Ratio at 434 nm',
@@ -143,7 +145,7 @@ ATTRS = {
                                 'thermistor_temperature'),
     },
     'pco2_seawater_quality_flag': {
-        'long_name': 'pCO2 SeaWater Quality Flag',
+        'long_name': 'pCO2 Seawater Quality Flag',
         'comment': ('Quality assessment of the seawater pCO2 based on assessments of the raw values used to calculate '
                     'the pCO2. Levels used to indicate suspect quality are pulled from the vendor code. Failed values '
                     'are flagged based on reviews of past instrument performance.'),
@@ -202,7 +204,7 @@ def quality_checks(ds):
     qc_flag[m] = 4
 
     # test for clearly failed pCO2 values -- data is 2x above or below the suspect upper and lower limits
-    m = (ds.pco2_seawater < 100) | (ds.pco2_seawater > 4000)
+    m = (ds.pco2_seawater < 100) | (ds.pco2_seawater > 4000) | (np.isnan(ds.pco2_seawater))
     qc_flag[m] = 4
 
     # test for failed absorbance blank ratio values (less than 20% of full scale)
@@ -265,6 +267,11 @@ def pco2w_datalogger(ds):
                     'recovered instrument data where no external GPS referenced clock is available.')
     })
 
+    # check for missing blank data, stripped from the record and treated as a co-located sensor.
+    if 'absorbance_blank_434' not in ds.variables:
+        ds['absorbance_blank_434'] = ('time', ds['deployment'] * 0 - 9999999)
+        ds['absorbance_blank_620'] = ('time', ds['deployment'] * 0 - 9999999)
+
     # rename some of the variables for better clarity
     rename = {
         'voltage_battery': 'raw_battery_voltage',
@@ -312,6 +319,9 @@ def pco2w_datalogger(ds):
     data_types = ['thermistor_temperature', 'pco2_seawater']
     for v in data_types:
         ds[v] = ds[v].astype('float32')
+
+    # test the data quality
+    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -381,9 +391,6 @@ def pco2w_instrument(ds):
     # merge the data sets back together
     ds = ds.merge(data)
 
-    # test the data quality
-    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
-
     # calculate the battery voltage
     ds['battery_voltage'] = ds['raw_battery_voltage'] * 15. / 4096.
 
@@ -397,6 +404,9 @@ def pco2w_instrument(ds):
     data_types = ['thermistor_temperature', 'pco2_seawater']
     for v in data_types:
         ds[v] = ds[v].astype('float32')
+
+    # test the data quality
+    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -430,7 +440,7 @@ def main(argv=None):
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
         # download the data for the deployment
-        pco2w = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*PCO2W.*\\.nc$' % deploy))
+        pco2w = load_gc_thredds(site, node, sensor, method, stream, ('^(?!.*blank).*deployment%04d.*PCO2W.*\\.nc$' % deploy))
 
         # check to see if we downloaded any data
         if not pco2w:
@@ -446,7 +456,7 @@ def main(argv=None):
             raise SystemExit(exit_text)
 
         # Valid M2M request, start downloading the data
-        pco2w = m2m_collect(r, '.*PCO2W.*\\.nc$')
+        pco2w = m2m_collect(r, '^(?!.*blank).*PCO2W.*\\.nc$')
 
         # check to see if we downloaded any data
         if not pco2w:

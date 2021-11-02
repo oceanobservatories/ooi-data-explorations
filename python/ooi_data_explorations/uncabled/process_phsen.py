@@ -5,7 +5,7 @@ import os
 import re
 import xarray as xr
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, get_deployment_dates, \
     get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below
@@ -534,34 +534,36 @@ def main(argv=None):
     start = args.start
     stop = args.stop
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        phsen = m2m_collect(r, ('.*deployment%04d.*PHSEN.*\\.nc$' % deploy))
+        # download the data for the deployment
+        phsen = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*PHSEN.*\\.nc$' % deploy))
+
+        # check to see if we downloaded any data
+        if not phsen:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
     else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
         phsen = m2m_collect(r, '.*PHSEN.*\\.nc$')
 
-    if not phsen:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        # check to see if we downloaded any data
+        if not phsen:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
 
     # clean-up and reorganize
     if method in ['telemetered', 'recovered_host']:

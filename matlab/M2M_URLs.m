@@ -10929,6 +10929,17 @@ elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(4).units = 'kg/m3';
     var_list(5).units = 'dbar';
     var_list(6).units = 'S/m';
+elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'DOSTA') && strcmp(method,'Streamed')
+    uframe_dataset_name = 'RS01SBPS/SF01A/2A-CTDPFA102/streamed/ctdpf_sbe43_sample';
+    var_list(1).name = 'time';
+    var_list(2).name = 'corrected_dissolved_oxygen';
+    var_list(3).name = 'seawater_pressure';
+    var_list(1).data = [];
+    var_list(2).data = [];
+    var_list(3).data = [];
+    var_list(1).units = 'seconds since 1900-01-01';
+    var_list(2).units = 'umol/kg';
+    var_list(3).units = 'dbar';
 elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/2A-CTDPFA107/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';

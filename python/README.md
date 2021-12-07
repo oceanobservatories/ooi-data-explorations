@@ -3,7 +3,7 @@
 ## Overview
 
 The python code provided here was developed primarily as a toolset for myself, as an OOI Data Team member, to 
-facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc that I need to perform as 
+facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc. that I need to perform as 
 part of my day-to-day work. I am providing this code to the larger community in the hopes that it will be of some use 
 to you, since the steps I use for accessing and using the data are identical to those any user would employ. The code 
 uses the [OOI M2M API](https://oceanobservatories.org/ooi-m2m-interface/) to access the data and either loads it into
@@ -12,7 +12,7 @@ depending on how you call it. There are examples below of how to setup and use t
 and scripts available in the examples directory.
 
 If you have any comments, questions or issues, please don't hesitate to 
-[let us know]((https://github.com/oceanobservatories/ooi-data-explorations/issues)).
+[let me know]((https://github.com/oceanobservatories/ooi-data-explorations/issues)).
 
 ## Table of Contents
 
@@ -26,7 +26,9 @@ If you have any comments, questions or issues, please don't hesitate to
     * [Simplifying the As-Is Requests](#simplifying-the-as-is-requests)
         * [YAML Structure](#yaml-structure)
         * [Simplified Request](#simplified-request)
+    * [Additional Utilities](#additional-utilities)
     * [Requesting Processed Data](#requesting-processed-data)
+    * [QARTOD Workflows](#qartod-workflows)
 
 ## Installation
 
@@ -44,20 +46,21 @@ One key difference between the tutorial and my personal preference is to use the
 installation instead of [Miniconda](https://docs.conda.io/en/latest/miniconda.html) as called out in the tutorial. All 
 the tools you would need, and then some, are installed with Anaconda. You can follow the tutorial exactly as written 
 and all of the code in this project will work, but I recommend using Anaconda instead of Miniconda. There are several 
-other things you may end up wanting to do with the tools available in Anaconda.
+other packages and tools provided by Anaconda that you may end up wanting to work with.
 
 Additionally, you do not need to install Bash or Git for the code to work. You can 
-[directly download the code](https://github.com/oceanobservatories/ooi-data-explorations/archive/master.zip),
-use a text editor to [setup access credentials](#access-credentials), and/or use the Anaconda Prompt or a terminal of
-your choice instead of the examples given below. I am trying to be OS independent, thus the examples below assume you
-are using some form of bash. Adjust as you need and see fit. 
+[directly download the code](https://github.com/oceanobservatories/ooi-data-explorations/archive/master.zip) instead of
+using Git, use a text editor to [setup your access credentials](#access-credentials), and/or use the Anaconda Prompt or 
+a terminal of your choice instead of following the examples given below. I am trying to be OS independent, thus the 
+examples below assume you are using some form of bash (Git Bash if you followed the tutorial from above). Adjust as you
+need and see fit.  
 
 Note, for Windows users only and assuming you are using Git Bash, if you already have Anaconda/Miniconda installed on
 your machine, you do not need to uninstall/reinstall as described in the 
 [tutorial](https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/).
 You can leave everything as-is. However, you do need to link Git Bash to Anaconda (or Miniconda); this happens
 automagically if you follow the sequence in the tutorial by installing Git Bash before Anaconda. If you already have 
-Anaconda installed, however, from the bash terminal add the following code to `.bash_profile` file in your home 
+Anaconda installed, however, from the bash terminal add the following code to the `.bash_profile` file in your home 
 directory (assuming you installed Anaconda in your home directory, which is the default):
 
 ```shell script
@@ -69,7 +72,7 @@ source .bash_profile
 ### Access Credentials
 
 Access credentials are required to download the data from OOINet via the M2M interface. Directions on how to obtain 
-these, in addition to details about the M2M system, are [available here](https://oceanobservatories.org/ooi-m2m-interface/).
+these, in addition to details about the M2M system, are [available on the OOI website](https://oceanobservatories.org/ooi-m2m-interface/).
 
 * If you haven't already done so, either create a user account on the [OOI Data Portal](https://ooinet.oceanobservatories.org), 
 or use the CILogon button with an academic or Google account (login button is towards the upper right corner of the 
@@ -81,7 +84,7 @@ web page) to login to the portal.
 The python code uses the [netrc](https://docs.python.org/3.6/library/netrc.html) utility to obtain your access 
 credentials. Users need to create a `.netrc` file in their home directory to store these access credentials. Using
 either a text editor or the bash terminal, create the `.netrc` file (replacing the `<API Username>` and `<API Token>` 
-in the example below with your credentials from the [OOI Data Portal](https://ooinet.oceanobservatories.org)):
+in the example below with the corresponding values from your login credentials for the [OOI Data Portal](https://ooinet.oceanobservatories.org)):
 
 ```shell script
 cd ~
@@ -117,15 +120,15 @@ conda activate ooi
 conda env list
 
 # install the package as a local development package
-pip install -e . 
+conda develop -p .
 ```
 
 ## Usage
 
 The code is available in the [ooi_data_explorations](ooi_data_explorations) directory with examples (both scripts
 and notebooks) in the [examples](examples) directory. The python code has been developed and used with both Python 3.6
-and 3.7 on Windows and Linux machines. They are configured in a granular fashion to allow users to access the data in
-a few different ways.
+and 3.7 on Windows and Linux machines. The functions are configured in a granular fashion to allow users to access the
+data in a few different ways.
 
 ### M2M Terminology
 
@@ -140,25 +143,25 @@ all of the data for a particular instrument of interest will be downloaded.
 * Node -- 5 character uppercase string (of which the first 2 characters are really the key) denoting the assembly the
 instrument is connected to/mounted on. These can be thought of as physical locations within/under the higher level site 
 designator.
-* Sensor -- 12 character uppercase string that indicates, among other things, the instrument class and series. The class
-and series [defined](https://oceanobservatories.org/instruments/) on the OOI website.
+* Sensor -- 12 character uppercase string that indicates, among other things, the instrument class and series. The 
+instrument class and series are [defined](https://oceanobservatories.org/instruments/) on the OOI website.
 * Delivery Method -- Method of data delivery (lowercase).
     * `streamed` -- Real-time data delivery method for all cabled assets. Data is "streamed" to shore over the fiber
     optic network as it outputs from an instrument. 
     * `telemetered` -- Near real-time data delivery method for most uncabled assets. Data is recorded remotely
     by a data logger system and delivered in batches over a satellite or cellular network link on a recurring schedule 
     (e.g every 2 hours).
-    * `recovered_host` -- Usually the same data set as the telemeterd for uncabled assets. Key difference is this data is 
-	downloaded from the data logger system after the asset is recovered. In most cases, this is 1:1 with the 
+    * `recovered_host` -- Usually the same data set as telemetered for uncabled assets. Key difference is this data is 
+    downloaded from the data logger system after the asset is recovered. In most cases, this is 1:1 with the 
     telemetered data unless there was an issue with telemetry during the deployment or the data was decimated
     (temporal and/or # of parameters) by the data logger system  prior to transmission.
     * `recovered_inst` -- Data recorded on and downloaded directly from an individual instrument after the instrument is
     recovered. Not all instruments internally record data, so this method will not be available for all instruments.
-	* `recovered_wfp` -- Data recorded on and downloaded from the McLane Moored Profiler system used at several sites 
-	in OOI. Telemetered data is decimated, this data set represents the full-resolution data.
-	* `recovered_cspp` -- Data recorded on and downloaded from the Coastal Surface Piercing Profiler system used in
-	the Endurance array. Telemetered data is decimated, this data set represents the full-resolution data.
-* Stream -- A collection of parameters output by an instrument, or read from a file, and parsed into a named data set.
+    * `recovered_wfp` -- Data recorded on and downloaded from the McLane Moored Profiler system used at several sites 
+    in OOI. Telemetered data is decimated, this data set represents the full-resolution data.
+    * `recovered_cspp` -- Data recorded on and downloaded from the Coastal Surface Piercing Profiler system used in
+    the Endurance array. Telemetered data is decimated, this data set represents the full-resolution data.
+* Stream -- A collection of parameters output by an instrument or read from a file, and parsed into a named data set.
 Stream names are all lowercase. Streams are mostly associated with the data delivery methods and there may be more than
 one stream per method.
 
@@ -195,7 +198,8 @@ r = m2m_request(site, node, sensor, method, stream, start, stop)
 
 # Use a regex tag to download only the pH sensor data from the THREDDS catalog
 # created by our request.
-data = m2m_collect(r, '.*PHSEN.*\\.nc$')
+tag = '.*PHSEN.*\\.nc$'
+data = m2m_collect(r, tag)
 
 # Save the data to the users home directory under a folder called ooidata for
 # further processing
@@ -212,18 +216,30 @@ nc_out = os.path.join(out_path, out_file)
 data.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf')
 ```
 
+The example above will request data from the pH sensor (PHSEN) on the Oregon Shelf Surface Mooring (CE02SHSM) 
+near-surface (7 m depth) instrument frame (NSIF) via `m2m_request`. The requested data is gathered by the system in a 
+THREDDS catalog specific to the user and the request. One or more NetCDF files with the requested data will be in the 
+catalog. The second function, `m2m_collect`, will load the content of those files into an xarray dataset. A key input to
+`m2m_collect` is the regex tag used to select the files to load. In most cases, a user could use `'.*\\.nc$'` as the 
+tag, downloading all available NetCDF files. In some cases, however, the tag used needs to be more selective. If an
+instrument requires data from a co-located sensor, those NetCDF files will be present as well. Part of the process in
+collecting the requested data is concatenating the downloaded data into a single xarray dataset. That will fail if the 
+individual data files contain different variables. In the above example, the pH sensor requires salinity data from a 
+co-located CTD. Both pH sensor and CTD NetCDF files will be present in the THREDDS catalog. The tag `'.*PHSEN.*\\.nc$'` 
+is used to select only the pH sensor data.
+
 ### Simplifying the As-Is Requests
 
 Users really only need to use `m2m_request` and `m2m_collect` for the data requests. However, the user needs to
-explicitly know all of the details and terms from above. Outside of OOI (and even inside of OOI), the terminology used
-for sites, nodes, sensors, methods, and streams can be intimidating and confusing. In an attempt to clean up some of 
-that terminology, limit the need for the user to learn all of the OOI lingo, and to align with some of the 
-functionality in the Matlab and R utilities, I've organized a subset of all of the sources of OOI data into a 
-[YAML structure](ooi_data_explorations/m2m_urls.yml) that users can query using a simpler set of terms as part of a 
-data request. The YAML structure removes from consideration all so-called engineering sensors and instruments that 
+explicitly know all of the details (e.g. correct regex tag) and terms from above. Outside of OOI (and even inside of 
+OOI), the terminology used for sites, nodes, sensors, methods, and streams can be intimidating and confusing. In an 
+attempt to clean up some of that terminology, limit the need for the user to learn all of the OOI lingo, and to align 
+with some of the functionality in the Matlab and R utilities, I've organized a subset of all of the sources of OOI data 
+into a [YAML structure](ooi_data_explorations/m2m_urls.yml) that users can query using a simpler set of terms as part of 
+a data request. The YAML structure removes from consideration all so-called engineering sensors and instruments that 
 cannot be accessed through the API (e.g. cameras or bio-accoustic sonar), as well as most of the non-science streams 
 (engineering or metadata streams). The idea is to cover the most common needs, rather than all possible cases. Users can
-still access any data set desired, but you will need to use the [method from above](#requesting-as-is-mostly-data) to 
+still access any data set desired, but they need to use the [method from above](#requesting-as-is-mostly-data) to 
 explicitly call any stream not represented in the YAML structure.
 
 #### YAML Structure
@@ -248,7 +264,7 @@ there is more than one, the code defaults to selecting the first. I've curated t
 of interest to 99.9% of users. The key utility here is users do not have to know the stream name. You can still get at 
 the other streams, if needed, but you have to explicitly know what they are and call them as shown in example above.
 
-The last things to consider are date ranges to bound the request and an aggregation value. Date ranges are fairly 
+The last things to consider are the date ranges to bound the request and an aggregation value. Date ranges are fairly 
 self-explanatory. You need to select a starting and ending date for the data of interest, otherwise you will get all of 
 the data for that instrument. That could potentially be a large request, so be careful. The dates entered need to be
 recognizable as such. I'm using the [dateutil parser function](https://dateutil.readthedocs.io/en/stable/parser.html) to 
@@ -314,26 +330,46 @@ data_04 = data_request(site, assembly, instrument, method, start=start, stop=sto
 data_05 = data_request(site, assembly, instrument, method, start=start, stop=stop, aggregate=5)
 ```
 
+### Additional Utilities
+
+In addition to `m2m_request` and `m2m_collect`, a collection of additional utilities are available to access instrument
+and site deployment information. This information is collected in the OOI [Asset Management](https://github.com/oceanobservatories/asset-management)
+database. It includes the dates, times and locations of deployments, instrument serial numbers, calibration coefficients,
+and all the other pieces of information that combine to form the OOI metadata. These utilities and their use are 
+demonstrated in a [Jupyter notebook](examples/notebooks/m2m_explorations.ipynb) available in the [examples](examples/notebooks) 
+directory.
+
 ### Requesting Processed Data
 
 For most individuals, the above code should satisfy your needs. For some of the data QC tasks I work through, the data
-needs organizational reworks, renaming or different processing to fit within my workflow. The process_*.py modules in
-the [cabled](ooi_data_explorations/cabled) and [uncabled](ooi_data_explorations/uncabled) directories represent an 
-attempt on my part to rework the data sets into more useful forms before conducting any further work. Primarily, these 
-re-works are for my own use, but they are available for others to use. The primary steps are:
+needs organizational reworking, renaming of variables or different processing to fit within my workflow. The 
+process_*.py modules in the [cabled](ooi_data_explorations/cabled) and [uncabled](ooi_data_explorations/uncabled) 
+directories represent an attempt on my part to rework the data sets into more useful forms before conducting any 
+further work. Primarily, these re-works are for my own use, but they are available for others to use. The primary steps
+are:
 
 * Deleting certain variables that are of no use to my needs (helps to reduce file sizes)
 * Renaming some parameters to more consistent names (across and within datasets). The original OOI names are preserved 
 as variable level attributes termed `ooinet_variable_name`.
 * Resetting the QC parameters to use the `flag_mask` and `flag_meaning` attributes from the 
 [CF Metadata conventions](http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#flags).
-* Reseting incorrectly set units and other attributes for some of the variables.
+* Reseting incorrectly set units and other attributes for some variables.
 * Reworking certain parameters by splitting or reshaping the data into more useful forms. 
-* Update global attributes and otherwise clean-up the data sets.
+* Update global attributes and otherwise cleaning up the data set.
 
-Additionally, some of the instrument data is collected in bursts (e.g. every 15 minutes for 3 minutes at 1 Hz). This
-can make some of the data sets fairly large. By applying a median average to each of the bursts, the size of the data
-set can be reduced to a more workable form, and the point-to-point variability in each burst can be smoothed. Burst 
-averaging is optional. Most of these functions are set to run from the command line. Examples of how these are run
-can be found in the [examples directory](examples). Bash scripts to automate downloading date using these processing
+Additionally, some instrument data is collected in burst mode (e.g. every 15 minutes for 3 minutes at 1 Hz). This
+can make the data sets fairly large. By applying a median average to each of the bursts, the size of the data set can
+be reduced to a more workable form, and the point-to-point variability in each burst can be smoothed out. Burst 
+averaging is optional. Most of the processing functions are set to run from the command line. Examples of how these are
+run can be found in the [examples directory](examples). Bash scripts to automate downloading date using these processing
 scripts are in the [utilities/harvesters](utilities/harvesters) directory.
+
+### QARTOD Workflows
+
+OOI is beginning the process of replacing the current automated QC algorithms with [QARTOD](https://ioos.noaa.gov/project/qartod/)
+[tests](https://github.com/ioos/ioos_qc) developed by [IOOS](https://ioos.noaa.gov/). The workflows and functions used 
+to generate the test limits for Endurance Array assets are available under the [qartod](ooi_data_explorations/qartod) 
+directory. These workflows rely on the processing functions described above. As more QARTOD tests are developed, the
+processing functions and the QARTOD workflows will be extended. The goal is to create a record for the community 
+detailing how the test limits were created and to facilitate regenerating those limits as more data is collected over
+time.

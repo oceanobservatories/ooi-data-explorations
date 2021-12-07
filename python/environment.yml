@@ -7,7 +7,9 @@ dependencies:
   - argcomplete
   - beautifulsoup4
   - bottleneck
+  - cgsn_parsers
   - chest
+  - conda-build
   - configobj
   - geos
   - gsw
@@ -40,5 +42,4 @@ dependencies:
   - yaml
   - pip:
     - https://bitbucket.org/ooicgsn/pyseas/get/develop.zip
-    - https://bitbucket.org/ooicgsn/cgsn-parsers/get/master.zip
     - https://bitbucket.org/ooicgsn/cgsn-processing/get/master.zip

@@ -4,7 +4,7 @@ import numpy as np
 import os
 import xarray as xr
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, get_deployment_dates, \
     get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
 
 # Setup some attributes, used to replace those incorrectly set, or needed after the processing below
@@ -82,6 +82,7 @@ ATTRS = {
                     'instrument blank data set.'),
         'units': 'counts',
         'data_product_identifier': 'CO2ABS1-BLNK_L0',
+        '_FillValue': -9999999
     },
     'absorbance_blank_620': {
         'long_name': 'Blank Optical Absorbance Ratio at 620 nm',
@@ -91,6 +92,7 @@ ATTRS = {
                     'instrument blank data set.'),
         'units': 'counts',
         'data_product_identifier': 'CO2ABS2-BLNK_L0',
+        '_FillValue': -9999999
     },
     'absorbance_ratio_434': {
         'long_name': 'Optical Absorbance Ratio at 434 nm',
@@ -143,7 +145,7 @@ ATTRS = {
                                 'thermistor_temperature'),
     },
     'pco2_seawater_quality_flag': {
-        'long_name': 'pCO2 SeaWater Quality Flag',
+        'long_name': 'pCO2 Seawater Quality Flag',
         'comment': ('Quality assessment of the seawater pCO2 based on assessments of the raw values used to calculate '
                     'the pCO2. Levels used to indicate suspect quality are pulled from the vendor code. Failed values '
                     'are flagged based on reviews of past instrument performance.'),
@@ -192,17 +194,17 @@ def quality_checks(ds):
     m = m.any(axis=1)
     qc_flag[m] = 3
 
+    # test for suspect pC02 values -- data falls outside the vendor calibration range
+    m = (ds.pco2_seawater < 200) | (ds.pco2_seawater > 2000)
+    qc_flag[m] = 3
+
     # test for failed signal levels -- values based on limits used with the SAMI-pH data
     m = (ds.signal_434 < 5) | (ds.signal_620 < 5)
     m = m.any(axis=1)
     qc_flag[m] = 4
 
-    # test for suspect pC02 values -- data falls outside the vendor calibration range
-    m = (ds.pco2_seawater < 200) | (ds.pco2_seawater > 2000)
-    qc_flag[m] = 3
-
-    # test for clearly failed pCO2 values -- data is 2x above or below the lower and upper limits
-    m = (ds.pco2_seawater < 100) | (ds.pco2_seawater > 4000)
+    # test for clearly failed pCO2 values -- data is 2x above or below the suspect upper and lower limits
+    m = (ds.pco2_seawater < 100) | (ds.pco2_seawater > 4000) | (np.isnan(ds.pco2_seawater))
     qc_flag[m] = 4
 
     # test for failed absorbance blank ratio values (less than 20% of full scale)
@@ -265,6 +267,11 @@ def pco2w_datalogger(ds):
                     'recovered instrument data where no external GPS referenced clock is available.')
     })
 
+    # check for missing blank data, stripped from the record and treated as a co-located sensor.
+    if 'absorbance_blank_434' not in ds.variables:
+        ds['absorbance_blank_434'] = ('time', ds['deployment'] * 0 - 9999999)
+        ds['absorbance_blank_620'] = ('time', ds['deployment'] * 0 - 9999999)
+
     # rename some of the variables for better clarity
     rename = {
         'voltage_battery': 'raw_battery_voltage',
@@ -312,6 +319,9 @@ def pco2w_datalogger(ds):
     data_types = ['thermistor_temperature', 'pco2_seawater']
     for v in data_types:
         ds[v] = ds[v].astype('float32')
+
+    # test the data quality
+    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -381,9 +391,6 @@ def pco2w_instrument(ds):
     # merge the data sets back together
     ds = ds.merge(data)
 
-    # test the data quality
-    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
-
     # calculate the battery voltage
     ds['battery_voltage'] = ds['raw_battery_voltage'] * 15. / 4096.
 
@@ -397,6 +404,9 @@ def pco2w_instrument(ds):
     data_types = ['thermistor_temperature', 'pco2_seawater']
     for v in data_types:
         ds[v] = ds[v].astype('float32')
+
+    # test the data quality
+    ds['pco2_seawater_quality_flag'] = quality_checks(ds)
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -423,34 +433,36 @@ def main(argv=None):
     start = args.start
     stop = args.stop
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        pco2w = m2m_collect(r, ('^(?!.*blank).*deployment%04d.*PCO2W.*nc$' % deploy))
-    else:
-        pco2w = m2m_collect(r, '^(?!.*blank).*PCO2W.*nc$')
+        # download the data for the deployment
+        pco2w = load_gc_thredds(site, node, sensor, method, stream, ('^(?!.*blank).*deployment%04d.*PCO2W.*\\.nc$' % deploy))
 
-    if not pco2w:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        # check to see if we downloaded any data
+        if not pco2w:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
+    else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
+        pco2w = m2m_collect(r, '^(?!.*blank).*PCO2W.*\\.nc$')
+
+        # check to see if we downloaded any data
+        if not pco2w:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
 
     # clean-up and reorganize
     if method in ['telemetered', 'recovered_host']:

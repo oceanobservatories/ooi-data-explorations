@@ -774,7 +774,7 @@ def process_file(catalog_file, gc=False):
     else:
         dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
-    ds = xr.load_dataset(url + '#fillmismatch')
+    ds = xr.load_dataset(url + '#fillmismatch', decode_cf=False)
 
     if not ds:
         return None

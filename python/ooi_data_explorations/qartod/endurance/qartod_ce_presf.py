@@ -10,11 +10,11 @@ import dateutil.parser as parser
 import os
 import pandas as pd
 import pytz
-import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
-from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, inputs
+from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, inputs, \
+    ANNO_HEADER, CLM_HEADER, GR_HEADER
 
 
 def combine_delivery_methods(site, node, sensor):
@@ -170,20 +170,16 @@ def main(argv=None):
         os.makedirs(out_path)
 
     # save the annotations to a csv file for further processing
-    csv_names = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
-                 'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
     anno_csv = '-'.join([site, node, sensor]) + '.quality_annotations.csv'
-    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=csv_names)
+    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=ANNO_HEADER)
 
     # save the gross range values to a csv for further processing
-    csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source']
     gr_csv = '-'.join([site, node, sensor]) + '.gross_range.csv'
-    gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=csv_names)
+    gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=GR_HEADER)
 
     # save the climatology values and table to a csv for further processing
-    csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source']
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
-    clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=csv_names)
+    clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
     parameters = ['seawater_temperature', 'abs_seafloor_pressure',
                   'seawater_temperature', 'abs_seafloor_pressure',
                   'presf_tide_temperature', 'presf_tide_pressure']

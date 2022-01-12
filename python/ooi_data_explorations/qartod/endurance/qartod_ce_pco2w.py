@@ -15,7 +15,7 @@ from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_a
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_pco2w import pco2w_instrument, quality_checks
 from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
-    process_climatology, inputs
+    process_climatology, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
 
 
 def generate_qartod(site, node, sensor, cut_off):
@@ -57,7 +57,7 @@ def generate_qartod(site, node, sensor, cut_off):
     # HITL annotations that can be combined with system annotations and pCO2 quality checks to create
     # a cleaned up data set prior to calculating the QARTOD test values
     fail = data.pco2_seawater_quality_flag.where(data.pco2_seawater_quality_flag == 4).notnull()
-    blocks = identify_blocks(fail, [24, 96])
+    blocks = identify_blocks(fail, [48, 72])
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
@@ -147,21 +147,17 @@ def main(argv=None):
         os.makedirs(out_path)
 
     # save the annotations to a csv file for further processing
-    csv_names = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
-                 'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
     anno_csv = '-'.join([site, node, sensor]) + '.quality_annotations.csv'
-    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=csv_names)
+    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=ANNO_HEADER)
 
     # save the gross range values to a csv for further processing
-    csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source']
     gr_csv = '-'.join([site, node, sensor]) + '.gross_range.csv'
-    gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=csv_names)
+    gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=GR_HEADER)
 
     # save the climatology values and table to a csv for further processing
-    csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source']
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_tbl = '-'.join([site, node, sensor]) + '-pco2_seawater.csv'
-    clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=csv_names)
+    clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
     with open(os.path.join(out_path, clm_tbl), 'w') as clm:
         clm.write(clm_table[0])
 

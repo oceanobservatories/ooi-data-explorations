@@ -778,11 +778,16 @@ def process_file(catalog_file, gc=False):
         dods_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/dodsC/'
     else:
         dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
+
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
-    ds = xr.load_dataset(url + '#fillmismatch')
+    ds = xr.load_dataset(url + '#fillmismatch', decode_cf=False)
 
     if not ds:
         return None
+
+    # since the CF decoding of the time is failing, reset time here to the correct units and redo
+    ds.time['units'] = 'seconds since 1900-01-01 00:00:00.000Z'
+    ds = xr.decode_cf(ds)
 
     # addresses error in how the *_qartod_executed variables are set
     qartod_pattern = re.compile(r'^.+_qartod_executed$')
@@ -792,6 +797,7 @@ def process_file(catalog_file, gc=False):
             if ds[v].shape != ds['provenance'].shape:
                 ds = ds.drop_vars(v)
 
+    # convert the dimensions from obs to time and get rid of obs and other variables we don't need
     ds = ds.swap_dims({'obs': 'time'})
     ds = ds.reset_coords()
     keys = ['obs', 'id', 'provenance', 'driver_timestamp', 'ingestion_timestamp',
@@ -799,6 +805,8 @@ def process_file(catalog_file, gc=False):
     for key in keys:
         if key in ds.variables:
             ds = ds.drop_vars(key)
+
+    # resort by time
     ds = ds.sortby('time')
 
     # clear-up some global attributes we will no longer be using

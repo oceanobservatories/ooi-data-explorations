@@ -13,6 +13,12 @@ import sys
 from ooi_data_explorations.qartod.climatology import Climatology
 from ooi_data_explorations.qartod.gross_range import GrossRange
 
+# csv file ordered header row
+ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
+             'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
+CLM_HEADER =  ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
+GR_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source', 'notes']
+
 
 def identify_blocks(flags, time_step=None):
     """
@@ -188,15 +194,16 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
         'stream': stream,
         'parameters': {'inp': param, 'tinp': 'time', 'zinp': 'None'},
         'climatologyTable': 'climatology_tables/{}-{}-{}-{}.csv'.format(site, node, sensor, param),
-        'source': 'The variance explained by the climatological model is {:.1%}.'.format(var_explained[0])
+        'source': 'The variance explained by the climatological model is {:.1%}.'.format(var_explained[0]),
+        'notes': ''
     }
 
     # create the climatology table
     header_str = ''
-    value_str = '[0, 0]'
+    value_str = '"[0, 0]"'
     for idx, mu in enumerate(clm.monthly_fit):
         # use the index number to create the header row
-        header_str += ',[{}, {}]'.format(idx+1, idx+1)
+        header_str += ',"[{}, {}]"'.format(idx+1, idx+1)
 
         # calculate the climatological ranges
         cmin = mu - clm.monthly_std.values[idx] * 3
@@ -208,7 +215,7 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
             cmax = sensor_range[1]
 
         # append the data to ranges
-        value_str += ',[{:.2f}, {:.2f}]'.format(cmin, cmax)
+        value_str += ',"[{:.2f}, {:.2f}]"'.format(cmin, cmax)
 
     clm_table = header_str + '\n' + value_str
 
@@ -306,7 +313,8 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
                  }
              }
          },
-        'source': source
+        'source': source,
+        'notes': ''
     }
     return qc_dict
 

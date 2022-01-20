@@ -607,12 +607,12 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     if start:
         begin_date = '?beginDT=' + start
     else:
-        begin_date = '?beginDT=0'   # use default of 0 to request all data from the beginning of the record
+        begin_date = '?beginDT=2014-01-01T00:00:00.000Z'   # use default to request data from start of program
 
     if stop:
         end_date = '&endDT=' + stop
     else:
-        end_date = '&endDT=' + datetime.now(timezone.utc).strftime("%Y%m%dT%H:%M:%S.000Z")
+        end_date = '&endDT=' + datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     options = begin_date + end_date + '&format=application/netcdf'
     r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,

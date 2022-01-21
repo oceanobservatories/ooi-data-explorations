@@ -370,52 +370,79 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
 def parse_qc(ds):
     """
     Extract the QC test results from the different variables in the data set,
-    and create a new dataset with the QC test result variables explicitly
-    named.
+    and create a new variable with the QC test results set to match the logic
+    used in QARTOD testing. Instead of setting the results to an integer
+    representation of a bitmask, use the pass = 1, not_evaluated = 2,
+    suspect_or_of_high_interest = 3, fail = 4 and missing = 9 flag values from
+    QARTOD.
 
-    This code comes from an example notebook developed by the OOI Data Team
-    for the 2018 Data Workshops. It has been adapted to use xarray instead
-    of pandas. As with the original tests, the QC values are True = pass and
-    False = fail. The original example, by Friedrich Knuth, and additional
-    information on the original OOI QC algorithms (replacing with QARTOD) can
-    be found at:
+    This code was inspired by an example notebook developed by the OOI Data
+    Team for the 2018 Data Workshops. The original example, by Friedrich Knuth,
+    and additional information on the original OOI QC algorithms can be found
+    at:
 
     https://oceanobservatories.org/knowledgebase/interpreting-qc-variables-and-results/
 
     :param ds: dataset with *_qc_executed and *_qc_results variables
-    :return: updated dataset with the *_qc_executed and *_qc_results
-        variables removed and replaced by explicitly named qc variables
+    :return qc_flags: an integer array with the results of each QC tests reset
+        to a QARTOD style flag.
     """
     # create a list of the variables that have had QC tests applied
     vars = [x.split('_qc_results')[0] for x in ds.variables if 'qc_results' in x]
+
+    # for each variable with qc tests applied
     for var in vars:
-        # setup the qc result and executed variables and the new names
+        # set the qc_results and qc_executed variable names and the new qc_flags variable name
         qc_result = var + '_qc_results'
         qc_executed = var + '_qc_executed'
-        names = {
-            0: var + '_qc_globalrangetest',
-            1: var + '_qc_localrangetest',
-            2: var + '_qc_spiketest',
-            3: var + '_qc_polytrendtest',
-            4: var + '_qc_stuckvaluetest',
-            5: var + '_qc_gradienttest',
-            7: var + '_qc_propagateflags',
-        }
+        qc_summary = var + '_qc_summary_flag'
 
-        # use the qc_executed variable to determine which tests were run, and setup a bit mask
+        # create the initial qc_flags array
+        flags = np.tile(np.array([0, 0, 0, 0, 0, 0, 0, 0]), (len(ds.time), 1))
+        # the list of tests run, and there bit positions are:
+        #    0: dataqc_globalrangetest
+        #    1: dataqc_localrangetest
+        #    2: dataqc_spiketest
+        #    3: dataqc_polytrendtest
+        #    4: dataqc_stuckvaluetest
+        #    5: dataqc_gradienttest
+        #    6: undefined
+        #    7: dataqc_propagateflags
+
+        # use the qc_executed variable to determine which tests were run, and setup a bit mask to pull out the results
         executed = np.bitwise_or.reduce(ds[qc_executed].values.astype('uint8'))
         executed_bits = np.unpackbits(executed.astype('uint8'))
 
-        # for each test executed, assign the results to the explicitly named variables and create the variable
+        # for each test executed, reset the qc_flags for pass == 1, suspect == 3, or fail == 4
         for index, value in enumerate(executed_bits[::-1]):
             if value:
-                name = names.get(index)
+                if index in [2, 3, 4, 5, 6, 7]:
+                    flag = 3
+                else:
+                    # only mark the global range test as fail, all the other tests are problematic
+                    flag = 4
                 mask = 2 ** index
-                values = (ds[qc_result].values.astype('uint8') & mask) > 0
-                ds[name] = ('time', values)
+                m = (ds[qc_result].values.astype('uint8') & mask) > 0
+                flags[m, index] = 1   # True == pass
+                flags[~m, index] = flag  # False == suspect/fail
 
-        # remove the original qc variables
-        ds = ds.drop_vars([qc_executed, qc_result])
+        # add the qc_flags to the dataset, rolling up the results into a single value
+        ds[qc_summary] = ('time', flags.max(axis=1))
+
+        # set up the attributes for the new variable
+        ds[qc_summary].attrs = dict({
+            'long_name': '%s QC Summary Flag' % ds[var].attrs['long_name'],
+            'comment': ('Converts the QC Results values from a bitmap to a QARTOD style summary flag, where ',
+                        'the values are 1 == pass, 2 == not evaluated, 3 == suspect or of high interest, ',
+                        '4 == fail, and 9 == missing. The QC tests, as applied by OOI, only yield pass or ',
+                        'fail values.'),
+            'flag_values': np.array([1, 2, 3, 4, 9]),
+            'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing'
+        })
+
+        # add the standard name if the variable has one
+        if 'standard_name' in ds[var].attrs:
+            ds[qc_summary].attrs['standard_name'] = '%s qc_summary_flag' % ds[var].attrs['standard_name']
 
     return ds
 

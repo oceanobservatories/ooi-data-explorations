@@ -73,63 +73,6 @@ ATTRS = dict({
 })
 
 
-def quality_checks(ds):
-    """
-    Assessment of the ECO Triplet data (chlorophyll, CDOM and the volume
-    scattering coefficient) to create quality variables for the instrument as
-    a whole and for each of the key derived variables. Uses a susbset of the
-    QARTOD flags to indicate the quality. QARTOD flags used are:
-
-        1 = Pass
-        2 = Missing
-        3 = Suspect or of High Interest
-        4 = Fail
-
-    Flags are based on the currently implemented QC checks. In the future, these
-    will be replaced by QARTOD test values.
-
-    :param ds: xarray dataset with the calculated biooptical parameters
-    :return qc_flag: dataset with arrays of flag values indicating overall
-        instrument quality and the quality of specific variables.
-    """
-    # parse the OOI QC variables to create a dataset with explicitly named QC variables
-    ds_qc = parse_qc(ds)
-
-    # create the initial quality flags dataset
-    flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
-    qc_flag = xr.Dataset({
-        'rollup_data_quality_flag': flag,
-        'estimated_chlorophyll_quality_flag': flag,
-        'fluorometric_cdom_quality_flag': flag,
-        'beta_700_quality_flag': flag,
-        'bback_quality_flag': flag
-    }, coords={'time': ds['time']})
-
-    # QC tests used to set the suspect and fail quality flags and the variables to check
-    suspect = ['_qc_spiketest', '_qc_polytrendtest', '_qc_stuckvaluetest']
-    fail = ['_qc_globalrangetest']
-    variables = ['estimated_chlorophyll', 'fluorometric_cdom', 'beta_700', 'bback']
-
-    # create the suspect and fail flags for the named variables
-    for var in variables:
-        # assign the suspect flags
-        for test in suspect:
-            qc_var = var + test
-            quality_var = var + '_quality_flag'
-            m = np.logical_not(ds_qc[qc_var]).values
-            qc_flag[quality_var][m] = 3
-        # assign the fail flags
-        for test in fail:
-            qc_var = var + test
-            quality_var = var + '_quality_flag'
-            m = np.logical_not(ds_qc[qc_var]).values
-            qc_flag[quality_var][m] = 4
-
-    # combined
-
-    return qc_flag
-
-
 def flort_datalogger(ds, burst=True):
     """
     Takes flort data recorded by the data loggers used in the CGSN/EA moorings
@@ -203,6 +146,11 @@ def flort_datalogger(ds, burst=True):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
         burst = ds
@@ -269,6 +217,11 @@ def flort_instrument(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     return ds
 
 
@@ -323,6 +276,11 @@ def flort_cspp(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     return ds
 
 
@@ -376,6 +334,11 @@ def flort_wfp(ds):
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
 
     return ds
 

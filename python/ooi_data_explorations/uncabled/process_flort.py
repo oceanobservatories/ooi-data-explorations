@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
+import xarray as xr
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
-    get_vocabulary, update_dataset, ENCODINGS
+from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, get_vocabulary, \
+    update_dataset, ENCODINGS
+from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 # load configuration settings
 ATTRS = dict({
@@ -144,10 +146,15 @@ def flort_datalogger(ds, burst=True):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
         burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -210,6 +217,129 @@ def flort_instrument(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    return ds
+
+
+def flort_cspp(ds):
+    """
+    Takes FLORT data recorded by the CSPP loggers used by the Endurance Array
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
+
+    :param ds: initial FLORT data set downloaded from OOI via the M2M system
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   internal_timestamp == superseded by time, redundant so can remove
+    #   suspect_timestamp = not used
+    #   measurement_wavelength_* == metadata, move into variable attributes.
+    #   seawater_scattering_coefficient == not used
+    ds = ds.reset_coords()
+    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
+
+    # lots of renaming here to get a better defined data set with cleaner attributes
+    rename = {
+        'pressure': 'seawater_pressure',
+        'pressure_qc_executed': 'seawater_pressure_qc_executed',
+        'pressure_qc_results': 'seawater_pressure_qc_results',
+        'temperature': 'seawater_temperature',
+        'salinity': 'practical_salinity',
+        'raw_signal_chl': 'raw_chlorophyll',
+        'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
+        'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
+        'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
+        'raw_signal_cdom': 'raw_cdom',
+        'raw_signal_beta': 'raw_backscatter',
+        'total_volume_scattering_coefficient': 'beta_700',
+        'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
+        'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
+        'optical_backscatter': 'bback',
+        'optical_backscatter_qc_executed': 'bback_qc_executed',
+        'optical_backscatter_qc_results': 'bback_qc_results',
+    }
+    ds = ds.rename(rename)
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    return ds
+
+
+def flort_wfp(ds):
+    """
+    Takes FLORT data recorded by the Wire-Following Profilers (used by CGSN/EA
+    as part of the coastal and global arrays) and cleans up the data set to
+    make it more user-friendly.  Primary task is renaming parameters and
+    dropping some that are of limited use. Additionally, re-organize some of
+    the variables to permit better assessments of the data.
+
+    :param ds: initial FLORT data set downloaded from OOI via the M2M system
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   internal_timestamp == superseded by time, redundant so can remove
+    #   suspect_timestamp = not used
+    #   measurement_wavelength_* == metadata, move into variable attributes.
+    #   seawater_scattering_coefficient == not used
+    #   raw_internal_temp == not available, NaN filled
+    ds = ds.reset_coords()
+    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient',
+                  'raw_internal_temp'])
+
+    # lots of renaming here to get a better defined data set with cleaner attributes
+    rename = {
+        'int_ctd_pressure': 'seawater_pressure',
+        'ctdpf_ckl_seawater_temperature': 'seawater_temperature',
+        'raw_signal_chl': 'raw_chlorophyll',
+        'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
+        'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
+        'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
+        'raw_signal_cdom': 'raw_cdom',
+        'raw_signal_beta': 'raw_backscatter',
+        'total_volume_scattering_coefficient': 'beta_700',
+        'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
+        'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
+        'optical_backscatter': 'bback',
+        'optical_backscatter_qc_executed': 'bback_qc_executed',
+        'optical_backscatter_qc_results': 'bback_qc_results',
+    }
+    ds = ds.rename(rename)
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     return ds
 
 
@@ -225,40 +355,50 @@ def main(argv=None):
     stop = args.stop
     burst = args.burst
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        flort = m2m_collect(r, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
+        # download the data for the deployment
+        flort = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
+
+        # check to see if we downloaded any data
+        if not flort:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
     else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
         flort = m2m_collect(r, '.*FLORT.*\\.nc$')
 
-    if not flort:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        # check to see if we downloaded any data
+        if not flort:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
 
-    # clean-up and reorganize
-    if method in ['telemetered', 'recovered_host']:
-        flort = flort_datalogger(flort, burst)
+    # clean-up and reorganize the data
+    if node == 'SP001':
+        # this FLORT is part of a CSPP
+        flort = flort_cspp(flort)
+    elif node == 'WFP01':
+        # this FLORT is part of a Wire-Following Profiler
+        flort = flort_wfp(flort)
     else:
-        flort = flort_instrument(flort)
+        # this FLORT is on one of the moorings
+        if method in ['telemetered', 'recovered_host']:
+            flort = flort_datalogger(flort, burst)
+        else:
+            flort = flort_instrument(flort)
 
     vocab = get_vocabulary(site, node, sensor)[0]
     flort = update_dataset(flort, vocab['maxdepth'])

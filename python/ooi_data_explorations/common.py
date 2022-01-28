@@ -6,6 +6,7 @@
     M2M interface
 """
 import argparse
+import io
 import netrc
 import numpy as np
 import os
@@ -19,9 +20,9 @@ import pandas as pd
 
 from bs4 import BeautifulSoup
 from collections.abc import Mapping
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
-from itertools import repeat
+from functools import partial
 from requests.adapters import HTTPAdapter
 from tqdm import tqdm
 from urllib3.util import Retry
@@ -663,11 +664,17 @@ def m2m_collect(data, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate into a single data set
     print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
-    with ProcessPoolExecutor(max_workers=5) as pool:
-        frames = list(tqdm(pool.map(process_file, files), total=len(files), desc='Downloading files', file=sys.stdout))
+    if len(files) < 3:
+        # just 1 to 2 files, download sequentially
+        frames = [process_file(file) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+    else:
+        # multiple files, use multithreading to download concurrently
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            frames = list(tqdm(executor.map(process_file, files), total=len(files),
+                               desc='Downloading and Processing Data Files', file=sys.stdout))
 
     if not frames:
-        message = "No data files were downloaded from the user''s M2M THREDDS server."
+        message = 'No data files were downloaded from the user''s M2M THREDDS server.'
         warnings.warn(message)
         return None
 
@@ -724,9 +731,15 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    with ProcessPoolExecutor(max_workers=5) as pool:
-        frames = list(tqdm(pool.map(process_file, files, repeat(True)),
-                           total=len(files), desc='Downloading files', file=sys.stdout))
+    if len(files) < 3:
+        # just 1 to 2 files, download sequentially
+        frames = [process_file(file, gc=True) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+    else:
+        # multiple files, use multithreading to download concurrently
+        part_files = partial(process_file, gc=True)
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            frames = list(tqdm(executor.map(part_files, files), total=len(files),
+                               desc='Downloading and Processing Data Files', file=sys.stdout))
 
     if not frames:
         message = "No data files were downloaded from the Gold Copy THREDDS server."
@@ -775,19 +788,18 @@ def process_file(catalog_file, gc=False):
     :return: downloaded data in an xarray dataset.
     """
     if gc:
-        dods_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/dodsC/'
+        dods_url = 'https://thredds.dataexplorer.oceanobservatories.org/thredds/fileServer/'
     else:
-        dods_url = 'https://opendap.oceanobservatories.org/thredds/dodsC/'
+        dods_url = 'https://opendap.oceanobservatories.org/thredds/fileServer/'
 
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
-    ds = xr.load_dataset(url + '#fillmismatch', decode_cf=False)
-
-    if not ds:
+    r = SESSION.get(url, timeout=(3.05, 120))
+    if r.ok:
+        ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
+    else:
+        failed_file = catalog_file.rpartition('/')
+        warnings.warn('Failed to download %s' % failed_file[-1])
         return None
-
-    # since the CF decoding of the time is failing, reset time here to the correct units and redo
-    ds.time['units'] = 'seconds since 1900-01-01 00:00:00.000Z'
-    ds = xr.decode_cf(ds)
 
     # addresses error in how the *_qartod_executed variables are set
     qartod_pattern = re.compile(r'^.+_qartod_executed$')
@@ -806,7 +818,20 @@ def process_file(catalog_file, gc=False):
         if key in ds.variables:
             ds = ds.drop_vars(key)
 
-    # resort by time
+    # since the CF decoding of the time is failing, explicitly reset all instances where the units are
+    # seconds since 1900-01-01 to the correct CF units and convert the values to datetime64[ns] types
+    time_pattern = re.compile(r'^seconds since 1900-01-01.*$')
+    ntp_date = np.datetime64('1900-01-01')
+    for v in ds.variables:
+        if 'units' in ds[v].attrs.keys():
+            if isinstance(ds[v].attrs['units'], str):  # because some units use non-standard characters...
+                if time_pattern.match(ds[v].attrs['units']):
+                    del(ds[v].attrs['_FillValue'])  # no fill values for time!
+                    ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00Z'
+                    np_time = ntp_date + (ds[v] * 1e9).astype('timedelta64[ns]')
+                    ds[v] = np_time
+
+    # sort by time
     ds = ds.sortby('time')
 
     # clear-up some global attributes we will no longer be using
@@ -929,10 +954,10 @@ def update_dataset(ds, depth):
     if 'lat' in ds.variables:
         lat = ds.lat.values[0][0]
         lon = ds.lon.values[0][0]
-        ds.drop(['lat', 'lon'])
+        ds = ds.drop_vars(['lat', 'lon'])
     else:
-        lat = ds.attrs['lat']
-        lon = ds.attrs['lon']
+        lat = ds.attrs['lat'][0]
+        lon = ds.attrs['lon'][0]
         del(ds.attrs['lat'])
         del(ds.attrs['lon'])
 
@@ -1033,7 +1058,7 @@ def update_dataset(ds, depth):
     ds['time'].attrs = dict({
         'long_name': 'Time',
         'standard_name': 'time',
-        'units': 'seconds since 1970-01-01 00:00:00 0:00',
+        'units': 'seconds since 1970-01-01T00:00:00Z',
         'axis': 'T',
         'calendar': 'gregorian'
     })

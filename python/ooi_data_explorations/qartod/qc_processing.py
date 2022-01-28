@@ -384,8 +384,9 @@ def parse_qc(ds):
     https://oceanobservatories.org/knowledgebase/interpreting-qc-variables-and-results/
 
     :param ds: dataset with *_qc_executed and *_qc_results variables
-    :return qc_flags: an integer array with the results of each QC tests reset
-        to a QARTOD style flag.
+    :return ds: dataset with the *_qc_executed and *_qc_results variables
+        reworked to create a new *_qc_summary variable with the results
+        of the QC checks decoded into a QARTOD style flag value.
     """
     # create a list of the variables that have had QC tests applied
     vars = [x.split('_qc_results')[0] for x in ds.variables if 'qc_results' in x]
@@ -399,7 +400,7 @@ def parse_qc(ds):
 
         # create the initial qc_flags array
         flags = np.tile(np.array([0, 0, 0, 0, 0, 0, 0, 0]), (len(ds.time), 1))
-        # the list of tests run, and there bit positions are:
+        # the list of tests run, and their bit positions are:
         #    0: dataqc_globalrangetest
         #    1: dataqc_localrangetest
         #    2: dataqc_spiketest

@@ -733,7 +733,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
     if len(files) < 3:
         # just 1 to 2 files, download sequentially
-        frames = [process_file(file) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+        frames = [process_file(file, gc=True) for file in tqdm(files, desc='Downloading and Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc=True)
@@ -793,11 +793,11 @@ def process_file(catalog_file, gc=False):
         dods_url = 'https://opendap.oceanobservatories.org/thredds/fileServer/'
 
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
-    r = SESSION.get(url)
+    r = SESSION.get(url, timeout=(3.05, 120))
     if r.ok:
         ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
     else:
-        failed_file = catalog_file.rpartion('/')
+        failed_file = catalog_file.rpartition('/')
         warnings.warn('Failed to download %s' % failed_file[-1])
         return None
 
@@ -954,7 +954,7 @@ def update_dataset(ds, depth):
     if 'lat' in ds.variables:
         lat = ds.lat.values[0][0]
         lon = ds.lon.values[0][0]
-        ds.drop(['lat', 'lon'])
+        ds = ds.drop_vars(['lat', 'lon'])
     else:
         lat = ds.attrs['lat'][0]
         lon = ds.attrs['lon'][0]

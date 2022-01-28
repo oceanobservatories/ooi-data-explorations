@@ -69,8 +69,69 @@ ATTRS = dict({
                     'Scattering Function and corrected for effects of temperature and salinity.'),
         'data_product_identifier': 'FLUBSCT_L2',
         'ancillary_variables': 'beta_700 temperature salinity bback_qc_executed bback_qc_results'
+    },
+    'practical_salinity': {
+            'long_name': 'Practical Salinity',
+            'standard_name': 'sea_water_practical_salinity',
+            'units': '1',
+            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'PRACSAL_L2'
+    },
+    'seawater_temperature': {
+            'long_name': 'Seawater Temperature',
+            'standard_name': 'sea_water_temperature',
+            'units': 'degree_Celsius',
+            'comment': ('Normally this would be seawater temperature data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'TEMPWAT_L1'
     }
 })
+
+
+def quality_checks(ds):
+    """
+    Assessment of the raw data and the calculated parameters for quality
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
+
+        1 = Pass
+        3 = Suspect or of High Interest
+        4 = Fail
+
+    The final flag value represents the worst case assessment of the data
+    quality.
+
+    :param ds: xarray dataset with the raw signal data and the calculated
+               bio-optical parameters
+    :return beta_flag: QARTOD quality flags for the backscatter measurements
+    :return cdom_flag: QARTOD quality flags for the CDOM measurements
+    :return chl_flag: QARTOD quality flags for the chlorophyll measurements
+    """
+    max_counts = 4115   # counts should be greater than 0 and less than 4120 +/- 5
+    beta_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+    cdom_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+    chl_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+
+    # test the min/max values of the raw measurements
+    m = (ds.raw_backscatter == 0) | (ds.raw_backscatter > max_counts)
+    beta_flag[m] = 4    # raw volume scattering coefficient values off scale
+    m = (ds.raw_cdom == 0) | (ds.raw_cdom > max_counts)
+    cdom_flag[m] = 4    # raw CDOM values off scale
+    m = (ds.raw_chlorophyll == 0) | (ds.raw_chlorophyll > max_counts)
+    chl_flag[m] = 4     # raw chlorophyll values off scale
+
+    # test the min/max values of the derived measurements (values from the vendor code)
+    m = (ds.bback < 0) | (ds.bback > 5)
+    beta_flag[m] = 4    # scattering measurement range
+    m = (ds.fluorometric_cdom < 0) | (ds.fluorometric_cdom > 375)
+    cdom_flag[m] = 4    # fluorometric CDOM measurement range
+    m = (ds.estimated_chlorophyll < 0) | (ds.estimated_chlorophyll > 50)
+    chl_flag[m] = 4     # estimated chlorophyll measurement range
+
+    return beta_flag, cdom_flag, chl_flag
 
 
 def flort_datalogger(ds, burst=True):
@@ -90,33 +151,13 @@ def flort_datalogger(ds, burst=True):
     #   measurement_wavelength_* == metadata, move into variable attributes.
     #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
     #   seawater_scattering_coefficient == not used
-    ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
 
     # check for data from a co-located CTD, if not present add with appropriate attributes
     if 'temp' not in ds.variables:
         ds['temp'] = ('time', ds['deployment'] * np.nan)
-        ds['temp'].attrs = {
-            'comment': ('Normally this would be seawater temperature data from a co-located CTD. However, data from ' +
-                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
-                        'of the data set.'),
-            'data_product_identifier': 'TEMPWAT_L1',
-            'long_name': 'Seawater Temperature',
-            'standard_name': 'sea_water_temperature',
-            'units': 'degree_Celsius'
-        }
-
         ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
-        ds['practical_salinity'].attrs = {
-            'long_name': 'Practical Salinity',
-            'standard_name': 'sea_water_practical_salinity',
-            'units': '1',
-            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
-                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
-                        'of the data set.'),
-            'data_product_identifier': 'PRACSAL_L2'
-        }
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
@@ -151,16 +192,40 @@ def flort_datalogger(ds, burst=True):
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
-    if burst:   # re-sample the data to a defined time interval using a median average
-        # create the burst averaging
-        burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
-        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+    # create qc flags for the data and add them to the OOI qc flags
+    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
+                                                         beta_flag])).max(axis=0))
+    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
+                                                                 cdom_flag])).max(axis=0))
+    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
+                                                                      chl_flag])).max(axis=0))
 
-        # reset the attributes...which keep_attrs should do...
-        burst.attrs = ds.attrs
-        for v in burst.variables:
-            burst[v].attrs = ds[v].attrs
+    if burst:
+        # re-sample the data collected in burst mode using a 15-minute median average
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+
+        # for each of the three FLORT measurements, calculate stats (min, max, and the standard deviation)
+        # for each of the bursts
+        cdom = ds['fluorometric_cdom'].resample(time='900s', skipna=True)
+        cdom = np.array([cdom.min('time').values, cdom.max('time').values, cdom.std('time').values])
+
+        chl = ds['estimated_chlorophyll'].resample(time='900s', skipna=True)
+        chl = np.array([chl.min('time').values, chl.max('time').values, chl.std('time').values])
+
+        beta = ds['beta_700'].resample(time='900s', skipna=True)
+        beta = np.array([beta.min('time').values, beta.max('time').values, beta.std('time').values])
+
+        # create a data set with the burst statistics for the variables
+        stats = xr.Dataset({
+            'fluorometric_cdom_burst_stats': (['time', 'stats'], cdom.T),
+            'estimated_chlorophyll_burst_stats': (['time', 'stats'], chl.T),
+            'beta_700_burst_stats': (['time', 'stats'], beta.T)
+        }, coords={'time': burst['time'], 'stats': np.arange(0, 3).astype('int32')})
+
+        # add the stats into the burst averaged data set, and then remove the missing rows
+        burst = burst.merge(stats)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly average data
         ds = burst
@@ -222,6 +287,15 @@ def flort_instrument(ds):
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
+    # create qc flags for the data and add them to the OOI qc flags
+    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
+                                                         beta_flag])).max(axis=0))
+    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
+                                                                 cdom_flag])).max(axis=0))
+    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
+                                                                      chl_flag])).max(axis=0))
+
     return ds
 
 
@@ -281,6 +355,15 @@ def flort_cspp(ds):
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
+    # create qc flags for the data and add them to the OOI qc flags
+    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
+                                                         beta_flag])).max(axis=0))
+    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
+                                                                 cdom_flag])).max(axis=0))
+    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
+                                                                      chl_flag])).max(axis=0))
+
     return ds
 
 
@@ -339,6 +422,15 @@ def flort_wfp(ds):
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
+
+    # create qc flags for the data and add them to the OOI qc flags
+    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
+                                                         beta_flag])).max(axis=0))
+    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
+                                                                 cdom_flag])).max(axis=0))
+    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
+                                                                      chl_flag])).max(axis=0))
 
     return ds
 

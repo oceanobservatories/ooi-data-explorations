@@ -10,17 +10,18 @@ import numpy as np
 import pandas as pd
 import sys
 
+from scipy.stats import shapiro
+
 from ooi_data_explorations.qartod.climatology import Climatology
-from ooi_data_explorations.qartod.gross_range import GrossRange
 
 # csv file ordered header row
 ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
              'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
-CLM_HEADER =  ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
+CLM_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
 GR_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source', 'notes']
 
 
-def identify_blocks(flags, time_step=None):
+def identify_blocks(flags, time_step, padding=0):
     """
     Use a boolean array of quality flags to find and create blocks of data
     bound by the starting and ending dates and times of consecutive flagged
@@ -38,13 +39,12 @@ def identify_blocks(flags, time_step=None):
     :param time_step: a two-value list of the minimum time range to use in
         combining flagged points into a group, and the minimum range of a
         group of flagged points to determine if a block should be created.
-        The defaults are 8 and 24 hours, respectively.
+    :param padding: add padding (in hours) to identified blocks
     :return blocks: List of starting and ending dates and times defining
         a block of flagged data.
     """
     # find blocks of consecutive points that span a time range greater than time_step[0]
-    if time_step is None:
-        time_step = [8, 24]
+    padding = np.timedelta64(padding, 'h')
     diff = 0
     flg = False
     dates = []
@@ -61,7 +61,7 @@ def identify_blocks(flags, time_step=None):
         # stop time and calculate the time difference
         if flags.values[i] and flg:
             stop = flags.time.values[i]
-            diff = ((stop - start) / 1e9 / 60 / 60).astype(np.int)  # convert from nanoseconds to hours
+            diff = ((stop - start) / 1e9 / 60 / 60).astype(int)  # convert from nanoseconds to hours
 
         # if we have identified a starting point and now find a data point that is not flagged,
         # check to see if either we are at the end of the record or the next set of data points
@@ -71,7 +71,7 @@ def identify_blocks(flags, time_step=None):
             # check to see if we are at the end of the record
             if i == flags.size:
                 stop = flags.time.values[i]
-                diff = ((stop - start) / 1e9 / 60 / 60).astype(np.int)  # convert from nanoseconds to hours
+                diff = ((stop - start) / 1e9 / 60 / 60).astype(int)  # convert from nanoseconds to hours
                 dates.append([start, stop, diff])
                 continue
 
@@ -82,7 +82,7 @@ def identify_blocks(flags, time_step=None):
             # if there are bad points within the time window, keep adding them
             if np.any(flags.values[m]):
                 stop = flags.time.values[i]
-                diff = ((stop - start) / 1e9 / 60 / 60).astype(np.int)  # convert from nanoseconds to hours
+                diff = ((stop - start) / 1e9 / 60 / 60).astype(int)  # convert from nanoseconds to hours
             else:
                 # otherwise close out the block
                 flg = False
@@ -97,23 +97,23 @@ def identify_blocks(flags, time_step=None):
         stop = dates[0][1]
         if len(dates) == 1:
             # if there was only one block...
-            blocks.append([start, stop])
+            blocks.append([start - padding, stop + padding])
         else:
             # ...otherwise
             for i in range(1, len(dates)):
-                diff = ((dates[i][0] - dates[i - 1][1]) / 1e9 / 60 / 60).astype(np.int)
+                diff = ((dates[i][0] - dates[i - 1][1]) / 1e9 / 60 / 60).astype(int)
                 # test to see if the difference between blocks is greater than time_step[1]
                 if diff > time_step[1]:
                     # create a block
                     stop = dates[i - 1][1]
-                    blocks.append([start, stop])
+                    blocks.append([start - padding, stop + padding])
                     # update the start time for the next set
                     start = dates[i][0]
 
                 # test if we are at the end of the blocks, if so use the last point
                 if i == len(dates) - 1:
                     stop = dates[i][1]
-                    blocks.append([start, stop])
+                    blocks.append([start - padding, stop + padding])
 
     return blocks
 
@@ -215,7 +215,7 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
             cmax = sensor_range[1]
 
         # append the data to ranges
-        value_str += ',"[{:.2f}, {:.2f}]"'.format(cmin, cmax)
+        value_str += ',"[{:.5f}, {:.5f}]"'.format(cmin, cmax)
 
     clm_table = header_str + '\n' + value_str
 
@@ -354,11 +354,25 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
-        # calculate the user range
-        gr = GrossRange(fail_min=sensor_range[idx][0], fail_max=sensor_range[idx][1])
-        gr.fit(ds, param, 3)
-        user_range = [gr.suspect_min, gr.suspect_max]
+        # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
+        # 5000 data points to use, running the test a total of 5000 times
+        m = ~np.isnan(ds[param])
+        pnorm = [shapiro(np.random.choice(ds[param][m], 5000)).pvalue for _ in range(5000)]
+        if np.mean(pnorm) < 0.01:  # be a bit more stringent on the p-value
+            # most likely this data set is not normally distributed, and we will set the user range using
+            # percentiles that approximate the Empirical Rule, covering 99.7% of the data
+            lower = [np.nanpercentile(np.random.choice(ds[param], 5000), 0.15) for _ in range(5000)]
+            upper = [np.nanpercentile(np.random.choice(ds[param], 5000), 99.85) for _ in range(5000)]
+        else:
+            # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
+            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1])
+            mu = ds[param][m].mean()
+            sd = ds[param][m].std()
+            lower = mu - sd * 3
+            upper = mu + sd * 3
+
         # create the formatted dictionary
+        user_range = [np.round(np.min(lower), decimals=5), np.round(np.max(upper), decimals=5)]
         qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
         # append the dictionary to the dataframe
         gross_range = gross_range.append(qc_dict, ignore_index=True)

@@ -192,7 +192,7 @@ def flort_datalogger(ds, burst=True):
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
-    # create qc flags for the data and add them to the OOI qc flags
+    # create QC flags for the data and add them to the OOI QC summary flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
                                                          beta_flag])).max(axis=0))

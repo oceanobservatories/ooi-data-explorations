@@ -13,11 +13,11 @@ import pandas as pd
 import pytz
 import xarray as xr
 
-from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
+from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_flort import flort_datalogger, flort_instrument, flort_cspp, flort_wfp
 from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
-    process_climatology, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
+    process_climatology, woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
 
 
 def combine_delivery_methods(site, node, sensor):
@@ -248,12 +248,21 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # add the stream name and the source comment
     gr_lookup['stream'] = 'flort_sample'
-    gr_lookup['source'] = ('Sensor min/max based on the vendor sensor specifications. The user min/max represents '
-                           'the range of values that approximately cover 99.7% of all data collected '
-                           'through {}.'.format(src_date))
+    gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
+
+    # based on the site and node, determine if we need a depth based climatology
+    depth_bins = np.array([])
+    if node in ['SP001', 'WFP01']:
+        if site in ['CE02SHSP', 'CE07SHSP', 'CE09OSPM']:
+            vocab = get_vocabulary(site, node, sensor)[0]
+            max_depth = vocab['maxdepth']
+            depth_bins = woa_standard_bins()
+            m = depth_bins[:, 1] <= max_depth
+            depth_bins = depth_bins[m, :]
 
     # create and format the climatology lookups and tables for the data
-    clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node, sensor=sensor)
+    clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
+                                                site=site, node=node, sensor=sensor)
 
     # add the stream name
     clm_lookup['stream'] = 'flort_sample'

@@ -33,6 +33,18 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     # combine the telemetered and recovered host datasets, which have the same variables,
     # dropping any 1-dimensional variables along the way.
     if tdata and rhdata:
+        # first, identify any variables in tdata that are not available in rhdata
+        for v in tdata.variables:
+            if v not in rhdata.variables:
+                # add an empty variable of the same type and dimensions to rhdata
+                rhdata[v] = tdata[v].broadcast_like(ridata['time'])
+
+        # next, identify any variables in rhdata that are not available in tdata
+        for v in ridata.variables:
+            if v not in tdata.variables:
+                # add an empty variable of the same type and dimensions to ridata
+                tdata[v] = rhdata[v].broadcast_like(tdata['time'])
+
         # use concat to join the datasets and then select only unique time points
         ds = xr.concat([tdata.squeeze(), rhdata.squeeze()], 'time')
         _, index = np.unique(ds['time'], return_index=True)

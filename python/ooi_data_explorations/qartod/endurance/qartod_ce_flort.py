@@ -243,10 +243,10 @@ def generate_qartod(site, node, sensor, cut_off):
     limits = [[0, 5], [0, 5], [0, 50], [0, 375]]
 
     # create the initial gross range entry
-    gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor)
+    gr_lookup = process_gross_range(data, parameters, limits, site=site,
+                                    node=node, sensor=sensor, stream='flort_sample')
 
     # add the stream name and the source comment
-    gr_lookup['stream'] = 'flort_sample'
     gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
 
     # based on the site and node, determine if we need a depth based climatology
@@ -261,7 +261,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # create and format the climatology lookups and tables for the data
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
-                                                site=site, node=node, sensor=sensor)
+                                                site=site, node=node, sensor=sensor, stream='flort_sample')
 
     # add the stream name
     clm_lookup['stream'] = 'flort_sample'

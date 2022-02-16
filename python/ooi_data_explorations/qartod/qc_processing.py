@@ -305,6 +305,10 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     clm_lookup = pd.DataFrame()
     clm_tables = []
 
+    # check the type of the depth bins, and set to an empty array if NoneType
+    if not depth_bins:
+        depth_bins = np.array([])
+
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
@@ -346,7 +350,8 @@ def process_climatology(ds, params, sensor_range, **kwargs):
             clm.fit(ds, param)
 
             # create the formatted dictionary for the lookup tables
-            qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], site, node, sensor, stream)
+            qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
+                                                    site, node, sensor, stream)
 
             # append the dictionary to the dataframe and the table to the list
             clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)

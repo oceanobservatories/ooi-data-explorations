@@ -158,8 +158,7 @@ def generate_qartod(site, node, sensor, cut_off):
     :return clm_lookup: CSV formatted strings to save to a csv file for the
         QARTOD climatology lookup tables.
     :return clm_table: CSV formatted strings to save to a csv file for the
-        QARTOD climatology range table for the seafloor pressure and
-        temperature.
+        QARTOD climatology range tables.
     """
     # load the combined data for the different sources of FLORT data
     data = combine_delivery_methods(site, node, sensor)

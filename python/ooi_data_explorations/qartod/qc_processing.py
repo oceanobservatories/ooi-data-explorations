@@ -252,11 +252,11 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
 
         # calculate the climatological ranges
         cmin = mu - clm.monthly_std.values[idx] * 3
-        if cmin < sensor_range[0]:
+        if cmin < sensor_range[0] or cmin > sensor_range[1]:
             cmin = sensor_range[0]
 
         cmax = mu + clm.monthly_std.values[idx] * 3
-        if cmax > sensor_range[1]:
+        if cmax > sensor_range[1] or cmax < sensor_range[0]:
             cmax = sensor_range[1]
 
         # append the data to ranges
@@ -437,18 +437,18 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
         # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
         # 5000 data points to use, running the test a total of 5000 times
         m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-        pnorm = [normaltest(np.random.choice(ds[param][m], 5000)).pvalue for _ in range(5000)]
+        pnorm = [normaltest(np.random.choice(ds[param][m], 4500)).pvalue for _ in range(5000)]
         if np.mean(pnorm) < 0.01:
             # most likely this data set is not normally distributed, check to see if we can use a log-normal
             # transformation (not all distributions can/should be thus transformed)
             lnorm = np.log(ds[param][m])
-            pnorm = [normaltest(np.random.choice(lnorm, 5000)).pvalue for _ in range(5000)]
+            pnorm = [normaltest(np.random.choice(lnorm, 4500)).pvalue for _ in range(5000)]
             if np.mean(pnorm) < 0.01:
                 # Even with a log-normal transformation, the data is not normally distributed, so we will
                 # set the user range using percentiles that approximate the Empirical Rule, covering
                 # 99.7% of the data
-                lower = np.min([np.nanpercentile(np.random.choice(ds[param], 5000), 0.15) for _ in range(5000)])
-                upper = np.max([np.nanpercentile(np.random.choice(ds[param], 5000), 99.85) for _ in range(5000)])
+                lower = np.nanpercentile(ds[param][m], 0.15)
+                upper = np.nanpercentile(ds[param][m], 99.85)
                 source = ('User range based on percentiles of all observations, used to cover 99.7% of the data '
                           'which does not follow a normal distribution.')
             else:
@@ -468,9 +468,17 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
             upper = mu + sd * 3
             source = 'User range based on the mean +- 3 standard deviations of all observations.'
 
+        # reset the lower and upper ranges if they exceed the sensor ranges
+        if lower < sensor_range[idx][0]:
+            lower = sensor_range[idx][0]
+
+        if upper > sensor_range[idx][1]:
+            upper = sensor_range[idx][1]
+
         # create the formatted dictionary
         user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
         qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
+
         # append the dictionary to the dataframe
         gross_range = gross_range.append(qc_dict, ignore_index=True)
 

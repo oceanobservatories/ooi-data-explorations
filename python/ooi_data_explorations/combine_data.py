@@ -40,7 +40,7 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
                 rhdata[v] = tdata[v].broadcast_like(ridata['time'])
 
         # next, identify any variables in rhdata that are not available in tdata
-        for v in ridata.variables:
+        for v in rhdata.variables:
             if v not in tdata.variables:
                 # add an empty variable of the same type and dimensions to ridata
                 tdata[v] = rhdata[v].broadcast_like(tdata['time'])

@@ -306,7 +306,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     clm_tables = []
 
     # check the type of the depth bins, and set to an empty array if NoneType
-    if not depth_bins:
+    if isinstance(depth_bins, type(None)):
         depth_bins = np.array([])
 
     # loop through the parameter(s) of interest
@@ -459,10 +459,10 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
             else:
                 # The transformed data approximates a normal distribution, and we can use the Empirical Rule to
                 # create the ranges from the transformed data
-                mu = np.exp(np.mean(lnorm))
-                sd = np.exp(np.std(lnorm))
-                lower = mu / sd**3
-                upper = mu * sd**3
+                mu = np.exp(np.mean(lnorm.values))
+                sd = np.exp(np.std(lnorm.values))
+                lower = (mu / sd**3)
+                upper = (mu * sd**3)
                 source = ('User range based on the mean +- 3 standard deviations of all observations derived '
                           'from a log transformation of the data to approximate a normal distribution.')
         else:

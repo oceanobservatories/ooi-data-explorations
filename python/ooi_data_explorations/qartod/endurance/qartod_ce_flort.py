@@ -252,7 +252,7 @@ def generate_qartod(site, node, sensor, cut_off):
     # based on the site and node, determine if we need a depth based climatology
     depth_bins = np.array([])
     if node in ['SP001', 'WFP01']:
-        if site in ['CE02SHSP', 'CE07SHSP', 'CE09OSPM']:
+        if site in ['CE01ISSP', 'CE02SHSP', 'CE06ISSP', 'CE07SHSP', 'CE09OSPM']:
             vocab = get_vocabulary(site, node, sensor)[0]
             max_depth = vocab['maxdepth']
             depth_bins = woa_standard_bins()

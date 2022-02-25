@@ -440,31 +440,17 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
         # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
-        # 5000 data points to use, running the test a total of 5000 times
+        # 4500 data points to use, running the test a total of 5000 times
         m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
         pnorm = [normaltest(np.random.choice(ds[param][m], 4500)).pvalue for _ in range(5000)]
         if np.mean(pnorm) < 0.01:
-            # most likely this data set is not normally distributed, check to see if we can use a log-normal
-            # transformation (not all distributions can/should be thus transformed)
-            lnorm = np.log(ds[param][m])
-            pnorm = [normaltest(np.random.choice(lnorm, 4500)).pvalue for _ in range(5000)]
-            if np.mean(pnorm) < 0.01:
-                # Even with a log-normal transformation, the data is not normally distributed, so we will
-                # set the user range using percentiles that approximate the Empirical Rule, covering
-                # 99.7% of the data
-                lower = np.nanpercentile(ds[param][m], 0.15)
-                upper = np.nanpercentile(ds[param][m], 99.85)
-                source = ('User range based on percentiles of all observations, used to cover 99.7% of the data '
-                          'which does not follow a normal distribution.')
-            else:
-                # The transformed data approximates a normal distribution, and we can use the Empirical Rule to
-                # create the ranges from the transformed data
-                mu = np.exp(np.mean(lnorm.values))
-                sd = np.exp(np.std(lnorm.values))
-                lower = (mu / sd**3)
-                upper = (mu * sd**3)
-                source = ('User range based on the mean +- 3 standard deviations of all observations derived '
-                          'from a log transformation of the data to approximate a normal distribution.')
+            # Even with a log-normal transformation, the data is not normally distributed, so we will
+            # set the user range using percentiles that approximate the Empirical Rule, covering
+            # 99.7% of the data
+            lower = np.nanpercentile(ds[param][m], 0.15)
+            upper = np.nanpercentile(ds[param][m], 99.85)
+            source = ('User range based on percentiles of the observations, which are not normally distributed. '
+                      'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
         else:
             # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
             mu = ds[param][m].mean().values[0]

@@ -3,6 +3,7 @@
 import numpy as np
 import os
 import xarray as xr
+from datetime import datetime, timedelta
 
 from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, get_vocabulary, \
     update_dataset, ENCODINGS
@@ -152,7 +153,7 @@ def flort_datalogger(ds, burst=True):
     #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
     #   seawater_scattering_coefficient == not used
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
 
     # check for data from a co-located CTD, if not present add with appropriate attributes
     if 'temp' not in ds.variables:
@@ -252,7 +253,7 @@ def flort_instrument(ds):
     #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
@@ -316,7 +317,7 @@ def flort_cspp(ds):
     #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient'])
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
@@ -386,8 +387,7 @@ def flort_wfp(ds):
     #   raw_internal_temp == not available, NaN filled
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'seawater_scattering_coefficient',
-                  'raw_internal_temp'])
+                  'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'raw_internal_temp'])
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {

@@ -59,7 +59,7 @@ def combine_delivery_methods(site, node, sensor):
             grps = list(telem.groupby('deployment'))
             for grp in grps:
                 print('# -- Processing telemetered deployment %s' % grp[0])
-                deployments.append(flort_wfp(grp[1]))
+                deployments.append(flort_wfp(grp[1], grid=True))
             telem = xr.concat(deployments, 'time')
 
             print('##### Downloading the recovered_wfp FLORT data for %s #####' % site)
@@ -69,7 +69,7 @@ def combine_delivery_methods(site, node, sensor):
             grps = list(rhost.groupby('deployment'))
             for grp in grps:
                 print('# -- Processing recovered_host deployment %s' % grp[0])
-                deployments.append(flort_wfp(grp[1]))
+                deployments.append(flort_wfp(grp[1], grid=True))
             rhost = xr.concat(deployments, 'time')
 
         # merge, but do not resample the time records.

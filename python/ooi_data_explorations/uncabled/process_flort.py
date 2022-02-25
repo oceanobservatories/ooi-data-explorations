@@ -2,14 +2,17 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
+import pandas as pd
 import xarray as xr
-from datetime import datetime, timedelta
+
+from scipy.interpolate import griddata
 
 from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, get_vocabulary, \
     update_dataset, ENCODINGS
 from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 # load configuration settings
+FILL_INT = -9999999
 ATTRS = dict({
     'raw_backscatter': {
         'long_name': 'Raw Optical Backscatter at 700 nm',
@@ -368,7 +371,7 @@ def flort_cspp(ds):
     return ds
 
 
-def flort_wfp(ds):
+def flort_wfp(ds, grid=False):
     """
     Takes FLORT data recorded by the Wire-Following Profilers (used by CGSN/EA
     as part of the coastal and global arrays) and cleans up the data set to
@@ -377,6 +380,7 @@ def flort_wfp(ds):
     the variables to permit better assessments of the data.
 
     :param ds: initial FLORT data set downloaded from OOI via the M2M system
+    :param grid: boolean flag for whether the data should be gridded
     :return ds: cleaned up data set
     """
     # drop some of the variables:
@@ -431,6 +435,53 @@ def flort_wfp(ds):
                                                                  cdom_flag])).max(axis=0))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
                                                                       chl_flag])).max(axis=0))
+
+    if grid:
+        # clear out any duplicate time stamps
+        _, index = np.unique(ds['time'], return_index=True)
+        ds = ds.isel(time=index)
+
+        # since the scipy griddata function cannot use the time values as is (get converted to nanoseconds, which
+        # is too large of a value), we need to temporarily convert them to a floating point number in days since
+        # the start of the data record; we can then use that temporary date/time array for the gridding.
+        base_time = ds['time'].min().values
+        dt = (ds['time'] - base_time).astype(float) / 1e9 / 60 / 60 / 24
+
+        # construct the new grid, using 1 m depth bins from 30 to 510 m, and daily intervals from the start of
+        # the record to the end (centered on noon UTC).
+        depth_range = np.arange(30, 511, 1)
+        time_range = np.arange(0.5, np.ceil(dt.max()) + 0.5, 1)
+        gridded_time = base_time.astype('M8[D]') + pd.to_timedelta(time_range, unit='D')
+
+        # grid the data, adding the results to a list of data arrays
+        gridded = []
+        for v in ds.variables:
+            if v not in ['time', 'depth']:
+                # grid the data for each variable
+                gdata = griddata((dt.values, ds['depth'].values), ds[v].values,
+                                 (time_range[None, :], depth_range[:, None]),
+                                 method='linear')
+
+                # add the data to a data array
+                da = xr.DataArray(name=v, data=gdata, coords=[("depth", depth_range), ("time", gridded_time)])
+                da.attrs = ds[v].attrs
+
+                # reset the data types and fill values for floats and ints
+                if ds[v].dtype == np.dtype(int):
+                    da = da.where(np.isnan is True, FILL_INT)
+                    da.attrs['_FillValue'] = FILL_INT
+                    da = da.astype(int)
+                else:
+                    da.attrs['_FillValue'] = np.nan
+                    da = da.astype(float)
+
+                # add to the list
+                gridded.append(da)
+
+        # recombine the gridded data arrays into a single dataset
+        gridded = xr.merge(gridded)
+        gridded.attrs = ds.attrs
+        ds = gridded
 
     return ds
 

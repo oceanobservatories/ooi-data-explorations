@@ -234,6 +234,9 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
 
     # create the lookup dictionary
     var_explained = clm.regression['variance_explained']
+    if len(var_explained) == 0:
+        var_explained = [0]
+
     qc_dict = {
         'subsite': site,
         'node': node,
@@ -318,7 +321,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
                 # slice the dataset, selecting our data based on depth ranges
                 sliced = ds[param].where((ds.depth >= bins[0]) & (ds.depth <= bins[1]), drop=True).to_dataset()
                 if len(sliced[param]) == 0:
-                    next()
+                    continue
 
                 # sort based on time and make sure we have a monotonic dataset
                 sliced = sliced.sortby('time')

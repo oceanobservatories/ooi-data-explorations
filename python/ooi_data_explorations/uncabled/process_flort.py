@@ -36,21 +36,21 @@ ATTRS = dict({
         'long_name': 'Estimated Chlorophyll Concentration',
         'standard_name': 'mass_concentration_of_chlorophyll_in_sea_water',
         'units': 'ug L-1',
-        'comment': ('Estimated chlorophyll concentration based upon a calibration curve derived from a fluorescent ' +
-                    'proxy approximately equal to 25 ug/l of a Thalassiosira weissflogii phytoplankton culture. ' +
+        'comment': ('Estimated chlorophyll concentration based upon a calibration curve derived from a fluorescent '
+                    'proxy approximately equal to 25 ug/l of a Thalassiosira weissflogii phytoplankton culture. '
                     'This measurement is considered to be an estimate only of the true chlorophyll concentration.'),
         'data_product_identifier': 'CHLAFLO_L1',
         'ancillary_variables': 'raw_chlorophyll estimated_chlorophyll_qc_executed estimated_chlorophyll_qc_results'
     },
     'fluorometric_cdom': {
         'long_name': 'Fluorometric CDOM Concentration',
-        'standard_name': ('concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent' +
+        'standard_name': ('concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent'
                           '_mass_fraction_of_quinine_sulfate_dihydrate'),
         'units': 'ppb',
-        'comment': ('More commonly referred to as Chromophoric Dissolved Organic Matter (CDOM). CDOM plays an ' +
-                    'important role in the carbon cycling and biogeochemistry of coastal waters. It occurs ' +
-                    'naturally in aquatic environments primarily as a result of tannins released from decaying ' +
-                    'plant and animal matter, and can enter coastal areas in river run-off containing organic ' +
+        'comment': ('More commonly referred to as Chromophoric Dissolved Organic Matter (CDOM). CDOM plays an '
+                    'important role in the carbon cycling and biogeochemistry of coastal waters. It occurs '
+                    'naturally in aquatic environments primarily as a result of tannins released from decaying '
+                    'plant and animal matter, and can enter coastal areas in river run-off containing organic '
                     'materials leached from soils.'),
         'data_product_identifier': 'CDOMFLO_L1',
         'ancillary_variables': 'raw_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results'
@@ -59,9 +59,9 @@ ATTRS = dict({
         'long_name': 'Volume Scattering Function at 700 nm',
         'standard_name': 'volume_scattering_function_of_radiative_flux_in_sea_water',
         'units': 'm-1 sr-1',
-        'comment': ('Radiative flux is the sum of shortwave and longwave radiative fluxes. Scattering of ' +
-                    'radiation is its deflection from its incident path without loss of energy. The volume ' +
-                    'scattering function is the intensity (flux per unit solid angle) of scattered radiation per ' +
+        'comment': ('Radiative flux is the sum of shortwave and longwave radiative fluxes. Scattering of '
+                    'radiation is its deflection from its incident path without loss of energy. The volume '
+                    'scattering function is the intensity (flux per unit solid angle) of scattered radiation per '
                     'unit length of scattering medium, normalised by the incident radiation flux.'),
         'data_product_identifier': 'FLUBSCT_L1',
         'ancillary_variables': 'raw_backscatter beta_700_qc_executed beta_700_qc_results'
@@ -69,7 +69,7 @@ ATTRS = dict({
     'bback': {
         'long_name': 'Total Optical Backscatter at 700 nm',
         'units': 'm-1',
-        'comment': ('Total (particulate + water) optical backscatter at 700 nm, derived from the Volume ' +
+        'comment': ('Total (particulate + water) optical backscatter at 700 nm, derived from the Volume '
                     'Scattering Function and corrected for effects of temperature and salinity.'),
         'data_product_identifier': 'FLUBSCT_L2',
         'ancillary_variables': 'beta_700 temperature salinity bback_qc_executed bback_qc_results'
@@ -78,8 +78,8 @@ ATTRS = dict({
             'long_name': 'Practical Salinity',
             'standard_name': 'sea_water_practical_salinity',
             'units': '1',
-            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
-                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from '
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure '
                         'of the data set.'),
             'data_product_identifier': 'PRACSAL_L2'
     },
@@ -87,10 +87,13 @@ ATTRS = dict({
             'long_name': 'Seawater Temperature',
             'standard_name': 'sea_water_temperature',
             'units': 'degree_Celsius',
-            'comment': ('Normally this would be seawater temperature data from a co-located CTD. However, data from ' +
-                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+            'comment': ('Normally this would be seawater temperature data from a co-located CTD. However, data from '
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure '
                         'of the data set.'),
             'data_product_identifier': 'TEMPWAT_L1'
+    },
+    'seawater_scattering_coefficient': {
+
     }
 })
 
@@ -127,7 +130,7 @@ def quality_checks(ds):
     m = (ds.raw_chlorophyll == 0) | (ds.raw_chlorophyll > max_counts)
     chl_flag[m] = 4     # raw chlorophyll values off scale
 
-    # test the min/max values of the derived measurements (values from the vendor code)
+    # test the min/max values of the derived measurements (values from the vendor documentation)
     m = (ds.bback < 0) | (ds.bback > 5)
     beta_flag[m] = 4    # scattering measurement range
     m = (ds.fluorometric_cdom < 0) | (ds.fluorometric_cdom > 375)

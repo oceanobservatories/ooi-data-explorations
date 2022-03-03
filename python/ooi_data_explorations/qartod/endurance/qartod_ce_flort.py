@@ -59,7 +59,7 @@ def combine_delivery_methods(site, node, sensor):
             grps = list(telem.groupby('deployment'))
             for grp in grps:
                 print('# -- Processing telemetered deployment %s' % grp[0])
-                deployments.append(flort_wfp(grp[1], grid=True))
+                deployments.append(flort_wfp(grp[1]))
             telem = xr.concat(deployments, 'time')
 
             print('##### Downloading the recovered_wfp FLORT data for %s #####' % site)
@@ -69,7 +69,7 @@ def combine_delivery_methods(site, node, sensor):
             grps = list(rhost.groupby('deployment'))
             for grp in grps:
                 print('# -- Processing recovered_host deployment %s' % grp[0])
-                deployments.append(flort_wfp(grp[1], grid=True))
+                deployments.append(flort_wfp(grp[1]))
             rhost = xr.concat(deployments, 'time')
 
         # merge, but do not resample the time records.
@@ -166,18 +166,22 @@ def generate_qartod(site, node, sensor, cut_off):
     # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
     # HITL annotations that can be combined with system annotations to create a cleaned up data set
     # prior to calculating the QARTOD test values
+    if node == 'WFP01':
+        index = 10  # decimate the WFP data so we can process it
+    else:
+        index = 1
     chl_fail = data.estimated_chlorophyll_qc_summary_flag.where(data.estimated_chlorophyll_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(chl_fail, [18, 72])
+    blocks = identify_blocks(chl_fail[::index], [18, 72])
     chl_hitl = create_annotations(site, node, sensor, blocks)
     chl_hitl['parameters'] = [[22, 1141] for i in chl_hitl['parameters']]
 
     cdom_fail = data.fluorometric_cdom_qc_summary_flag.where(data.fluorometric_cdom_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(cdom_fail, [18, 72])
+    blocks = identify_blocks(cdom_fail[::index], [18, 72])
     cdom_hitl = create_annotations(site, node, sensor, blocks)
     cdom_hitl['parameters'] = [[23, 1143] for i in cdom_hitl['parameters']]
 
     beta_fail = data.beta_700_qc_summary_flag.where(data.beta_700_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(beta_fail, [18, 72], 24)
+    blocks = identify_blocks(beta_fail[::index], [18, 72], 24)
     beta_hitl = create_annotations(site, node, sensor, blocks)
     beta_hitl['parameters'] = [[24, 25, 1139] for i in beta_hitl['parameters']]
 
@@ -239,8 +243,8 @@ def generate_qartod(site, node, sensor, cut_off):
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
 
     # set the parameters and the gross range limits
-    parameters = ['beta_700', 'bback', 'estimated_chlorophyll', 'fluorometric_cdom']
-    limits = [[0, 5], [0, 5], [0, 50], [0, 375]]
+    parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
+    limits = [[0, 5], [0, 50], [0, 375]]
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site,

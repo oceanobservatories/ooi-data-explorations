@@ -23,13 +23,13 @@ ATTRS = dict({
     'raw_chlorophyll': {
         'long_name': 'Raw Chlorophyll Fluorescence',
         'units': 'counts',
-        'comment': 'Raw chlorophyll fluorescence (470 nm excitation/ 695 nm emission) measurements.',
+        'comment': 'Raw chlorophyll fluorescence (470 nm excitation/695 nm emission) measurements.',
         'data_product_identifier': 'CHLAFLO_L0'
     },
     'raw_cdom': {
         'long_name': 'Raw CDOM Fluorescence',
         'units': 'counts',
-        'comment': 'Raw CDOM fluorescence (370 nm excitation/ 460 nm emission) measurements.',
+        'comment': 'Raw CDOM fluorescence (370 nm excitation/460 nm emission) measurements.',
         'data_product_identifier': 'CDOMFLO_L0'
     },
     'estimated_chlorophyll': {
@@ -37,8 +37,8 @@ ATTRS = dict({
         'standard_name': 'mass_concentration_of_chlorophyll_in_sea_water',
         'units': 'ug L-1',
         'comment': ('Estimated chlorophyll concentration based upon a calibration curve derived from a fluorescent '
-                    'proxy approximately equal to 25 ug/l of a Thalassiosira weissflogii phytoplankton culture. '
-                    'This measurement is considered to be an estimate only of the true chlorophyll concentration.'),
+                    'proxy approximately equal to 25 ug/l of a Thalassiosira weissflogii phytoplankton culture. This '
+                    'measurement is considered to be an estimate only of the true chlorophyll concentration.'),
         'data_product_identifier': 'CHLAFLO_L1',
         'ancillary_variables': 'raw_chlorophyll estimated_chlorophyll_qc_executed estimated_chlorophyll_qc_results'
     },
@@ -59,6 +59,8 @@ ATTRS = dict({
         'long_name': 'Volume Scattering Function at 700 nm',
         'standard_name': 'volume_scattering_function_of_radiative_flux_in_sea_water',
         'units': 'm-1 sr-1',
+        'radiation_wavelength': 700.0,
+        'radiation_wavelength_unit': 'nm',
         'comment': ('Radiative flux is the sum of shortwave and longwave radiative fluxes. Scattering of '
                     'radiation is its deflection from its incident path without loss of energy. The volume '
                     'scattering function is the intensity (flux per unit solid angle) of scattered radiation per '
@@ -68,32 +70,44 @@ ATTRS = dict({
     },
     'bback': {
         'long_name': 'Total Optical Backscatter at 700 nm',
+        'standard_name': 'volume_backwards_scattering_coefficient_of_radiative_flux_in_sea_water',
         'units': 'm-1',
         'comment': ('Total (particulate + water) optical backscatter at 700 nm, derived from the Volume '
                     'Scattering Function and corrected for effects of temperature and salinity.'),
         'data_product_identifier': 'FLUBSCT_L2',
-        'ancillary_variables': 'beta_700 temperature salinity bback_qc_executed bback_qc_results'
+        'ancillary_variables': ('beta_700 seawater_temperature practical_salinity seawater_scattering_coefficient '
+                                'bback_qc_executed bback_qc_results'),
+        '_FillValue': np.nan
     },
     'practical_salinity': {
-            'long_name': 'Practical Salinity',
-            'standard_name': 'sea_water_practical_salinity',
-            'units': '1',
-            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from '
-                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure '
-                        'of the data set.'),
-            'data_product_identifier': 'PRACSAL_L2'
+        'long_name': 'Practical Salinity',
+        'standard_name': 'sea_water_practical_salinity',
+        'units': '1',
+        'comment': ('Salinity is generally defined as the concentration of dissolved salt in a parcel of sea water. ' 
+                    'Practical Salinity is a more specific unitless quantity calculated from the conductivity of ' 
+                    'sea water and adjusted for temperature and pressure. It is approximately equivalent to Absolute ' 
+                    'Salinity (the mass fraction of dissolved salt in sea water), but they are not interchangeable. '
+                    'Measurements are from a co-located CTD.'),
+        'data_product_identifier': 'PRACSAL_L2',
+        '_FillValue': np.nan
     },
     'seawater_temperature': {
-            'long_name': 'Seawater Temperature',
-            'standard_name': 'sea_water_temperature',
-            'units': 'degree_Celsius',
-            'comment': ('Normally this would be seawater temperature data from a co-located CTD. However, data from '
-                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure '
-                        'of the data set.'),
-            'data_product_identifier': 'TEMPWAT_L1'
+        'long_name': 'Seawater Temperature',
+        'standard_name': 'sea_water_temperature',
+        'units': 'degree_Celsius',
+        'comment': ('Sea water temperature is the in situ temperature of the sea water. Measurements are from a '
+                    'co-located CTD'),
+        'data_product_identifier': 'TEMPWAT_L1',
+        '_FillValue': np.nan
     },
     'seawater_scattering_coefficient': {
-
+        'long_name': 'Seawater Optical Backscatter at 700 nm',
+        'units': 'm-1',
+        'comment': ('Theoretical estimation of the optical backscatter for pure seawater at 700 nm adjusted for the'
+                    'effects of temperature and salinity. This value is added to the particulate optical backscatter '
+                    'measurement to create the total optical backscatter measurement contained in this data set.'),
+        'ancillary_variables': 'seawater_temperature practical_salinity',
+        '_FillValue': np.nan
     }
 })
 
@@ -131,12 +145,12 @@ def quality_checks(ds):
     chl_flag[m] = 4     # raw chlorophyll values off scale
 
     # test the min/max values of the derived measurements (values from the vendor documentation)
-    m = (ds.bback < 0) | (ds.bback > 5)
-    beta_flag[m] = 4    # scattering measurement range
-    m = (ds.fluorometric_cdom < 0) | (ds.fluorometric_cdom > 375)
-    cdom_flag[m] = 4    # fluorometric CDOM measurement range
-    m = (ds.estimated_chlorophyll < 0) | (ds.estimated_chlorophyll > 50)
-    chl_flag[m] = 4     # estimated chlorophyll measurement range
+    m = (ds.bback < 0) | (ds.bback > 5)  # scattering measurement range
+    beta_flag[m] = 4
+    m = (ds.fluorometric_cdom < 0) | (ds.fluorometric_cdom > 375)  # fluorometric CDOM measurement range
+    cdom_flag[m] = 4
+    m = (ds.estimated_chlorophyll < 0) | (ds.estimated_chlorophyll > 50)  # estimated chlorophyll measurement range
+    chl_flag[m] = 4
 
     return beta_flag, cdom_flag, chl_flag
 
@@ -157,14 +171,16 @@ def flort_datalogger(ds, burst=True):
     #   suspect_timestamp = not used
     #   measurement_wavelength_* == metadata, move into variable attributes.
     #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
-    #   seawater_scattering_coefficient == not used
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
 
-    # check for data from a co-located CTD, if not present add with appropriate attributes
+    # check for data from a co-located CTD, if not present add it and reset the fill value for the optical
+    # backscatter derived values
     if 'temp' not in ds.variables:
         ds['temp'] = ('time', ds['deployment'] * np.nan)
         ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
+        ds['optical_backscatter'] = ds['optical_backscatter'] * np.nan
+        ds['seawater_scattering_coefficient'] = ds['seawater_scattering_coefficient'] * np.nan
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
@@ -256,7 +272,6 @@ def flort_instrument(ds):
     #   suspect_timestamp = not used
     #   measurement_wavelength_* == metadata, move into variable attributes.
     #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
-    #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl'])

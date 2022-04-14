@@ -50,6 +50,7 @@ def combine_delivery_methods(site, node, sensor):
             for grp in grps:
                 print('# -- Processing recovered_host deployment %s' % grp[0])
                 deployments.append(flort_cspp(grp[1]))
+            deployments = [i for i in deployments if i]
             rhost = xr.concat(deployments, 'time')
         else:
             print('##### Downloading the telemetered FLORT data for %s #####' % site)
@@ -60,6 +61,7 @@ def combine_delivery_methods(site, node, sensor):
             for grp in grps:
                 print('# -- Processing telemetered deployment %s' % grp[0])
                 deployments.append(flort_wfp(grp[1]))
+            deployments = [i for i in deployments if i]
             telem = xr.concat(deployments, 'time')
 
             print('##### Downloading the recovered_wfp FLORT data for %s #####' % site)
@@ -70,6 +72,7 @@ def combine_delivery_methods(site, node, sensor):
             for grp in grps:
                 print('# -- Processing recovered_host deployment %s' % grp[0])
                 deployments.append(flort_wfp(grp[1]))
+            deployments = [i for i in deployments if i]
             rhost = xr.concat(deployments, 'time')
 
         # merge, but do not resample the time records.
@@ -84,6 +87,7 @@ def combine_delivery_methods(site, node, sensor):
         for grp in grps:
             print('# -- Processing telemetered deployment %s' % grp[0])
             deployments.append(flort_instrument(grp[1]))
+        deployments = [i for i in deployments if i]
         telem = xr.concat(deployments, 'time')
 
         print('##### Downloading the recovered_host FLORT data for %s #####' % site)
@@ -94,6 +98,7 @@ def combine_delivery_methods(site, node, sensor):
         for grp in grps:
             print('# -- Processing recovered_host deployment %s' % grp[0])
             deployments.append(flort_instrument(grp[1]))
+        deployments = [i for i in deployments if i]
         rhost = xr.concat(deployments, 'time')
 
         print('##### Downloading the recovered_inst FLORT data for %s #####' % site)
@@ -104,6 +109,7 @@ def combine_delivery_methods(site, node, sensor):
         for grp in grps:
             print('# -- Processing recovered_inst deployment %s' % grp[0])
             deployments.append(flort_instrument(grp[1]))
+        deployments = [i for i in deployments if i]
         rinst = xr.concat(deployments, 'time')
 
         # merge and resample to a 2 hour data record
@@ -118,7 +124,8 @@ def combine_delivery_methods(site, node, sensor):
         grps = list(telem.groupby('deployment'))
         for grp in grps:
             print('# -- Processing telemetered deployment %s' % grp[0])
-            deployments.append(flort_datalogger(grp[1]))
+            deployments.append(flort_datalogger(grp[1], True))
+        deployments = [i for i in deployments if i]
         telem = xr.concat(deployments, 'time')
 
         print('##### Downloading the recovered_host FLORT data for %s #####' % site)
@@ -128,7 +135,8 @@ def combine_delivery_methods(site, node, sensor):
         grps = list(rhost.groupby('deployment'))
         for grp in grps:
             print('# -- Processing recovered_host deployment %s' % grp[0])
-            deployments.append(flort_datalogger(grp[1]))
+            deployments.append(flort_datalogger(grp[1], True))
+        deployments = [i for i in deployments if i]
         rhost = xr.concat(deployments, 'time')
 
         # combine the datasets, leaving them as 15-minute median averaged datasets
@@ -244,7 +252,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # set the parameters and the gross range limits
     parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
-    limits = [[0, 5], [0, 50], [0, 375]]
+    limits = [[0, 3], [0, 30], [0, 375]]
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site,
@@ -305,7 +313,7 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
-    parameters = ['beta_700', 'bback', 'estimated_chlorophyll', 'fluorometric_cdom']
+    parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

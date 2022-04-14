@@ -148,11 +148,11 @@ def quality_checks(ds):
     chl_flag[m] = 4     # raw chlorophyll values off scale
 
     # test the min/max values of the derived measurements (values from the vendor documentation)
-    m = (ds.bback <= 0) | (ds.bback > 5)  # scattering measurement range
+    m = (ds.bback <= 0) | (ds.bback > 3)  # scattering measurement range
     beta_flag[m] = 4
     m = (ds.fluorometric_cdom <= 0) | (ds.fluorometric_cdom > 375)  # fluorometric CDOM measurement range
     cdom_flag[m] = 4
-    m = (ds.estimated_chlorophyll <= 0) | (ds.estimated_chlorophyll > 50)  # estimated chlorophyll measurement range
+    m = (ds.estimated_chlorophyll <= 0) | (ds.estimated_chlorophyll > 30)  # estimated chlorophyll measurement range
     chl_flag[m] = 4
 
     return beta_flag, cdom_flag, chl_flag

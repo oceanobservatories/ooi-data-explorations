@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import sys
+
 import numpy as np
 import os
 import pandas as pd
+import warnings
 import xarray as xr
 
 from scipy.interpolate import griddata
@@ -79,6 +82,15 @@ ATTRS = dict({
                                 'bback_qc_executed bback_qc_results'),
         '_FillValue': np.nan
     },
+    'seawater_scattering_coefficient': {
+        'long_name': 'Seawater Optical Backscatter at 700 nm',
+        'units': 'm-1',
+        'comment': ('Theoretical estimation of the optical backscatter for pure seawater at 700 nm adjusted for the'
+                    'effects of temperature and salinity. This value is added to the particulate optical backscatter '
+                    'measurement to create the total optical backscatter measurement contained in this data set.'),
+        'ancillary_variables': 'seawater_temperature practical_salinity',
+        '_FillValue': np.nan
+    },
     'practical_salinity': {
         'long_name': 'Practical Salinity',
         'standard_name': 'sea_water_practical_salinity',
@@ -100,15 +112,6 @@ ATTRS = dict({
         'data_product_identifier': 'TEMPWAT_L1',
         '_FillValue': np.nan
     },
-    'seawater_scattering_coefficient': {
-        'long_name': 'Seawater Optical Backscatter at 700 nm',
-        'units': 'm-1',
-        'comment': ('Theoretical estimation of the optical backscatter for pure seawater at 700 nm adjusted for the'
-                    'effects of temperature and salinity. This value is added to the particulate optical backscatter '
-                    'measurement to create the total optical backscatter measurement contained in this data set.'),
-        'ancillary_variables': 'seawater_temperature practical_salinity',
-        '_FillValue': np.nan
-    }
 })
 
 
@@ -137,25 +140,25 @@ def quality_checks(ds):
     chl_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
     # test the min/max values of the raw measurements
-    m = (ds.raw_backscatter == 0) | (ds.raw_backscatter > max_counts)
+    m = (ds.raw_backscatter <= 0) | (ds.raw_backscatter > max_counts)
     beta_flag[m] = 4    # raw volume scattering coefficient values off scale
-    m = (ds.raw_cdom == 0) | (ds.raw_cdom > max_counts)
+    m = (ds.raw_cdom <= 0) | (ds.raw_cdom > max_counts)
     cdom_flag[m] = 4    # raw CDOM values off scale
-    m = (ds.raw_chlorophyll == 0) | (ds.raw_chlorophyll > max_counts)
+    m = (ds.raw_chlorophyll <= 0) | (ds.raw_chlorophyll > max_counts)
     chl_flag[m] = 4     # raw chlorophyll values off scale
 
     # test the min/max values of the derived measurements (values from the vendor documentation)
-    m = (ds.bback < 0) | (ds.bback > 5)  # scattering measurement range
+    m = (ds.bback <= 0) | (ds.bback > 5)  # scattering measurement range
     beta_flag[m] = 4
-    m = (ds.fluorometric_cdom < 0) | (ds.fluorometric_cdom > 375)  # fluorometric CDOM measurement range
+    m = (ds.fluorometric_cdom <= 0) | (ds.fluorometric_cdom > 375)  # fluorometric CDOM measurement range
     cdom_flag[m] = 4
-    m = (ds.estimated_chlorophyll < 0) | (ds.estimated_chlorophyll > 50)  # estimated chlorophyll measurement range
+    m = (ds.estimated_chlorophyll <= 0) | (ds.estimated_chlorophyll > 50)  # estimated chlorophyll measurement range
     chl_flag[m] = 4
 
     return beta_flag, cdom_flag, chl_flag
 
 
-def flort_datalogger(ds, burst=True):
+def flort_datalogger(ds, burst=False):
     """
     Takes flort data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
@@ -218,11 +221,11 @@ def flort_datalogger(ds, burst=True):
     # create QC flags for the data and add them to the OOI QC summary flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0))
+                                                         beta_flag])).max(axis=0, initial=1))
     ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0))
+                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0))
+                                                                      chl_flag])).max(axis=0, initial=1))
 
     if burst:
         # re-sample the data collected in burst mode using a 15-minute median average
@@ -304,6 +307,14 @@ def flort_instrument(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # check if the raw data for all three channels is 0, if so the FLORT wasn't talking to the CTD and these are
+    # all just fill values that can be removed.
+    ds = ds.where(ds['raw_backscatter'] + ds['raw_cdom'] + ds['raw_chlorophyll'] > 0, drop=True)
+    if len(ds.time) == 0:
+        # this was one of those deployments where the FLORT was never able to communicate with the CTD.
+        warnings.warn('Communication failure between the FLORT and the CTDBP. No data was recorded.')
+        return None
+
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
@@ -312,11 +323,11 @@ def flort_instrument(ds):
     # create qc flags for the data and add them to the OOI qc flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0))
+                                                         beta_flag])).max(axis=0, initial=1))
     ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0))
+                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0))
+                                                                      chl_flag])).max(axis=0, initial=1))
 
     return ds
 
@@ -380,11 +391,11 @@ def flort_cspp(ds):
     # create qc flags for the data and add them to the OOI qc flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0))
+                                                         beta_flag])).max(axis=0, initial=1))
     ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0))
+                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0))
+                                                                      chl_flag])).max(axis=0, initial=1))
 
     return ds
 
@@ -448,11 +459,11 @@ def flort_wfp(ds, grid=False):
     # create qc flags for the data and add them to the OOI qc flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0))
+                                                         beta_flag])).max(axis=0, initial=1))
     ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0))
+                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0))
+                                                                      chl_flag])).max(axis=0, initial=1))
 
     if grid:
         # clear out any duplicate time stamps
@@ -554,12 +565,15 @@ def main(argv=None):
     elif node == 'WFP01':
         # this FLORT is part of a Wire-Following Profiler
         flort = flort_wfp(flort)
+    elif node == 'SBD17':
+        # this FLORT is connected to the CTDBP on an EA Inshore Surface Mooring
+        flort = flort_instrument(flort)
+        if not flort:
+            # there was no data after removing all the 0's
+            sys.exit()
     else:
-        # this FLORT is on one of the moorings
-        if method in ['telemetered', 'recovered_host']:
-            flort = flort_datalogger(flort, burst)
-        else:
-            flort = flort_instrument(flort)
+        # this FLORT is stand-alone on one of the moorings
+        flort = flort_datalogger(flort, burst)
 
     vocab = get_vocabulary(site, node, sensor)[0]
     flort = update_dataset(flort, vocab['maxdepth'])

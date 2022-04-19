@@ -10,17 +10,55 @@ import numpy as np
 import pandas as pd
 import sys
 
+from scipy.stats import normaltest
+
 from ooi_data_explorations.qartod.climatology import Climatology
-from ooi_data_explorations.qartod.gross_range import GrossRange
 
 # csv file ordered header row
 ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
              'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
-CLM_HEADER =  ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
+CLM_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
 GR_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source', 'notes']
 
 
-def identify_blocks(flags, time_step=None):
+def woa_standard_bins():
+    """
+    Construct a 2D array of the World Ocean Atlas (WOA) Standard Depth Bins
+    from the surface to 5500 meters for use in the Climatology calculations.
+    The bins are used to select data based on depth that fall between 2
+    standard depth levels (e.g. between 0 m (Level 1) and 5 m (Level 2)).
+
+    Further information on the WOA depth bins is available in the documentation
+    available from the National Centers for Environmental Information (NCEI):
+    https://www.ncei.noaa.gov/data/oceans/woa/WOA18/DOC/woa18documentation.pdf
+
+    :return woa_bins: The WOA standard depth bins as a 2D numpy array
+    """
+    # Surface to 100 m by 5 m
+    left = np.atleast_2d(np.arange(0, 100, 5)).T
+    right = np.atleast_2d(np.arange(5, 105, 5)).T
+    m100 = np.concatenate((left, right), axis=1)
+
+    # 100 m to 500 m by 25 m
+    left = np.atleast_2d(np.arange(100, 500, 25)).T
+    right = np.atleast_2d(np.arange(125, 525, 25)).T
+    m500 = np.concatenate((left, right), axis=1)
+
+    # 500 m to 2000 m by 50 m
+    left = np.atleast_2d(np.arange(500, 2000, 50)).T
+    right = np.atleast_2d(np.arange(550, 2050, 50)).T
+    m2000 = np.concatenate((left, right), axis=1)
+
+    # 2000 m to 5500 m by 1000 m
+    left = np.atleast_2d(np.arange(2000, 5500, 100)).T
+    right = np.atleast_2d(np.arange(2100, 5600, 100)).T
+    m5500 = np.concatenate((left, right), axis=1)
+
+    woa_bins = np.concatenate((m100, m500, m2000, m5500), axis=0)
+    return woa_bins
+
+
+def identify_blocks(flags, time_step, padding=0):
     """
     Use a boolean array of quality flags to find and create blocks of data
     bound by the starting and ending dates and times of consecutive flagged
@@ -38,13 +76,12 @@ def identify_blocks(flags, time_step=None):
     :param time_step: a two-value list of the minimum time range to use in
         combining flagged points into a group, and the minimum range of a
         group of flagged points to determine if a block should be created.
-        The defaults are 8 and 24 hours, respectively.
+    :param padding: add padding (in hours) to identified blocks
     :return blocks: List of starting and ending dates and times defining
         a block of flagged data.
     """
     # find blocks of consecutive points that span a time range greater than time_step[0]
-    if time_step is None:
-        time_step = [8, 24]
+    padding = np.timedelta64(padding, 'h')
     diff = 0
     flg = False
     dates = []
@@ -61,7 +98,7 @@ def identify_blocks(flags, time_step=None):
         # stop time and calculate the time difference
         if flags.values[i] and flg:
             stop = flags.time.values[i]
-            diff = ((stop - start) / 1e9 / 60 / 60).astype(np.int)  # convert from nanoseconds to hours
+            diff = ((stop - start) / 1e9 / 60 / 60).astype(int)  # convert from nanoseconds to hours
 
         # if we have identified a starting point and now find a data point that is not flagged,
         # check to see if either we are at the end of the record or the next set of data points
@@ -71,7 +108,7 @@ def identify_blocks(flags, time_step=None):
             # check to see if we are at the end of the record
             if i == flags.size:
                 stop = flags.time.values[i]
-                diff = ((stop - start) / 1e9 / 60 / 60).astype(np.int)  # convert from nanoseconds to hours
+                diff = ((stop - start) / 1e9 / 60 / 60).astype(int)  # convert from nanoseconds to hours
                 dates.append([start, stop, diff])
                 continue
 
@@ -82,7 +119,7 @@ def identify_blocks(flags, time_step=None):
             # if there are bad points within the time window, keep adding them
             if np.any(flags.values[m]):
                 stop = flags.time.values[i]
-                diff = ((stop - start) / 1e9 / 60 / 60).astype(np.int)  # convert from nanoseconds to hours
+                diff = ((stop - start) / 1e9 / 60 / 60).astype(int)  # convert from nanoseconds to hours
             else:
                 # otherwise close out the block
                 flg = False
@@ -97,23 +134,23 @@ def identify_blocks(flags, time_step=None):
         stop = dates[0][1]
         if len(dates) == 1:
             # if there was only one block...
-            blocks.append([start, stop])
+            blocks.append([start - padding, stop + padding])
         else:
             # ...otherwise
             for i in range(1, len(dates)):
-                diff = ((dates[i][0] - dates[i - 1][1]) / 1e9 / 60 / 60).astype(np.int)
+                diff = ((dates[i][0] - dates[i - 1][1]) / 1e9 / 60 / 60).astype(int)
                 # test to see if the difference between blocks is greater than time_step[1]
                 if diff > time_step[1]:
                     # create a block
                     stop = dates[i - 1][1]
-                    blocks.append([start, stop])
+                    blocks.append([start - padding, stop + padding])
                     # update the start time for the next set
                     start = dates[i][0]
 
                 # test if we are at the end of the blocks, if so use the last point
                 if i == len(dates) - 1:
                     stop = dates[i][1]
-                    blocks.append([start, stop])
+                    blocks.append([start - padding, stop + padding])
 
     return blocks
 
@@ -167,7 +204,7 @@ def create_annotations(site, node, sensor, blocks):
     return output
 
 
-def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
+def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor, stream):
     """
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Climatology lookup tables.
@@ -175,6 +212,7 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
     :param param: parameter name of the variable for the calculated climatology
     :param clm: results of the climatology test, used to create the table
     :param sensor_range: list of vendor defined ranges for valid data
+    :param depth_bins: depth bins used for the climatology
     :param site: Site designator, extracted from the first part of the reference
         designator
     :param node: Node designator, extracted from the second part of the reference
@@ -185,8 +223,20 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
     :return qc_dict: dictionary with the sensor and user gross range values
         added in the formatting expected by the QC lookup
     """
+    # setup the depth bins, if set
+    header_str = ''
+    if depth_bins.any():
+        value_str = '"[{}, {}]"'.format(depth_bins[0], depth_bins[1])
+        note = 'Climatology based on depth bins (from {} to {} m).'.format(depth_bins[0], depth_bins[1])
+    else:
+        value_str = '"[0, 0]"'
+        note = 'Climatology based on the entire dataset.'
+
     # create the lookup dictionary
     var_explained = clm.regression['variance_explained']
+    if len(var_explained) == 0:
+        var_explained = [0]
+
     qc_dict = {
         'subsite': site,
         'node': node,
@@ -195,27 +245,25 @@ def format_climatology(param, clm, sensor_range, site, node, sensor, stream):
         'parameters': {'inp': param, 'tinp': 'time', 'zinp': 'None'},
         'climatologyTable': 'climatology_tables/{}-{}-{}-{}.csv'.format(site, node, sensor, param),
         'source': 'The variance explained by the climatological model is {:.1%}.'.format(var_explained[0]),
-        'notes': ''
+        'notes': note
     }
 
     # create the climatology table
-    header_str = ''
-    value_str = '"[0, 0]"'
     for idx, mu in enumerate(clm.monthly_fit):
         # use the index number to create the header row
         header_str += ',"[{}, {}]"'.format(idx+1, idx+1)
 
         # calculate the climatological ranges
         cmin = mu - clm.monthly_std.values[idx] * 3
-        if cmin < sensor_range[0]:
+        if cmin < sensor_range[0] or cmin > sensor_range[1]:
             cmin = sensor_range[0]
 
         cmax = mu + clm.monthly_std.values[idx] * 3
-        if cmax > sensor_range[1]:
+        if cmax > sensor_range[1] or cmax < sensor_range[0]:
             cmax = sensor_range[1]
 
         # append the data to ranges
-        value_str += ',"[{:.2f}, {:.2f}]"'.format(cmin, cmax)
+        value_str += ',"[{:.5f}, {:.5f}]"'.format(cmin, cmax)
 
     clm_table = header_str + '\n' + value_str
 
@@ -232,6 +280,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     :param params: list of the parameter name(s) of the variable(s) used for
         the calculated climatology
     :param sensor_range: list of vendor defined ranges for valid data
+    :keyword depth_bins: 2D array of WOA depth bins
     :keyword site: Site designator, extracted from the first part of the
         reference designator (optional input)
     :keyword node: Node designator, extracted from the second part of the
@@ -246,6 +295,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
         define the monthly climatology test limits
     """
     # process the optional keyword arguments
+    depth_bins = kwargs.get('depth_bins')
     site = kwargs.get('site')
     node = kwargs.get('node')
     sensor = kwargs.get('sensor')
@@ -258,18 +308,57 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     clm_lookup = pd.DataFrame()
     clm_tables = []
 
+    # check the type of the depth bins, and set to an empty array if NoneType
+    if isinstance(depth_bins, type(None)):
+        depth_bins = np.array([])
+
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
-        # calculate the 2-cycle climatology for the parameter of interest
-        clm.fit(ds, param)
+        if depth_bins.any():
+            depth_tables = ''
+            for bins in depth_bins:
+                # slice the dataset, selecting our data based on depth ranges
+                sliced = ds[param].where((ds.depth >= bins[0]) & (ds.depth <= bins[1]), drop=True).to_dataset()
+                if len(sliced[param]) == 0:
+                    continue
 
-        # create the formatted dictionary for the lookup tables
-        qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], site, node, sensor, stream)
+                # sort based on time and make sure we have a monotonic dataset
+                sliced = sliced.sortby('time')
+                _, index = np.unique(sliced['time'], return_index=True)
+                sliced = sliced.isel(time=index)
 
-        # append the dictionary to the dataframe and the table to the list
-        clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
-        clm_tables.append(clm_table)
+                # calculate the 2-cycle climatology for the parameter of interest
+                m = (sliced[param] > sensor_range[idx][0]) & (sliced[param] < sensor_range[idx][1]) \
+                    & (~np.isnan(sliced[param]))
+                sliced = sliced.where(m, drop=True)
+                clm.fit(sliced, param)
+
+                # create the formatted dictionary for the lookup tables
+                qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor, stream)
+
+                # append the dictionary to the dataframe and build the depth table
+                clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
+                if depth_tables:
+                    depth_tables += clm_table[114:]
+                else:
+                    depth_tables += clm_table
+
+            # add the final depth table for the parameter
+            clm_tables.append(depth_tables)
+        else:
+            # calculate the 2-cycle climatology for the parameter of interest
+            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
+            ds = ds.where(m, drop=True)
+            clm.fit(ds, param)
+
+            # create the formatted dictionary for the lookup tables
+            qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
+                                                    site, node, sensor, stream)
+
+            # append the dictionary to the dataframe and the table to the list
+            clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
+            clm_tables.append(clm_table)
 
     # return the results
     return clm_lookup, clm_tables
@@ -346,7 +435,6 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     node = kwargs.get('node')
     sensor = kwargs.get('sensor')
     stream = kwargs.get('stream')
-    source = kwargs.get('source')
 
     # create an empty pandas dataframe to hold the results
     gross_range = pd.DataFrame()
@@ -354,12 +442,37 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
-        # calculate the user range
-        gr = GrossRange(fail_min=sensor_range[idx][0], fail_max=sensor_range[idx][1])
-        gr.fit(ds, param, 3)
-        user_range = [gr.suspect_min, gr.suspect_max]
+        # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
+        # 4500 data points to use, running the test a total of 5000 times
+        m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
+        pnorm = [normaltest(np.random.choice(ds[param][m], 4500)).pvalue for _ in range(5000)]
+        if np.mean(pnorm) < 0.01:
+            # Even with a log-normal transformation, the data is not normally distributed, so we will
+            # set the user range using percentiles that approximate the Empirical Rule, covering
+            # 99.7% of the data
+            lower = np.nanpercentile(ds[param][m], 0.15)
+            upper = np.nanpercentile(ds[param][m], 99.85)
+            source = ('User range based on percentiles of the observations, which are not normally distributed. '
+                      'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
+        else:
+            # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
+            mu = ds[param][m].mean().values[0]
+            sd = ds[param][m].std().value[0]
+            lower = mu - sd * 3
+            upper = mu + sd * 3
+            source = 'User range based on the mean +- 3 standard deviations of all observations.'
+
+        # reset the lower and upper ranges if they exceed the sensor ranges
+        if lower < sensor_range[idx][0]:
+            lower = sensor_range[idx][0]
+
+        if upper > sensor_range[idx][1]:
+            upper = sensor_range[idx][1]
+
         # create the formatted dictionary
+        user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
         qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
+
         # append the dictionary to the dataframe
         gross_range = gross_range.append(qc_dict, ignore_index=True)
 

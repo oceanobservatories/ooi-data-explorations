@@ -3,8 +3,9 @@
 import numpy as np
 import os
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, get_deployment_dates, \
     get_vocabulary, update_dataset, dt64_epoch, ENCODINGS
+from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 ATTRS = {
     'raw_oxygen_concentration': {
@@ -129,18 +130,16 @@ def dosta_datalogger(ds, burst=False):
     #   dcl_controller_timestamp == time, redundant so can remove
     #   internal_timestamp, there is no internal instrument clock
     #   product_number, these are all 4831s and captured in global attributes
-    #   estimated_oxygen_concentration_qc_executed, preliminary data product no QC tests should be applied
-    #   estimated_oxygen_concentration_qc_results, preliminary data product no QC tests should be applied
-    #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
-    #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
-    ds = ds.drop(['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
-                  'estimated_oxygen_concentration_qc_executed', 'estimated_oxygen_concentration_qc_results',
-                  'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results'])
+    ds = ds.drop(['dcl_controller_timestamp', 'product_number', 'internal_timestamp'])
 
     # rename some of the variables for better clarity
     rename = {
         'estimated_oxygen_concentration': 'oxygen_concentration',
+        'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
+        'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
         'estimated_oxygen_saturation': 'oxygen_saturation',
+        'estimated_oxygen_saturation_qc_executed': 'oxygen_saturation_qc_executed',
+        'estimated_oxygen_saturation_qc_results': 'oxygen_saturation_qc_results',
         'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
         'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
         'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',
@@ -276,6 +275,71 @@ def dosta_ctdbp_instrument(ds):
     return ds
 
 
+def dosta_cspp(ds):
+    """
+    Takes DOSTA data recorded by the CSPP loggers used by the Endurance Array
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
+
+    :param ds: initial DOSTA data set downloaded from OOI via the M2M system
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   suspect_timestamp = not used
+    #   internal_timestamp, there is no instrument clock == profiler_timestamp == time, redundant
+    ds = ds.drop(['suspect_timestamp', 'internal_timestamp', 'profiler_timestamp'])
+
+    # rename some variables for better clarity
+    rename = {
+        'estimated_oxygen_concentration': 'oxygen_concentration',
+        'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
+        'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
+        'estimated_oxygen_saturation': 'oxygen_saturation',
+        'estimated_oxygen_saturation_qc_executed': 'oxygen_saturation_qc_executed',
+        'estimated_oxygen_saturation_qc_results': 'oxygen_saturation_qc_results',
+        'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
+        'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
+        'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',
+        'dissolved_oxygen': 'oxygen_concentration_corrected',
+        'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
+        'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'pressure': 'seawater_pressure',
+        'pressure_qc_executed': 'seawater_pressure_qc_executed',
+        'pressure_qc_results': 'seawater_pressure_qc_results',
+        'temperature': 'seawater_temperature',
+        'salinity': 'practical_salinity',
+    }
+    ds = ds.rename(rename)
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add original OOINet variable name as an attribute if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    return ds
+
+
 def main(argv=None):
     args = inputs(argv)
     site = args.site
@@ -289,42 +353,47 @@ def main(argv=None):
     burst = args.burst
     sensor_type = args.sensor_type
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        dosta = m2m_collect(r, ('.*deployment%04d.*DOSTA.*\\.nc$' % deploy))
+        # download the data for the deployment
+        dosta = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*DOSTA.*\\.nc$' % deploy))
+
+        # check to see if we downloaded any data
+        if not dosta:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
     else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
         dosta = m2m_collect(r, '.*DOSTA.*\\.nc$')
 
-    if not dosta:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        # check to see if we downloaded any data
+        if not dosta:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
 
-    if not sensor_type in ['solo', 'ctdbp']:
+    if sensor_type not in ['solo', 'ctdbp']:
         exit_text = 'You need to specify the type of DOSTA in order to process: solo or ctdbp'
         raise SystemExit(exit_text)
 
     # clean-up and reorganize based on the type and data delivery method
     if sensor_type == 'solo':
-        dosta = dosta_datalogger(dosta, burst)
+        if node == 'SP001':
+            dosta = dosta_cspp(dosta)
+        else:
+            dosta = dosta_datalogger(dosta, burst)
 
     if sensor_type == 'ctdbp':
         if method in ['telemetered', 'recovered_host']:

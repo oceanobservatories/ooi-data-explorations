@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 @author Christopher Wingard
-@brief Load the DOSTA data from the uncabled, Coastal Endurance Surface
-    Moorings and Profilers and process the data to generate QARTOD Gross Range
-    and Climatology test limits
+@brief Load the DOFST data from the uncabled, Coastal Endurance Profiler
+    Mooring and process the data to generate QARTOD Gross Range and Climatology
+    test limits
 """
 import dateutil.parser as parser
 import numpy as np
@@ -15,8 +15,6 @@ import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
-from ooi_data_explorations.uncabled.process_dosta import dosta_datalogger, dosta_ctdbp_datalogger, \
-    dosta_ctdbp_instrument, dosta_cspp
 from ooi_data_explorations.uncabled.process_dofst import dofst_wfp
 from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
     process_climatology, woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
@@ -25,8 +23,8 @@ from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_a
 def combine_delivery_methods(site, node, sensor):
     """
     Takes the downloaded data from the different data delivery methods for the
-    dissolved oxygen sensors (DOSTA, DOFST), and combines them, where appropriate,
-    into a single, merged xarray data sets.
+    WFP dissolved oxygen sensor (DOFST), and combines them into a single,
+    merged xarray data sets.
 
     :param site: Site designator, extracted from the first part of the
         reference designator
@@ -34,121 +32,42 @@ def combine_delivery_methods(site, node, sensor):
         reference designator
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
-    :return merged: the merged and resampled (if appropriate) DOSTA dataset
+    :return merged: the merged DOFST dataset
     """
     # set the stream and tag constants
-    tag = '.*DOSTA.*\\.nc$'
+    tag = '.*DOFST.*\\.nc$'
 
-    if node in ['SP001', 'WFP01']:
-        # this DOSTA is part of a CSPP or WFP and includes telemetered and recovered data
-        if node == 'SP001':
-            telem = None  # don't use the telemetered CSPP data
-            print('##### Downloading the recovered_cspp DOSTA data for %s #####' % site)
-            rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'dosta_abcdjm_cspp_instrument_recovered', tag)
-            deployments = []
-            print('# -- Group the data by deployment and process the data')
-            grps = list(rhost.groupby('deployment'))
-            for grp in grps:
-                print('# -- Processing recovered_host deployment %s' % grp[0])
-                deployments.append(dosta_cspp(grp[1]))
-            deployments = [i for i in deployments if i]
-            rhost = xr.concat(deployments, 'time')
-        else:
-            print('##### Downloading the telemetered DOFST data for %s #####' % site)
-            telem = load_gc_thredds(site, node, sensor, 'telemetered', 'dofst_k_wfp_instrument', tag)
-            deployments = []
-            print('# -- Group the data by deployment and process the data')
-            grps = list(telem.groupby('deployment'))
-            for grp in grps:
-                print('# -- Processing telemetered deployment %s' % grp[0])
-                deployments.append(dofst_wfp(grp[1]))
-            deployments = [i for i in deployments if i]
-            telem = xr.concat(deployments, 'time')
+    # this DOFST is part of a CSPP or WFP and includes telemetered and recovered data
+    print('##### Downloading the telemetered DOFST data for %s #####' % site)
+    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'dofst_k_wfp_instrument', tag)
+    deployments = []
+    print('# -- Group the data by deployment and process the data')
+    grps = list(telem.groupby('deployment'))
+    for grp in grps:
+        print('# -- Processing telemetered deployment %s' % grp[0])
+        deployments.append(dofst_wfp(grp[1]))
+    deployments = [i for i in deployments if i]
+    telem = xr.concat(deployments, 'time')
 
-            print('##### Downloading the recovered_wfp DOFTS data for %s #####' % site)
-            rhost = load_gc_thredds(site, node, sensor, 'recovered_wfp', 'dofst_k_wfp_instrument_recovered', tag)
-            deployments = []
-            print('# -- Group the data by deployment and process the data')
-            grps = list(rhost.groupby('deployment'))
-            for grp in grps:
-                print('# -- Processing recovered_host deployment %s' % grp[0])
-                deployments.append(dofst_wfp(grp[1]))
-            deployments = [i for i in deployments if i]
-            rhost = xr.concat(deployments, 'time')
+    print('##### Downloading the recovered_wfp DOFST data for %s #####' % site)
+    rhost = load_gc_thredds(site, node, sensor, 'recovered_wfp', 'dofst_k_wfp_instrument_recovered', tag)
+    deployments = []
+    print('# -- Group the data by deployment and process the data')
+    grps = list(rhost.groupby('deployment'))
+    for grp in grps:
+        print('# -- Processing recovered_host deployment %s' % grp[0])
+        deployments.append(dofst_wfp(grp[1]))
+    deployments = [i for i in deployments if i]
+    rhost = xr.concat(deployments, 'time')
 
-        # merge, but do not resample the time records.
-        merged = combine_datasets(telem, rhost, None, None)
-    elif node in ['RID16', 'MFD37']:
-        # this DOSTA is connected to a CTDBP and includes all 3 types of data delivery methods
-        print('##### Downloading the telemetered DOSTA data for %s #####' % site)
-        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'dosta_abcdjm_ctdbp_dcl_instrument', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(telem.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing telemetered deployment %s' % grp[0])
-            deployments.append(dosta_ctdbp_datalogger(grp[1]))
-        deployments = [i for i in deployments if i]
-        telem = xr.concat(deployments, 'time')
-
-        print('##### Downloading the recovered_host DOSTA data for %s #####' % site)
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'dosta_abcdjm_ctdbp_dcl_instrument_recovered', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(rhost.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
-            deployments.append(dosta_ctdbp_datalogger(grp[1]))
-        deployments = [i for i in deployments if i]
-        rhost = xr.concat(deployments, 'time')
-
-        print('##### Downloading the recovered_inst DOSTA data for %s #####' % site)
-        rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'dosta_abcdjm_ctdbp_instrument_recovered', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(rinst.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing recovered_inst deployment %s' % grp[0])
-            deployments.append(dosta_ctdbp_instrument(grp[1]))
-        deployments = [i for i in deployments if i]
-        rinst = xr.concat(deployments, 'time')
-
-        # merge and resample to a 2 hour data record
-        merged = combine_datasets(telem, rhost, rinst, 120)
-    else:
-        # this DOSTA is standalone on one of the NSIFs and includes the telemetered and recovered_host data.
-        # the data is collected in bursts (3 minutes at 1 Hz). process each data set per-deployment
-        print('##### Downloading the telemetered DOSTA data for %s #####' % site)
-        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'dosta_abcdjm_dcl_instrument', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(telem.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing telemetered deployment %s' % grp[0])
-            deployments.append(dosta_datalogger(grp[1], True))
-        deployments = [i for i in deployments if i]
-        telem = xr.concat(deployments, 'time')
-
-        print('##### Downloading the recovered_host DOSTA data for %s #####' % site)
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'dosta_abcdjm_dcl_instrument_recovered', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(rhost.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
-            deployments.append(dosta_datalogger(grp[1], True))
-        deployments = [i for i in deployments if i]
-        rhost = xr.concat(deployments, 'time')
-
-        # combine the datasets, leaving them as 15-minute median averaged datasets
-        merged = combine_datasets(telem, rhost, None, None)
-
+    # merge, but do not resample the time records.
+    merged = combine_datasets(telem, rhost, None, None)
     return merged
 
 
 def generate_qartod(site, node, sensor, cut_off):
     """
-    Load all DOSTA data for a defined reference designator (using the site,
+    Load all DOFST data for a defined reference designator (using the site,
     node and sensor names to construct the reference designator) and
     collected via the different data delivery methods and combine them into a
     single data set from which QARTOD test limits for the gross range and
@@ -169,39 +88,17 @@ def generate_qartod(site, node, sensor, cut_off):
     :return clm_table: CSV formatted strings to save to a csv file for the
         QARTOD climatology range tables.
     """
-    # load the combined data for the different sources of DOSTA data
+    # load the combined data for the different sources of DOFST data
     data = combine_delivery_methods(site, node, sensor)
 
     # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
     # HITL annotations that can be combined with system annotations to create a cleaned up data set
     # prior to calculating the QARTOD test values
-    if node == 'WFP01':
-        index = 10  # decimate the WFP data so we can process it
-    else:
-        index = 1
-    svu_fail = data.svu_oxygen_concentration_qc_summary_flag.where(
-        data.svu_oxygen_concentration_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(svu_fail[::index], [18, 72])
-    svu_hitl = create_annotations(site, node, sensor, blocks)
-    svu_hitl['parameters'] = [[14, 2843] for i in svu_hitl['parameters']]
-
+    index = 10  # decimate the WFP data so we can process it
     do_fail = data.oxygen_concentration_corrected_qc_summary_flag.where(
         data.oxygen_concentration_corrected_qc_summary_flag > 3).notnull()
     blocks = identify_blocks(do_fail[::index], [18, 72])
-    do_hitl = create_annotations(site, node, sensor, blocks)
-    do_hitl['parameters'] = [[14] for i in do_hitl['parameters']]
-
-    therm_fail = data.optode_temperature_qc_summary_flag.where(
-        data.optode_temperature_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(therm_fail[::index], [18, 72])
-    therm_hitl = create_annotations(site, node, sensor, blocks)
-    therm_hitl['parameters'] = [[942, 14, 2843] for i in therm_hitl['parameters']]
-
-    # combine the different dictionaries into a single HITL annotation dictionary for later use
-    hitl = svu_hitl.copy()
-    for d in (do_hitl, therm_hitl):
-        for key, value in d.items():
-            hitl[key] = hitl[key] + d[key]
+    hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -220,25 +117,9 @@ def generate_qartod(site, node, sensor, cut_off):
     # clean-up the data, NaN-ing values that were marked as fail in the QC checks and/or identified as a block
     # of failed data, and then removing all records where the rollup annotation (every parameter fails) was
     # set to fail.
-    data['svu_oxygen_concentration'][svu_fail] = np.nan
-    data['oxygen_concentration_corrected'][svu_fail] = np.nan
-    if 'dosta_abcdjm_cspp_tc_oxygen_annotations_qc_results' in data.variables:
-        m = data.dosta_abcdjm_cspp_tc_oxygen_annotations_qc_results == 4
-        data['svu_oxygen_concentration'][m] = np.nan
-        data['oxygen_concentration_corrected'][m] = np.nan
-
     data['oxygen_concentration_corrected'][do_fail] = np.nan
     if 'dissolved_oxygen_annotations_qc_results' in data.variables:
         m = data.dissolved_oxygen_annotations_qc_results == 4
-        data['oxygen_concentration_corrected'][m] = np.nan
-
-    data['optode_temperature'][therm_fail] = np.nan
-    data['svu_oxygen_concentration'][therm_fail] = np.nan
-    data['oxygen_concentration_corrected'][therm_fail] = np.nan
-    if 'optode_temperature_annotations_qc_results' in data.variables:
-        m = data.optode_temperature_annotations_qc_results == 4
-        data['optode_temperature'][m] = np.nan
-        data['svu_oxygen_concentration'][m] = np.nan
         data['oxygen_concentration_corrected'][m] = np.nan
 
     if 'rollup_annotations_qc_results' in data.variables:
@@ -260,40 +141,34 @@ def generate_qartod(site, node, sensor, cut_off):
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
 
     # set the parameters and the gross range limits
-    parameters = ['optode_temperature', 'oxygen_concentration', 'oxygen_saturation',
-                  'svu_oxygen_concentration', 'oxygen_concentration_corrected']
-    limits = [[-5, 40], [0, 120], [0, 500], [0, 500], [0, 500]]
+    parameters = ['oxygen_concentration_corrected']
+    limits = [0, 500]
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site,
-                                    node=node, sensor=sensor, stream='dosta_abcdjm_cspp_instrument_recovered')
+                                    node=node, sensor=sensor, stream='dofst_k_wfp_instrument')
 
     # add the stream name and the source comment
     gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
 
-    # based on the site and node, determine if we need a depth based climatology
-    depth_bins = np.array([])
-    if node in ['WFP01']:
-        vocab = get_vocabulary(site, node, sensor)[0]
-        max_depth = vocab['maxdepth']
-        depth_bins = woa_standard_bins()
-        m = depth_bins[:, 1] <= max_depth
-        depth_bins = depth_bins[m, :]
+    # set up the bins for a depth based climatology
+    vocab = get_vocabulary(site, node, sensor)[0]
+    max_depth = vocab['maxdepth']
+    depth_bins = woa_standard_bins()
+    m = depth_bins[:, 1] <= max_depth
+    depth_bins = depth_bins[m, :]
 
     # create and format the climatology lookups and tables for the data
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
                                                 site=site, node=node, sensor=sensor,
-                                                stream='dosta_abcdjm_cspp_instrument_recovered')
-
-    # add the stream name
-    clm_lookup['stream'] = 'dosta_sample'
+                                                stream='dofst_k_wfp_instrument')
 
     return annotations, gr_lookup, clm_lookup, clm_table
 
 
 def main(argv=None):
     """
-    Download the DOSTA data from the Gold Copy THREDDS server and create the
+    Download the DOFST data from the Gold Copy THREDDS server and create the
     QARTOD gross range and climatology test lookup tables.
     """
     # setup the input arguments
@@ -323,7 +198,7 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
-    parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
+    parameters = ['oxygen_concentration_corrected']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

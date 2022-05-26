@@ -243,6 +243,11 @@ def dosta_ctdbp_datalogger(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # replace the fill-values (CTD uses a 0 when there is no comms to the DOSTA) with a NaN
+    m = ds['oxygen_concentration'] <= 0
+    ds['oxygen_concentration'][m] = np.nan
+    ds['oxygen_concentration_corrected'][m] = np.nan
+
     return ds
 
 
@@ -285,6 +290,11 @@ def dosta_ctdbp_instrument(ds):
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
+
+    # replace the fill-values (CTD uses a 0 when there is no comms to the DOSTA) with a NaN
+    m = ds['oxygen_concentration'] <= 0
+    ds['oxygen_concentration'][m] = np.nan
+    ds['oxygen_concentration_corrected'][m] = np.nan
 
     return ds
 

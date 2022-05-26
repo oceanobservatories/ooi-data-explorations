@@ -147,37 +147,8 @@ def generate_qartod(site, node, sensor, cut_off):
     # load the combined data for the different sources of DOSTA data
     data = combine_delivery_methods(site, node, sensor)
 
-    # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
-    # HITL annotations that can be combined with system annotations to create a cleaned up data set
-    # prior to calculating the QARTOD test values
-    oxy_fail = data.oxygen_concentration_qc_summary_flag.where(
-        data.oxygen_concentration_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(oxy_fail, [18, 72])
-    oxy_hitl = create_annotations(site, node, sensor, blocks)
-    data['oxygen_concentration'][oxy_fail] = np.nan
-
-    corr_fail = data.oxygen_concentration_corrected_qc_summary_flag.where(
-        data.oxygen_concentration_corrected_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(corr_fail, [18, 72])
-    corr_hitl = create_annotations(site, node, sensor, blocks)
-    data['oxygen_concentration_corrected'][corr_fail] = np.nan
-
-    # combine the different dictionaries into a single HITL annotation dictionary for later use
-    hitl = oxy_hitl.copy()
-    for key, value in corr_hitl.items():
-        hitl[key] = hitl[key] + corr_hitl[key]
-
-    if node not in ['RID16', 'MFD37']:
-        # stand-alone DOSTAs have the initial oxygen concentration recalculated, test that parameter as well
-        svu_fail = data.svu_oxygen_concentration_qc_summary_flag.where(
-            data.svu_oxygen_concentration_qc_summary_flag > 3).notnull()
-        blocks = identify_blocks(svu_fail, [18, 72])
-        svu_hitl = create_annotations(site, node, sensor, blocks)
-        data['svu_oxygen_concentration'][svu_fail] = np.nan
-
-        # add the annotations to the dictionary
-        for key, value in corr_hitl.items():
-            hitl[key] = hitl[key] + svu_hitl[key]
+    # remove the obviously bad data (DO less than 0)
+    data = data.where(data.oxygen_concentration_corrected > 0)
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -186,9 +157,6 @@ def generate_qartod(site, node, sensor, cut_off):
         annotations = annotations.drop(columns=['@class'])
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
-
-    # append the fail annotations to the existing annotations
-    annotations = annotations.append(pd.DataFrame(hitl), ignore_index=True, sort=False)
 
     # create an annotation-based quality flag
     data = add_annotation_qc_flags(data, annotations)
@@ -225,7 +193,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # based on the site and node, determine if we need a depth based climatology
     depth_bins = np.array([])
-    if node in ['SP001', 'WFP01']:
+    if node == 'SP001':
         vocab = get_vocabulary(site, node, sensor)[0]
         max_depth = vocab['maxdepth']
         depth_bins = woa_standard_bins()
@@ -275,7 +243,10 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
-    parameters = ['oxygen_concentration', 'svu_oxygen_concentration', 'oxygen_concentration_corrected']
+    if node in ['RID16', 'MFD37']:
+        parameters = ['oxygen_concentration', 'oxygen_concentration_corrected']
+    else:
+        parameters = ['oxygen_concentration', 'svu_oxygen_concentration', 'oxygen_concentration_corrected']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

@@ -133,9 +133,13 @@ def dosta_datalogger(ds, burst=False):
     #   estimated_oxygen_concentration_qc_results, preliminary data product no QC tests should be applied
     #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
     #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
-    ds = ds.drop(['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
+    #   CGSN Update: Redo to make this a list comprehension so limited parameter datasets can also be processed
+    drop_list = ['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
                   'estimated_oxygen_concentration_qc_executed', 'estimated_oxygen_concentration_qc_results',
-                  'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results'])
+                  'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # rename some of the variables for better clarity
     rename = {

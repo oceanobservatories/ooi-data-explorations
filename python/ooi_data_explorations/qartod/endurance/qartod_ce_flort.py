@@ -13,11 +13,11 @@ import pandas as pd
 import pytz
 import xarray as xr
 
-from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
+from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_flort import flort_datalogger, flort_instrument, flort_cspp, flort_wfp
 from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
-    process_climatology, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
+    process_climatology, woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
 
 
 def combine_delivery_methods(site, node, sensor):
@@ -42,44 +42,101 @@ def combine_delivery_methods(site, node, sensor):
         # this FLORT is part of a CSPP or WFP and includes telemetered and recovered data
         if node == 'SP001':
             telem = None  # don't use the telemetered CSPP data
+            print('##### Downloading the recovered_cspp FLORT data for %s #####' % site)
             rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', stream, tag)
-            rhost = flort_cspp(rhost)
+            deployments = []
+            print('# -- Group the data by deployment and process the data')
+            grps = list(rhost.groupby('deployment'))
+            for grp in grps:
+                print('# -- Processing recovered_host deployment %s' % grp[0])
+                deployments.append(flort_cspp(grp[1]))
+            deployments = [i for i in deployments if i]
+            rhost = xr.concat(deployments, 'time')
         else:
+            print('##### Downloading the telemetered FLORT data for %s #####' % site)
             telem = load_gc_thredds(site, node, sensor, 'telemetered', stream, tag)
-            telem = flort_wfp(telem)
+            deployments = []
+            print('# -- Group the data by deployment and process the data')
+            grps = list(telem.groupby('deployment'))
+            for grp in grps:
+                print('# -- Processing telemetered deployment %s' % grp[0])
+                deployments.append(flort_wfp(grp[1]))
+            deployments = [i for i in deployments if i]
+            telem = xr.concat(deployments, 'time')
+
+            print('##### Downloading the recovered_wfp FLORT data for %s #####' % site)
             rhost = load_gc_thredds(site, node, sensor, 'recovered_wfp', stream, tag)
-            rhost = flort_wfp(rhost)
+            deployments = []
+            print('# -- Group the data by deployment and process the data')
+            grps = list(rhost.groupby('deployment'))
+            for grp in grps:
+                print('# -- Processing recovered_host deployment %s' % grp[0])
+                deployments.append(flort_wfp(grp[1]))
+            deployments = [i for i in deployments if i]
+            rhost = xr.concat(deployments, 'time')
 
         # merge, but do not resample the time records.
         merged = combine_datasets(telem, rhost, None, None)
     elif node == 'SBD17':
         # this FLORT is mounted on the buoy of the Inshore moorings and includes all three types of data
+        print('##### Downloading the telemetered FLORT data for %s #####' % site)
         telem = load_gc_thredds(site, node, sensor, 'telemetered', stream, tag)
-        telem = flort_instrument(telem)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(telem.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing telemetered deployment %s' % grp[0])
+            deployments.append(flort_instrument(grp[1]))
+        deployments = [i for i in deployments if i]
+        telem = xr.concat(deployments, 'time')
+
+        print('##### Downloading the recovered_host FLORT data for %s #####' % site)
         rhost = load_gc_thredds(site, node, sensor, 'recovered_host', stream, tag)
-        rhost = flort_instrument(rhost)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(rhost.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing recovered_host deployment %s' % grp[0])
+            deployments.append(flort_instrument(grp[1]))
+        deployments = [i for i in deployments if i]
+        rhost = xr.concat(deployments, 'time')
+
+        print('##### Downloading the recovered_inst FLORT data for %s #####' % site)
         rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', stream, tag)
-        rinst = flort_instrument(rinst)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(rinst.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing recovered_inst deployment %s' % grp[0])
+            deployments.append(flort_instrument(grp[1]))
+        deployments = [i for i in deployments if i]
+        rinst = xr.concat(deployments, 'time')
 
         # merge and resample to a 2 hour data record
         merged = combine_datasets(telem, rhost, rinst, 120)
     else:
         # this FLORT is standalone on one of the NSIFs and includes the telemetered and recovered_host data
         # data is collected in bursts (3 minutes at 1 Hz). process each data set per-deployment
+        print('##### Downloading the telemetered FLORT data for %s #####' % site)
         telem = load_gc_thredds(site, node, sensor, 'telemetered', stream, tag)
         deployments = []
+        print('# -- Group the data by deployment and process the data')
         grps = list(telem.groupby('deployment'))
         for grp in grps:
-            print('Processing telemetered deployment %s' % grp[0])
-            deployments.append(flort_datalogger(grp[1]))
+            print('# -- Processing telemetered deployment %s' % grp[0])
+            deployments.append(flort_datalogger(grp[1], True))
+        deployments = [i for i in deployments if i]
         telem = xr.concat(deployments, 'time')
 
+        print('##### Downloading the recovered_host FLORT data for %s #####' % site)
         rhost = load_gc_thredds(site, node, sensor, 'recovered_host', stream, tag)
         deployments = []
+        print('# -- Group the data by deployment and process the data')
         grps = list(rhost.groupby('deployment'))
         for grp in grps:
-            print('Processing recovered_host deployment %s' % grp[0])
-            deployments.append(flort_datalogger(grp[1]))
+            print('# -- Processing recovered_host deployment %s' % grp[0])
+            deployments.append(flort_datalogger(grp[1], True))
+        deployments = [i for i in deployments if i]
         rhost = xr.concat(deployments, 'time')
 
         # combine the datasets, leaving them as 15-minute median averaged datasets
@@ -109,8 +166,7 @@ def generate_qartod(site, node, sensor, cut_off):
     :return clm_lookup: CSV formatted strings to save to a csv file for the
         QARTOD climatology lookup tables.
     :return clm_table: CSV formatted strings to save to a csv file for the
-        QARTOD climatology range table for the seafloor pressure and
-        temperature.
+        QARTOD climatology range tables.
     """
     # load the combined data for the different sources of FLORT data
     data = combine_delivery_methods(site, node, sensor)
@@ -118,29 +174,28 @@ def generate_qartod(site, node, sensor, cut_off):
     # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
     # HITL annotations that can be combined with system annotations to create a cleaned up data set
     # prior to calculating the QARTOD test values
+    if node == 'WFP01':
+        index = 10  # decimate the WFP data so we can process it
+    else:
+        index = 1
     chl_fail = data.estimated_chlorophyll_qc_summary_flag.where(data.estimated_chlorophyll_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(chl_fail, [18, 72])
+    blocks = identify_blocks(chl_fail[::index], [18, 72])
     chl_hitl = create_annotations(site, node, sensor, blocks)
-    chl_hitl['parameters'] = ['chl' for i in chl_hitl['parameters']]
+    chl_hitl['parameters'] = [[22, 1141] for i in chl_hitl['parameters']]
 
     cdom_fail = data.fluorometric_cdom_qc_summary_flag.where(data.fluorometric_cdom_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(cdom_fail, [18, 72])
+    blocks = identify_blocks(cdom_fail[::index], [18, 72])
     cdom_hitl = create_annotations(site, node, sensor, blocks)
-    cdom_hitl['parameters'] = ['cdom' for i in cdom_hitl['parameters']]
+    cdom_hitl['parameters'] = [[23, 1143] for i in cdom_hitl['parameters']]
 
     beta_fail = data.beta_700_qc_summary_flag.where(data.beta_700_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(beta_fail, [18, 72])
+    blocks = identify_blocks(beta_fail[::index], [18, 72], 24)
     beta_hitl = create_annotations(site, node, sensor, blocks)
-    beta_hitl['parameters'] = ['beta' for i in beta_hitl['parameters']]
-
-    bback_fail = data.bback_qc_summary_flag.where(data.bback_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(bback_fail, [18, 72])
-    bback_hitl = create_annotations(site, node, sensor, blocks)
-    bback_hitl['parameters'] = ['bback' for i in bback_hitl['parameters']]
+    beta_hitl['parameters'] = [[24, 25, 1139] for i in beta_hitl['parameters']]
 
     # combine the different dictionaries into a single HITL annotation dictionary for later use
     hitl = chl_hitl.copy()
-    for d in (cdom_hitl, beta_hitl, bback_hitl):
+    for d in (cdom_hitl, beta_hitl):
         for key, value in d.items():
             hitl[key] = hitl[key] + d[key]
 
@@ -158,14 +213,27 @@ def generate_qartod(site, node, sensor, cut_off):
     # create an annotation-based quality flag
     data = add_annotation_qc_flags(data, annotations)
 
-    # clean-up the data, NaN-ing values that were marked as fail in the QC checks, and then removing
-    # all records where the rollup annotation was set to fail
+    # clean-up the data, NaN-ing values that were marked as fail in the QC checks and/or identified as a block
+    # of failed data, and then removing all records where the rollup annotation (every parameter fails) was
+    # set to fail.
     data['estimated_chlorophyll'][chl_fail] = np.nan
+    if 'fluorometric_chl_a_annotations_qc_results' in data.variables:
+        m = data.fluorometric_chl_a_annotations_qc_results == 4
+        data['estimated_chlorophyll'][m] = np.nan
+
     data['fluorometric_cdom'][cdom_fail] = np.nan
+    if 'fluorometric_cdom_annotations_qc_results' in data.variables:
+        m = data.fluorometric_cdom_annotations_qc_results == 4
+        data['fluorometric_cdom'][m] = np.nan
+
     data['beta_700'][beta_fail] = np.nan
-    data['bback'][beta_fail] = np.nan
-    data['bback'][bback_fail] = np.nan
-    data = data.where(data.rollup_annotations_qc_results < 4)
+    if 'total_volume_scattering_coefficient_annotations_qc_results' in data.variables:
+        m = data.total_volume_scattering_coefficient_annotations_qc_results == 4
+        data['beta_700'][m] = np.nan
+        data['bback'][m] = np.nan
+
+    if 'rollup_annotations_qc_results' in data.variables:
+        data = data.where(data.rollup_annotations_qc_results < 4)
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.
@@ -184,19 +252,28 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # set the parameters and the gross range limits
     parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
-    limits = [[0, 5], [0, 30], [0, 375]]
+    limits = [[0, 3], [0, 30], [0, 375]]
 
     # create the initial gross range entry
-    gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor)
+    gr_lookup = process_gross_range(data, parameters, limits, site=site,
+                                    node=node, sensor=sensor, stream='flort_sample')
 
     # add the stream name and the source comment
-    gr_lookup['stream'] = 'flort_sample'
-    gr_lookup['source'] = ('Sensor min/max based on the vendor sensor specifications. '
-                           'The user min/max is the historical mean of all data collected '
-                           'up to {} +/- 3 standard deviations.'.format(src_date))
+    gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
+
+    # based on the site and node, determine if we need a depth based climatology
+    depth_bins = np.array([])
+    if node in ['SP001', 'WFP01']:
+        if site in ['CE01ISSP', 'CE02SHSP', 'CE06ISSP', 'CE07SHSP', 'CE09OSPM']:
+            vocab = get_vocabulary(site, node, sensor)[0]
+            max_depth = vocab['maxdepth']
+            depth_bins = woa_standard_bins()
+            m = depth_bins[:, 1] <= max_depth
+            depth_bins = depth_bins[m, :]
 
     # create and format the climatology lookups and tables for the data
-    clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node, sensor=sensor)
+    clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
+                                                site=site, node=node, sensor=sensor, stream='flort_sample')
 
     # add the stream name
     clm_lookup['stream'] = 'flort_sample'
@@ -206,7 +283,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
 def main(argv=None):
     """
-    Download the PRESF data from the Gold Copy THREDDS server and create the
+    Download the FLORT data from the Gold Copy THREDDS server and create the
     QARTOD gross range and climatology test lookup tables.
     """
     # setup the input arguments
@@ -220,29 +297,23 @@ def main(argv=None):
     annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
     # save the downloaded annotations and qartod lookups and tables
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/presf')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/flort')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
     # save the annotations to a csv file for further processing
-    csv_names = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
-                 'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
     anno_csv = '-'.join([site, node, sensor]) + '.quality_annotations.csv'
-    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=csv_names)
+    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=ANNO_HEADER)
 
     # save the gross range values to a csv for further processing
-    csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source']
     gr_csv = '-'.join([site, node, sensor]) + '.gross_range.csv'
-    gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=csv_names)
+    gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=GR_HEADER)
 
     # save the climatology values and table to a csv for further processing
-    csv_names = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source']
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
-    clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=csv_names)
-    parameters = ['seawater_temperature', 'abs_seafloor_pressure',
-                  'seawater_temperature', 'abs_seafloor_pressure',
-                  'presf_tide_temperature', 'presf_tide_pressure']
+    clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
+    parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

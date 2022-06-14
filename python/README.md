@@ -110,7 +110,11 @@ cd ooi-data-explorations/python
 
 # configure the OOI python environment
 conda env create -f environment.yml
+conda init # might be required for windows users if environment is not active
 conda activate ooi
+
+# you can check the active environment by running
+conda env list
 
 # install the package as a local development package
 pip install -e . 

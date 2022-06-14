@@ -154,7 +154,11 @@ def dosta_datalogger(ds, burst=False):
         'int_ctd_pressure': 'seawater_pressure',
         'temp': 'seawater_temperature',
     }
-    ds = ds.rename(rename)
+    
+    # CGSN Update: made this iterative as above to reprocess limited parameter datasets
+    for var in ds.variables:
+        if var in rename.keys():
+            ds = ds.rename({var: rename.get(var)})
 
     # reset some attributes
     for key, value in ATTRS.items():

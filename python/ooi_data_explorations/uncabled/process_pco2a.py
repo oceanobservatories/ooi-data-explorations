@@ -155,6 +155,56 @@ def pco2a_datalogger(ds, burst=False):
 
     return ds
 
+def median_absolute_difference(x):
+    """Calculate the median absolute deviation"""
+    # Calculate the median
+    median = np.nanmedian(x)
+    # Calculate the differences
+    diffs = np.abs(x - median)
+    # Calculate the median absolute difference
+    mad = np.median(diffs)
+
+    return mad
+
+def quality_checks(ds, param, fail_min, fail_max, window="12H", center=True):
+    """Checks the data for re-zeroing error which generates an anomolous low
+    seawater pCO2 measurement. This functions calculates the median-absolute
+    deviation on a 24-hour centered-rolling window. This is to identify the
+    outliers """
+
+    # First, nan out the out-of-range values
+    mask = (ds[param] < fail_min) | (ds[param] > fail_max)
+    ds[param][mask] = np.nan
+
+    # Next, calculate the rolling mean & standard deviation, interpolating missing values
+    df = ds[param].to_dataframe().interpolate()
+    median = df.rolling(window=window, center=center).median()
+    mad = df.rolling(window=window, center=center).apply(median_absolute_difference)
+
+    # Create a flag array to store the results
+    quality_flag = ds[param].astype(int)*0 + 1
+
+    # Identify where values are below the 3 standard deviations
+    mask = ds[param] , median[param]-3*mad[param]
+    quality_flag[mask] = 3
+
+    # Add to the dataset
+    # Add the flags to the dataset
+    ds[param+"_quality_flag"] = flags
+
+    # Add attributes
+    ds[param+"_quality_flag"].attrs = {
+        "standard_name": param+"_qc_flag",
+        "long_name": f"QC Flag for {param}",
+        "comment": "Flag which attempts to identify low-pCO2 values due to the re-zeroing sampling issue " +
+                   "of the Pro-Oceanus with occurs about once every 12H."
+    }
+
+    return ds
+
+
+
+
 
 def main(argv=None):
     # setup the input arguments

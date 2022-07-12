@@ -1,25 +1,16 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:light
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.13.4
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+@author Andrew Reed
+@brief Check if a particular reference designator - data stream - parameter are
+    in a given QC-lookup table
+"""
 import glob
 import ast
 import pandas as pd
 import os
 
 
-# +
 def parse_gross_range_table(table):
     """Parse the gross range qc-lookup table.
     
@@ -133,7 +124,7 @@ def check_entry_climatology(refdes, stream, variables, climatology_test_values, 
         The particular data stream for the given reference designator
     variables: (str or list)
         The variable(s) for the reference designator-stream to check are in the qc-lookup table
-    gross_range_test_values: (pd.DataFrame)
+    climatology_test_values: (pd.DataFrame)
         The qc-lookup table for the gross range test which should contain the reference designator,
         stream, and variable(s) if they have been added
     qartod_dir: (str)
@@ -209,7 +200,7 @@ def check_entries(refdes, stream, variables, qartod_dir=None, tests=["gross_rang
     Check if the reference designator, data stream, and variables are in the qc-lookup tables.
        
     Current iteration is set for "gross_range" and "climatology" tests. Designed to be flexible
-    enough to accomodate future tests so long as they follow the qc-lookup format set by the
+    enough to accommodate future tests so long as they follow the qc-lookup format set by the
     existing test tables.
     
     Parameters

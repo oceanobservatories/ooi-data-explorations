@@ -664,8 +664,8 @@ def m2m_collect(data, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate into a single data set
     print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
-    if len(files) < 3:
-        # just 1 to 2 files, download sequentially
+    if len(files) < 4:
+        # just 1 to 3 files, download sequentially
         frames = [process_file(file) for file in tqdm(files, desc='Downloading and Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
@@ -731,8 +731,8 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    if len(files) < 3:
-        # just 1 to 2 files, download sequentially
+    if len(files) < 4:
+        # just 1 to 3 files, download sequentially
         frames = [process_file(file, gc=True) for file in tqdm(files, desc='Downloading and Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
@@ -827,7 +827,7 @@ def process_file(catalog_file, gc=False):
             if isinstance(ds[v].attrs['units'], str):  # because some units use non-standard characters...
                 if time_pattern.match(ds[v].attrs['units']):
                     del(ds[v].attrs['_FillValue'])  # no fill values for time!
-                    ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00Z'
+                    ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00.000Z'
                     np_time = ntp_date + (ds[v] * 1e9).astype('timedelta64[ns]')
                     ds[v] = np_time
 
@@ -835,8 +835,7 @@ def process_file(catalog_file, gc=False):
     ds = ds.sortby('time')
 
     # clear-up some global attributes we will no longer be using
-    keys = ['DODS.strlen', 'DODS.dimName',
-            'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
+    keys = ['DODS.strlen', 'DODS.dimName', 'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
     for key in keys:
         if key in ds.attrs:
             del(ds.attrs[key])
@@ -857,41 +856,49 @@ def process_file(catalog_file, gc=False):
 
 def merge_frames(frames):
     """
-    Merge the multiple data files downloaded from the M2M system or the Gold
+    Merge the multiple data frames downloaded from the M2M system or the Gold
     Copy THREDDS server into a single xarray data set. Keep track of how many
-    files fail to merge.
+    frames fail to merge.
 
     :param frames: The data frames to concatenate/merge into a single data set
     :return data: The final, merged data set
     """
     # merge the list of processed data frames into a single data set
-    nfiles = len(frames)
-    nframes = nfiles
-    bad_files = 0
+    nframes = len(frames)
+    bad_frames = 0
     if nframes > 1:
-        # try merging all of the frames into a single data set (some frames may be corrupted, and will be skipped)
-        data, fail = _frame_merger(frames[0], frames)
+        try:
+            # first try to just concatenate all the frames; this usually works, but not always
+            data = xr.concat(frames, dim='time')
+        except ValueError:
+            # try merging the frames one-by-one into a single data set
+            data, fail = _frame_merger(frames[0], frames)
 
-        # if all of the files, except for the first one, failed that would suggest the first file is the problem.
-        # try the merge again, reset the starting frame to skip the first one.
-        if nframes - fail == 1:
-            data, fail = _frame_merger(frames[1], frames[1:])
-            nframes -= 1
+            # if all files failed that would suggest the first file is the problem.
+            # try the merge again, resetting the starting frame to skip the first one.
+            if nframes - fail == 1:
+                try:
+                    bad_frames += 1
+                    data = xr.concat(frames[1:], dim='time')
+                except ValueError:
+                    # this data set has issues! try merging one more time, frame by frame
+                    data, fail = _frame_merger(frames[1], frames[1:])
+                    bad_frames += fail
 
-            # if we still can't merge the frames, then there probably is something more fundamentally wrong, and trying
-            # to account for it here is not going to be possible
-            if nframes - 1 - fail == 1:
-                message = f"Unable to merge the {len(frames)} files downloaded from the Gold Copy THREDDS server."
-                warnings.warn(message)
-                return None
-        else:
-            bad_files = nfiles - nframes + fail
+                    # if we still can't merge the frames, then there probably is something more fundamentally wrong,
+                    # and trying to account for it here is not going to be possible
+                    if nframes - 1 - fail == 1:
+                        message = f"Unable to merge the {nframes} files downloaded from the Gold Copy THREDDS server."
+                        warnings.warn(message)
+                        return None
+            else:
+                bad_frames += fail
     else:
         # there is just the one
         data = frames[0]
 
-    if bad_files > 0:
-        message = "{} of the {} downloaded files failed to merge.".format(bad_files, nfiles)
+    if bad_frames > 0:
+        message = "{} of the {} downloaded files failed to merge.".format(bad_frames, nframes)
         warnings.warn(message)
 
     data = data.sortby(['deployment', 'time'])

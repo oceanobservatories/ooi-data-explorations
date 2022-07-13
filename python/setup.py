@@ -38,6 +38,7 @@ setup(
     packages = find_packages(),
     install_requires = [
         'xarray',
+        'dask',
         'munch',
         'tqdm',
         'urllib3',

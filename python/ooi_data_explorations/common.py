@@ -6,6 +6,7 @@
     M2M interface
 """
 import argparse
+import dask
 import io
 import netrc
 import numpy as np
@@ -684,7 +685,7 @@ def m2m_collect(data, tag='.*\\.nc$'):
     return m2m
 
 
-def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$'):
+def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask=False):
     """
     Download data from the OOI Gold Copy THREDDS catalog, using the reference
     designator parameters to select the catalog of interest and the regex tag
@@ -703,15 +704,17 @@ def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$'):
         recovered_host or recovered_inst)
     :param stream: Stream name that contains the data of interest
     :param tag: regex pattern to select the NetCDF files to download
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
     :return data: All of the data, combined into a single dataset
     """
     # download the data from the Gold Copy THREDDS server
     dataset_id = '-'.join([site, node, sensor, method, stream]) + '/catalog.html'
-    data = gc_collect(dataset_id, tag)
+    data = gc_collect(dataset_id, tag, use_dask)
     return data
 
 
-def gc_collect(dataset_id, tag='.*\\.nc$'):
+def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     """
     Use a regex tag combined with the dataset ID to collect data from the OOI
     Gold Copy THREDDS catalog. The collected data is gathered into an xarray
@@ -720,6 +723,8 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
     :param dataset_id: dataset ID as a string
     :param tag: regex tag to use in discriminating the data files, so we only
         collect the data files of interest
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
     :return gc: the collected Gold Copy data as an xarray dataset
     """
     # construct the THREDDS catalog URL based on the dataset ID
@@ -733,10 +738,12 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
-        frames = [process_file(file, gc=True) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+        frames = [process_file(file, gc=True, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
+                                                                                              'Processing Data '
+                                                                                              'Files')]
     else:
         # multiple files, use multithreading to download concurrently
-        part_files = partial(process_file, gc=True)
+        part_files = partial(process_file, gc=True, use_dask=use_dask)
         with ThreadPoolExecutor(max_workers=10) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
@@ -747,9 +754,9 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
         return None
 
     # merge the data frames into a single data set
-    gc = merge_frames(frames)
+    data = merge_frames(frames)
 
-    return gc
+    return data
 
 
 def list_files(url, tag='.*\\.nc$'):
@@ -770,7 +777,7 @@ def list_files(url, tag='.*\\.nc$'):
     return [node.get('href') for node in soup.find_all('a', text=pattern)]
 
 
-def process_file(catalog_file, gc=False):
+def process_file(catalog_file, gc=False, use_dask=False):
     """
     Function to download one of the NetCDF files as an xarray data set, convert
     to time as the appropriate dimension instead of obs, and drop the
@@ -785,6 +792,8 @@ def process_file(catalog_file, gc=False):
     :param gc: Boolean flag to indicate whether the file is from the Gold
         Copy THREDDS server (gc = True), or the user's M2M THREDDS catalog
         (gc = False, default).
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default = False)
     :return: downloaded data in an xarray dataset.
     """
     if gc:
@@ -795,7 +804,10 @@ def process_file(catalog_file, gc=False):
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
     r = SESSION.get(url, timeout=(3.05, 120))
     if r.ok:
-        ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
+        if use_dask:
+            ds = xr.open_dataset(io.BytesIO(r.content), decode_cf=False, chunks=10000)
+        else:
+            ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
     else:
         failed_file = catalog_file.rpartition('/')
         warnings.warn('Failed to download %s' % failed_file[-1])
@@ -924,15 +936,17 @@ def _frame_merger(data, frames):
     for idx, frame in enumerate(frames[1:], start=2):
         try:
             # concatenation handles 99% of the cases
-            data = xr.concat([data, frame], dim='time')
-        except ValueError:
+            with dask.config.set(**{'array.slicing.split_large_chunks': False}):
+                data = xr.concat([data, frame], dim='time')
+        except (ValueError, NotImplementedError):
             try:
                 # try merging the data, usually one of the data files is missing a variable from a co-located
                 # sensor that the system was unable to find
                 _, index = np.unique(data['time'], return_index=True)
                 data = data.isel(time=index)
-                data = data.merge(frame, compat='override')
-            except ValueError:
+                with dask.config.set(**{'array.slicing.split_large_chunks': False}):
+                    data = data.merge(frame, compat='override')
+            except (ValueError, NotImplementedError):
                 # something is just not right with this data file
                 fail += 1
 

@@ -130,7 +130,17 @@ def dosta_datalogger(ds, burst=False):
     #   dcl_controller_timestamp == time, redundant so can remove
     #   internal_timestamp, there is no internal instrument clock
     #   product_number, these are all 4831s and captured in global attributes
-    ds = ds.drop(['dcl_controller_timestamp', 'product_number', 'internal_timestamp'])
+    #   estimated_oxygen_concentration_qc_executed, preliminary data product no QC tests should be applied
+    #   estimated_oxygen_concentration_qc_results, preliminary data product no QC tests should be applied
+    #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
+    #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
+    #   CGSN Update: Redo to make this a list comprehension so limited parameter datasets can also be processed
+    drop_list = ['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
+                  'estimated_oxygen_concentration_qc_executed', 'estimated_oxygen_concentration_qc_results',
+                  'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # rename some of the variables for better clarity
     rename = {
@@ -149,7 +159,11 @@ def dosta_datalogger(ds, burst=False):
         'int_ctd_pressure': 'seawater_pressure',
         'temp': 'seawater_temperature',
     }
-    ds = ds.rename(rename)
+    
+    # CGSN Update: made this iterative as above to reprocess limited parameter datasets
+    for var in ds.variables:
+        if var in rename.keys():
+            ds = ds.rename({var: rename.get(var)})
 
     # reset some attributes
     for key, value in ATTRS.items():

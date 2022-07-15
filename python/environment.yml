@@ -3,12 +3,15 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python>=3.7
+  - python>=3.8
   - argcomplete
   - beautifulsoup4
   - bottleneck
+  - cgsn_parsers
   - chest
+  - conda-build
   - configobj
+  - dask
   - geos
   - gsw
   - hdf4
@@ -40,5 +43,4 @@ dependencies:
   - yaml
   - pip:
     - https://bitbucket.org/ooicgsn/pyseas/get/develop.zip
-    - https://bitbucket.org/ooicgsn/cgsn-parsers/get/master.zip
     - https://bitbucket.org/ooicgsn/cgsn-processing/get/master.zip

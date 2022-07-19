@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import dateutil.parser as parser
 import numpy as np
 import os
+import pytz
 import xarray as xr
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, get_deployment_dates, \
-    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
+from datetime import timedelta
+
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, \
+    list_deployments, get_deployment_dates, get_vocabulary, update_dataset, ENCODINGS
 
 # from cgsn_processing.process.finding_calibrations import find_calibration
 # from cgsn_processing.process.proc_optaa import Calibrations, apply_dev, apply_tscorr, apply_scatcorr, \
@@ -315,6 +319,7 @@ ATTRS = dict({
     }
 })
 
+
 def estimate_chl_poc(optaa):
     """
     The OPTAA data can be used to create estimates of the chlorophyll and
@@ -394,6 +399,54 @@ def calculate_ratios(optaa):
     optaa['ratio_qband'] = apg[:, m676] / apg[:, m440]
 
     return optaa
+
+
+def adjusted_dates(site, node, sensor, deploy):
+    """
+    Due to a bug in the way the system is currently assigning the calibration
+    coefficients, we need to bound the data requests for each deployment
+    based on the start and end times of the neighboring deployments. We cannot
+    take advantage of the overlapping deployments as that may result the wrong
+    calibration coefficients being applied to the record.
+
+    :param site: Site designator, extracted from the first part of the
+        reference designator
+    :param node: Node designator, extracted from the second part of the
+        reference designator
+    :param sensor: Sensor designator, extracted from the third and fourth part
+        of the reference designator
+    :param deploy: sensor deployment number
+    :return start: Deployment start date, adjusted to ensure no overlap with
+        the previous, if any, deployment
+    :return stop: Deployment stop date, adjusted to ensure no overlap with
+        the following, if any, deployment
+    """
+    deployments = list_deployments(site, node, sensor)
+    if deploy == deployments[0]:
+        # First deployment, use the deployment start date and adjust the stop date
+        start, _ = get_deployment_dates(site, node, sensor, deploy)
+
+        stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
+        stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
+        stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+    elif deploy == deployments[-1]:
+        # Last deployment, use the deployment end date and adjust the start date
+        start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
+        start = start.astimezone(pytz.utc) + timedelta(hours=1)
+        start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
+        _, stop = get_deployment_dates(site, node, sensor, deploy)
+    else:
+        # middle deployments, adjust the start and stop dates
+        start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
+        start = start.astimezone(pytz.utc) + timedelta(hours=1)
+        start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
+        stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
+        stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
+        stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
+    return start, stop
 
 
 def optaa_datalogger(ds):
@@ -531,32 +584,25 @@ def main(argv=None):
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
 
-    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
+    # if we are specifying a deployment number, then create the start and stop dates
     if deploy:
-        # download the data for the deployment
-        optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
+        start, stop = adjusted_dates(site, node, sensor, deploy)
 
-        # check to see if we downloaded any data
-        if not optaa:
-            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
-                                                                                    stream, deploy))
-            raise SystemExit(exit_text)
-    else:
-        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
-        r = m2m_request(site, node, sensor, method, stream, start, stop)
-        if not r:
-            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
-                                                                                  stream, start, stop))
-            raise SystemExit(exit_text)
+    # Request the data for download from OOINet via the M2M API using the specified dates
+    r = m2m_request(site, node, sensor, method, stream, start, stop)
+    if not r:
+        exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                              stream, start, stop))
+        raise SystemExit(exit_text)
 
-        # Valid M2M request, start downloading the data
-        optaa = m2m_collect(r, '.*OPTAA.*\\.nc$')
+    # Valid M2M request, start downloading the data
+    optaa = m2m_collect(r, '.*OPTAA.*\\.nc$')
 
-        # check to see if we downloaded any data
-        if not optaa:
-            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
-                                                                                    stream, start, stop))
-            raise SystemExit(exit_text)
+    # check to see if we downloaded any data
+    if not optaa:
+        exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                stream, start, stop))
+        raise SystemExit(exit_text)
 
     optaa = optaa_datalogger(optaa)
     vocab = get_vocabulary(site, node, sensor)[0]

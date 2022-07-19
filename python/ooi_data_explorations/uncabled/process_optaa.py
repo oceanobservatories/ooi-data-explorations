@@ -468,8 +468,6 @@ def optaa_datalogger(ds):
     if 'temp' not in ds.variables:
         ds['temp'] = ('time', ds['deployment'] * np.nan)
         ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
-        ds['optical_absorption'] = (['time, wavelength'], ds['a_signal_counts'] * np.nan)
-        ds['beam_attenuation'] = (['time, wavelength'], ds['c_signal_counts'] * np.nan)
 
     # pull out the number of wavelengths and then drop the variable (will add to the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)

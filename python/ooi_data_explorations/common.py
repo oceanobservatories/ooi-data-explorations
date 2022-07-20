@@ -666,11 +666,11 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     files = list_files(url, tag)
 
     # Process the data files found above and concatenate into a single data set
-    print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
+    print('Downloading %d data file(s) from the user''s OOI M2M THREDDS catalog' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
         frames = [process_file(file, gc=False, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
-                                                                                           'Processing Data Files')]
+                                                                                               'Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc=False, use_dask=use_dask)

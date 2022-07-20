@@ -422,29 +422,30 @@ def adjusted_dates(site, node, sensor, deploy):
         the following, if any, deployment
     """
     deployments = list_deployments(site, node, sensor)
+    start, stop = get_deployment_dates(site, node, sensor, deploy)
     if deploy == deployments[0]:
         # First deployment, use the deployment start date and adjust the stop date
-        start, _ = get_deployment_dates(site, node, sensor, deploy)
-
-        stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
-        stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
-        stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        if deploy + 1 in deployments:
+            stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
+            stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
+            stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
     elif deploy == deployments[-1]:
         # Last deployment, use the deployment end date and adjust the start date
-        start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
-        start = start.astimezone(pytz.utc) + timedelta(hours=1)
-        start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-
-        _, stop = get_deployment_dates(site, node, sensor, deploy)
+        if deploy - 1 in deployments:
+            start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
+            start = start.astimezone(pytz.utc) + timedelta(hours=1)
+            start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
     else:
         # middle deployments, adjust the start and stop dates
-        start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
-        start = start.astimezone(pytz.utc) + timedelta(hours=1)
-        start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        if deploy - 1 in deployments:
+            start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
+            start = start.astimezone(pytz.utc) + timedelta(hours=1)
+            start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
-        stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
-        stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
-        stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        if deploy + 1 in deployments:
+            stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
+            stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
+            stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 
     return start, stop
 
@@ -466,8 +467,8 @@ def optaa_datalogger(ds):
 
     # check for data from a co-located CTD, if not present create the variables using NaN as the fill value
     if 'temp' not in ds.variables:
-        ds['temp'] = ('time', ds['deployment'] * np.nan)
-        ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
+        ds['temp'] = ('time', ds['deployment'].data * np.nan)
+        ds['practical_salinity'] = ('time', ds['deployment'].data * np.nan)
 
     # pull out the number of wavelengths and then drop the variable (will add to the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)

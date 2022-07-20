@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 
-from ooi_data_explorations.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, \
-    m2m_collect, update_dataset, CONFIG, ENCODINGS
-from ooi_data_explorations.uncabled.process_optaa import optaa_datalogger
+from ooi_data_explorations.common import list_deployments, get_vocabulary, m2m_request, m2m_collect, \
+    update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.uncabled.process_optaa import adjusted_dates, optaa_datalogger
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[-1]
-    start, stop = get_deployment_dates(site, node, sensor, deploy)
+    start, stop = adjusted_dates(site, node, sensor, deploy)
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)

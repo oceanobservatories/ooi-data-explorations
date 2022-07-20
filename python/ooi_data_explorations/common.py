@@ -647,7 +647,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     return data
 
 
-def m2m_collect(data, tag='.*\\.nc$'):
+def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     """
     Use a regex tag combined with the results of the M2M data request to
     collect the data from the THREDDS catalog. Collected data is gathered
@@ -657,6 +657,8 @@ def m2m_collect(data, tag='.*\\.nc$'):
         where the data is to be found for download
     :param tag: regex tag to use in discriminating the data files, so we only
         collect the correct ones
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
     :return: the collected data as an xarray dataset
     """
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
@@ -664,14 +666,16 @@ def m2m_collect(data, tag='.*\\.nc$'):
     files = list_files(url, tag)
 
     # Process the data files found above and concatenate into a single data set
-    print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
+    print('Downloading %d data file(s) from the user''s OOI M2M THREDDS catalog' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
-        frames = [process_file(file) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+        frames = [process_file(file, gc=False, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
+                                                                                               'Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
+        part_files = partial(process_file, gc=False, use_dask=use_dask)
         with ThreadPoolExecutor(max_workers=10) as executor:
-            frames = list(tqdm(executor.map(process_file, files), total=len(files),
+            frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
     if not frames:
@@ -977,8 +981,12 @@ def update_dataset(ds, depth):
         lon = ds.lon.values[0][0]
         ds = ds.drop_vars(['lat', 'lon'])
     else:
-        lat = ds.attrs['lat'][0]
-        lon = ds.attrs['lon'][0]
+        if np.isscalar(ds.lat):
+            lat = ds.attrs['lat']
+            lon = ds.attrs['lon']
+        else:
+            lat = ds.attrs['lat'][0]
+            lon = ds.attrs['lon'][0]
         del(ds.attrs['lat'])
         del(ds.attrs['lon'])
 

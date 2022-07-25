@@ -148,7 +148,7 @@ def generate_qartod(site, node, sensor, cut_off):
     data = combine_delivery_methods(site, node, sensor)
 
     # remove the obviously bad data (DO less than 0)
-    data = data.where(data.oxygen_concentration_corrected > 0)
+    data = data.where(data.oxygen_concentration_corrected > 0, drop=True)
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -163,7 +163,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # clean-up the data, removing all records where the rollup annotation (every parameter fails) was set to fail.
     if 'rollup_annotations_qc_results' in data.variables:
-        data = data.where(data.rollup_annotations_qc_results < 4)
+        data = data.where(data.rollup_annotations_qc_results != 4, drop=True)
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.

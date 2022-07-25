@@ -267,7 +267,12 @@ def dosta_ctdbp_instrument(ds):
     #   internal_timestamp == time, redundant so can remove
     ds = ds.drop(['internal_timestamp', 'ctd_time'])
 
-    # rename some of the variables for better clarity
+    # check for data from a co-located CTD, if not present create the variables using NaN as the fill value
+    if 'temp' not in ds.variables:
+        ds['temp'] = ('time', ds['deployment'].data * np.nan)
+        ds['int_ctd_pressure'] = ('time', ds['deployment'].data * np.nan)
+
+    # rename some variables for better clarity
     rename = {
         'oxygen': 'raw_oxygen_concentration',
         'ctd_tc_oxygen': 'oxygen_concentration',

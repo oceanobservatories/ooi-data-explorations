@@ -123,7 +123,7 @@ def generate_qartod(site, node, sensor, cut_off):
         data['oxygen_concentration_corrected'][m] = np.nan
 
     if 'rollup_annotations_qc_results' in data.variables:
-        data = data.where(data.rollup_annotations_qc_results < 4)
+        data = data.where(data.rollup_annotations_qc_results != 4)
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.

@@ -130,13 +130,10 @@ def dosta_datalogger(ds, burst=False):
     #   dcl_controller_timestamp == time, redundant so can remove
     #   internal_timestamp, there is no internal instrument clock
     #   product_number, these are all 4831s and captured in global attributes
-    #   estimated_oxygen_concentration_qc_executed, preliminary data product no QC tests should be applied
-    #   estimated_oxygen_concentration_qc_results, preliminary data product no QC tests should be applied
     #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
     #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
     #   CGSN Update: Redo to make this a list comprehension so limited parameter datasets can also be processed
     drop_list = ['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
-                 'estimated_oxygen_concentration_qc_executed', 'estimated_oxygen_concentration_qc_results',
                  'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
     for var in ds.variables:
         if var in drop_list:
@@ -145,6 +142,8 @@ def dosta_datalogger(ds, burst=False):
     # rename variables for better clarity
     rename = {
         'estimated_oxygen_concentration': 'oxygen_concentration',
+        'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
+        'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
         'estimated_oxygen_saturation': 'oxygen_saturation',
         'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
         'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
@@ -170,6 +169,11 @@ def dosta_datalogger(ds, burst=False):
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
@@ -239,6 +243,11 @@ def dosta_ctdbp_datalogger(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     # replace the fill-values (CTD uses a 0 when there is no comms to the DOSTA) with a NaN
     m = ds['oxygen_concentration'] <= 0
     ds['oxygen_concentration'][m] = np.nan
@@ -292,6 +301,11 @@ def dosta_ctdbp_instrument(ds):
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
 
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
     # replace the fill-values (CTD uses a 0 when there is no comms to the DOSTA) with a NaN
     m = ds['oxygen_concentration'] <= 0
     ds['oxygen_concentration'][m] = np.nan
@@ -311,9 +325,19 @@ def dosta_cspp(ds):
     :return ds: cleaned up data set
     """
     # drop some of the variables:
-    #   suspect_timestamp = not used
-    #   internal_timestamp, there is no instrument clock == profiler_timestamp == time, redundant
     ds = ds.drop(['suspect_timestamp', 'internal_timestamp', 'profiler_timestamp'])
+    # drop some of the variables:
+    #   suspect_timestamp = not used
+    #   internal_timestamp == profiler_timestamp == time, redundant
+    #   profiler_timestamp == time, redundant
+    #   product_number, these are all 4831s and this is captured in the global attributes
+    #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
+    #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
+    drop_list = ['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
+                 'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # rename some variables for better clarity
     rename = {
@@ -321,8 +345,6 @@ def dosta_cspp(ds):
         'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
         'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
         'estimated_oxygen_saturation': 'oxygen_saturation',
-        'estimated_oxygen_saturation_qc_executed': 'oxygen_saturation_qc_executed',
-        'estimated_oxygen_saturation_qc_results': 'oxygen_saturation_qc_results',
         'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
         'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
         'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',

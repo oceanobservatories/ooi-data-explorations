@@ -37,7 +37,7 @@ def combine_delivery_methods(site, node, sensor):
     # set the stream and tag constants
     tag = '.*DOFST.*\\.nc$'
 
-    # this DOFST is part of a CSPP or WFP and includes telemetered and recovered data
+    # this DOFST is part of a WFP and includes telemetered and recovered data
     print('##### Downloading the telemetered DOFST data for %s #####' % site)
     telem = load_gc_thredds(site, node, sensor, 'telemetered', 'dofst_k_wfp_instrument', tag)
     deployments = []
@@ -91,15 +91,6 @@ def generate_qartod(site, node, sensor, cut_off):
     # load the combined data for the different sources of DOFST data
     data = combine_delivery_methods(site, node, sensor)
 
-    # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
-    # HITL annotations that can be combined with system annotations to create a cleaned up data set
-    # prior to calculating the QARTOD test values
-    index = 10  # decimate the WFP data so we can process it
-    do_fail = data.oxygen_concentration_corrected_qc_summary_flag.where(
-        data.oxygen_concentration_corrected_qc_summary_flag > 3).notnull()
-    blocks = identify_blocks(do_fail[::index], [18, 72])
-    hitl = create_annotations(site, node, sensor, blocks)
-
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)
@@ -108,22 +99,21 @@ def generate_qartod(site, node, sensor, cut_off):
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-    # append the fail annotations to the existing annotations
-    annotations = annotations.append(pd.DataFrame(hitl), ignore_index=True, sort=False)
+        # create an annotation-based quality flag
+        data = add_annotation_qc_flags(data, annotations)
 
-    # create an annotation-based quality flag
-    data = add_annotation_qc_flags(data, annotations)
+    # clean-up the data, NaN-ing values that were marked as fail in the QC checks and then removing all
+    # records where the rollup annotation (every parameter fails) was set to fail.
+    if 'oxygen_concentration_corrected_qc_summary_flag' in data.variables:
+        m = data.oxygen_concentration_corrected_qc_summary_flag == 4
+        data['oxygen_concentration_corrected'][m] = np.nan
 
-    # clean-up the data, NaN-ing values that were marked as fail in the QC checks and/or identified as a block
-    # of failed data, and then removing all records where the rollup annotation (every parameter fails) was
-    # set to fail.
-    data['oxygen_concentration_corrected'][do_fail] = np.nan
     if 'dissolved_oxygen_annotations_qc_results' in data.variables:
         m = data.dissolved_oxygen_annotations_qc_results == 4
         data['oxygen_concentration_corrected'][m] = np.nan
 
     if 'rollup_annotations_qc_results' in data.variables:
-        data = data.where(data.rollup_annotations_qc_results != 4)
+        data = data.where(data.rollup_annotations_qc_results != 4, drop=True)
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.

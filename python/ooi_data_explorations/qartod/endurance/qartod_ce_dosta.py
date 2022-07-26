@@ -147,9 +147,6 @@ def generate_qartod(site, node, sensor, cut_off):
     # load the combined data for the different sources of DOSTA data
     data = combine_delivery_methods(site, node, sensor)
 
-    # remove the obviously bad data (DO less than 0)
-    data = data.where(data.oxygen_concentration_corrected > 0, drop=True)
-
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)
@@ -158,10 +155,25 @@ def generate_qartod(site, node, sensor, cut_off):
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-    # create an annotation-based quality flag
-    data = add_annotation_qc_flags(data, annotations)
+        # create an annotation-based quality flag
+        data = add_annotation_qc_flags(data, annotations)
 
-    # clean-up the data, removing all records where the rollup annotation (every parameter fails) was set to fail.
+    # clean-up the data, NaN-ing values that were marked as fail in the QC checks and then removing all
+    # records where the rollup annotation (every parameter fails) was set to fail.
+    if 'oxygen_concentration_corrected_qc_summary_flag' in data.variables:
+        m = data.oxygen_concentration_corrected_qc_summary_flag == 4
+        data['oxygen_concentration'][m] = np.nan
+        data['oxygen_concentration_corrected'][m] = np.nan
+        if 'svu_oxygen_concentration' in data.variables:
+            data['svu_oxygen_concentration'][m] = np.nan
+
+    if 'dissolved_oxygen_annotations_qc_results' in data.variables:
+        m = data.dissolved_oxygen_annotations_qc_results == 4
+        data['oxygen_concentration'][m] = np.nan
+        data['oxygen_concentration_corrected'][m] = np.nan
+        if 'svu_oxygen_concentration' in data.variables:
+            data['svu_oxygen_concentration'][m] = np.nan
+
     if 'rollup_annotations_qc_results' in data.variables:
         data = data.where(data.rollup_annotations_qc_results != 4, drop=True)
 

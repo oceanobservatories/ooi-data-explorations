@@ -136,20 +136,16 @@ def dosta_datalogger(ds, burst=False):
     #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
     #   CGSN Update: Redo to make this a list comprehension so limited parameter datasets can also be processed
     drop_list = ['dcl_controller_timestamp', 'product_number', 'internal_timestamp',
-                  'estimated_oxygen_concentration_qc_executed', 'estimated_oxygen_concentration_qc_results',
-                  'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
+                 'estimated_oxygen_concentration_qc_executed', 'estimated_oxygen_concentration_qc_results',
+                 'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
     for var in ds.variables:
         if var in drop_list:
             ds = ds.drop(var)
 
-    # rename some of the variables for better clarity
+    # rename variables for better clarity
     rename = {
         'estimated_oxygen_concentration': 'oxygen_concentration',
-        'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
-        'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
         'estimated_oxygen_saturation': 'oxygen_saturation',
-        'estimated_oxygen_saturation_qc_executed': 'oxygen_saturation_qc_executed',
-        'estimated_oxygen_saturation_qc_results': 'oxygen_saturation_qc_results',
         'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
         'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
         'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',

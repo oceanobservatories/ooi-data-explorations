@@ -101,12 +101,13 @@ def generate_qartod(site, node, sensor, cut_off):
     # create an annotation-based quality flag for the surface seawater data
     water = add_annotation_qc_flags(water, annotations)
 
-    # clean-up the air data, removing values that marked as suspect or fail in the annotations
-    air = air.where((air.partial_pressure_co2_atm_annotations_qc_results < 3) & (air.rollup_annotations_qc_results < 3))
+    # clean-up the air data, removing values that marked as fail in the annotations
+    air = air.where((air.partial_pressure_co2_atm_annotations_qc_results != 4)
+                    & (air.rollup_annotations_qc_results != 4))
 
     # clean-up the water data, removing values that marked as suspect or fail in the annotations
-    water = water.where((water.partial_pressure_co2_ssw_annotations_qc_results < 3) &
-                        (water.rollup_annotations_qc_results < 3))
+    water = water.where((water.partial_pressure_co2_ssw_annotations_qc_results != 4) &
+                        (water.rollup_annotations_qc_results != 4))
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.

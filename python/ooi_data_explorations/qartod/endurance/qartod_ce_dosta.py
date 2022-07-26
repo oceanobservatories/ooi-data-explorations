@@ -178,6 +178,8 @@ def generate_qartod(site, node, sensor, cut_off):
         end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
         src_date = cut.strftime('%Y-%m-%d')
 
+    _, index = np.unique(data['time'], return_index=True)
+    data = data.isel(time=index)
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
 
     # set the parameters and the gross range limits

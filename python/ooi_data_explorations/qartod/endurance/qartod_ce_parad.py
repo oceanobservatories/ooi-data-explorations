@@ -18,7 +18,7 @@ from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_parad import parad_cspp, parad_wfp
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, woa_standard_bins, \
     inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
-
+from ooi_data_explorations.qartod.endurance.qartod_ce_gliders import collect_glider
 
 def combine_delivery_methods(site, node, sensor):
     """
@@ -38,20 +38,28 @@ def combine_delivery_methods(site, node, sensor):
     tag = '.*PARAD.*\\.nc$'
 
     if node == 'SP001':
-        # this PARAD is part of a CSPP and includes recovered data only
-        print('##### Downloading the recovered_cspp PARAD data for %s #####' % site)
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'parad_j_cspp_instrument_recovered', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(rhost.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
-            deployments.append(parad_cspp(grp[1]))
-        deployments = [i for i in deployments if i]
-        rhost = xr.concat(deployments, 'time')
+        if site in ['CE01ISSP', 'CE06ISSP']:
+            # this PARAD is part of a CSPP and includes recovered data only
+            print('##### Downloading the recovered_cspp PARAD data for %s #####' % site)
+            rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'parad_j_cspp_instrument_recovered', tag)
+            deployments = []
+            print('# -- Group the data by deployment and process the data')
+            grps = list(rhost.groupby('deployment'))
+            for grp in grps:
+                print('# -- Processing recovered_host deployment %s' % grp[0])
+                deployments.append(parad_cspp(grp[1]))
+            deployments = [i for i in deployments if i]
+            rhost = xr.concat(deployments, 'time')
 
-        # merge, but do not resample the time records.
-        merged = combine_datasets(None, rhost, None, None)
+            # merge, but do not resample the time records.
+            merged = combine_datasets(None, rhost, None, None)
+        else:
+            # use the glider data records to develop the QARTOD test limits
+            if site == 'CE02SHSP':
+                merged = collect_glider(44.639, -124.304)
+            else:
+                merged = collect_glider(46.986, -124.566)
+
     else:
         # this PARAD is part of a WFP and includes telemetered and recovered data
         print('##### Downloading the telemetered PARAD data for %s #####' % site)
@@ -111,7 +119,7 @@ def generate_qartod(site, node, sensor, cut_off):
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)
-    if not annotations.empty:
+    if not annotations.empty and site not in ['CE02SHSP', 'CE07SHSP']:
         annotations = annotations.drop(columns=['@class'])
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
@@ -160,13 +168,20 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # based on node, determine if we need a depth based climatology
     depth_bins = np.array([])
-    if node in ['WFP01']:
+    if node == 'WFP01':
         vocab = get_vocabulary(site, node, sensor)[0]
         max_depth = vocab['maxdepth']
         depth_bins = woa_standard_bins()
         m = depth_bins[:, 1] <= max_depth
         depth_bins = depth_bins[m, :]
         depth_bins = depth_bins[6:, :]  # profiler doesn't go above 30 m
+
+    if node == 'SP001' and site in ['CE02SHSP', 'CE07SHSP']:
+        vocab = get_vocabulary(site, node, sensor)[0]
+        max_depth = vocab['maxdepth']
+        depth_bins = woa_standard_bins()
+        m = depth_bins[:, 1] <= max_depth
+        depth_bins = depth_bins[m, :]
 
     # create and format the climatology lookups and tables for the data
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,

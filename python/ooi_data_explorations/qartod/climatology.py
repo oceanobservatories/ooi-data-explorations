@@ -27,7 +27,12 @@ class Climatology():
             the observations for a given calendar-month.
         """
         da = ds[param].groupby(ds.time.dt.month).std()
-        self.monthly_std = pd.Series(da.values, index=da.month)
+        keys = list(da.dims)
+        if 'depth' in keys:
+            # calculate the mean standard deviation for all the depths
+            self.monthly_std = pd.Series(da.mean(dim='depth'), index=da.month)
+        else:
+            self.monthly_std = pd.Series(da.values, index=da.month)
 
         # Fill missing std values
         ind = np.arange(1, 13, 1)
@@ -39,6 +44,44 @@ class Climatology():
             self.monthly_std.index, 3)).interpolate(limit_area="inside")
         # Finally, shift values back by 3 (90 degrees) to reset index
         self.monthly_std = self.monthly_std.reindex(index=np.roll(self.monthly_std.index, -3))
+
+    def mu(self, ds, param):
+        """
+        Calculates the mean for a calendar-month from all observations for a
+        given calendar-month. Does linear interpolation to fill NaNs. Performs
+        a 90-degree phase shift to interp edge-cases.
+
+        Parameters
+        ----------
+        ds: (xarray.DataSet)
+            DataSet of the original time series observations
+        param: (str)
+            A string corresponding to the variable in the DataSet which is fit.
+
+        Attributes
+        ----------
+        monthly_mu: (pandas.Series)
+            The mean for a calendar month calculated from all observations for
+            a given calendar-month.
+        """
+        da = ds[param].groupby(ds.time.dt.month).mean()
+        keys = list(da.dims)
+        if 'depth' in keys:
+            # calculate the mean for all the depths
+            self.monthly_mu = pd.Series(da.mean(dim='depth'), index=da.month)
+        else:
+            self.monthly_mu = pd.Series(da.values, index=da.month)
+
+        # Fill missing std values
+        ind = np.arange(1, 13, 1)
+        self.monthly_mu = self.monthly_mu.reindex(index=ind)
+        # First, interpolate only NaNs surrounded by valid values
+        self.monthly_mu = self.monthly_mu.interpolate(limit_area="inside")
+        # Second, shift values by 3 (90 degrees) to capture edge cases
+        self.monthly_mu = self.monthly_mu.reindex(index=np.roll(
+            self.monthly_mu.index, 3)).interpolate(limit_area="inside")
+        # Finally, shift values back by 3 (90 degrees) to reset index
+        self.monthly_mu = self.monthly_mu.reindex(index=np.roll(self.monthly_mu.index, -3))
 
     def fit(self, ds, param):
         """Calculate the climatological fit and monthly standard deviations.
@@ -80,6 +123,9 @@ class Climatology():
         """
         # Resample the data to monthly means
         mu = ds[param].resample(time="M").mean()
+        keys = list(mu.dims)
+        if 'depth' in keys:
+            mu = mu.mean(dim='depth')
 
         # Next, build the model
         ts = mu.values
@@ -109,14 +155,20 @@ class Climatology():
             "variance_explained": 1 - resid / sum((ts - ts.mean()) ** 2)
         }
 
-        # Calculate the two-cycle fitted data
-        fitted_data = beta[0] + beta[1]*np.sin(2*np.pi*f*t_out) + beta[2]*np.cos(
-            2*np.pi*f*t_out) + beta[3]*np.sin(4*np.pi*f*t_out) + beta[4]*np.cos(4*np.pi*f*t_out)
-        fitted_data = pd.Series(fitted_data, index=mu.get_index("time"))
-        self.fitted_data = fitted_data
+        if self.regression['variance_explained'] > 0.15:
+            # Calculate the two-cycle fitted data
+            fitted_data = beta[0] + beta[1]*np.sin(2*np.pi*f*t_out) + beta[2]*np.cos(
+                2*np.pi*f*t_out) + beta[3]*np.sin(4*np.pi*f*t_out) + beta[4]*np.cos(4*np.pi*f*t_out)
 
-        # Return the monthly_avg
-        self.monthly_fit = self.fitted_data.groupby(self.fitted_data.index.month).mean()
+            fitted_data = pd.Series(fitted_data, index=mu.get_index("time"))
+            self.fitted_data = fitted_data
+
+            # Return the monthly_avg from the fitted data
+            self.monthly_fit = self.fitted_data.groupby(self.fitted_data.index.month).mean()
+        else:
+            # Return the monthly_avg from the monthly means
+            self.mu(ds, param)
+            self.monthly_fit = self.monthly_mu
 
         # Return the monthly_std
         self.std(ds, param)

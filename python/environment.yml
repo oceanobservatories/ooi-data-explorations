@@ -12,6 +12,7 @@ dependencies:
   - conda-build
   - configobj
   - dask
+  - erddapy
   - geos
   - gsw
   - hdf4

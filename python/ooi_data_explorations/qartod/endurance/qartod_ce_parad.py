@@ -6,25 +6,27 @@
     Mooring and Coastal Surface-Piercing Profilers (CSPP) and process the data
     to generate QARTOD Gross Range and Climatology test limits
 """
-import dateutil.parser as parser
+import dask
 import numpy as np
 import os
 import pandas as pd
 import pytz
 import xarray as xr
 
-from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, add_annotation_qc_flags
-from ooi_data_explorations.combine_data import combine_datasets
-from ooi_data_explorations.uncabled.process_parad import parad_cspp, parad_wfp
+from ftplib import FTP
+from pysolar.solar import get_altitude
+from pysolar.radiation import get_radiation_direct
+
+from ooi_data_explorations.common import get_annotations, get_vocabulary, list_deployments, get_deployment_dates, \
+    get_sensor_information
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, woa_standard_bins, \
     inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
-from ooi_data_explorations.qartod.endurance.qartod_ce_gliders import collect_glider
 
-def combine_delivery_methods(site, node, sensor):
+
+# noinspection PyTypeChecker
+def generate_qartod(site, node, sensor):
     """
-    Takes the downloaded data from the different data delivery methods for the
-    profiling Photosynthetically Active Radiation (PARAD) sensors, and combines
-    them into a single, merged xarray data set.
+    blah, blah, blah.
 
     :param site: Site designator, extracted from the first part of the
         reference designator
@@ -32,80 +34,6 @@ def combine_delivery_methods(site, node, sensor):
         reference designator
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
-    :return merged: the merged PARAD dataset
-    """
-    # set the tag constant
-    tag = '.*PARAD.*\\.nc$'
-
-    if node == 'SP001':
-        if site in ['CE01ISSP', 'CE06ISSP']:
-            # this PARAD is part of a CSPP and includes recovered data only
-            print('##### Downloading the recovered_cspp PARAD data for %s #####' % site)
-            rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'parad_j_cspp_instrument_recovered', tag)
-            deployments = []
-            print('# -- Group the data by deployment and process the data')
-            grps = list(rhost.groupby('deployment'))
-            for grp in grps:
-                print('# -- Processing recovered_host deployment %s' % grp[0])
-                deployments.append(parad_cspp(grp[1]))
-            deployments = [i for i in deployments if i]
-            rhost = xr.concat(deployments, 'time')
-
-            # merge, but do not resample the time records.
-            merged = combine_datasets(None, rhost, None, None)
-        else:
-            # use the glider data records to develop the QARTOD test limits
-            if site == 'CE02SHSP':
-                merged = collect_glider(44.639, -124.304)
-            else:
-                merged = collect_glider(46.986, -124.566)
-
-    else:
-        # this PARAD is part of a WFP and includes telemetered and recovered data
-        print('##### Downloading the telemetered PARAD data for %s #####' % site)
-        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'parad_k__stc_imodem_instrument', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(telem.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing telemetered deployment %s' % grp[0])
-            deployments.append(parad_wfp(grp[1]))
-        deployments = [i for i in deployments if i]
-        telem = xr.concat(deployments, 'time')
-
-        print('##### Downloading the recovered_wfp PARAD data for %s #####' % site)
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_wfp', 'parad_k__stc_imodem_instrument_recovered', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(rhost.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
-            deployments.append(parad_wfp(grp[1]))
-        deployments = [i for i in deployments if i]
-        rhost = xr.concat(deployments, 'time')
-
-        # merge, but do not resample the time records.
-        merged = combine_datasets(telem, rhost, None, None)
-
-    return merged
-
-
-def generate_qartod(site, node, sensor, cut_off):
-    """
-    Load all PARAD data for a defined reference designator (using the site,
-    node and sensor names to construct the reference designator) and
-    collected via the different data delivery methods and combine them into a
-    single data set from which QARTOD test limits for the gross range and
-    climatology tests can be calculated.
-
-    :param site: Site designator, extracted from the first part of the
-        reference designator
-    :param node: Node designator, extracted from the second part of the
-        reference designator
-    :param sensor: Sensor designator, extracted from the third and fourth part
-        of the reference designator
-    :param cut_off: string formatted date to use as cut-off for data to add
-        to QARTOD test sets
     :return gr_lookup: CSV formatted strings to save to a csv file for the
         QARTOD gross range lookup tables.
     :return clm_lookup: CSV formatted strings to save to a csv file for the
@@ -113,80 +41,125 @@ def generate_qartod(site, node, sensor, cut_off):
     :return clm_table: CSV formatted strings to save to a csv file for the
         QARTOD climatology range tables.
     """
-    # load the combined data for the different sources of PARAD data
-    data = combine_delivery_methods(site, node, sensor)
-
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)
-    if not annotations.empty and site not in ['CE02SHSP', 'CE07SHSP']:
+    if not annotations.empty:
         annotations = annotations.drop(columns=['@class'])
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-        # create an annotation-based quality flag
-        data = add_annotation_qc_flags(data, annotations)
+    # get the min and max depth for the site-node-sensor from the M2M vocabulary
+    vocab = get_vocabulary(site, node, sensor)[0]
+    min_depth = vocab['mindepth']
+    max_depth = vocab['maxdepth']
 
-    # clean-up the data, NaN-ing values that were marked as fail in the QC checks and then removing all
-    # records where the rollup annotation (every parameter fails) was set to fail.
-    if 'par_qc_summary_flag' in data.variables:
-        m = data.par_qc_summary_flag == 4
-        data['par'][m] = np.nan
+    # gather the latitude and longitude data for all the deployments and calculate the mean location
+    deployments = list_deployments(site, node, sensor)
+    latitude = []
+    longitude = []
+    for deploy in deployments:
+        metadata = get_sensor_information(site, node, sensor, deploy)[0]
+        latitude.append(metadata['location']['latitude'])
+        longitude.append(metadata['location']['longitude'])
 
-    if 'rollup_annotations_qc_results' in data.variables:
-        data = data.where(data.rollup_annotations_qc_results != 4, drop=True)
+    latitude = np.mean(latitude)
+    longitude = np.mean(longitude)
 
-    # if a cut_off date was used, limit data to all data collected up to the cut_off date.
-    # otherwise, set the limit to the range of the downloaded data.
-    if cut_off:
-        cut = parser.parse(cut_off)
-        cut = cut.astimezone(pytz.utc)
-        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
-        src_date = cut.strftime('%Y-%m-%d')
+    # set up, if not already created a directory to save the Coast Watch data (saves reprocessing the data)
+    kd_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/coastwatch/kdpar')
+    kd_path = os.path.abspath(kd_path)
+    if not os.path.exists(kd_path):
+        os.makedirs(kd_path)
+
+    kd_file = '%s.noaa.viirs.monthly.sq.kdpar.nc' % site.lower()
+    kd_out = os.path.join(kd_path, kd_file)
+    if os.path.isfile(kd_out):
+        kd = xr.load_dataset(kd_out)
     else:
-        cut = parser.parse(data.time_coverage_end)
-        cut = cut.astimezone(pytz.utc)
-        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
-        src_date = cut.strftime('%Y-%m-%d')
+        # Data obtained from the "NOAA MSL12 Ocean Color - Science Quality - VIIRS SNPP" satellite data products
+        # page, downloading the L3 monthly KdPAR data from the FTP server (ERDDAP and THREDDS servers proved too
+        # unstable to rely on). See the data products web page for more information:
+        #   https://coastwatch.noaa.gov/cw/satellite-data-products/ocean-color/science-quality/viirs-snpp.html
+        # check to see if the data has been downloaded, if not do so first
+        if not os.path.exists(os.path.join(kd_path, 'raw')):
+            os.makedirs(os.path.join(kd_path, 'raw'))
+            ftp_server = 'ftp.star.nesdis.noaa.gov'
+            ftp_server_path = '/pub/socd1/mecb/coastwatch/viirs/science/L3/global/kd/monthly/WW00/'
+            ftp = FTP(ftp_server)
+            ftp.login(user='anonymous')
+            ftp.cwd(ftp_server_path)
+            files = ftp.nlst('*kdpar.nc')
+            for file in files:
+                print('downloading %s' % os.path.join(kd_path, 'raw', os.path.basename(file)))
+                with open(os.path.join(kd_path, 'raw', os.path.basename(file)), 'wb') as f:
+                    ftp.retrbinary('RETR %s' % file, f.write)
 
-    _, index = np.unique(data['time'], return_index=True)
-    data = data.isel(time=index)
-    data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
+            ftp.quit()
+
+        # load the Kd(PAR) data into an xarray dataset
+        with dask.config.set(**{'array.slicing.split_large_chunks': False}):
+            kd = xr.open_mfdataset(os.path.join(kd_path, 'raw/*.nc'), combine='nested', concat_dim='time',
+                                   engine='netcdf4')
+
+        # clean up the data set and use a simple bounding box to limit the extent to the site of interest
+        kd = kd.drop_vars(['coord_ref', 'palette'])
+        kd = kd.where((kd['lat'] >= latitude - 0.09375) & (kd['lat'] <= latitude + 0.09375), drop=True)
+        kd = kd.where((kd['lon'] >= longitude - 0.09375) & (kd['lon'] <= longitude + 0.09375), drop=True)
+
+        kd = kd.mean(dim=['altitude', 'lat', 'lon'], keep_attrs=True)
+        kd = kd.sortby('time')
+
+        kd['kd_par'] = kd.kd_par.compute()  # convert dask array to standard
+        kd.to_netcdf(kd_out, mode='w', format='NETCDF4', engine='h5netcdf')
+
+    # calculate clear sky irradiance at solar noon for this site using the Kd(PAR) time record
+    date = pd.to_datetime(kd.time).to_pydatetime()
+    surface = []
+    for d in date:
+        dt = d.replace(tzinfo=pytz.timezone('US/Pacific'))
+        altitude = get_altitude(latitude, longitude, dt)
+        # PAR is approximately 50% of the shortwave radiation, and we need to convert from W/m^2 to umol/m^2/s
+        surface.append(get_radiation_direct(dt, altitude) * 0.5 / 0.21739130434)
+
+    # create a 2D array with Ed(PAR) estimated as a function of depth from the satellite Kd(PAR) values and
+    # model estimates of clear-sky irradiance
+    depths = np.arange(min_depth, max_depth + 0.125, 0.125)
+    ed = np.zeros([len(date), len(depths)])
+    for i in range(len(date)):
+        ed[i, :] = surface[i] * np.exp(-kd.kd_par.values[i] * depths)
+
+    # convert to an xarray dataset
+    ed = xr.Dataset({
+        'Ed': (['time', 'depth'], ed),
+    }, coords={'time': kd.time.values, 'depth': depths})
 
     # set the parameters and the gross range limits
-    parameters = ['par']
+    parameters = ['Ed']
     limits = [0, 5000]
 
     # create the initial gross range entry
-    quantile = data['depth'].quantile([0.01, 0.99], dim='time', interpolation='linear')
-    sub = data.where(data.depth <= quantile[0], drop=True)  # limit gross range estimation to near-surface values
+    quantile = ed['depth'].quantile(0.01).values     # upper 1% of the depth array
+    sub = ed.where(ed.depth <= quantile, drop=True)  # limit gross range estimation to near-surface values
+    sub = sub.max(dim=['depth'], keep_attrs=True)
     gr_lookup = process_gross_range(sub, parameters, limits, site=site,
                                     node=node, sensor=sensor, stream='parad_replace_me')
 
     # add the stream name and the source comment
-    gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
+    gr_lookup['notes'] = ('User range modeled from data collected by the NOAA VIIRS satellite and estimates of '
+                          'clear sky irradiance from the pysolar package.')
 
-    # based on node, determine if we need a depth based climatology
-    depth_bins = np.array([])
-    if node == 'WFP01':
-        vocab = get_vocabulary(site, node, sensor)[0]
-        max_depth = vocab['maxdepth']
-        depth_bins = woa_standard_bins()
-        m = depth_bins[:, 1] <= max_depth
-        depth_bins = depth_bins[m, :]
-        depth_bins = depth_bins[6:, :]  # profiler doesn't go above 30 m
-
-    if node == 'SP001' and site in ['CE02SHSP', 'CE07SHSP']:
-        vocab = get_vocabulary(site, node, sensor)[0]
-        max_depth = vocab['maxdepth']
-        depth_bins = woa_standard_bins()
-        m = depth_bins[:, 1] <= max_depth
-        depth_bins = depth_bins[m, :]
+    # create the depth bins for a depth-based climatology
+    depth_bins = woa_standard_bins()
+    m = depth_bins[:, 1] <= max_depth
+    depth_bins = depth_bins[m, :]
+    if site == 'CE09OSPM':
+        depth_bins = depth_bins[6:, :]  # WFP doesn't go above 30 m
 
     # create and format the climatology lookups and tables for the data
-    clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
+    clm_lookup, clm_table = process_climatology(ed, parameters, limits, depth_bins=depth_bins,
                                                 site=site, node=node, sensor=sensor,
-                                                stream='parad_replace_me')
+                                                stream='parad_replace_me', fixed_lower=True)
 
     return annotations, gr_lookup, clm_lookup, clm_table
 
@@ -196,15 +169,14 @@ def main(argv=None):
     Download the PARAD data from the Gold Copy THREDDS server and create the
     QARTOD gross range and climatology test lookup tables.
     """
-    # setup the input arguments
+    # set up the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node
     sensor = args.sensor
-    cut_off = args.cut_off
 
     # create the QARTOD gross range and climatology lookup values and tables
-    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
+    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor)
 
     # save the downloaded annotations and qartod lookups and tables
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/parad')
@@ -223,7 +195,7 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
-    parameters = ['par']
+    parameters = ['PAR']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

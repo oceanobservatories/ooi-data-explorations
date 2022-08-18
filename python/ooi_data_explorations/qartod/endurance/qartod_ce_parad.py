@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 @author Christopher Wingard
-@brief Load the PARAD data from the uncabled, Coastal Endurance Profiler
-    Mooring and Coastal Surface-Piercing Profilers (CSPP) and process the data
-    to generate QARTOD Gross Range and Climatology test limits
+@brief Create QARTOD tables for the Coastal Endurance Profiler Mooring and
+    Coastal Surface-Piercing Profilers (CSPP)
 """
 import dask
 import numpy as np
@@ -26,7 +25,11 @@ from ooi_data_explorations.qartod.qc_processing import process_gross_range, proc
 # noinspection PyTypeChecker
 def generate_qartod(site, node, sensor):
     """
-    blah, blah, blah.
+    Generate QARTOD tables for the Endurance Array PARAD sensors using data
+    from the NOAA MSL12 Ocean Color - Science Quality - VIIRS SNPP satellite
+    data sets (specifically monthly Kd(PAR)) and an estimate of clear sky
+    irradiance from the pysolar module to create depth based estimates of
+    in situ PAR (Ed).
 
     :param site: Site designator, extracted from the first part of the
         reference designator

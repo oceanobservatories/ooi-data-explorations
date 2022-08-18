@@ -34,6 +34,7 @@ dependencies:
   - pyIGRF
   - pyncml
   - pytz
+  - pysolar
   - pyYAML
   - scipy
   - simplejson

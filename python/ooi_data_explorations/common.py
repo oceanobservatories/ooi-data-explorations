@@ -6,6 +6,7 @@
     M2M interface
 """
 import argparse
+import dask
 import io
 import netrc
 import numpy as np
@@ -646,7 +647,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     return data
 
 
-def m2m_collect(data, tag='.*\\.nc$'):
+def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     """
     Use a regex tag combined with the results of the M2M data request to
     collect the data from the THREDDS catalog. Collected data is gathered
@@ -656,6 +657,8 @@ def m2m_collect(data, tag='.*\\.nc$'):
         where the data is to be found for download
     :param tag: regex tag to use in discriminating the data files, so we only
         collect the correct ones
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
     :return: the collected data as an xarray dataset
     """
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
@@ -663,14 +666,16 @@ def m2m_collect(data, tag='.*\\.nc$'):
     files = list_files(url, tag)
 
     # Process the data files found above and concatenate into a single data set
-    print('Downloading %d data file(s) from the user''s OOI M2M THREDSS catalog' % len(files))
-    if len(files) < 3:
-        # just 1 to 2 files, download sequentially
-        frames = [process_file(file) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+    print('Downloading %d data file(s) from the user''s OOI M2M THREDDS catalog' % len(files))
+    if len(files) < 4:
+        # just 1 to 3 files, download sequentially
+        frames = [process_file(file, gc=False, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
+                                                                                               'Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
+        part_files = partial(process_file, gc=False, use_dask=use_dask)
         with ThreadPoolExecutor(max_workers=10) as executor:
-            frames = list(tqdm(executor.map(process_file, files), total=len(files),
+            frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
     if not frames:
@@ -684,7 +689,7 @@ def m2m_collect(data, tag='.*\\.nc$'):
     return m2m
 
 
-def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$'):
+def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask=False):
     """
     Download data from the OOI Gold Copy THREDDS catalog, using the reference
     designator parameters to select the catalog of interest and the regex tag
@@ -703,15 +708,17 @@ def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$'):
         recovered_host or recovered_inst)
     :param stream: Stream name that contains the data of interest
     :param tag: regex pattern to select the NetCDF files to download
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
     :return data: All of the data, combined into a single dataset
     """
     # download the data from the Gold Copy THREDDS server
     dataset_id = '-'.join([site, node, sensor, method, stream]) + '/catalog.html'
-    data = gc_collect(dataset_id, tag)
+    data = gc_collect(dataset_id, tag, use_dask)
     return data
 
 
-def gc_collect(dataset_id, tag='.*\\.nc$'):
+def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     """
     Use a regex tag combined with the dataset ID to collect data from the OOI
     Gold Copy THREDDS catalog. The collected data is gathered into an xarray
@@ -720,6 +727,8 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
     :param dataset_id: dataset ID as a string
     :param tag: regex tag to use in discriminating the data files, so we only
         collect the data files of interest
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
     :return gc: the collected Gold Copy data as an xarray dataset
     """
     # construct the THREDDS catalog URL based on the dataset ID
@@ -731,12 +740,14 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    if len(files) < 3:
-        # just 1 to 2 files, download sequentially
-        frames = [process_file(file, gc=True) for file in tqdm(files, desc='Downloading and Processing Data Files')]
+    if len(files) < 4:
+        # just 1 to 3 files, download sequentially
+        frames = [process_file(file, gc=True, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
+                                                                                              'Processing Data '
+                                                                                              'Files')]
     else:
         # multiple files, use multithreading to download concurrently
-        part_files = partial(process_file, gc=True)
+        part_files = partial(process_file, gc=True, use_dask=use_dask)
         with ThreadPoolExecutor(max_workers=10) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
@@ -747,9 +758,9 @@ def gc_collect(dataset_id, tag='.*\\.nc$'):
         return None
 
     # merge the data frames into a single data set
-    gc = merge_frames(frames)
+    data = merge_frames(frames)
 
-    return gc
+    return data
 
 
 def list_files(url, tag='.*\\.nc$'):
@@ -770,7 +781,7 @@ def list_files(url, tag='.*\\.nc$'):
     return [node.get('href') for node in soup.find_all('a', text=pattern)]
 
 
-def process_file(catalog_file, gc=False):
+def process_file(catalog_file, gc=False, use_dask=False):
     """
     Function to download one of the NetCDF files as an xarray data set, convert
     to time as the appropriate dimension instead of obs, and drop the
@@ -785,6 +796,8 @@ def process_file(catalog_file, gc=False):
     :param gc: Boolean flag to indicate whether the file is from the Gold
         Copy THREDDS server (gc = True), or the user's M2M THREDDS catalog
         (gc = False, default).
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default = False)
     :return: downloaded data in an xarray dataset.
     """
     if gc:
@@ -795,7 +808,10 @@ def process_file(catalog_file, gc=False):
     url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
     r = SESSION.get(url, timeout=(3.05, 120))
     if r.ok:
-        ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
+        if use_dask:
+            ds = xr.open_dataset(io.BytesIO(r.content), decode_cf=False, chunks=10000)
+        else:
+            ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
     else:
         failed_file = catalog_file.rpartition('/')
         warnings.warn('Failed to download %s' % failed_file[-1])
@@ -827,7 +843,7 @@ def process_file(catalog_file, gc=False):
             if isinstance(ds[v].attrs['units'], str):  # because some units use non-standard characters...
                 if time_pattern.match(ds[v].attrs['units']):
                     del(ds[v].attrs['_FillValue'])  # no fill values for time!
-                    ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00Z'
+                    ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00.000Z'
                     np_time = ntp_date + (ds[v] * 1e9).astype('timedelta64[ns]')
                     ds[v] = np_time
 
@@ -835,8 +851,7 @@ def process_file(catalog_file, gc=False):
     ds = ds.sortby('time')
 
     # clear-up some global attributes we will no longer be using
-    keys = ['DODS.strlen', 'DODS.dimName',
-            'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
+    keys = ['DODS.strlen', 'DODS.dimName', 'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
     for key in keys:
         if key in ds.attrs:
             del(ds.attrs[key])
@@ -857,41 +872,49 @@ def process_file(catalog_file, gc=False):
 
 def merge_frames(frames):
     """
-    Merge the multiple data files downloaded from the M2M system or the Gold
+    Merge the multiple data frames downloaded from the M2M system or the Gold
     Copy THREDDS server into a single xarray data set. Keep track of how many
-    files fail to merge.
+    frames fail to merge.
 
     :param frames: The data frames to concatenate/merge into a single data set
     :return data: The final, merged data set
     """
     # merge the list of processed data frames into a single data set
-    nfiles = len(frames)
-    nframes = nfiles
-    bad_files = 0
+    nframes = len(frames)
+    bad_frames = 0
     if nframes > 1:
-        # try merging all of the frames into a single data set (some frames may be corrupted, and will be skipped)
-        data, fail = _frame_merger(frames[0], frames)
+        try:
+            # first try to just concatenate all the frames; this usually works, but not always
+            data = xr.concat(frames, dim='time')
+        except ValueError:
+            # try merging the frames one-by-one into a single data set
+            data, fail = _frame_merger(frames[0], frames)
 
-        # if all of the files, except for the first one, failed that would suggest the first file is the problem.
-        # try the merge again, reset the starting frame to skip the first one.
-        if nframes - fail == 1:
-            data, fail = _frame_merger(frames[1], frames[1:])
-            nframes -= 1
+            # if all files failed that would suggest the first file is the problem.
+            # try the merge again, resetting the starting frame to skip the first one.
+            if nframes - fail == 1:
+                try:
+                    bad_frames += 1
+                    data = xr.concat(frames[1:], dim='time')
+                except ValueError:
+                    # this data set has issues! try merging one more time, frame by frame
+                    data, fail = _frame_merger(frames[1], frames[1:])
+                    bad_frames += fail
 
-            # if we still can't merge the frames, then there probably is something more fundamentally wrong, and trying
-            # to account for it here is not going to be possible
-            if nframes - 1 - fail == 1:
-                message = f"Unable to merge the {len(frames)} files downloaded from the Gold Copy THREDDS server."
-                warnings.warn(message)
-                return None
-        else:
-            bad_files = nfiles - nframes + fail
+                    # if we still can't merge the frames, then there probably is something more fundamentally wrong,
+                    # and trying to account for it here is not going to be possible
+                    if nframes - 1 - fail == 1:
+                        message = f"Unable to merge the {nframes} files downloaded from the Gold Copy THREDDS server."
+                        warnings.warn(message)
+                        return None
+            else:
+                bad_frames += fail
     else:
         # there is just the one
         data = frames[0]
 
-    if bad_files > 0:
-        message = "{} of the {} downloaded files failed to merge.".format(bad_files, nfiles)
+    if bad_frames > 0:
+        message = "{} of the {} downloaded files failed to merge.".format(bad_frames, nframes)
         warnings.warn(message)
 
     data = data.sortby(['deployment', 'time'])
@@ -917,15 +940,17 @@ def _frame_merger(data, frames):
     for idx, frame in enumerate(frames[1:], start=2):
         try:
             # concatenation handles 99% of the cases
-            data = xr.concat([data, frame], dim='time')
-        except ValueError:
+            with dask.config.set(**{'array.slicing.split_large_chunks': False}):
+                data = xr.concat([data, frame], dim='time')
+        except (ValueError, NotImplementedError):
             try:
                 # try merging the data, usually one of the data files is missing a variable from a co-located
                 # sensor that the system was unable to find
                 _, index = np.unique(data['time'], return_index=True)
                 data = data.isel(time=index)
-                data = data.merge(frame, compat='override')
-            except ValueError:
+                with dask.config.set(**{'array.slicing.split_large_chunks': False}):
+                    data = data.merge(frame, compat='override')
+            except (ValueError, NotImplementedError):
                 # something is just not right with this data file
                 fail += 1
 
@@ -956,8 +981,12 @@ def update_dataset(ds, depth):
         lon = ds.lon.values[0][0]
         ds = ds.drop_vars(['lat', 'lon'])
     else:
-        lat = ds.attrs['lat'][0]
-        lon = ds.attrs['lon'][0]
+        if np.isscalar(ds.lat):
+            lat = ds.attrs['lat']
+            lon = ds.attrs['lon']
+        else:
+            lat = ds.attrs['lat'][0]
+            lon = ds.attrs['lon'][0]
         del(ds.attrs['lat'])
         del(ds.attrs['lon'])
 

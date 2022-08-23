@@ -204,7 +204,7 @@ def create_annotations(site, node, sensor, blocks):
     return output
 
 
-def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor, stream):
+def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor, stream, fixed_lower):
     """
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Climatology lookup tables.
@@ -220,10 +220,11 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
     :param sensor: Sensor designator, extracted from the third and fourth part of
         the reference designator
     :param stream: Stream name that contains the data of interest
+    :param fixed_lower:
     :return qc_dict: dictionary with the sensor and user gross range values
         added in the formatting expected by the QC lookup
     """
-    # setup the depth bins, if set
+    # set up the depth bins, if set
     header_str = ''
     if depth_bins.any():
         value_str = '"[{}, {}]"'.format(depth_bins[0], depth_bins[1])
@@ -255,7 +256,7 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
 
         # calculate the climatological ranges
         cmin = mu - clm.monthly_std.values[idx] * 3
-        if cmin < sensor_range[0] or cmin > sensor_range[1]:
+        if fixed_lower or (cmin < sensor_range[0] or cmin > sensor_range[1]):
             cmin = sensor_range[0]
 
         cmax = mu + clm.monthly_std.values[idx] * 3
@@ -300,6 +301,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     node = kwargs.get('node')
     sensor = kwargs.get('sensor')
     stream = kwargs.get('stream')
+    fixed_lower = kwargs.get('fixed_lower')
 
     # initialize the Climatology class
     clm = Climatology()
@@ -315,50 +317,52 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
-        if depth_bins.any():
-            depth_tables = ''
-            for bins in depth_bins:
-                # slice the dataset, selecting our data based on depth ranges
-                sliced = ds[param].where((ds.depth >= bins[0]) & (ds.depth <= bins[1]), drop=True).to_dataset()
-                if len(sliced[param]) == 0:
-                    continue
+        if param in ds.variables:
+            if depth_bins.any():
+                depth_tables = ''
+                for bins in depth_bins:
+                    # slice the dataset, selecting our data based on depth ranges
+                    sliced = ds[param].where((ds.depth >= bins[0]) & (ds.depth <= bins[1]), drop=True).to_dataset()
+                    if len(sliced[param]) == 0:
+                        continue
 
-                # sort based on time and make sure we have a monotonic dataset
-                sliced = sliced.sortby('time')
-                _, index = np.unique(sliced['time'], return_index=True)
-                sliced = sliced.isel(time=index)
+                    # sort based on time and make sure we have a monotonic dataset
+                    sliced = sliced.sortby('time')
+                    _, index = np.unique(sliced['time'], return_index=True)
+                    sliced = sliced.isel(time=index)
 
+                    # calculate the 2-cycle climatology for the parameter of interest
+                    m = (sliced[param] > sensor_range[idx][0]) & (sliced[param] < sensor_range[idx][1]) \
+                        & (~np.isnan(sliced[param]))
+                    sliced = sliced.where(m, drop=True)
+                    clm.fit(sliced, param)
+
+                    # create the formatted dictionary for the lookup tables
+                    qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
+                                                            stream, fixed_lower)
+
+                    # append the dictionary to the dataframe and build the depth table
+                    clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
+                    if depth_tables:
+                        depth_tables += clm_table[114:]
+                    else:
+                        depth_tables += clm_table
+
+                # add the final depth table for the parameter
+                clm_tables.append(depth_tables)
+            else:
                 # calculate the 2-cycle climatology for the parameter of interest
-                m = (sliced[param] > sensor_range[idx][0]) & (sliced[param] < sensor_range[idx][1]) \
-                    & (~np.isnan(sliced[param]))
-                sliced = sliced.where(m, drop=True)
-                clm.fit(sliced, param)
+                m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
+                ds = ds.where(m, drop=True)
+                clm.fit(ds, param)
 
                 # create the formatted dictionary for the lookup tables
-                qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor, stream)
+                qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
+                                                        site, node, sensor, stream, fixed_lower)
 
-                # append the dictionary to the dataframe and build the depth table
+                # append the dictionary to the dataframe and the table to the list
                 clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
-                if depth_tables:
-                    depth_tables += clm_table[114:]
-                else:
-                    depth_tables += clm_table
-
-            # add the final depth table for the parameter
-            clm_tables.append(depth_tables)
-        else:
-            # calculate the 2-cycle climatology for the parameter of interest
-            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-            ds = ds.where(m, drop=True)
-            clm.fit(ds, param)
-
-            # create the formatted dictionary for the lookup tables
-            qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
-                                                    site, node, sensor, stream)
-
-            # append the dictionary to the dataframe and the table to the list
-            clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
-            clm_tables.append(clm_table)
+                clm_tables.append(clm_table)
 
     # return the results
     return clm_lookup, clm_tables
@@ -442,39 +446,40 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(params):
-        # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
-        # 4500 data points to use, running the test a total of 5000 times
-        m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-        pnorm = [normaltest(np.random.choice(ds[param][m], 4500)).pvalue for _ in range(5000)]
-        if np.mean(pnorm) < 0.01:
-            # Even with a log-normal transformation, the data is not normally distributed, so we will
-            # set the user range using percentiles that approximate the Empirical Rule, covering
-            # 99.7% of the data
-            lower = np.nanpercentile(ds[param][m], 0.15)
-            upper = np.nanpercentile(ds[param][m], 99.85)
-            source = ('User range based on percentiles of the observations, which are not normally distributed. '
-                      'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
-        else:
-            # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
-            mu = ds[param][m].mean().values[0]
-            sd = ds[param][m].std().value[0]
-            lower = mu - sd * 3
-            upper = mu + sd * 3
-            source = 'User range based on the mean +- 3 standard deviations of all observations.'
+        if param in ds.variables:
+            # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
+            # 4500 data points to use, running the test a total of 5000 times
+            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
+            pnorm = [normaltest(np.random.choice(ds[param][m], 4500)).pvalue for _ in range(5000)]
+            if np.mean(pnorm) < 0.01:
+                # Even with a log-normal transformation, the data is not normally distributed, so we will
+                # set the user range using percentiles that approximate the Empirical Rule, covering
+                # 99.7% of the data
+                lower = np.nanpercentile(ds[param][m], 0.15)
+                upper = np.nanpercentile(ds[param][m], 99.85)
+                source = ('User range based on percentiles of the observations, which are not normally distributed. '
+                          'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
+            else:
+                # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
+                mu = ds[param][m].mean().values[0]
+                sd = ds[param][m].std().value[0]
+                lower = mu - sd * 3
+                upper = mu + sd * 3
+                source = 'User range based on the mean +- 3 standard deviations of all observations.'
 
-        # reset the lower and upper ranges if they exceed the sensor ranges
-        if lower < sensor_range[idx][0]:
-            lower = sensor_range[idx][0]
+            # reset the lower and upper ranges if they exceed the sensor ranges
+            if lower < sensor_range[idx][0]:
+                lower = sensor_range[idx][0]
 
-        if upper > sensor_range[idx][1]:
-            upper = sensor_range[idx][1]
+            if upper > sensor_range[idx][1]:
+                upper = sensor_range[idx][1]
 
-        # create the formatted dictionary
-        user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
-        qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
+            # create the formatted dictionary
+            user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
+            qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
 
-        # append the dictionary to the dataframe
-        gross_range = gross_range.append(qc_dict, ignore_index=True)
+            # append the dictionary to the dataframe
+            gross_range = gross_range.append(qc_dict, ignore_index=True)
 
     # return the results
     return gross_range

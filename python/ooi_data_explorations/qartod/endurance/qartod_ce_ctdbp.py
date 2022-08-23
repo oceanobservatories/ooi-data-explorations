@@ -91,7 +91,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # clean-up the data, removing values that were marked as fail either from the quality checks or in the
     # annotations, and all data collected after the cut off date
-    data = data.where(data.rollup_annotations_qc_results < 4)
+    data = data.where(data.rollup_annotations_qc_results != 4)
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.

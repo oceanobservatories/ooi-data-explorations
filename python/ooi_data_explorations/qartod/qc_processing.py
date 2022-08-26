@@ -11,6 +11,8 @@ import pandas as pd
 import sys
 
 from scipy.stats import normaltest
+import dask
+from dask.diagnostics import ProgressBar
 
 from ooi_data_explorations.qartod.climatology import Climatology
 
@@ -450,19 +452,31 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
             # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
             # 4500 data points to use, running the test a total of 5000 times
             m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-            pnorm = [normaltest(np.random.choice(ds[param][m], 4500)).pvalue for _ in range(5000)]
+            # ---------------------------------------------------------------------
+            # Utilize dask to parallelize the random choice and calculate the pnorm
+            random_choice = dask.delayed(np.random.choice)
+            # Select out the dataarray of the desired param. This speeds up the process
+            da = ds[param][m]
+            vals = []
+            for i in range(5000):
+                vals.append(random_choice(da, 4500))
+            # Now compute
+            with ProgressBar():
+                print("Testing data for normality: ")
+                pvals = dask.compute(*vals)
+            pnorm = [normaltest(v).pvalue for v in pvals]
             if np.mean(pnorm) < 0.01:
                 # Even with a log-normal transformation, the data is not normally distributed, so we will
                 # set the user range using percentiles that approximate the Empirical Rule, covering
                 # 99.7% of the data
-                lower = np.nanpercentile(ds[param][m], 0.15)
-                upper = np.nanpercentile(ds[param][m], 99.85)
+                lower = np.nanpercentile(da, 0.15)
+                upper = np.nanpercentile(da, 99.85)
                 source = ('User range based on percentiles of the observations, which are not normally distributed. '
                           'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
             else:
                 # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
-                mu = ds[param][m].mean().values[0]
-                sd = ds[param][m].std().value[0]
+                mu = da.mean().values[0]
+                sd = da.std().value[0]
                 lower = mu - sd * 3
                 upper = mu + sd * 3
                 source = 'User range based on the mean +- 3 standard deviations of all observations.'

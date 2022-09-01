@@ -462,7 +462,7 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
                 vals.append(random_choice(da, 4500))
             # Now compute
             with ProgressBar():
-                print("Testing data for normality: ")
+                print("Testing data for normality: %s" % param)
                 pvals = dask.compute(*vals)
             pnorm = [normaltest(v).pvalue for v in pvals]
             if np.mean(pnorm) < 0.01:

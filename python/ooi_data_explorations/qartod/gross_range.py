@@ -2,6 +2,9 @@ import os
 import numpy as np
 import pandas as pd
 import xarray as xr
+import dask
+from dask.diagnostics import ProgressBar
+from scipy.stats import normaltest
 
 
 class GrossRange():
@@ -37,7 +40,7 @@ class GrossRange():
         self.fail_min = fail_min
         self.fail_max = fail_max
 
-    def fit(self, ds, param, sigma=5):
+    def fit(self, ds, param, sigma=3, check_normality=False, **kwargs):
         """Fit suspect range with specified standard deviation.
 
         Parameters
@@ -47,20 +50,60 @@ class GrossRange():
             with a primary dimension of time.
         param: (string)
             The name of the data variable from the given dataset to fit
-        sigma: (float)
+        sigma: (float: 3)
             The number of standard deviations for calculating the suspect range
-
+        check_normality: (boolean: False)
+            Check if the data is distributed normally. If not, utilize percentiles
+            instead of mean and standard deviation.
         """
-        # First, filter out data which falls outside of the fail ranges
-        ds = self.filter_fail_range(ds, param)
+        # First, get the applicable data from the dataset
+        da = ds[param]
+        
+        # Next, filter out data which falls outside of the fail ranges
+        da = self.filter_fail_range(da)
+        
+        normal_flag = True
+        # Next, check to see if data is normally distributed
+        if check_normality:
+            print(f"----- Testing {param} data for normality -----")
+            pnorm = self.check_normality(da)
+            if pnorm < 0.01:
+                normal_flag = False
+                print(f"----- {param} is not normally distributed -----")
+            else:
+                pass
+        
+        # If data is normally distributed, use mean and standard deviation
+        if normal_flag:
+            # Calculate the mean and standard deviation
+            avg = np.nanmean(da)
+            std = np.nanstd(da)
 
-        # Calculate the mean and standard deviation
-        avg = np.nanmean(ds[param])
-        std = np.nanstd(ds[param])
-
-        # Calculate the suspect range
-        suspect_min = avg-sigma*std
-        suspect_max = avg+sigma*std
+            # Calculate the suspect range
+            suspect_min = avg-sigma*std
+            suspect_max = avg+sigma*std
+            source = f"User range based on the mean +- {sigma} standard deviations of all observations."
+        else:
+            # Even with a log-normal transformation, the data is not normally distributed, so we will
+            # set the user range using percentiles that approximate the Empirical Rule
+            if sigma == 3:
+                lower_p = 0.15
+                upper_p = 100-lower_p
+            elif sigma == 4:
+                lower_p = 3.167E-3
+                upper_p = 100-lower_p
+            elif sigma == 5:
+                lower_p = 2.867E-5
+                upper_p = 100-lower_p
+            else:
+                pass
+            print(f"Using percentiles from {lower_p} to {upper_p}")
+            # Calculate the suspect min/max based on percentiles equivalent to standard deviations
+            suspect_min = np.nanpercentile(da, lower_p)
+            suspect_max = np.nanpercentile(da, upper_p)
+            p_range = np.round(100 - lower_p*2, 1)
+            source = f"User range based on percentiles of the observations, which are not normally distributed. Percentiles were chosen to cover {p_range}% of the data, approximating the Empirical Rule."
+            
 
         # If the suspect ranges are outside the fail ranges, set
         # suspect ranges to the fail_ranges
@@ -70,14 +113,28 @@ class GrossRange():
             suspect_max = self.fail_max
 
         # Save the results
-        self.suspect_min = np.round(suspect_min, decimals=2)
-        self.suspect_max = np.round(suspect_max, decimals=2)
+        self.suspect_min = np.round(suspect_min, decimals=5)
+        self.suspect_max = np.round(suspect_max, decimals=5)
+        self.source = source
 
-    def filter_fail_range(self, ds, param):
+    def filter_fail_range(self, da):
         """Filter out values which fall outside the fail range."""
-        ds = ds.where((ds[param] < self.fail_max) &
-                      (ds[param] > self.fail_min), drop=True)
-        return ds
+        mask = (da > self.fail_min) & (da < self.fail_max) & (~np.isnan(da))
+        da = da[mask]
+        return da
+
+    def check_normality(self, da, n_choices=5000, n_iters=1000):
+        """Check if the data is normally distributed"""
+        random_choice = dask.delayed(np.random.choice)
+        vals = []
+        for i in range(n_iters):
+            vals.append(random_choice(da, n_choices))
+        # Now compute
+        with ProgressBar():
+            pvals = dask.compute(*vals)
+        # Take the mean of the pvalues of the normaltest
+        pnorm = [normaltest(v).pvalue for v in pvals]
+        return np.mean(pnorm)
 
     def make_qcConfig(self):
         """Build properly formatted qcConfig object for qartod gross range."""

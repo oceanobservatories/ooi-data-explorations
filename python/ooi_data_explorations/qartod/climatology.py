@@ -5,7 +5,7 @@ import xarray as xr
 
 class Climatology():
 
-    def std(self, ds, param):
+    def std(self, da):
         """Calculate the standard deviation of grouped-monthly data.
 
         Calculates the standard deviation for a calendar-month from all
@@ -26,7 +26,7 @@ class Climatology():
             The standard deviation for a calendar month calculated from all of
             the observations for a given calendar-month.
         """
-        da = ds[param].groupby(ds.time.dt.month).std()
+        da = da.groupby(da.time.dt.month).std()
         keys = list(da.dims)
         if 'depth' in keys:
             # calculate the mean standard deviation for all the depths
@@ -45,7 +45,7 @@ class Climatology():
         # Finally, shift values back by 3 (90 degrees) to reset index
         self.monthly_std = self.monthly_std.reindex(index=np.roll(self.monthly_std.index, -3))
 
-    def mu(self, ds, param):
+    def mu(self, da):
         """
         Calculates the mean for a calendar-month from all observations for a
         given calendar-month. Does linear interpolation to fill NaNs. Performs
@@ -64,7 +64,7 @@ class Climatology():
             The mean for a calendar month calculated from all observations for
             a given calendar-month.
         """
-        da = ds[param].groupby(ds.time.dt.month).mean()
+        da = da.groupby(da.time.dt.month).mean()
         keys = list(da.dims)
         if 'depth' in keys:
             # calculate the mean for all the depths
@@ -83,7 +83,7 @@ class Climatology():
         # Finally, shift values back by 3 (90 degrees) to reset index
         self.monthly_mu = self.monthly_mu.reindex(index=np.roll(self.monthly_mu.index, -3))
 
-    def fit(self, ds, param):
+    def fit(self, da):
         """Calculate the climatological fit and monthly standard deviations.
 
         Calculates the climatological fit for a time series. First, the data
@@ -95,11 +95,9 @@ class Climatology():
 
         Parameters
         ----------
-        ds: (xarray.DataSet)
-            DataSet of the original time series observations
-        param: (str)
-            A string corresponding to the variable in the DataSet to fit.
-
+        ds: (xarray.DataArray)
+            DataArray of the original time series observations
+       
         Attributes
         -------
         fitted_data: (pandas.Series)
@@ -122,7 +120,7 @@ class Climatology():
         climatology.fit(ctdbp_data, "ctdbp_seawater_temperature")
         """
         # Resample the data to monthly means
-        mu = ds[param].resample(time="M").mean()
+        mu = da.resample(time="M").mean()
         keys = list(mu.dims)
         if 'depth' in keys:
             mu = mu.mean(dim='depth')
@@ -167,8 +165,8 @@ class Climatology():
             self.monthly_fit = self.fitted_data.groupby(self.fitted_data.index.month).mean()
         else:
             # Return the monthly_avg from the monthly means
-            self.mu(ds, param)
+            self.mu(da)
             self.monthly_fit = self.monthly_mu
 
         # Return the monthly_std
-        self.std(ds, param)
+        self.std(da)

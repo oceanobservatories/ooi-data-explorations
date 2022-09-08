@@ -44,7 +44,7 @@ def quality_checks(ds):
         # In the case of the sea surface conductivity and temperature data, different values are used to represent
         # missing data. Specifically, the values are set to a 0.0 and -5.0, respectively. In either case, (NaNs or
         # 0.0 and -5.0) set the QC flag to 9 to indicate "Missing" data, and then convert the 0.0 and -5.0 values to
-        # a NaN to avoid propagating a false numbers into subsequent calculations (e.g. salinity or heat flux).
+        # a NaN to avoid propagating false numbers into subsequent calculations (e.g. salinity or heat flux).
         if p == 'sea_surface_temperature':
             m = ds[p] < -4.0  # use a floating point value just above -5
             flags[m] = 9

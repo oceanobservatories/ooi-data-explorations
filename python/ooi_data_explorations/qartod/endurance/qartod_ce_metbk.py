@@ -7,12 +7,11 @@
     Climatology test limits
 """
 import dateutil.parser as parser
-import os
-import xarray as xr
-
 import numpy as np
+import os
 import pandas as pd
 import pytz
+import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
@@ -44,43 +43,54 @@ def combine_delivery_methods(site, node, sensor):
                   'sea_surface_conductivity', 'shortwave_irradiance', 'eastward_wind_velocity',
                   'northward_wind_velocity']
 
-    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'metbk_a_dcl_instrument', tag, use_dask=True)
-    deployments = []
-    print('# -- Group the telemetered data by deployment and process the data')
-    grps = list(telem.groupby('deployment'))
-    for grp in grps:
-        print('# -- Processing telemetered deployment %s' % grp[0])
-        data = metbk_datalogger(grp[1])
-        for p in parameters:
+    # Utilize a simple function for the initial processing of the telemetered and recovered_host data sets
+    def process_metbk(data, params=None):
+        """
+        Internal function for use by dask parallel to process the METBK data. Will
+        process the data via metbk_datalogger function, NaN any value marked as fail
+        via the automated QC tests, and then create a 15-minute median averaged data
+        set for further analysis.
+
+        :param data: per deployment data set to process
+        :param params: parameters with automated QC results
+        :return: final, 15-minute median averaged dataset
+        """
+        if params is None:
+            params = parameters
+        da = metbk_datalogger(data)
+        for p in params:
             qc_summary = p + '_qc_summary_flag'
-            m = data[qc_summary] == 4
-            data[p][m] = np.NaN
-        loaded = data.compute()
+            m = da[qc_summary] == 4
+            da[p][m] = np.NaN
+        loaded = da.compute()
         burst = loaded.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
-        deployments.append(burst)
+        return burst
+
+    # download the telemetered METBK data from the Gold Copy THREDDS catalog
+    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'metbk_a_dcl_instrument', tag, use_dask=True)
+
+    print('# Group the telemetered data by deployment and process the data')
+    deployments = []
+    grps = list(telem.groupby('deployment'))
+    for grp in grps:
+        print('# -- Group and process telemetered deployment %d' % grp[0])
+        deployments.append(process_metbk(grp[1], parameters))
 
     # create the final telemetered data set
-    deployments = [i for i in deployments if i]
     telem = xr.concat(deployments, 'time')
 
+    # download the recovered_host METBK data from the Gold Copy THREDDS catalog
     rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'metbk_a_dcl_instrument_recovered', tag)
+
+    print('# Group the recovered_host data by deployment and process the data')
     deployments = []
-    print('# -- Group the recovered_host data by deployment and process the data')
     grps = list(rhost.groupby('deployment'))
     for grp in grps:
-        print('# -- Processing recovered_host deployment %s' % grp[0])
-        data = metbk_datalogger(grp[1])
-        for p in parameters:
-            qc_summary = p + '_qc_summary_flag'
-            m = data[qc_summary] == 4
-            data[p][m] = np.NaN
-        burst = data.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
-        burst = burst.where(~np.isnan(burst.deployment), drop=True)
-        deployments.append(burst)
+        print('# -- Group and process recovered_host deployment %d' % grp[0])
+        deployments.append(process_metbk(grp[1], parameters))
 
     # create the final recovered_host data set
-    deployments = [i for i in deployments if i]
     rhost = xr.concat(deployments, 'time')
 
     # combine the two datasets into a single, merged time series
@@ -153,6 +163,11 @@ def generate_qartod(site, node, sensor, cut_off):
 
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
 
+    # NaN out shortwave radiation data measured outside solar noon. Will only use the nominal max values from
+    # each day (approximately solar noon) to create the gross range and climatology (min value will always be 0).
+    m = (data.time.dt.hour < 19.75) | (data.time.dt.hour > 20.25)
+    data['shortwave_irradiance'][m] = np.nan
+
     # create the initial gross range entries. Sensor ranges from the module specifications section of the ASIMET
     # Documentation Page (https://uop.whoi.edu/UOPinstruments/frodo/asimet/index.html).
     limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 50], [0, 2800],
@@ -167,32 +182,33 @@ def generate_qartod(site, node, sensor, cut_off):
     idx = 0
     for num, stream in enumerate(streams):
         for j in range(11):
-            gr_lookup['parameter'][idx + j] = {'inp': parameters[num][j]}
             gr_lookup['stream'][idx + j] = stream
         idx += 11
 
-    # set the default source string
-    gr_lookup['source'] = ('Sensor min/max based on the ASIMET sensor module specifications. '
-                           'The user min/max is the historical mean of all data collected '
-                           'up to {} +/- 3 standard deviations.'.format(src_date))
+    # add the source details
+    gr_lookup['source'] = ('User range based on data collected through {}.'.format(src_date))
 
     # create and format the climatology lookups and tables for the data and water streams (dropping precipitation)
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
                   'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
                   'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
+    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45],
+              [0, 7], [0, 42], [-32.5, 32.5], [-32.5, 32.5]]
 
     clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node, sensor=sensor)
 
     # replicate it twice for the different streams
-    gr_lookup = pd.concat([gr_lookup] * 2, ignore_index=True)
+    clm_lookup = pd.concat([clm_lookup] * 2, ignore_index=True)
 
-    # re-work the gross range entries for the different streams
+    # re-work the climatology entries for the different streams
     idx = 0
     for num, stream in enumerate(streams):
-        for j in range(11):
-            gr_lookup['parameter'][idx + j] = {'inp': parameters[num][j]}
-            gr_lookup['stream'][idx + j] = stream
-        idx += 11
+        for j in range(10):
+            clm_lookup['stream'][idx + j] = stream
+        idx += 10
+
+    # add the source details
+    clm_lookup['source'] = ('Climatology test values based on data collected through {}.'.format(src_date))
 
     return annotations, gr_lookup, clm_lookup, clm_table
 
@@ -202,7 +218,7 @@ def main(argv=None):
     Download the METBK data from the Gold Copy THREDDS server and create the
     QARTOD gross range and climatology test lookup tables.
     """
-    # setup the input arguments
+    # set up the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node
@@ -231,7 +247,7 @@ def main(argv=None):
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
-                  'precipitation', 'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
+                  'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
                   'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'

@@ -6,7 +6,7 @@
 # calculate QARTOD test ranges and generate the different lookup values and
 # tables.
 #
-# C. Wingard, 2021-06-17 -- Initial code
+# C. Wingard, 2022-09-08 -- Initial code
 
 # set the base directory python command for all subsequent processing
 . $(dirname $CONDA_EXE)/../etc/profile.d/conda.sh

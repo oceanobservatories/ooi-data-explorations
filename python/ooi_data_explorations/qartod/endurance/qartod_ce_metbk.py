@@ -190,10 +190,9 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # create and format the climatology lookups and tables for the data and water streams (dropping precipitation)
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
-                  'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
-                  'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
-    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45],
-              [0, 7], [0, 42], [-32.5, 32.5], [-32.5, 32.5]]
+                  'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_salinity',
+                  'eastward_wind_velocity', 'northward_wind_velocity']
+    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45], [0, 42], [-32.5, 32.5], [-32.5, 32.5]]
 
     clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node, sensor=sensor)
 
@@ -247,8 +246,8 @@ def main(argv=None):
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
-                  'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
-                  'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
+                  'shortwave_irradiance', 'sea_surface_temperature', 'eastward_wind_velocity',
+                  'northward_wind_velocity']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

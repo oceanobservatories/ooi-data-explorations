@@ -36,19 +36,21 @@ def quality_checks(ds):
                   'eastward_wind_velocity', 'northward_wind_velocity']
     for p in parameters:
         # The primary failure mode of the METBK is to repeat the last value it received from a sensor.
-        # Use the IOOS QARTOD flat line test to identify these cases
-        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 600, 1800, 0.01)
+        # Use the IOOS QARTOD flat line test to identify these cases (consider it suspect if it repeats
+        # for 30+ minutes and failed if it repeats for 1+ hours.
+        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 1800, 3600, 0.1)
 
-        # The secondary failure mode is to set values to a NaN if no sensor data is available. In the
-        # case of the sea surface conductivity and temperature data, the values are set to 0 and -5,
-        # respectively. In both cases, set the flag to 9 to indicate Missing data, converting the 0
-        # and -5 to a NaN to avoid propagating a real numbers into subsequent calculations.
+        # The secondary failure mode occurs when the METBK logger sets values to a NaN if no sensor data is available.
+        # In the case of the sea surface conductivity and temperature data, different values are used to represent
+        # missing data. Specifically, the values are set to a 0.0 and -5.0, respectively. In either case, (NaNs or
+        # 0.0 and -5.0) set the QC flag to 9 to indicate "Missing" data, and then convert the 0.0 and -5.0 values to
+        # a NaN to avoid propagating false numbers into subsequent calculations (e.g. salinity or heat flux).
         if p == 'sea_surface_temperature':
-            m = ds[p] == -5
+            m = ds[p] < -4.0  # use a floating point value just above -5
             flags[m] = 9
             ds[p][m] = np.nan
         elif p == 'sea_surface_conductivity':
-            m = ds[p] == 0
+            m = ds[p] < 0.5  # use a floating point value just above 0
             flags[m] = 9
             ds[p][m] = np.nan
         else:
@@ -72,7 +74,7 @@ def quality_checks(ds):
                 'comment': ('Converts the QC Results values from a bitmap to a QARTOD style summary flag, where ',
                             'the values are 1 == pass, 2 == not evaluated, 3 == suspect or of high interest, ',
                             '4 == fail, and 9 == missing. The QC tests, as applied by OOI, only yield pass or ',
-                            'fail values.'),
+                            'fail values. By resetting, the QC flags become more user friendly and more nuanced.'),
                 'flag_values': np.array([1, 2, 3, 4, 9]),
                 'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing'
             })
@@ -135,6 +137,7 @@ def metbk_datalogger(ds, burst=False):
     the data.
 
     :param ds: initial metbk data set downloaded from OOI via the M2M system
+    :param burst: resample the 1-minute data to a 15-minute time interval
     :return ds: cleaned up data set
     """
     # drop some variables:
@@ -199,9 +202,9 @@ def metbk_datalogger(ds, burst=False):
     # run quality checks, adding the results to the QC summary flag
     ds = quality_checks(ds)
 
-    if burst:   # re-sample the data to a 10-minute interval using a median average
+    if burst:   # re-sample the data to a 15-minute interval using a median average
         burst = ds
-        burst = burst.resample(time='600s', base=3300, loffset='300s', skipna=True).median(dim='time', keep_attrs=True)
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly average data

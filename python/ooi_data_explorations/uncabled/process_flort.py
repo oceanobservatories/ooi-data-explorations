@@ -148,11 +148,11 @@ def quality_checks(ds):
     chl_flag[m] = 4     # raw chlorophyll values off scale
 
     # test the min/max values of the derived measurements (values from the vendor documentation)
-    m = (ds.bback <= 0) | (ds.bback > 5)  # scattering measurement range
+    m = (ds.bback <= 0) | (ds.bback > 3)  # scattering measurement range
     beta_flag[m] = 4
     m = (ds.fluorometric_cdom <= 0) | (ds.fluorometric_cdom > 375)  # fluorometric CDOM measurement range
     cdom_flag[m] = 4
-    m = (ds.estimated_chlorophyll <= 0) | (ds.estimated_chlorophyll > 50)  # estimated chlorophyll measurement range
+    m = (ds.estimated_chlorophyll <= 0) | (ds.estimated_chlorophyll > 30)  # estimated chlorophyll measurement range
     chl_flag[m] = 4
 
     return beta_flag, cdom_flag, chl_flag
@@ -231,6 +231,7 @@ def flort_datalogger(ds, burst=False):
                                                                       chl_flag])).max(axis=0, initial=1))
 
     if burst:
+        # Add a load step due to updates in xarray to be allowed to us nanmedian
         ds.load()
         # re-sample the data collected in burst mode using a 15-minute median average
         burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)

@@ -382,61 +382,6 @@ def dosta_cspp(ds):
     return ds
 
 
-def dosta_wfp(ds):
-    """
-    Takes DOSTA data recorded by the WFP loggers used by the Global Arrays
-    and cleans up the data set to make it more user-friendly.  Primary task is
-    renaming parameters and dropping some that are of limited use. Additionally,
-    re-organize some of the variables to permit better assessments of the data.
-
-    :param ds: initial DOSTA data set downloaded from OOI via the M2M system
-    :return ds: cleaned up data set
-    """
-    # drop some of the variables:
-    #   suspect_timestamp = not used
-    #   internal_timestamp == profiler_timestamp == time, redundant
-    #   profiler_timestamp == time, redundant
-    #   product_number, these are all 4831s and this is captured in the global attributes
-    #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
-    #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
-    drop_list = ['suspect_timestamp', 'internal_timestamp', 'profiler_timestamp', 'product_number',
-                 'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
-    for var in ds.variables:
-        if var in drop_list:
-            ds = ds.drop(var)
-
-    # rename some variables for better clarity
-    rename = {
-        'estimated_oxygen_concentration': 'oxygen_concentration',
-        'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
-        'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
-        'dissolved_oxygen': 'oxygen_concentration_corrected',
-        'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
-        'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
-        'int_ctd_pressure': 'seawater_pressure',
-        'sea_water_temperature': 'seawater_temperature',
-        'sea_water_practical_salinity': 'practical_salinity',
-    }
-    ds = ds.rename(rename)
-
-    # reset some attributes
-    for key, value in ATTRS.items():
-        for atk, atv in value.items():
-            if key in ds.variables:
-                ds[key].attrs[atk] = atv
-
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
-
-    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
-    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
-    # interest == 3, and fail == 4.
-    ds = parse_qc(ds)
-
-    return ds
-
-
 def main(argv=None):
     args = inputs(argv)
     site = args.site

@@ -168,7 +168,8 @@ def dosta_datalogger(ds, burst=False):
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -206,7 +207,10 @@ def dosta_ctdbp_datalogger(ds):
     # drop some of the variables:
     #   dcl_controller_timestamp == time, redundant so can remove
     #   date_time_string == internal_timestamp, redundant so can remove
-    ds = ds.drop(['dcl_controller_timestamp', 'date_time_string'])
+    drop_list = ['dcl_controller_timestamp', 'date_time_string']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -270,7 +274,10 @@ def dosta_ctdbp_instrument(ds):
     # drop some of the variables:
     #   ctd_time == time, redundant so can remove
     #   internal_timestamp == time, redundant so can remove
-    ds = ds.drop(['internal_timestamp', 'ctd_time'])
+    drop_list = ['internal_timestamp', 'ctd_time']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # check for data from a co-located CTD, if not present create the variables using NaN as the fill value
     if 'temp' not in ds.variables:

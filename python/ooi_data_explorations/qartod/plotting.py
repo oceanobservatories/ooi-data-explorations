@@ -69,7 +69,10 @@ def plot_data_variable(ds, param, add_deployments=True):
         ax.legend(*legend, edgecolor="black", loc="center left", bbox_to_anchor=(1, 0.5))
         
     return fig, ax
+<<<<<<< HEAD
         
+=======
+>>>>>>> dosta_cgsn_updates
 
 def plot_gross_range(ds, param, gross_range):
     """Plot the data with the associated climatology values.

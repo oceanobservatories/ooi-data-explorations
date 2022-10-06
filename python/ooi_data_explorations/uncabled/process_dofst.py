@@ -79,13 +79,14 @@ def dofst_wfp(ds, grid=False):
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
         'int_ctd_pressure': 'seawater_pressure',
-        'ctdpf_ckl_seawater_temperature': 'seawater_temperature',
         'dofst_k_oxygen': 'raw_oxygen_concentration',
         'dofst_k_oxygen_l2': 'oxygen_concentration_corrected',
         'dofst_k_oxygen_l2_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dofst_k_oxygen_l2_qc_results': 'oxygen_concentration_corrected_qc_results'
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -95,7 +96,8 @@ def dofst_wfp(ds, grid=False):
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high

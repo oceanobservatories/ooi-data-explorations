@@ -229,13 +229,16 @@ def dosta_ctdbp_datalogger(ds):
         'dosta_ln_optode_oxygen': 'oxygen_concentration',
         'dosta_ln_optode_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
         'dosta_ln_optode_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'dosta_analog_tc_oxygen': 'oxygen_concentration',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
         'int_ctd_pressure': 'seawater_pressure',
         'temp': 'seawater_temperature',
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -245,7 +248,8 @@ def dosta_ctdbp_datalogger(ds):
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -290,13 +294,16 @@ def dosta_ctdbp_instrument(ds):
         'ctd_tc_oxygen': 'oxygen_concentration',
         'ctd_tc_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
         'ctd_tc_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'dosta_tc_oxygen': 'oxygen_concentration',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
         'int_ctd_pressure': 'seawater_pressure',
         'temp': 'seawater_temperature',
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -306,7 +313,8 @@ def dosta_ctdbp_instrument(ds):
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high

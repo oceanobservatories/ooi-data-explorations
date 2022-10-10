@@ -51,7 +51,7 @@ def pco2a_datalogger(ds, burst=False):
         ds = ds.drop(upstream)
     else:
         # METBK data was missing, add variables below to keep data sets consistent
-        ds['sea_surface_temperature'] = ('time', ds['deployment'] * np.nan)
+        ds['sea_surface_temperature'] = ('time', ds['deployment'].data * np.nan)
         ds['sea_surface_temperature'].attrs = {
             'long_name': 'Sea Surface Temperature',
             'standard_name': 'sea_surface_temperature',
@@ -64,7 +64,7 @@ def pco2a_datalogger(ds, burst=False):
             'stream': 'metbk_a_dcl_instrument'
         }
 
-        ds['met_salsurf'] = ('time', ds['deployment'] * np.nan)
+        ds['met_salsurf'] = ('time', ds['deployment'].data * np.nan)
         ds['met_salsurf'].attrs = {
             'long_name': 'Sea Surface Practical Salinity',
             'standard_name': 'sea_surface_salinity',
@@ -77,7 +77,7 @@ def pco2a_datalogger(ds, burst=False):
             'stream': 'metbk_a_dcl_instrument'
         }
 
-        ds['met_wind10m'] = ('time', ds['deployment'] * np.nan)
+        ds['met_wind10m'] = ('time', ds['deployment'].data * np.nan)
         ds['met_wind10m'].attrs = {
             'long_name': 'Normalized Wind Speed at 10 m',
             'standard_name': 'wind_speed',

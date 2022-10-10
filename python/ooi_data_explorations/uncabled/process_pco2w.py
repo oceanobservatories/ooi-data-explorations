@@ -251,9 +251,12 @@ def pco2w_datalogger(ds):
     #   absorbance_ratio_*_qc_results == incorrectly set tests, ignoring
     #   absorbance_ratio_*_qc_executed == incorrectly set tests, ignoring
     ds = ds.reset_coords()
-    ds = ds.drop(['passed_checksum', 'record_type', 'record_time', 'dcl_controller_timestamp',
+    drop_vars = ['passed_checksum', 'record_type', 'record_time', 'dcl_controller_timestamp',
                   'absorbance_ratio_434_qc_results', 'absorbance_ratio_434_qc_executed',
-                  'absorbance_ratio_620_qc_results', 'absorbance_ratio_620_qc_executed'])
+                  'absorbance_ratio_620_qc_results', 'absorbance_ratio_620_qc_executed']
+    for v in drop_vars:
+        if v in ds.variables:
+            ds = ds.drop(v)
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -353,9 +356,12 @@ def pco2w_instrument(ds):
     #   absorbance_ratio_*_qc_results == incorrectly set tests, ignoring
     #   absorbance_ratio_*_qc_executed == incorrectly set tests, ignoring
     ds = ds.reset_coords()
-    ds = ds.drop(['record_type', 'record_time', 'internal_timestamp',
+    drop_vars = ['record_type', 'record_time', 'internal_timestamp',
                   'absorbance_ratio_434_qc_results', 'absorbance_ratio_434_qc_executed',
-                  'absorbance_ratio_620_qc_results', 'absorbance_ratio_620_qc_executed'])
+                  'absorbance_ratio_620_qc_results', 'absorbance_ratio_620_qc_executed']
+    for v in drop_vars:
+        if v in ds.variables:
+            ds = ds.drop(v)
 
     # rename some of the variables for better clarity
     rename = {

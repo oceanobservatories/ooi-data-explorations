@@ -277,6 +277,123 @@ def flord_instrument(ds):
     return ds
 
 
+def flord_wfp(ds, grid=False):
+    """
+    Takes FLORD data recorded by the Wire-Following Profilers (used by CGSN
+    as part of the global arrays) and cleans up the data set to
+    make it more user-friendly.  Primary task is renaming parameters and
+    dropping some that are of limited use. Additionally, re-organize some of
+    the variables to permit better assessments of the data.
+
+    :param ds: initial FLORT data set downloaded from OOI via the M2M system
+    :param grid: boolean flag for whether the data should be gridded
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   internal_timestamp == superseded by time, redundant so can remove
+    #   suspect_timestamp = not used
+    #   measurement_wavelength_* == metadata, move into variable attributes.
+    #   seawater_scattering_coefficient == not used
+    #   raw_internal_temp == not available, NaN filled
+    ds = ds.reset_coords()
+    drop_vars = ['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
+                 'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'raw_internal_temp']
+    for v in drop_vars:
+        if v in ds.variables:
+            ds = ds.drop_vars(v)
+
+    # lots of renaming here to get a better defined data set with cleaner attributes
+    rename = {
+        'int_ctd_pressure': 'seawater_pressure',
+        'sea_water_temperature': 'seawater_temperature',
+        'raw_signal_chl': 'raw_chlorophyll',
+        'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
+        'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
+        'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
+        'raw_signal_beta': 'raw_backscatter',
+        'total_volume_scattering_coefficient': 'beta_700',
+        'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
+        'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
+        'optical_backscatter': 'bback',
+        'optical_backscatter_qc_executed': 'bback_qc_executed',
+        'optical_backscatter_qc_results': 'bback_qc_results',
+    }
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # create qc flags for the data and add them to the OOI qc flags
+    beta_flag, chl_flag = quality_checks(ds)
+    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
+                                                         beta_flag])).max(axis=0, initial=1))
+    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
+                                                                      chl_flag])).max(axis=0, initial=1))
+
+    if grid:
+        # clear out any duplicate time stamps
+        _, index = np.unique(ds['time'], return_index=True)
+        ds = ds.isel(time=index)
+
+        # since the scipy griddata function cannot use the time values as is (get converted to nanoseconds, which
+        # is too large of a value), we need to temporarily convert them to a floating point number in days since
+        # the start of the data record; we can then use that temporary date/time array for the gridding.
+        base_time = ds['time'].min().values
+        dt = (ds['time'] - base_time).astype(float) / 1e9 / 60 / 60 / 24
+
+        # construct the new grid, using 1 m depth bins from 30 to 510 m, and daily intervals from the start of
+        # the record to the end (centered on noon UTC).
+        depth_range = np.arange(30, 511, 1)
+        time_range = np.arange(0.5, np.ceil(dt.max()) + 0.5, 1)
+        gridded_time = base_time.astype('M8[D]') + pd.to_timedelta(time_range, unit='D')
+
+        # grid the data, adding the results to a list of data arrays
+        gridded = []
+        for v in ds.variables:
+            if v not in ['time', 'depth']:
+                # grid the data for each variable
+                gdata = griddata((dt.values, ds['depth'].values), ds[v].values,
+                                 (time_range[None, :], depth_range[:, None]),
+                                 method='linear')
+
+                # add the data to a data array
+                da = xr.DataArray(name=v, data=gdata, coords=[("depth", depth_range), ("time", gridded_time)])
+                da.attrs = ds[v].attrs
+
+                # reset the data types and fill values for floats and ints
+                if ds[v].dtype == np.dtype(int):
+                    da = da.where(np.isnan is True, FILL_INT)
+                    da.attrs['_FillValue'] = FILL_INT
+                    da = da.astype(int)
+                else:
+                    da.attrs['_FillValue'] = np.nan
+                    da = da.astype(float)
+
+                # add to the list
+                gridded.append(da)
+
+        # recombine the gridded data arrays into a single dataset
+        gridded = xr.merge(gridded)
+        gridded.attrs = ds.attrs
+        ds = gridded
+
+    return ds
+
+
 def main(argv=None):
     args = inputs(argv)
     site = args.site

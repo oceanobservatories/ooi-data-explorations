@@ -10,7 +10,7 @@ from ooi_data_explorations.uncabled.process_nutnr import nutnr_datalogger
 def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
     # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two parameters (level and instrmt) will set path and naming
+    # Ocean Observatories Initiative website. The last two parameters (level and instrmt) will set path and naming
     # conventions to save the data to the local disk.
     site = 'CE01ISSM'           # OOI Net site designator
     node = 'RID16'              # OOI Net node designator

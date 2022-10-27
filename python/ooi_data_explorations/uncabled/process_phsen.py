@@ -257,11 +257,13 @@ def phsen_datalogger(ds):
         'thermistor_start': 'raw_thermistor_start',
         'thermistor_end': 'raw_thermistor_end',
         'phsen_thermistor_temperature': 'thermistor_temperature',
-        'phsen_abcdef_ph_seawater': 'seawater_ph',
-        'phsen_abcdef_ph_seawater_qc_executed': 'seawater_ph_qc_executed',
-        'phsen_abcdef_ph_seawater_qc_results': 'seawater_ph_qc_results'
+        'ph_seawater': 'seawater_ph',
+        'ph_seawater_qc_executed': 'seawater_ph_qc_executed',
+        'ph_seawater_qc_results': 'seawater_ph_qc_results',
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # now we need to reset the light and reference arrays to named variables that will be more meaningful and useful in
     # the final data files
@@ -353,11 +355,13 @@ def phsen_instrument(ds):
         'thermistor_start': 'raw_thermistor_start',
         'thermistor_end': 'raw_thermistor_end',
         'phsen_thermistor_temperature': 'thermistor_temperature',
-        'phsen_abcdef_ph_seawater': 'seawater_ph',
-        'phsen_abcdef_ph_seawater_qc_executed': 'seawater_ph_qc_executed',
-        'phsen_abcdef_ph_seawater_qc_results': 'seawater_ph_qc_results'
+        'ph_seawater': 'seawater_ph',
+        'ph_seawater_qc_executed': 'seawater_ph_qc_executed',
+        'ph_seawater_qc_results': 'seawater_ph_qc_results'
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # now we need to reset the light and reference arrays to named variables that will be more meaningful and useful in
     # the final data files
@@ -457,11 +461,13 @@ def phsen_imodem(ds):
         'thermistor_start': 'raw_thermistor_start',
         'thermistor_end': 'raw_thermistor_end',
         'phsen_thermistor_temperature': 'thermistor_temperature',
-        'phsen_abcdef_ph_seawater': 'seawater_ph',
-        'phsen_abcdef_ph_seawater_qc_executed': 'seawater_ph_qc_executed',
-        'phsen_abcdef_ph_seawater_qc_results': 'seawater_ph_qc_results'
+        'ph_seawater': 'seawater_ph',
+        'ph_seawater_qc_executed': 'seawater_ph_qc_executed',
+        'ph_seawater_qc_results': 'seawater_ph_qc_results'
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # now we need to reset the light and reference arrays to named variables that will be more meaningful and useful in
     # the final data files

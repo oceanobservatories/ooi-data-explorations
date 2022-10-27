@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.13.4
+#       jupytext_version: 1.14.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -68,6 +68,8 @@ def plot_data_variable(ds, param, add_deployments=True):
         legend = (m, l)
         ax.legend(*legend, edgecolor="black", loc="center left", bbox_to_anchor=(1, 0.5))
         
+    return fig, ax
+
 
 def plot_gross_range(ds, param, gross_range):
     """Plot the data with the associated climatology values.
@@ -98,6 +100,8 @@ def plot_gross_range(ds, param, gross_range):
     ax.set_ylabel(ds[param].attrs["long_name"])
     ax.set_title(ds.attrs["id"])
     fig.autofmt_xdate()
+    
+    return fig, ax
         
         
 def plot_climatology(ds, param, climatology):
@@ -137,3 +141,5 @@ def plot_climatology(ds, param, climatology):
     ax.set_title("-".join((ds.attrs["id"].split("-")[0:4])), fontsize=16)
     ax.set_ylabel(ds[param].attrs["long_name"], fontsize=16)
     fig.autofmt_xdate()
+    
+    return fig, ax

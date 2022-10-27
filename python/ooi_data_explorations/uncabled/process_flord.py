@@ -29,12 +29,6 @@ ATTRS = dict({
         'comment': 'Raw chlorophyll fluorescence (470 nm excitation/695 nm emission) measurements.',
         'data_product_identifier': 'CHLAFLO_L0'
     },
-    'raw_cdom': {
-        'long_name': 'Raw CDOM Fluorescence',
-        'units': 'counts',
-        'comment': 'Raw CDOM fluorescence (370 nm excitation/460 nm emission) measurements.',
-        'data_product_identifier': 'CDOMFLO_L0'
-    },
     'estimated_chlorophyll': {
         'long_name': 'Estimated Chlorophyll Concentration',
         'standard_name': 'mass_concentration_of_chlorophyll_in_sea_water',
@@ -44,19 +38,6 @@ ATTRS = dict({
                     'measurement is considered to be an estimate only of the true chlorophyll concentration.'),
         'data_product_identifier': 'CHLAFLO_L1',
         'ancillary_variables': 'raw_chlorophyll estimated_chlorophyll_qc_executed estimated_chlorophyll_qc_results'
-    },
-    'fluorometric_cdom': {
-        'long_name': 'Fluorometric CDOM Concentration',
-        'standard_name': ('concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent'
-                          '_mass_fraction_of_quinine_sulfate_dihydrate'),
-        'units': 'ppb',
-        'comment': ('More commonly referred to as Chromophoric Dissolved Organic Matter (CDOM). CDOM plays an '
-                    'important role in the carbon cycling and biogeochemistry of coastal waters. It occurs '
-                    'naturally in aquatic environments primarily as a result of tannins released from decaying '
-                    'plant and animal matter, and can enter coastal areas in river run-off containing organic '
-                    'materials leached from soils.'),
-        'data_product_identifier': 'CDOMFLO_L1',
-        'ancillary_variables': 'raw_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results'
     },
     'beta_700': {
         'long_name': 'Volume Scattering Function at 700 nm',
@@ -136,31 +117,26 @@ def quality_checks(ds):
     """
     max_counts = 4115   # counts should be greater than 0 and less than 4120 +/- 5
     beta_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
-    cdom_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
     chl_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
     # test the min/max values of the raw measurements
-    m = (ds.raw_backscatter <= 0) | (ds.raw_backscatter > max_counts)
-    beta_flag[m] = 4    # raw volume scattering coefficient values off scale
-    m = (ds.raw_cdom <= 0) | (ds.raw_cdom > max_counts)
-    cdom_flag[m] = 4    # raw CDOM values off scale
-    m = (ds.raw_chlorophyll <= 0) | (ds.raw_chlorophyll > max_counts)
-    chl_flag[m] = 4     # raw chlorophyll values off scale
+    if "raw_backscatter" in ds.variables:
+        m = (ds.raw_backscatter <= 0) | (ds.raw_backscatter > max_counts)
+        beta_flag[m] = 4    # raw volume scattering coefficient values off scale
+    if "raw_chlorophyll" in ds.variables:
+        m = (ds.raw_chlorophyll <= 0) | (ds.raw_chlorophyll > max_counts)
+        chl_flag[m] = 4     # raw chlorophyll values off scale
 
     # test the min/max values of the derived measurements (values from the vendor documentation)
-    m = (ds.bback <= 0) | (ds.bback > 3)  # scattering measurement range
-    beta_flag[m] = 4
-    m = (ds.fluorometric_cdom <= 0) | (ds.fluorometric_cdom > 375)  # fluorometric CDOM measurement range
-    cdom_flag[m] = 4
     m = (ds.estimated_chlorophyll <= 0) | (ds.estimated_chlorophyll > 30)  # estimated chlorophyll measurement range
     chl_flag[m] = 4
 
-    return beta_flag, cdom_flag, chl_flag
+    return beta_flag, chl_flag
 
 
-def flort_datalogger(ds, burst=False):
+def flord_datalogger(ds, burst=False):
     """
-    Takes flort data recorded by the data loggers used in the CGSN/EA moorings
+    Takes flord data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
     re-organize some of the variables to permit better assessments of the data.
@@ -185,24 +161,18 @@ def flort_datalogger(ds, burst=False):
     if 'temp' not in ds.variables and "seawater_temperature" not in ds.variables:
         ds['temp'] = ('time', ds['deployment'].data * np.nan)
         ds['practical_salinity'] = ('time', ds['deployment'].data * np.nan)
-        ds['optical_backscatter'] = ds['optical_backscatter'] * np.nan
-        ds['seawater_scattering_coefficient'] = ds['seawater_scattering_coefficient'] * np.nan
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
         'temp': 'seawater_temperature',
-        'raw_signal_chl': 'raw_chlorophyll',
+        'raw_signal_chl_volts': 'raw_chlorophyll_volts',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
-        'raw_signal_beta': 'raw_backscatter',
+        'raw_signal_beta_volts': 'raw_backscatter_volts',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
         'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
-        'optical_backscatter': 'bback',
-        'optical_backscatter_qc_executed': 'bback_qc_executed',
-        'optical_backscatter_qc_results': 'bback_qc_results',
     }
     ds = ds.rename(rename)
 
@@ -222,49 +192,16 @@ def flort_datalogger(ds, burst=False):
     ds = parse_qc(ds)
 
     # create QC flags for the data and add them to the OOI QC summary flags
-    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    beta_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
                                                          beta_flag])).max(axis=0, initial=1))
-    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
                                                                       chl_flag])).max(axis=0, initial=1))
-
-    if burst:
-        # Add a load step due to updates in xarray to be allowed to us nanmedian
-        ds.load()
-        # re-sample the data collected in burst mode using a 15-minute median average
-        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
-
-        # for each of the three FLORT measurements, calculate stats (min, max, and the standard deviation)
-        # for each of the bursts
-        cdom = ds['fluorometric_cdom'].resample(time='900s', skipna=True)
-        cdom = np.array([cdom.min('time').values, cdom.max('time').values, cdom.std('time').values])
-
-        chl = ds['estimated_chlorophyll'].resample(time='900s', skipna=True)
-        chl = np.array([chl.min('time').values, chl.max('time').values, chl.std('time').values])
-
-        beta = ds['beta_700'].resample(time='900s', skipna=True)
-        beta = np.array([beta.min('time').values, beta.max('time').values, beta.std('time').values])
-
-        # create a data set with the burst statistics for the variables
-        stats = xr.Dataset({
-            'fluorometric_cdom_burst_stats': (['time', 'stats'], cdom.T),
-            'estimated_chlorophyll_burst_stats': (['time', 'stats'], chl.T),
-            'beta_700_burst_stats': (['time', 'stats'], beta.T)
-        }, coords={'time': burst['time'], 'stats': np.arange(0, 3).astype('int32')})
-
-        # add the stats into the burst averaged data set, and then remove the missing rows
-        burst = burst.merge(stats)
-        burst = burst.where(~np.isnan(burst.deployment), drop=True)
-
-        # save the newly average data
-        ds = burst
 
     return ds
 
 
-def flort_instrument(ds):
+def flord_instrument(ds):
     """
     Takes flort data recorded by the Sea-Bird Electronics SBE16Plus used in the
     CGSN/EA moorings and cleans up the data set to make it more user-friendly.
@@ -281,24 +218,29 @@ def flort_instrument(ds):
     #   measurement_wavelength_* == metadata, move into variable attributes.
     #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
     ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
+    drop_vars = ['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
+                 'measurement_wavelength_cdom', 'measurement_wavelength_chl']
+    for var in ds.variables:
+        if var in drop_vars:
+            ds = ds.drop_vars(var)
+    
+    if 'temp' not in ds.variables and "seawater_temperature" not in ds.variables:
+        ds['temp'] = ('time', ds['deployment'].data * np.nan)
+        ds['practical_salinity'] = ('time', ds['deployment'].data * np.nan)
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
         'temp': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
+        'raw_signal_chl_volts': 'raw_chlorophyll_volts',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
         'raw_signal_beta': 'raw_backscatter',
+        'raw_signal_beta_volts': 'raw_backscatter_volts',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
         'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
-        'optical_backscatter': 'bback',
-        'optical_backscatter_qc_executed': 'bback_qc_executed',
-        'optical_backscatter_qc_results': 'bback_qc_results',
     }
     ds = ds.rename(rename)
 
@@ -314,10 +256,10 @@ def flort_instrument(ds):
 
     # check if the raw data for all three channels is 0, if so the FLORT wasn't talking to the CTD and these are
     # all just fill values that can be removed.
-    ds = ds.where(ds['raw_backscatter'] + ds['raw_cdom'] + ds['raw_chlorophyll'] > 0, drop=True)
+    ds = ds.where(ds['raw_backscatter'] + ds['raw_chlorophyll'] > 0, drop=True)
     if len(ds.time) == 0:
         # this was one of those deployments where the FLORT was never able to communicate with the CTD.
-        warnings.warn('Communication failure between the FLORT and the CTDBP. No data was recorded.')
+        warnings.warn('Communication failure between the FLORD and the CTDBP. No data was recorded.')
         return None
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
@@ -326,89 +268,19 @@ def flort_instrument(ds):
     ds = parse_qc(ds)
 
     # create qc flags for the data and add them to the OOI qc flags
-    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    beta_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
                                                          beta_flag])).max(axis=0, initial=1))
-    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
                                                                       chl_flag])).max(axis=0, initial=1))
 
     return ds
 
 
-def flort_cspp(ds):
+def flord_wfp(ds, grid=False):
     """
-    Takes FLORT data recorded by the CSPP loggers used by the Endurance Array
-    and cleans up the data set to make it more user-friendly.  Primary task is
-    renaming parameters and dropping some that are of limited use. Additionally,
-    re-organize some of the variables to permit better assessments of the data.
-
-    :param ds: initial FLORT data set downloaded from OOI via the M2M system
-    :return ds: cleaned up data set
-    """
-    # drop some of the variables:
-    #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = not used
-    #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   seawater_scattering_coefficient == not used
-    ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
-
-    # lots of renaming here to get a better defined data set with cleaner attributes
-    rename = {
-        'pressure': 'seawater_pressure',
-        'pressure_qc_executed': 'seawater_pressure_qc_executed',
-        'pressure_qc_results': 'seawater_pressure_qc_results',
-        'temperature': 'seawater_temperature',
-        'salinity': 'practical_salinity',
-        'raw_signal_chl': 'raw_chlorophyll',
-        'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
-        'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
-        'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
-        'raw_signal_beta': 'raw_backscatter',
-        'total_volume_scattering_coefficient': 'beta_700',
-        'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
-        'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
-        'optical_backscatter': 'bback',
-        'optical_backscatter_qc_executed': 'bback_qc_executed',
-        'optical_backscatter_qc_results': 'bback_qc_results',
-    }
-    ds = ds.rename(rename)
-
-    # reset some attributes
-    for key, value in ATTRS.items():
-        for atk, atv in value.items():
-            if key in ds.variables:
-                ds[key].attrs[atk] = atv
-
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
-
-    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
-    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
-    # interest == 3, and fail == 4.
-    ds = parse_qc(ds)
-
-    # create qc flags for the data and add them to the OOI qc flags
-    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
-    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0, initial=1))
-    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0, initial=1))
-    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0, initial=1))
-
-    return ds
-
-
-def flort_wfp(ds, grid=False):
-    """
-    Takes FLORT data recorded by the Wire-Following Profilers (used by CGSN/EA
-    as part of the coastal and global arrays) and cleans up the data set to
+    Takes FLORD data recorded by the Wire-Following Profilers (used by CGSN
+    as part of the global arrays) and cleans up the data set to
     make it more user-friendly.  Primary task is renaming parameters and
     dropping some that are of limited use. Additionally, re-organize some of
     the variables to permit better assessments of the data.
@@ -433,12 +305,11 @@ def flort_wfp(ds, grid=False):
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
         'int_ctd_pressure': 'seawater_pressure',
-        'ctdpf_ckl_seawater_temperature': 'seawater_temperature',
+        'sea_water_temperature': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
         'raw_signal_beta': 'raw_backscatter',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
@@ -467,11 +338,9 @@ def flort_wfp(ds, grid=False):
     ds = parse_qc(ds)
 
     # create qc flags for the data and add them to the OOI qc flags
-    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
+    beta_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
                                                          beta_flag])).max(axis=0, initial=1))
-    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0, initial=1))
     ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
                                                                       chl_flag])).max(axis=0, initial=1))
 

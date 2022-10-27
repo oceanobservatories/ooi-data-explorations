@@ -168,7 +168,8 @@ def dosta_datalogger(ds, burst=False):
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -206,7 +207,10 @@ def dosta_ctdbp_datalogger(ds):
     # drop some of the variables:
     #   dcl_controller_timestamp == time, redundant so can remove
     #   date_time_string == internal_timestamp, redundant so can remove
-    ds = ds.drop(['dcl_controller_timestamp', 'date_time_string'])
+    drop_list = ['dcl_controller_timestamp', 'date_time_string']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
@@ -225,13 +229,16 @@ def dosta_ctdbp_datalogger(ds):
         'dosta_ln_optode_oxygen': 'oxygen_concentration',
         'dosta_ln_optode_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
         'dosta_ln_optode_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'dosta_analog_tc_oxygen': 'oxygen_concentration',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
         'int_ctd_pressure': 'seawater_pressure',
         'temp': 'seawater_temperature',
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -241,7 +248,8 @@ def dosta_ctdbp_datalogger(ds):
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -270,7 +278,10 @@ def dosta_ctdbp_instrument(ds):
     # drop some of the variables:
     #   ctd_time == time, redundant so can remove
     #   internal_timestamp == time, redundant so can remove
-    ds = ds.drop(['internal_timestamp', 'ctd_time'])
+    drop_list = ['internal_timestamp', 'ctd_time']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
 
     # check for data from a co-located CTD, if not present create the variables using NaN as the fill value
     if 'temp' not in ds.variables:
@@ -283,13 +294,16 @@ def dosta_ctdbp_instrument(ds):
         'ctd_tc_oxygen': 'oxygen_concentration',
         'ctd_tc_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
         'ctd_tc_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'dosta_tc_oxygen': 'oxygen_concentration',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
         'int_ctd_pressure': 'seawater_pressure',
         'temp': 'seawater_temperature',
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -299,7 +313,8 @@ def dosta_ctdbp_instrument(ds):
 
     # add original OOINet variable name as an attribute if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -354,6 +369,60 @@ def dosta_cspp(ds):
         'pressure_qc_results': 'seawater_pressure_qc_results',
         'temperature': 'seawater_temperature',
         'salinity': 'practical_salinity',
+    }
+    ds = ds.rename(rename)
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    return ds
+
+
+def dosta_wfp(ds):
+    """
+    Takes DOSTA data recorded by the WFP loggers used by the Global Arrays
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some of the variables to permit better assessments of the data.
+    :param ds: initial DOSTA data set downloaded from OOI via the M2M system
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   suspect_timestamp = not used
+    #   internal_timestamp == profiler_timestamp == time, redundant
+    #   profiler_timestamp == time, redundant
+    #   product_number, these are all 4831s and this is captured in the global attributes
+    #   estimated_oxygen_saturation_qc_executed, preliminary data product no QC tests should be applied
+    #   estimated_oxygen_saturation_qc_results, preliminary data product no QC tests should be applied
+    drop_list = ['suspect_timestamp', 'internal_timestamp', 'profiler_timestamp', 'product_number',
+                 'estimated_oxygen_saturation_qc_executed', 'estimated_oxygen_saturation_qc_results']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
+
+    # rename some variables for better clarity
+    rename = {
+        'estimated_oxygen_concentration': 'oxygen_concentration',
+        'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
+        'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
+        'dissolved_oxygen': 'oxygen_concentration_corrected',
+        'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
+        'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'int_ctd_pressure': 'seawater_pressure',
+        'sea_water_temperature': 'seawater_temperature',
+        'sea_water_practical_salinity': 'practical_salinity',
     }
     ds = ds.rename(rename)
 

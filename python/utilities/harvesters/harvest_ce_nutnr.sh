@@ -25,7 +25,7 @@ for i in $(seq -f "%02g" 8 17); do
 done
 
 ### CE02SHSM ###
-BASE_FLAGS="-s CE02SHSM -n RID27 -sn 07-NUTNRB000"
+BASE_FLAGS="-s CE02SHSM -n RID26 -sn 07-NUTNRB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce02shsm/nsif/nutnr/ce02shsm.nsif.nutnr"
 for i in $(seq -f "%02g" 7 15); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
@@ -34,7 +34,7 @@ for i in $(seq -f "%02g" 7 15); do
 done
 
 ### CE04OSSM ###
-BASE_FLAGS="-s CE04OSSM -n RID27 -sn 07-NUTNRB000"
+BASE_FLAGS="-s CE04OSSM -n RID26 -sn 07-NUTNRB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce04ossm/nsif/nutnr/ce04ossm.nsif.nutnr"
 for i in $(seq -f "%02g" 6 14); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
@@ -52,7 +52,7 @@ for i in $(seq -f "%02g" 8 16); do
 done
 
 ### CE07SHSM ###
-BASE_FLAGS="-s CE07SHSM -n RID27 -sn 07-NUTNRB000"
+BASE_FLAGS="-s CE07SHSM -n RID26 -sn 07-NUTNRB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce07shsm/nsif/nutnr/ce07shsm.nsif.nutnr"
 for i in $(seq -f "%02g" 7 15); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"
@@ -61,7 +61,7 @@ for i in $(seq -f "%02g" 7 15); do
 done
 
 ### CE09OSSM ###
-BASE_FLAGS="-s CE09OSSM -n RID27 -sn 07-NUTNRB000"
+BASE_FLAGS="-s CE09OSSM -n RID26 -sn 07-NUTNRB000"
 BASE_FILE="${HOME}/ooidata/m2m/ce09ossm/nsif/nutnr/ce09ossm.nsif.nutnr"
 for i in $(seq -f "%02g" 7 15); do
     $PYTHON $BASE_FLAGS -mt telemetered -st suna_dcl_recovered -ba -dp $i -o "$BASE_FILE.deploy$i.telemetered.suna_dcl_recovered.nc"

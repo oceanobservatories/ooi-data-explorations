@@ -49,9 +49,9 @@ ATTRS = {
 }
 
 
-def nutnr_datalogger(ds, burst=True):
+def suna_datalogger(ds, burst=True):
     """
-    Takes nutnr data recorded by the data loggers used in the CGSN/EA moorings
+    Takes SUNA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
     re-organize some variables to permit better assessments of the data.
@@ -62,9 +62,11 @@ def nutnr_datalogger(ds, burst=True):
     """
     # drop some variables:
     #   checksum = used to parse data, is not parsed if the checksum fails so no longer needed
-    #   frame_type = only frame types are SLF per the parser, don't need to repeat
+    #   frame_type = remove the dark frames if recorded, then remove
     #   humidity = not measured, no need to include
     ds = ds.reset_coords()
+    ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
+    ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity'])
 
     # convert the instrument date and time values to a floating point number with the time in seconds, and then
@@ -77,7 +79,7 @@ def nutnr_datalogger(ds, burst=True):
     ds['internal_timestamp'].attrs = dict({
         'long_name': 'Internal NUTNR Clock Time',
         'standard_name': 'time',
-        'units': 'seconds since 1970-01-01 00:00:00 0:00',
+        'units': 'seconds since 1900-01-01T00:00:00.000Z',
         'calendar': 'gregorian',
         'comment': ('Comparing the instrument internal clock versus the GPS referenced sampling time will allow for '
                     'calculations of the instrument clock offset and drift. Useful when working with the '
@@ -145,8 +147,126 @@ def nutnr_datalogger(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    ds['serial_number'] = ds['serial_number'].astype('int32')
-    ds['serial_number'].attrs['_FillValue'] = '-9999999'
+    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+    ds['serial_number'].attrs = dict({
+        'long_name': 'Serial Number',
+        # 'units': '', deliberately left blank, unitless value
+        'comment': ('Instrument serial number'),
+    })
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    if burst:   # re-sample the data to a defined time interval using a median average
+        # create the burst averaging
+        burst = ds
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # save the newly averaged data
+        ds = burst
+
+        # and reset some data types
+        data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
+                      'raw_spectral_measurements']
+        for v in data_types:
+            ds[v] = ds[v].astype('int32')
+
+    return ds
+
+
+def suna_instrument(ds, burst=True):
+    """
+    Takes SUNA data recorded internally by the Sea-Bird SUNA dissolved nitrate
+    sensor and cleans up the data set to make it more user-friendly.  Primary
+    task is renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some variables to permit better assessments of
+    the data.
+
+    :param ds: initial nutnr data set downloaded from OOI via the M2M system
+    :param burst: resample the data to the defined time interval
+    :return ds: cleaned up data set
+    """
+    # drop some variables:
+    #   checksum = used to parse data, is not parsed if the checksum fails so no longer needed
+    #   frame_type = remove the dark frames if recorded, then remove
+    #   humidity = not measured, no need to include
+    #   internal_timestamp == time, redundant so can remove
+    #   date_of_sample = used to construct the internal_timestamp
+    #   time_of_sample = used to construct the internal_timestamp
+    ds = ds.reset_coords()
+    ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
+    ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
+    ds = ds.drop(['checksum', 'frame_type', 'humidity', 'date_of_sample', 'time_of_sample'])
+
+    # check for data from a co-located CTD, if not present add with appropriate attributes
+    if 'sea_water_temperature' not in ds.variables:
+        ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_temperature'].attrs = {
+            'comment': ('Normally this would be sea water temperature data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'TEMPWAT_L1',
+            'long_name': 'Sea Water Temperature',
+            'standard_name': 'sea_water_temperature',
+            'units': 'degree_Celsius'
+        }
+
+        ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_practical_salinity'].attrs = {
+            'long_name': 'Sea Water Practical Salinity',
+            'standard_name': 'sea_water_practical_salinity',
+            'units': '1',
+            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'PRACSAL_L2'
+        }
+
+    # rename some variables for better clarity
+    rename = {
+        'nutnr_absorbance_at_254_nm': 'absorbance_at_254_nm',
+        'nutnr_absorbance_at_350_nm': 'absorbance_at_350_nm',
+        'nutnr_bromide_trace': 'bromide_trace',
+        'nutnr_current_main': 'current_main',
+        'nutnr_dark_value_used_for_fit': 'dark_value_used_for_fit',
+        'nutnr_fit_base_1': 'fit_base_1',
+        'nutnr_fit_base_2': 'fit_base_2',
+        'nutnr_fit_rmse': 'fit_rmse',
+        'nutnr_integration_time_factor': 'integration_time_factor',
+        'nutnr_nitrogen_in_nitrate': 'nitrogen_in_nitrate',
+        'nutnr_spectrum_average': 'spectrum_average',
+        'nutnr_voltage_int': 'voltage_instrument',
+        'temp_spectrometer': 'temperature_spectrometer',
+        'temp_lamp': 'temperature_lamp',
+        'temp_interior': 'temperature_interior',
+        'spectral_channels': 'raw_spectral_measurements',
+        'salinity_corrected_nitrate': 'corrected_nitrate_concentration',
+        'salinity_corrected_nitrate_qc_results': 'corrected_nitrate_concentration_qc_results',
+        'salinity_corrected_nitrate_qc_executed': 'corrected_nitrate_concentration_qc_executed',
+        'wavelength': 'wavelength_index'
+    }
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # address incorrectly set units and variable types
+    ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
+    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+    ds['serial_number'].attrs = dict({
+        'long_name': 'Serial Number',
+        # 'units': '', deliberately left blank, unitless value
+        'comment': ('Instrument serial number'),
+    })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -183,6 +303,9 @@ def main(argv=None):
     stop = args.stop
     burst = args.burst
 
+    if stream not in ['suna_dcl_recovered', 'suna_instrument_recovered']:
+        raise SystemExit('Data from the Satlantic ISUS dissolved nitrate sensor will not be supported at this time.')
+
     # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
@@ -215,7 +338,11 @@ def main(argv=None):
             raise SystemExit(exit_text)
 
     # clean-up and reorganize
-    nutnr = nutnr_datalogger(nutnr, burst)
+    if method in ['telemetered', 'recovered_host']:
+        nutnr = suna_datalogger(nutnr, burst)
+    else:
+        nutnr = suna_instrument(nutnr, burst)
+
     vocab = get_vocabulary(site, node, sensor)[0]
     nutnr = update_dataset(nutnr, vocab['maxdepth'])
 

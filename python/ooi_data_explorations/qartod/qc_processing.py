@@ -560,22 +560,19 @@ def parse_qc(ds):
                 flags[~m, index] = flag  # False == suspect/fail
 
         # add the qc_flags to the dataset, rolling up the results into a single value
-        ds[qc_summary] = ('time', flags.max(axis=1))
+        ds[qc_summary] = ('time', flags.max(axis=1, initial=1))
 
         # set up the attributes for the new variable
         ds[qc_summary].attrs = dict({
             'long_name': '%s QC Summary Flag' % ds[var].attrs['long_name'],
-            'comment': ('Converts the QC Results values from a bitmap to a QARTOD style summary flag, where ',
-                        'the values are 1 == pass, 2 == not evaluated, 3 == suspect or of high interest, ',
-                        '4 == fail, and 9 == missing. The QC tests, as applied by OOI, only yield pass or ',
+            'standard_name': 'aggregate_quality_flag',
+            'comment': ('Converts the QC Results values from a bitmap to a QARTOD style summary flag, where '
+                        'the values are 1 == pass, 2 == not evaluated, 3 == suspect or of high interest, '
+                        '4 == fail, and 9 == missing. The QC tests, as applied by OOI, only yield pass or '
                         'fail values.'),
             'flag_values': np.array([1, 2, 3, 4, 9]),
             'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing'
         })
-
-        # add the standard name if the variable has one
-        if 'standard_name' in ds[var].attrs:
-            ds[qc_summary].attrs['standard_name'] = '%s qc_summary_flag' % ds[var].attrs['standard_name']
 
     return ds
 

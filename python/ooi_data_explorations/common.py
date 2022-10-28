@@ -1059,7 +1059,7 @@ def update_dataset(ds, depth):
                 ds[v].attrs['standard_name'] = 'quality_flag'
 
             if qartod_results_pattern.match(v):
-                ds[v] = ds[v].astype(int)
+                ds[v] = ds[v].astype(np.int32)
                 ds[v].attrs['flag_values'] = np.array([1, 2, 3, 4, 9]),
                 ds[v].attrs['standard_name'] = 'aggregate_quality_flag'
 
@@ -1086,7 +1086,7 @@ def update_dataset(ds, depth):
                 ds[v].attrs['standard_name'] = 'quality_flag'
 
             if qc_summary_pattern.match(v):    # *_qc_summary variables
-                ds[v] = ds[v].astype(int)
+                ds[v] = ds[v].astype(np.int32)
 
             # add the qc/qartod test variables to the ancillary_variables attribute of the variable tested
             if 'ancillary_variables' in ds[ancillary].attrs:

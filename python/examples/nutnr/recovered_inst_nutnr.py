@@ -4,24 +4,24 @@ import os
 
 from ooi_data_explorations.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, \
     m2m_collect, update_dataset, CONFIG, ENCODINGS
-from ooi_data_explorations.uncabled.process_nutnr import suna_datalogger
+from ooi_data_explorations.uncabled.process_nutnr import suna_instrument
 
 
 def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
     # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative website. The last two will set path and naming conventions to save the data
-    # to the local disk
-    site = 'CE02SHSM'           # OOI Net site designator
-    node = 'RID26'              # OOI Net node designator
+    # Ocean Observatories Initiative website. The last two parameters (level and instrmt) will set path and naming
+    # conventions to save the data to the local disk.
+    site = 'CE01ISSM'           # OOI Net site designator
+    node = 'RID16'              # OOI Net node designator
     sensor = '07-NUTNRB000'     # OOI Net sensor designator
-    stream = 'suna_dcl_recovered'  # OOI Net stream name
-    method = 'recovered_host'   # OOI Net data delivery method
+    stream = 'suna_instrument_recovered'  # OOI Net stream name
+    method = 'recovered_inst'   # OOI Net data delivery method
     level = 'nsif'              # local directory name, level below site
     instrmt = 'nutnr'           # local directory name, instrument below level
 
-    # We are after recovered host data. Determine list of deployments and use the most recent recovered host dataset
-    # to determine the start and end dates for our request.
+    # We are after recovered instrument data. Determine list of deployments and a previous deployment to determine the
+    # start and end dates for our request.
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[-3]
@@ -33,7 +33,7 @@ def main():
     nutnr = nutnr.where(nutnr.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize
-    nutnr = suna_datalogger(nutnr, burst=True)
+    nutnr = suna_instrument(nutnr, burst=True)
     nutnr = update_dataset(nutnr, vocab['maxdepth'])
 
     # save the data

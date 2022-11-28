@@ -120,7 +120,7 @@ conda activate ooi
 conda env list
 
 # install the package as a local development package
-conda develop -p .
+conda develop .
 ```
 
 ## Usage

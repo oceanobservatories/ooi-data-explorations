@@ -4,8 +4,9 @@ import datetime
 import numpy as np
 import os
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, \
     get_vocabulary, update_dataset, dict_update, ENCODINGS
+from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 # load configuration settings
 ATTRS = {
@@ -21,12 +22,12 @@ ATTRS = {
         'data_product_identifier': 'NITRDIS_L1',
     },
     'corrected_nitrate_concentration': {
-        'long_name': 'Corrected Nitrate Concentration',
+        'long_name': 'Corrected Dissolved Nitrate Concentration',
         'standard_name': 'mole_concentration_of_nitrate_in_sea_water',
         'comment': 'Temperature and salinity corrected dissolved nitrate concentration.',
         'units': 'umol L-1',
         'data_product_identifier': 'NITRTSC_L2',
-        'ancillary_variables': ('seawater_temperature practical_salinity raw_spectral_measurements '
+        'ancillary_variables': ('sea_water_temperature sea_water_practical_salinity raw_spectral_measurements '
                                 'dark_value_used_for_fit')
     },
     'raw_spectral_measurements': {
@@ -48,22 +49,24 @@ ATTRS = {
 }
 
 
-def nutnr_datalogger(ds, burst=True):
+def suna_datalogger(ds, burst=True):
     """
-    Takes nutnr data recorded by the data loggers used in the CGSN/EA moorings
+    Takes SUNA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
-    re-organize some of the variables to permit better assessments of the data.
+    re-organize some variables to permit better assessments of the data.
 
     :param ds: initial nutnr data set downloaded from OOI via the M2M system
     :param burst: resample the data to the defined time interval
     :return ds: cleaned up data set
     """
-    # drop some of the variables:
+    # drop some variables:
     #   checksum = used to parse data, is not parsed if the checksum fails so no longer needed
-    #   frame_type = only frame types are SLF per the parser, don't need to repeat
+    #   frame_type = remove the dark frames if recorded, then remove
     #   humidity = not measured, no need to include
     ds = ds.reset_coords()
+    ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
+    ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity'])
 
     # convert the instrument date and time values to a floating point number with the time in seconds, and then
@@ -76,7 +79,7 @@ def nutnr_datalogger(ds, burst=True):
     ds['internal_timestamp'].attrs = dict({
         'long_name': 'Internal NUTNR Clock Time',
         'standard_name': 'time',
-        'units': 'seconds since 1970-01-01 00:00:00 0:00',
+        'units': 'seconds since 1900-01-01T00:00:00.000Z',
         'calendar': 'gregorian',
         'comment': ('Comparing the instrument internal clock versus the GPS referenced sampling time will allow for '
                     'calculations of the instrument clock offset and drift. Useful when working with the '
@@ -85,21 +88,21 @@ def nutnr_datalogger(ds, burst=True):
     ds = ds.drop(['date_of_sample', 'time_of_sample'])
 
     # check for data from a co-located CTD, if not present add with appropriate attributes
-    if 'temp' not in ds.variables:
-        ds['temp'] = ('time', ds['deployment'] * np.nan)
-        ds['temp'].attrs = {
-            'comment': ('Normally this would be seawater temperature data from a co-located CTD. However, data from ' +
+    if 'sea_water_temperature' not in ds.variables:
+        ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_temperature'].attrs = {
+            'comment': ('Normally this would be sea water temperature data from a co-located CTD. However, data from ' +
                         'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
                         'of the data set.'),
             'data_product_identifier': 'TEMPWAT_L1',
-            'long_name': 'Seawater Temperature',
+            'long_name': 'Sea Water Temperature',
             'standard_name': 'sea_water_temperature',
             'units': 'degree_Celsius'
         }
 
-        ds['practical_salinity'] = ('time', ds['deployment'] * np.nan)
-        ds['practical_salinity'].attrs = {
-            'long_name': 'Practical Salinity',
+        ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_practical_salinity'].attrs = {
+            'long_name': 'Sea Water Practical Salinity',
             'standard_name': 'sea_water_practical_salinity',
             'units': '1',
             'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
@@ -108,7 +111,7 @@ def nutnr_datalogger(ds, burst=True):
             'data_product_identifier': 'PRACSAL_L2'
         }
 
-    # rename some of the variables for better clarity
+    # rename some variables for better clarity
     rename = {
         'nutnr_absorbance_at_254_nm': 'absorbance_at_254_nm',
         'nutnr_absorbance_at_350_nm': 'absorbance_at_350_nm',
@@ -125,14 +128,16 @@ def nutnr_datalogger(ds, burst=True):
         'temp_spectrometer': 'temperature_spectrometer',
         'temp_lamp': 'temperature_lamp',
         'temp_interior': 'temperature_interior',
-        'temp': 'seawater_temperature',
         'spectral_channels': 'raw_spectral_measurements',
         'salinity_corrected_nitrate': 'corrected_nitrate_concentration',
         'salinity_corrected_nitrate_qc_results': 'corrected_nitrate_concentration_qc_results',
         'salinity_corrected_nitrate_qc_executed': 'corrected_nitrate_concentration_qc_executed',
         'wavelength': 'wavelength_index'
     }
-    ds = ds.rename(rename)
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -140,39 +145,148 @@ def nutnr_datalogger(ds, burst=True):
             if key in ds.variables:
                 ds[key].attrs[atk] = atv
 
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
-
-    # address incorrectly set units
-    ds['seawater_temperature'].attrs['units'] = 'degree_Celsius'
-    ds['temperature_lamp'].attrs['units'] = 'degree_Celsius'
-    ds['temperature_interior'].attrs['units'] = 'degree_Celsius'
-    ds['temperature_spectrometer'].attrs['units'] = 'degree_Celsius'
-    ds['nitrate_concentration'].attrs['units'] = 'umol L-1'
-    ds['corrected_nitrate_concentration'].attrs['units'] = 'umol L-1'
+    # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    ds['serial_number'] = ds['serial_number'].astype('int32')
+    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+    ds['serial_number'].attrs = dict({
+        'long_name': 'Serial Number',
+        # 'units': '', deliberately left blank, unitless value
+        'comment': ('Instrument serial number'),
+    })
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
         burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
-        # reset the attributes...which keep_attrs should do...
-        burst.attrs = ds.attrs
-        for v in burst.variables:
-            burst[v].attrs = ds[v].attrs
-
-        # save the newly average data
+        # save the newly averaged data
         ds = burst
 
-    # and reset some of the data types
-    data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
-                  'raw_spectral_measurements']
-    for v in data_types:
-        ds[v] = ds[v].astype('int32')
+        # and reset some data types
+        data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
+                      'raw_spectral_measurements']
+        for v in data_types:
+            ds[v] = ds[v].astype('int32')
+
+    return ds
+
+
+def suna_instrument(ds, burst=True):
+    """
+    Takes SUNA data recorded internally by the Sea-Bird SUNA dissolved nitrate
+    sensor and cleans up the data set to make it more user-friendly.  Primary
+    task is renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some variables to permit better assessments of
+    the data.
+
+    :param ds: initial nutnr data set downloaded from OOI via the M2M system
+    :param burst: resample the data to the defined time interval
+    :return ds: cleaned up data set
+    """
+    # drop some variables:
+    #   checksum = used to parse data, is not parsed if the checksum fails so no longer needed
+    #   frame_type = remove the dark frames if recorded, then remove
+    #   humidity = not measured, no need to include
+    #   internal_timestamp == time, redundant so can remove
+    #   date_of_sample = used to construct the internal_timestamp
+    #   time_of_sample = used to construct the internal_timestamp
+    ds = ds.reset_coords()
+    ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
+    ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
+    ds = ds.drop(['checksum', 'frame_type', 'humidity', 'date_of_sample', 'time_of_sample'])
+
+    # check for data from a co-located CTD, if not present add with appropriate attributes
+    if 'sea_water_temperature' not in ds.variables:
+        ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_temperature'].attrs = {
+            'comment': ('Normally this would be sea water temperature data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'TEMPWAT_L1',
+            'long_name': 'Sea Water Temperature',
+            'standard_name': 'sea_water_temperature',
+            'units': 'degree_Celsius'
+        }
+
+        ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_practical_salinity'].attrs = {
+            'long_name': 'Sea Water Practical Salinity',
+            'standard_name': 'sea_water_practical_salinity',
+            'units': '1',
+            'comment': ('Normally this would be seawater salinity data from a co-located CTD. However, data from ' +
+                        'that sensor is unavailable. This value has been filled with NaNs to preserve the structure ' +
+                        'of the data set.'),
+            'data_product_identifier': 'PRACSAL_L2'
+        }
+
+    # rename some variables for better clarity
+    rename = {
+        'nutnr_absorbance_at_254_nm': 'absorbance_at_254_nm',
+        'nutnr_absorbance_at_350_nm': 'absorbance_at_350_nm',
+        'nutnr_bromide_trace': 'bromide_trace',
+        'nutnr_current_main': 'current_main',
+        'nutnr_dark_value_used_for_fit': 'dark_value_used_for_fit',
+        'nutnr_fit_base_1': 'fit_base_1',
+        'nutnr_fit_base_2': 'fit_base_2',
+        'nutnr_fit_rmse': 'fit_rmse',
+        'nutnr_integration_time_factor': 'integration_time_factor',
+        'nutnr_nitrogen_in_nitrate': 'nitrogen_in_nitrate',
+        'nutnr_spectrum_average': 'spectrum_average',
+        'nutnr_voltage_int': 'voltage_instrument',
+        'temp_spectrometer': 'temperature_spectrometer',
+        'temp_lamp': 'temperature_lamp',
+        'temp_interior': 'temperature_interior',
+        'spectral_channels': 'raw_spectral_measurements',
+        'salinity_corrected_nitrate': 'corrected_nitrate_concentration',
+        'salinity_corrected_nitrate_qc_results': 'corrected_nitrate_concentration_qc_results',
+        'salinity_corrected_nitrate_qc_executed': 'corrected_nitrate_concentration_qc_executed',
+        'wavelength': 'wavelength_index'
+    }
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # address incorrectly set units and variable types
+    ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
+    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+    ds['serial_number'].attrs = dict({
+        'long_name': 'Serial Number',
+        # 'units': '', deliberately left blank, unitless value
+        'comment': ('Instrument serial number'),
+    })
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    if burst:   # re-sample the data to a defined time interval using a median average
+        # create the burst averaging
+        burst = ds
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # save the newly averaged data
+        ds = burst
+
+        # and reset some data types
+        data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
+                      'raw_spectral_measurements']
+        for v in data_types:
+            ds[v] = ds[v].astype('int32')
 
     return ds
 
@@ -189,41 +303,46 @@ def main(argv=None):
     stop = args.stop
     burst = args.burst
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    if stream not in ['suna_dcl_recovered', 'suna_instrument_recovered']:
+        raise SystemExit('Data from the Satlantic ISUS dissolved nitrate sensor will not be supported at this time.')
+
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    if stream not in ['suna_dcl_recovered']:
-        exit_text = ('Currently the only stream supported is suna_dcl_recovered, you requested %s.' % stream)
-        raise SystemExit(exit_text)
-
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        nutnr = m2m_collect(r, ('.*deployment%04d.*NUTNR.*\\.nc$' % deploy))
+        # download the data for the deployment
+        nutnr = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*NUTNR.*\\.nc$' % deploy))
+
+        # check to see if we downloaded any data
+        if not nutnr:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
     else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
         nutnr = m2m_collect(r, '.*NUTNR.*\\.nc$')
 
-    if not nutnr:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
+        # check to see if we downloaded any data
+        if not nutnr:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
 
     # clean-up and reorganize
-    nutnr = nutnr_datalogger(nutnr, burst)
+    if method in ['telemetered', 'recovered_host']:
+        nutnr = suna_datalogger(nutnr, burst)
+    else:
+        nutnr = suna_instrument(nutnr, burst)
+
     vocab = get_vocabulary(site, node, sensor)[0]
     nutnr = update_dataset(nutnr, vocab['maxdepth'])
 

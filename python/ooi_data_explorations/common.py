@@ -818,12 +818,12 @@ def process_file(catalog_file, gc=False, use_dask=False):
         return None
 
     # addresses error in how the *_qartod_executed variables are set
-    qartod_pattern = re.compile(r'^.+_qartod_executed$')
-    for v in ds.variables:
-        if qartod_pattern.match(v):
-            # the shape of the QARTOD executed variables should compare to the provenance variable
-            if ds[v].shape != ds['provenance'].shape:
-                ds = ds.drop_vars(v)
+    # qartod_pattern = re.compile(r'^.+_qartod_executed$')
+    # for v in ds.variables:
+    #     if qartod_pattern.match(v):
+    #         # the shape of the QARTOD executed variables should compare to the provenance variable
+    #         if ds[v].shape != ds['provenance'].shape:
+    #             ds = ds.drop_vars(v)
 
     # convert the dimensions from obs to time and get rid of obs and other variables we don't need
     ds = ds.swap_dims({'obs': 'time'})
@@ -863,7 +863,7 @@ def process_file(catalog_file, gc=False, use_dask=False):
     ds.attrs['cdm_data_type'] = 'Station'
     ds.attrs['featureType'] = 'timeSeries'
 
-    # update some of the global attributes
+    # update some global attributes
     ds.attrs['acknowledgement'] = 'National Science Foundation'
     ds.attrs['comment'] = 'Data collected from the OOI M2M API and reworked for use in locally stored NetCDF files.'
 
@@ -967,7 +967,7 @@ def update_dataset(ds, depth):
     :return ds: The updated data set
     """
     # add a default station identifier as a coordinate variable to the data set
-    ds.coords['station'] = 0
+    ds.coords['station'] = ds.attrs['subsite'].upper()
     ds = ds.expand_dims('station', axis=None)
     ds['station'].attrs = dict({
         'cf_role': 'timeseries_id',
@@ -995,7 +995,7 @@ def update_dataset(ds, depth):
         'lat': ('station', [lat]),
         'lon': ('station', [lon]),
         'z': ('station', [depth])
-    }, coords={'station': [0]})
+    }, coords={'station': [ds.attrs['subsite'].upper()]})
 
     geo_attrs = dict({
         'station': {
@@ -1045,42 +1045,54 @@ def update_dataset(ds, depth):
     # to bytes and set the attributes to define the flag masks and meanings.
     ds['deployment'].attrs['long_name'] = 'Deployment Number'   # add missing long_name attribute
     qc_pattern = re.compile(r'^.+_qc_.+$')
-    executed_pattern = re.compile(r'^.+_qc_executed$')
-    results_pattern = re.compile(r'^.+_qc_results$')
-    qartod_results = re.compile(r'^.+_qartod_results$')
+    qc_executed_pattern = re.compile(r'^.+_qc_executed$')
+    qc_results_pattern = re.compile(r'^.+_qc_results$')
+    qc_summary_pattern = re.compile(r'^.+_qc_summary_flag$')
+    qartod_pattern = re.compile(r'^.+_qartod_.+$')
+    qartod_executed_pattern = re.compile(r'^.+_qartod_executed$')
+    qartod_results_pattern = re.compile(r'^.+_qartod_results$')
     flag_masks = np.array([1, 2, 4, 8, 16, 32, 64, 128], dtype=np.uint8)
     for v in ds.variables:
-        if qartod_results.match(v):  # make sure set as integer
-            ds[v] = ds[v].astype('int32')
+        if qartod_pattern.match(v):  # update QARTOD variables
+            if qartod_executed_pattern.match(v):
+                ds[v] = ds[v].astype(str)
+                ds[v].attrs['standard_name'] = 'quality_flag'
+
+            if qartod_results_pattern.match(v):
+                ds[v] = ds[v].astype(np.int32)
+                ds[v].attrs['flag_values'] = np.array([1, 2, 3, 4, 9]),
+                ds[v].attrs['standard_name'] = 'aggregate_quality_flag'
 
         if qc_pattern.match(v):      # update QC variables
-            ds[v] = (('station', 'time'), [[np.uint8(x) for x in ds[v].values[0]]])
             ds[v].attrs['long_name'] = re.sub('Qc', 'QC', re.sub('_', ' ', v.title()))
+            ancillary = re.sub(r'_qc_.+$', '', v)
 
-            if executed_pattern.match(v):   # *_qc_executed variables
+            if qc_executed_pattern.match(v):   # *_qc_executed variables
+                ds[v] = ds[v].astype(np.uint8)
                 ds[v].attrs['flag_masks'] = flag_masks
                 ds[v].attrs['flag_meanings'] = ('global_range_test local_range_test spike_test poly_trend_test '
-                                                'stuck_value_test gradient_test propogate_flags')
+                                                'stuck_value_test gradient_test undefined propogate_flags')
                 ds[v].attrs['comment'] = 'Automated QC tests executed for the associated named variable.'
+                ds[v].attrs['standard_name'] = 'quality_flag'
 
-                ancillary = re.sub('_qc_executed', '', v)
-                ds[v].attrs['ancillary_variables'] = ancillary
-                if 'standard_name' in ds[ancillary].attrs:
-                    ds[v].attrs['standard_name'] = ds[ancillary].attrs['standard_name'] + \
-                        ' qc_tests_executed'
-
-            if results_pattern.match(v):    # *_qc_results variables
+            if qc_results_pattern.match(v):    # *_qc_results variables
+                ds[v] = ds[v].astype(np.uint8)
                 ds[v].attrs['flag_masks'] = flag_masks
                 ds[v].attrs['flag_meanings'] = ('global_range_test_passed local_range_test_passed spike_test_passed '
                                                 'poly_trend_test_passed stuck_value_test_passed gradient_test_passed '
-                                                'all_tests_passed')
+                                                'undefined all_tests_passed')
                 ds[v].attrs['comment'] = ('QC result flags are set to true (1) if the test passed. Otherwise, if '
                                           'the test failed or was not executed, the flag is set to false (0).')
+                ds[v].attrs['standard_name'] = 'quality_flag'
 
-                ancillary = re.sub('_qc_results', '', v)
-                ds[v].attrs['ancillary_variables'] = ancillary
-                if 'standard_name' in ds[ancillary].attrs:
-                    ds[v].attrs['standard_name'] = ds[ancillary].attrs['standard_name'] + ' qc_tests_results'
+            if qc_summary_pattern.match(v):    # *_qc_summary variables
+                ds[v] = ds[v].astype(np.int32)
+
+            # add the qc/qartod test variables to the ancillary_variables attribute of the variable tested
+            if 'ancillary_variables' in ds[ancillary].attrs:
+                ds[ancillary].attrs['ancillary_variables'] = '%s %s' % (ds[ancillary].attrs['ancillary_variables'], v)
+            else:
+                ds[ancillary].attrs['ancillary_variables'] = v
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
     ds['time'] = dt64_epoch(ds.time)

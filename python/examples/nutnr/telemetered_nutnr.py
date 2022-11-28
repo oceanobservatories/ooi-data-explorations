@@ -4,13 +4,13 @@ import os
 
 from ooi_data_explorations.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, \
     m2m_collect, update_dataset, CONFIG, ENCODINGS
-from ooi_data_explorations.uncabled.process_nutnr import nutnr_datalogger
+from ooi_data_explorations.uncabled.process_nutnr import suna_datalogger
 
 
 def main():
     # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
     # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two parameters (level and instrmt) will set path and naming
+    # Ocean Observatories Initiative website. The last two parameters (level and instrmt) will set path and naming
     # conventions to save the data to the local disk.
     site = 'CE01ISSM'           # OOI Net site designator
     node = 'RID16'              # OOI Net node designator
@@ -33,7 +33,7 @@ def main():
     nutnr = nutnr.where(nutnr.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize
-    nutnr = nutnr_datalogger(nutnr, burst=True)
+    nutnr = suna_datalogger(nutnr, burst=True)
     nutnr = update_dataset(nutnr, vocab['maxdepth'])
 
     # save the data

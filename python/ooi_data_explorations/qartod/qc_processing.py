@@ -17,7 +17,7 @@ from dask.diagnostics import ProgressBar
 from ooi_data_explorations.qartod.climatology import Climatology
 
 # csv file ordered header row
-ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
+ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'stream', 'method', 'parameters',
                'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
 CLM_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
 GR_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source', 'notes']

@@ -179,11 +179,11 @@ def metbk_datalogger(ds, burst=False):
         ds[var].attrs['units'] = 'degree_Celsius'
 
     # calculate the near surface salinity
-    ds['sea_surface_salinity'] = SP_from_C(ds['sea_surface_conductivity'] * 10, ds['sea_surface_temperature'], 1.0)
+    ds['sea_surface_salinity'] = SP_from_C(ds['sea_surface_conductivity'] * 10, ds['sea_surface_temperature'], 1.25)
     ds['sea_surface_salinity'].attrs = {
         'long_name': 'Sea Surface Practical Salinity',
         'standard_name': 'sea_surface_salinity',
-        'units': '1e-3',
+        'units': '1',
         'comment': ('Salinity is generally defined as the concentration of dissolved salt in a parcel of seawater. ' +
                     'Practical Salinity is a more specific unitless quantity calculated from the conductivity of ' +
                     'seawater and adjusted for temperature and pressure. It is approximately equivalent to Absolute ' +

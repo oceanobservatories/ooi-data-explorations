@@ -165,13 +165,13 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # NaN out shortwave radiation data measured outside solar noon. Will only use the nominal max values from
     # each day (approximately solar noon) to create the gross range and climatology (min value will always be 0).
-    m = (data.time.dt.hour < 19.75) | (data.time.dt.hour > 20.25)
+    m = (data.time.dt.hour < 19.5) | (data.time.dt.hour > 20.5)
     data['shortwave_irradiance'][m] = np.nan
 
     # create the initial gross range entries. Sensor ranges from the module specifications section of the ASIMET
     # Documentation Page (https://uop.whoi.edu/UOPinstruments/frodo/asimet/index.html).
     limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 50], [0, 2800],
-              [-5, 45], [0, 7], [0, 42], [-32.5, 32.5], [-32.5, 32.5]]
+              [-5, 45], [0, 7], [0, 42], [-65, 65], [-65, 65]]
     gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor)
 
     # replicate it twice for the different streams
@@ -188,11 +188,11 @@ def generate_qartod(site, node, sensor, cut_off):
     # add the source details
     gr_lookup['source'] = ('User range based on data collected through {}.'.format(src_date))
 
-    # create and format the climatology lookups and tables for the data and water streams (dropping precipitation)
+    # create and format the climatology lookups and tables (dropping precipitation and conductivity)
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
                   'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_salinity',
                   'eastward_wind_velocity', 'northward_wind_velocity']
-    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45], [0, 42], [-32.5, 32.5], [-32.5, 32.5]]
+    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45], [0, 42], [-65, 65], [-65, 65]]
 
     clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node, sensor=sensor)
 
@@ -246,8 +246,8 @@ def main(argv=None):
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
-                  'shortwave_irradiance', 'sea_surface_temperature', 'eastward_wind_velocity',
-                  'northward_wind_velocity']
+                  'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_salinity',
+                  'eastward_wind_velocity', 'northward_wind_velocity']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

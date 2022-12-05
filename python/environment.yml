@@ -17,6 +17,7 @@ dependencies:
   - gsw
   - hdf4
   - h5netcdf
+  - ioos_qc
   - jupyterlab
   - libnetcdf
   - matplotlib

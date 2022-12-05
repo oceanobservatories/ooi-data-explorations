@@ -17,8 +17,8 @@ from dask.diagnostics import ProgressBar
 from ooi_data_explorations.qartod.climatology import Climatology
 
 # csv file ordered header row
-ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'method', 'stream', 'parameters',
-             'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
+ANNO_HEADER = ['id', 'subsite', 'node', 'sensor', 'stream', 'method', 'parameters',
+               'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', 'source', 'annotation']
 CLM_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
 GR_HEADER = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source', 'notes']
 
@@ -34,7 +34,7 @@ def woa_standard_bins():
     available from the National Centers for Environmental Information (NCEI):
     https://www.ncei.noaa.gov/data/oceans/woa/WOA18/DOC/woa18documentation.pdf
 
-    :return woa_bins: The WOA standard depth bins as a 2D numpy array
+    :return: The WOA standard depth bins as a 2D numpy array
     """
     # Surface to 100 m by 5 m
     left = np.atleast_2d(np.arange(0, 100, 5)).T
@@ -70,7 +70,7 @@ def identify_blocks(flags, time_step, padding=0):
 
     There must be a minimum time range of flagged points (defined as covering
     more than 24 hours as the default) in order to create a block. Consecutive
-    blocks must be more than than the minimum time window apart, or they are
+    blocks must be more than the minimum time window apart, or they are
     combined into a single block.
 
     :param flags: a boolean array of data points flagged as failing a QC
@@ -79,7 +79,7 @@ def identify_blocks(flags, time_step, padding=0):
         combining flagged points into a group, and the minimum range of a
         group of flagged points to determine if a block should be created.
     :param padding: add padding (in hours) to identified blocks
-    :return blocks: List of starting and ending dates and times defining
+    :return: List of starting and ending dates and times defining
         a block of flagged data.
     """
     # find blocks of consecutive points that span a time range greater than time_step[0]
@@ -162,7 +162,7 @@ def create_annotations(site, node, sensor, blocks):
     Use the identified blocks of data marked as "fail" to create initial HITL
     annotations for the data. Additional HITL work will be required to review
     the data and the initial annotation flags to create a final HITL set of
-    annotations that can be posted to the data base.
+    annotations that can be posted to the database.
 
     :param site: Site designator, extracted from the first part of the
         reference designator
@@ -172,7 +172,7 @@ def create_annotations(site, node, sensor, blocks):
         of the reference designator
     :param blocks: Consecutive blocks of bad data determined via the
         identify_blocks function
-    :return output: Dictionary of the initial annotations for further review
+    :return: Dictionary of the initial annotations for further review
     """
     # default text to use for the HITL annotation
     fail_text = ('Based on a HITL review and automated quality assessments of the data, the data highlighted '
@@ -206,12 +206,12 @@ def create_annotations(site, node, sensor, blocks):
     return output
 
 
-def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor, stream, fixed_lower):
+def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sensor, stream, fixed_lower):
     """
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Climatology lookup tables.
 
-    :param param: parameter name of the variable for the calculated climatology
+    :param parameter: parameter name of the variable for the calculated climatology
     :param clm: results of the climatology test, used to create the table
     :param sensor_range: list of vendor defined ranges for valid data
     :param depth_bins: depth bins used for the climatology
@@ -223,17 +223,17 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
         the reference designator
     :param stream: Stream name that contains the data of interest
     :param fixed_lower:
-    :return qc_dict: dictionary with the sensor and user gross range values
+    :return: dictionary with the sensor and user gross range values
         added in the formatting expected by the QC lookup
     """
     # set up the depth bins, if set
     header_str = ''
     if depth_bins.any():
         value_str = '"[{}, {}]"'.format(depth_bins[0], depth_bins[1])
-        note = 'Climatology based on depth bins (from {} to {} m).'.format(depth_bins[0], depth_bins[1])
+        source = 'Climatology based on depth bins (from {} to {} m).'.format(depth_bins[0], depth_bins[1])
     else:
         value_str = '"[0, 0]"'
-        note = 'Climatology based on the entire dataset.'
+        source = ''
 
     # create the lookup dictionary
     var_explained = clm.regression['variance_explained']
@@ -245,10 +245,10 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
         'node': node,
         'sensor': sensor,
         'stream': stream,
-        'parameters': {'inp': param, 'tinp': 'time', 'zinp': 'None'},
-        'climatologyTable': 'climatology_tables/{}-{}-{}-{}.csv'.format(site, node, sensor, param),
-        'source': 'The variance explained by the climatological model is {:.1%}.'.format(var_explained[0]),
-        'notes': note
+        'parameters': {'inp': parameter, 'tinp': 'time', 'zinp': 'None'},
+        'climatologyTable': 'climatology_tables/{}-{}-{}-{}.csv'.format(site, node, sensor, parameter),
+        'source': source,
+        'notes': 'The variance explained by the climatological model is {:.1%}.'.format(var_explained[0])
     }
 
     # create the climatology table
@@ -273,14 +273,14 @@ def format_climatology(param, clm, sensor_range, depth_bins, site, node, sensor,
     return qc_dict, clm_table
 
 
-def process_climatology(ds, params, sensor_range, **kwargs):
+def process_climatology(ds, parameters, sensor_range, **kwargs):
     """
-    Using the data in an xarray dataset and a list of parameter(s), calculate
+    Using the data in a xarray dataset and a list of parameter(s), calculate
     a monthly climatology for each parameter and create formatted outputs
     that can be saved to the qc_lookup tables used by OOI for QARTOD testing
 
     :param ds: dataset with the parameter(s) to use in developing a climatology
-    :param params: list of the parameter name(s) of the variable(s) used for
+    :param parameters: list of the parameter name(s) of the variable(s) used for
         the calculated climatology
     :param sensor_range: list of vendor defined ranges for valid data
     :keyword depth_bins: 2D array of WOA depth bins
@@ -318,7 +318,7 @@ def process_climatology(ds, params, sensor_range, **kwargs):
 
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
-    for idx, param in enumerate(params):
+    for idx, param in enumerate(parameters):
         if param in ds.variables:
             if depth_bins.any():
                 depth_tables = ''
@@ -336,8 +336,8 @@ def process_climatology(ds, params, sensor_range, **kwargs):
                     # calculate the 2-cycle climatology for the parameter of interest
                     m = (sliced[param] > sensor_range[idx][0]) & (sliced[param] < sensor_range[idx][1]) \
                         & (~np.isnan(sliced[param]))
-                    sliced = sliced.where(m, drop=True)
-                    clm.fit(sliced, param)
+                    sliced = sliced[param].where(m, drop=True)
+                    clm.fit(sliced)
 
                     # create the formatted dictionary for the lookup tables
                     qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
@@ -355,8 +355,8 @@ def process_climatology(ds, params, sensor_range, **kwargs):
             else:
                 # calculate the 2-cycle climatology for the parameter of interest
                 m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-                ds = ds.where(m, drop=True)
-                clm.fit(ds, param)
+                da = ds[param].where(m, drop=True)
+                clm.fit(da)
 
                 # create the formatted dictionary for the lookup tables
                 qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
@@ -370,12 +370,12 @@ def process_climatology(ds, params, sensor_range, **kwargs):
     return clm_lookup, clm_tables
 
 
-def format_gross_range(param, sensor_range, user_range, site, node, sensor, stream, source):
+def format_gross_range(parameter, sensor_range, user_range, site, node, sensor, stream, notes):
     """
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Gross Range lookup tables.
 
-    :param param: parameter name of the variable for the calculated user range
+    :param parameter: parameter name of the variable for the calculated user range
     :param sensor_range: default sensor, or fail range, usually referenced
         from the vendor documentation
     :param user_range: user range, or sensor range, calculated from the data
@@ -386,7 +386,7 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
     :param sensor: Sensor designator, extracted from the third and fourth part of
         the reference designator
     :param stream: Stream name that contains the data of interest
-    :param source: Notes or comments about how the Gross Range values were
+    :param notes: Notes or comments about how the Gross Range values were
         obtained
     :return qc_dict: dictionary with the sensor and user gross range values
         added in the formatting expected by the QC lookup tables
@@ -398,7 +398,7 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
         'sensor': sensor,
         'stream': stream,
         'parameter': {
-            'inp': param
+            'inp': parameter
         },
         'qcConfig': {
              'qartod': {
@@ -408,21 +408,21 @@ def format_gross_range(param, sensor_range, user_range, site, node, sensor, stre
                  }
              }
          },
-        'source': source,
-        'notes': ''
+        'source': '',
+        'notes': notes
     }
     return qc_dict
 
 
-def process_gross_range(ds, params, sensor_range, **kwargs):
+def process_gross_range(ds, parameters, sensor_range, **kwargs):
     """
-    Using the data in an xarray dataset and a list of parameter(s), calculate
+    Using the data in a xarray dataset and a list of parameter(s), calculate
     a gross ranges (long term average plus/minus 3 standard deviations) for
     each parameter and create formatted outputs that can be saved to the
     qc_lookup tables used by OOI for QARTOD testing.
 
     :param ds: dataset with the parameter(s) to use in developing a gross range
-    :param params: list of the parameter name(s) of the variable(s) used for
+    :param parameters: list of the parameter name(s) of the variable(s) used for
         the calculated user portion of the gross range test
     :param sensor_range: list of vendor defined ranges for valid data
     :keyword site: Site designator, extracted from the first part of the
@@ -433,8 +433,8 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
         part of the reference designator (optional input)
     :keyword stream: Stream name that contains the data of interest
         (optional input)
-    :return gross_range: a pandas Dataframe corresponding to the values used to
-        create the QARTOD lookup tables for the gross range test
+    :return: a pandas Dataframe corresponding to the values used to create the
+        QARTOD lookup tables for the gross range test
     """
     # process the optional keyword arguments
     site = kwargs.get('site')
@@ -447,7 +447,7 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
 
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
-    for idx, param in enumerate(params):
+    for idx, param in enumerate(parameters):
         if param in ds.variables:
             # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
             # 4500 data points to use, running the test a total of 5000 times
@@ -462,7 +462,7 @@ def process_gross_range(ds, params, sensor_range, **kwargs):
                 vals.append(random_choice(da, 4500))
             # Now compute
             with ProgressBar():
-                print("Testing data for normality: ")
+                print("Testing data for normality: %s" % param)
                 pvals = dask.compute(*vals)
             pnorm = [normaltest(v).pvalue for v in pvals]
             if np.mean(pnorm) < 0.01:
@@ -521,10 +521,10 @@ def parse_qc(ds):
         of the QC checks decoded into a QARTOD style flag value.
     """
     # create a list of the variables that have had QC tests applied
-    vars = [x.split('_qc_results')[0] for x in ds.variables if 'qc_results' in x]
+    variables = [x.split('_qc_results')[0] for x in ds.variables if 'qc_results' in x]
 
     # for each variable with qc tests applied
-    for var in vars:
+    for var in variables:
         # set the qc_results and qc_executed variable names and the new qc_flags variable name
         qc_result = var + '_qc_results'
         qc_executed = var + '_qc_executed'
@@ -542,7 +542,7 @@ def parse_qc(ds):
         #    6: undefined
         #    7: dataqc_propagateflags
 
-        # use the qc_executed variable to determine which tests were run, and setup a bit mask to pull out the results
+        # use the qc_executed variable to determine which tests were run, and set up a bit mask to pull out the results
         executed = np.bitwise_or.reduce(ds[qc_executed].values.astype('uint8'))
         executed_bits = np.unpackbits(executed.astype('uint8'))
 

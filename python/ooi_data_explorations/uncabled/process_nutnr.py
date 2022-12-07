@@ -49,6 +49,56 @@ ATTRS = {
 }
 
 
+def quality_checks(ds):
+    """
+    Quality assessment of the raw and calculated nitrate concentration data
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
+
+        1 = Pass
+        3 = Suspect or of High Interest
+        4 = Fail
+
+    The final flag value represents the worst case assessment of the data quality.
+
+    :param ds: xarray dataset with the raw signal data and the calculated
+               seawater pH
+    :return qc_flag: array of flag values indicating seawater pH quality
+    """
+    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+
+    # "RMSE: The root-mean-square error parameter from the SUNA V2 can be used to make
+    # an estimate of how well the nitrate spectral fit is. This should usually be less than 1E-3. If
+    # it is higher, there is spectral shape (likely due to CDOM) that adversely impacts the nitrate
+    # estimate." SUNA V2 vendor documentation (Sea-Bird Scientific Document# SUNA180725)
+    m = ds.fit_rmse > 0.001
+    qc_flag[m] = 3
+
+    # "Absorption: The data output of the SUNA V2 is the absorption at 350 nm and 254 nm
+    # (A350 and A254). These wavelengths are outside the nitrate absorption range and can be
+    # used to make an estimate of the impact of CDOM. If absorption is high (>1.3 AU), the
+    # SUNA will not be able to collect adequate light to make a measurement." SUNA V2 vendor
+    # documentation (Sea-Bird Scientific Document# SUNA180725)
+    m254 = ds.absorbance_at_254_nm > 1.3
+    qc_flag[m254] = 4
+    m350 = ds.absorbance_at_350_nm > 1.3
+    qc_flag[m350] = 4
+
+    # test for failed dark value measurements (can't be less than 0)
+    m = ds.dark_value_used_for_fit <= 0
+    qc_flag[m] = 4
+
+    # test for a blocked absorption channel (or a failed lamp)
+    m = ds.spectrum_average < 10000
+    qc_flag[m] = 4
+
+    # test for out of range corrected dissolved nitrate readings
+    m = (ds.corrected_nitrate_concentration.values < -2.0) | (ds.corrected_nitrate_concentration.values > 3000)
+    qc_flag[m] = 4
+
+    return qc_flag
+
+
 def suna_datalogger(ds, burst=True):
     """
     Takes SUNA data recorded by the data loggers used in the CGSN/EA moorings
@@ -151,13 +201,16 @@ def suna_datalogger(ds, burst=True):
     ds['serial_number'].attrs = dict({
         'long_name': 'Serial Number',
         # 'units': '', deliberately left blank, unitless value
-        'comment': ('Instrument serial number'),
+        'comment': 'Instrument serial number'
     })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
+
+    # test the data quality using additional instrument variables
+    ds['dissolved_nitrate_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
@@ -272,6 +325,9 @@ def suna_instrument(ds, burst=True):
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
+
+    # test the data quality using additional instrument variables
+    ds['dissolved_nitrate_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging

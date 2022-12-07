@@ -110,8 +110,8 @@ def generate_qartod(site, node, sensor, cut_off):
     # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
     # HITL annotations that can be combined with system annotations to create a cleaned up data set
     # prior to calculating the QARTOD test values
-    fail = data.dissolved_nitrate_quality_flag.where(data.dissolved_nitrate_quality_flag > 3).notnull()
-    blocks = identify_blocks(fail, [18, 72])
+    fail = data.nitrate_sensor_quality_flag.where(data.nitrate_sensor_quality_flag > 3).notnull()
+    blocks = identify_blocks(fail, [24, 48])
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
@@ -133,7 +133,13 @@ def generate_qartod(site, node, sensor, cut_off):
     # set to fail.
     data['corrected_nitrate_concentration'][fail] = np.nan
     if 'rollup_annotations_qc_results' in data.variables:
-        data = data.where(data.rollup_annotations_qc_results != 4)
+        fail = data.rollup_annotations_qc_results.where(data.rollup_annotations_qc_results > 3).notnull()
+        data['corrected_nitrate_concentration'][fail] = np.nan
+
+    if 'corrected_nitrate_concentration_annotations_qc_results' in data.variables:
+        fail = data.corrected_nitrate_concentration_annotations_qc_results.where(
+            data.corrected_nitrate_concentration_annotations_qc_results > 3).notnull()
+        data['corrected_nitrate_concentration'][fail] = np.nan
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.
@@ -156,17 +162,35 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site,
-                                    node=node, sensor=sensor, stream='suna_recovered')
+                                    node=node, sensor=sensor, stream='suna')
+
+    if node in ['RID16', 'RID26']:
+        # replicate it twice for the different streams
+        gr_lookup = pd.concat([gr_lookup] * 2, ignore_index=True)
+
+        # re-work the gross range entries for the different streams
+        gr_lookup['stream'][0] = 'suna_dcl_recovered'
+        gr_lookup['stream'][1] = 'suna_instrument_recovered'
+    else:
+        gr_lookup['stream'] = 'nutnr_j_cspp_instrument_recovered'
 
     # add the stream name and the source comment
     gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
 
     # create and format the climatology lookups and tables for the data
     clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node,
-                                                sensor=sensor, stream='suna_recovered')
+                                                sensor=sensor, stream='suna')
 
-    # add the stream name
-    clm_lookup['stream'] = 'suna_recovered'
+    if node in ['RID16', 'RID26']:
+        # replicate it twice for the different streams
+        clm_lookup = pd.concat([clm_lookup] * 2, ignore_index=True)
+
+        # re-work the climatology entries for the different streams
+        clm_lookup['stream'][0] = 'suna_dcl_recovered'
+        clm_lookup['stream'][1] = 'suna_instrument_recovered'
+    else:
+        clm_lookup['stream'] = 'nutnr_j_cspp_instrument_recovered'
+
 
     return annotations, gr_lookup, clm_lookup, clm_table
 

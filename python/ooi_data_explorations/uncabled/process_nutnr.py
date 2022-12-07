@@ -71,8 +71,10 @@ def quality_checks(ds):
     # an estimate of how well the nitrate spectral fit is. This should usually be less than 1E-3. If
     # it is higher, there is spectral shape (likely due to CDOM) that adversely impacts the nitrate
     # estimate." SUNA V2 vendor documentation (Sea-Bird Scientific Document# SUNA180725)
-    m = ds.fit_rmse > 0.001
+    m = ds.fit_rmse > 0.001  # per the vendor documentation
     qc_flag[m] = 3
+    m = ds.fit_rmse > 0.100  # based on experience with the instrument data sets
+    qc_flag[m] = 4
 
     # "Absorption: The data output of the SUNA V2 is the absorption at 350 nm and 254 nm
     # (A350 and A254). These wavelengths are outside the nitrate absorption range and can be
@@ -200,7 +202,7 @@ def suna_datalogger(ds, burst=True):
     ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
     ds['serial_number'].attrs = dict({
         'long_name': 'Serial Number',
-        # 'units': '', deliberately left blank, unitless value
+        # 'units': '', deliberately left blank, unit-less value
         'comment': 'Instrument serial number'
     })
 
@@ -210,7 +212,7 @@ def suna_datalogger(ds, burst=True):
     ds = parse_qc(ds)
 
     # test the data quality using additional instrument variables
-    ds['dissolved_nitrate_quality_flag'] = quality_checks(ds)
+    ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
@@ -327,7 +329,7 @@ def suna_instrument(ds, burst=True):
     ds = parse_qc(ds)
 
     # test the data quality using additional instrument variables
-    ds['dissolved_nitrate_quality_flag'] = quality_checks(ds)
+    ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging

@@ -99,6 +99,7 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
         ds = ds.sortby('time')
         avg = ds.resample(time=itime, base=btime, loffset=loff, skipna=True).median(keep_attrs=True)
         avg = avg.interpolate_na(dim='time', max_gap=gtime)
+        avg = avg.where(~np.isnan(avg.deployment), drop=True)
 
         # add the attributes back into the data set
         avg.attrs = ds.attrs

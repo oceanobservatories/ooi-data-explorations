@@ -90,11 +90,8 @@ from ooi_data_explorations.common import AUTH
 #CE01ISSP URLs
 CE01ISSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered'
 CE01ISSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
-CE01ISSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/06-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE01ISSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/07-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE01ISSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/10-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE01ISSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/05-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
-CE01ISSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/02-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
 CE01ISSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE01ISSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE01ISSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
@@ -103,11 +100,8 @@ CE01ISSP_WINCH = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 #CE02SHSP URLs
 CE02SHSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered'
 CE02SHSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
-CE02SHSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/05-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE02SHSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/06-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE02SHSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/09-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE02SHSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/02-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
-CE02SHSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/01-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
 CE02SHSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE02SHSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE02SHSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
@@ -116,11 +110,8 @@ CE02SHSP_WINCH = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 #CE06ISSP URLs
 CE06ISSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered'
 CE06ISSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
-CE06ISSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/06-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE06ISSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/07-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE06ISSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/10-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE06ISSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/05-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
-CE06ISSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/02-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
 CE06ISSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE06ISSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE06ISSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
@@ -129,11 +120,8 @@ CE06ISSP_WINCH = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv
 #CE07SHSP URLs
 CE07SHSP_OPTAA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/04-OPTAAJ000/recovered_cspp/optaa_dj_cspp_instrument_recovered'
 CE07SHSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
-CE07SHSP_NUTNR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/05-NUTNRJ000/recovered_cspp/nutnr_j_cspp_instrument_recovered'
 CE07SHSP_SPKIR = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/06-SPKIRJ000/recovered_cspp/spkir_abj_cspp_instrument_recovered'
-CE07SHSP_PARAD = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/09-PARADJ000/recovered_cspp/parad_j_cspp_instrument_recovered'
 CE07SHSP_VELPT = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/02-VELPTJ000/recovered_cspp/velpt_j_cspp_instrument_recovered'
-CE07SHSP_DOSTA = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/01-DOSTAJ000/recovered_cspp/dosta_abcdjm_cspp_instrument_recovered'
 CE07SHSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE07SHSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE07SHSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
@@ -245,60 +233,6 @@ class OOIM2M():
         print('CTD conductivity in S m^-1.')
         return data
 
-    def cspp_dosta(nc):
-        site,depth = OOIM2M.find_site(nc)  #Determine the CSPP site and standard depth.
-        dfnc = pd.DataFrame(data = {'location':nc})  #The returned NetCDFs contain both DOSTA and CTDPF files. 
-        dosta = dfnc.loc[~dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]  #Identify the DOSTA files. (Files that do not (~) contain "cspp-ctdpf_j_cspp_instrument".)
-#       ctd = dfnc.loc[dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]  #Identify the CTD file. CTD data accompanies DOSTA data because it is used in the computation of data products. 
-        data = pd.DataFrame()
-        for remote in dosta['location']: #For each DOSTA remote location.
-            dataset = xr.open_dataset(remote)  #Open the dataset.
-            d = ({'datetime':dataset['profiler_timestamp'],   #Pull out these variables.
-                  'pressure':dataset['pressure_depth'], 
-                  'temperature':dataset['optode_temperature'], 
-                  'concentration':dataset['dissolved_oxygen'], 
-                  'estimated_saturation':dataset['estimated_oxygen_saturation']})
-            d = pd.DataFrame(data = d)        
-            data = pd.concat([data,d])  #Concatenate it with the previous loop.
-        data = data[data.pressure < depth]  #Remove bad values.
-        data = data[data.pressure > 0] 
-        data = data[data.estimated_saturation > 0]
-        data = data.dropna()  #Remove rows with any NaNs.
-        data = data.sort_values('datetime')  #Sort the data chronologically.
-        data = data.reset_index(drop=True)  #Reset the index.
-        print('DOSTA data for ' + site + ' available.')
-        print('DOSTA datetime in UTC.')
-        print('DOSTA pressure in dbars.')
-        print('DOSTA temperature in degC.')
-        print('DOSTA concentration in umol kg^-1.')   
-        print('DOSTA estimated_saturation in %.')
-        return data
-
-    def cspp_par(nc):
-        site,depth = OOIM2M.find_site(nc)
-        dfnc = pd.DataFrame(data = {'location':nc})
-        par = dfnc.loc[~dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]
-#        ctd = dfnc.loc[dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]
-        data = pd.DataFrame()
-        for remote in par['location']:
-            dataset = xr.open_dataset(remote)
-            d = ({'datetime':dataset['profiler_timestamp'], 
-                  'pressure':dataset['pressure_depth'], 
-                  'par':dataset['parad_j_par_counts_output']})
-            d = pd.DataFrame(data = d)        
-            data = pd.concat([data,d])
-        data = data[data.pressure < depth] #Remove obviously bad pressures.
-        data = data[data.pressure > 0]  
-        data = data[data.par > 0]  #Remove obviously bad values.
-        data = data.dropna()  #Remove rows with any NaNs.
-        data = data.sort_values('datetime')  #Sort the data chronologically.
-        data = data.reset_index(drop=True)  #Reset the index.
-        print('PAR data for ' + site + ' available.')
-        print('PAR datetime in UTC.')
-        print('PAR pressure in dbars.')
-        print('PAR par in umol photons m^-2 s^-1.')
-        return data
-    
     def cspp_velpt(nc):
         # OOI ion-function for VELPT-J assumes data from the instrument is output in mm/s, when it is actually output in m/s.         
         # https://github.com/oceanobservatories/ion-functions/blob/master/ion_functions/data/vel_functions.py
@@ -444,51 +378,7 @@ class OOIM2M():
         print('WM wm_voltage in volts.')
         print('WM rope_on_drum in meters.')
         return data
-         
-    def cspp_nutnr(nc):
-        site,depth = OOIM2M.find_site(nc)
-        dfnc = pd.DataFrame(data = {'location':nc})
-        nit = dfnc.loc[~dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]  #CTD data accompanies NUTNR data. Parse out the relevant URLs.
-        ctd = dfnc.loc[dfnc['location'].str.contains('ctdpf_j_cspp_instrument')]
-       
-        nit_data = pd.DataFrame()
-        for nit_remote in nit['location']:  #Pull nitrate data.
-            nit_dataset = xr.open_dataset(nit_remote)
-            n = ({'timestamp':nit_dataset['profiler_timestamp'], 
-                  'nitrate':nit_dataset['salinity_corrected_nitrate']})            
-            n = pd.DataFrame(data = n)
-            nit_data = pd.concat([nit_data,n],sort = False)
-        nit_data = nit_data.sort_values('timestamp')
-        nit_data = nit_data[nit_data.nitrate > 0]
-        
-        ctd_data = pd.DataFrame()
-        for ctd_remote in ctd['location']:  #Pull CTD data.
-            ctd_dataset = xr.open_dataset(ctd_remote)
-            c = ({'timestamp':ctd_dataset['profiler_timestamp'],   #Pull the following variables.
-                  'ctdpressure':ctd_dataset['pressure']})   
-            c = pd.DataFrame(data = c)  
-            ctd_data = pd.concat([ctd_data,c],sort = False)
-        ctd_data = ctd_data[ctd_data.ctdpressure < depth] #Remove obviously bad values.
-        ctd_data = ctd_data[ctd_data.ctdpressure > 0]  
-        ctd_data = ctd_data.sort_values('timestamp')
-        
-        combo = pd.concat([nit_data,ctd_data],sort = True)  #Combine nitrate and ctd data.
-        combo.index = combo['timestamp']
-        combo = combo[['timestamp','ctdpressure','nitrate']]
-        combo = combo.sort_index()
-        combo['pressure'] = combo['ctdpressure'].interpolate(method = 'time')  #Interpolate pressure by time.
-        combo['datetime'] = combo.index
-        
-        data = combo[['datetime','pressure','nitrate']]
-        data = data.sort_values('datetime')  #Sort the data chronologically.
-        data = data.dropna()
-        data = data.reset_index(drop = True)  #Reset the index.
-        print('NUTNR data for ' + site + ' available.')
-        print('NUTNR datetime in UTC.')
-        print('NUTNR pressure is interpolated from CTD pressure and is in dbars.')
-        print('NUTNR nitrate in uMol L^-1')
-        return data
-     
+
     def cspp_spkir(nc):
         site,depth = OOIM2M.find_site(nc)  #Get the deployment site and standard depth.
         dfnc = pd.DataFrame(data = {'location':nc})

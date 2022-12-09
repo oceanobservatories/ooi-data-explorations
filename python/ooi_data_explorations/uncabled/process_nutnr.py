@@ -199,7 +199,10 @@ def suna_datalogger(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+    if 'string19' in ds.dims.keys():
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data[:, :, 0]])
+    else:
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
     ds['serial_number'].attrs = dict({
         'long_name': 'Serial Number',
         # 'units': '', deliberately left blank, unit-less value
@@ -316,11 +319,14 @@ def suna_instrument(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+    if 'string19' in ds.dims.keys():
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data[:, :, 0]])
+    else:
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
     ds['serial_number'].attrs = dict({
         'long_name': 'Serial Number',
         # 'units': '', deliberately left blank, unitless value
-        'comment': ('Instrument serial number'),
+        'comment': 'Instrument serial number'
     })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the

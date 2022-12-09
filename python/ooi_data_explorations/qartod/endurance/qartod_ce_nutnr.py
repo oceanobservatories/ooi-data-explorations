@@ -151,12 +151,12 @@ def generate_qartod(site, node, sensor, cut_off):
     # set to fail.
     data['corrected_nitrate_concentration'][fail] = np.nan
     if 'rollup_annotations_qc_results' in data.variables:
-        fail = data.rollup_annotations_qc_results.where(data.rollup_annotations_qc_results > 3).notnull()
+        fail = data.rollup_annotations_qc_results.where(data.rollup_annotations_qc_results == 4).notnull()
         data['corrected_nitrate_concentration'][fail] = np.nan
 
     if 'corrected_nitrate_concentration_annotations_qc_results' in data.variables:
         fail = data.corrected_nitrate_concentration_annotations_qc_results.where(
-            data.corrected_nitrate_concentration_annotations_qc_results > 3).notnull()
+            data.corrected_nitrate_concentration_annotations_qc_results == 4).notnull()
         data['corrected_nitrate_concentration'][fail] = np.nan
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
@@ -176,7 +176,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # set the parameters and the gross range limits
     parameters = ['nitrate_concentration', 'corrected_nitrate_concentration']
-    limits = [[0.0, 3000], [-1.5, 3000]]
+    limits = [[0.0, 100], [-1.5, 100]]
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor, stream='suna')

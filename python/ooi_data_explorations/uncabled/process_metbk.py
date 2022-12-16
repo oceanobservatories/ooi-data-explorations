@@ -37,8 +37,8 @@ def quality_checks(ds):
     for p in parameters:
         # The primary failure mode of the METBK is to repeat the last value it received from a sensor.
         # Use the IOOS QARTOD flat line test to identify these cases (consider it suspect if it repeats
-        # for 30+ minutes and failed if it repeats for 1+ hours.
-        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 1800, 3600, 0.1)
+        # for 5+ minutes and failed if it repeats for 15+ minutes).
+        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 300, 900, 0.01)
 
         # The secondary failure mode occurs when the METBK logger sets values to a NaN if no sensor data is available.
         # In the case of the sea surface conductivity and temperature data, different values are used to represent
@@ -161,16 +161,15 @@ def metbk_datalogger(ds, burst=False):
     #   met_latnflx_minute
     #   met_netlirr_minute
     #   met_sensflx_minute
-    ds = ds.drop(['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres',
-                  'met_windavg_mag_corr_east', 'met_windavg_mag_corr_north', 'met_netsirr', 'met_salsurf',
-                  'met_spechum', 'ct_depth', 'met_current_direction', 'met_current_speed', 'met_relwind_direction',
-                  'met_relwind_speed', 'met_heatflx_minute', 'met_latnflx_minute', 'met_netlirr_minute',
-                  'met_sensflx_minute', 'met_barpres_qc_executed', 'met_barpres_qc_results',
-                  'met_current_direction_qc_executed', 'met_current_direction_qc_results',
+    ds = ds.drop(['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres', 'met_windavg_mag_corr_east',
+                  'met_windavg_mag_corr_north', 'met_netsirr', 'met_spechum', 'ct_depth', 'met_current_direction',
+                  'met_current_speed', 'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute',
+                  'met_latnflx_minute', 'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed',
+                  'met_barpres_qc_results', 'met_current_direction_qc_executed', 'met_current_direction_qc_results',
                   'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
                   'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
-                  'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_salsurf_qc_executed',
-                  'met_salsurf_qc_results', 'met_spechum_qc_executed', 'met_spechum_qc_results'])
+                  'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
+                  'met_spechum_qc_results'])
 
     # reset incorrectly formatted temperature and relative humidity units
     ds['relative_humidity'].attrs['units'] = 'percent'
@@ -178,21 +177,20 @@ def metbk_datalogger(ds, burst=False):
     for var in temp_vars:
         ds[var].attrs['units'] = 'degree_Celsius'
 
-    # calculate the near surface salinity
-    ds['sea_surface_salinity'] = SP_from_C(ds['sea_surface_conductivity'] * 10, ds['sea_surface_temperature'], 1.25)
-    ds['sea_surface_salinity'].attrs = {
-        'long_name': 'Sea Surface Practical Salinity',
-        'standard_name': 'sea_surface_salinity',
-        'units': '1',
-        'comment': ('Salinity is generally defined as the concentration of dissolved salt in a parcel of seawater. ' +
-                    'Practical Salinity is a more specific unitless quantity calculated from the conductivity of ' +
-                    'seawater and adjusted for temperature and pressure. It is approximately equivalent to Absolute ' +
-                    'Salinity (the mass fraction of dissolved salt in seawater), but they are not interchangeable.'),
-        'data_product_identifier': 'SALSURF_L2',
-        'instrument': (ds.attrs['subsite'] + '-SBD11-06-METBKA000'),
-        'stream': ds.attrs['stream'],
-        'ancillary_variables': 'sea_surface_conductivity sea_surface_temperature'
+    # rename the met_salsurf parameter
+    rename = {
+        'met_salsurf_qartod_executed': 'sea_surface_salinity_qartod_executed',
+        'met_salsurf_qartod_results': 'sea_surface_salinity_qartod_results'
     }
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
+
+    # correct the flag_values attribute for the *_qartod_results variables
+    for qresult in ['sea_surface_conductivity_qartod_results', 'sea_surface_temperature_qartod_results',
+                    'sea_surface_salinity_qartod_results']:
+        ds[qresult].attrs['flag_values'] = np.array([1, 2, 3, 4, 9])
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -201,6 +199,12 @@ def metbk_datalogger(ds, burst=False):
 
     # run quality checks, adding the results to the QC summary flag
     ds = quality_checks(ds)
+
+    # re-calculate the near surface salinity using the now NaN'ed out fill-values
+    ds['sea_surface_salinity'] = SP_from_C(ds['sea_surface_conductivity'] * 10, ds['sea_surface_temperature'], 1.0)
+    ds['sea_surface_salinity'].attrs = {
+        '_FillValue': np.nan
+    }
 
     if burst:   # re-sample the data to a 15-minute interval using a median average
         burst = ds
@@ -273,8 +277,8 @@ def main(argv=None):
     else:
         metbk = metbk_hourly(metbk)
 
-    vocab = get_vocabulary(site, node, sensor)[0]
-    metbk = update_dataset(metbk, vocab['maxdepth'])
+    # vocab = get_vocabulary(site, node, sensor)[0]
+    metbk = update_dataset(metbk, 1.0)
 
     # save the data to disk
     out_file = os.path.abspath(args.outfile)

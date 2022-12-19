@@ -966,14 +966,8 @@ def update_dataset(ds, depth):
     :param depth: instrument deployment depth
     :return ds: The updated data set
     """
-    # add a default station identifier as a coordinate variable to the data set
-    ds.coords['station'] = ds.attrs['subsite'].upper()
+    # add a station dimension to the data set
     ds = ds.expand_dims('station', axis=None)
-    ds['station'].attrs = dict({
-        'cf_role': 'timeseries_id',
-        'long_name': 'Station Identifier',
-        'comment': ds.attrs['subsite'].upper()
-    })
 
     # determine if the latitude and longitude are set as global attribute or a variable, and parse accordingly
     if 'lat' in ds.variables:
@@ -990,18 +984,18 @@ def update_dataset(ds, depth):
         del(ds.attrs['lat'])
         del(ds.attrs['lon'])
 
-    # add the geospatial coordinates using the station identifier from above as the dimension
+    # add the geospatial coordinates using the station dimension from above
     geo_coords = xr.Dataset({
+        'station_name': ('station', [ds.attrs['subsite'].upper()]),
         'lat': ('station', [lat]),
         'lon': ('station', [lon]),
         'z': ('station', [depth])
-    }, coords={'station': [ds.attrs['subsite'].upper()]})
+    })
 
     geo_attrs = dict({
-        'station': {
-            'cf_role': 'timeseries_id',
-            'long_name': 'Station Identifier',
-            'comment': ds.attrs['subsite'].upper()
+        'station_name': {
+            'long_name': 'Station Name',
+            'cf_role': 'timeseries_id'
         },
         'lon': {
             'long_name': 'Longitude',
@@ -1034,7 +1028,7 @@ def update_dataset(ds, depth):
 
     # update coordinate attributes for all variables
     for v in ds.variables:
-        if v not in ['time', 'lat', 'lon', 'z', 'station']:
+        if v not in ['time', 'lat', 'lon', 'z', 'station_name']:
             # remove older coordinates encoding if it exists
             if 'coordinates' in ds[v].encoding.keys():
                 del ds[v].encoding['coordinates']

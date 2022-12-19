@@ -4,10 +4,9 @@ import numpy as np
 import os
 
 from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, \
-    get_vocabulary, update_dataset, ENCODINGS
+    update_dataset, ENCODINGS
 from ooi_data_explorations.qartod.qc_processing import parse_qc
 
-from gsw.conversions import SP_from_C
 from ioos_qc import qartod
 
 
@@ -33,12 +32,12 @@ def quality_checks(ds):
     """
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
                   'precipitation', 'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
-                  'eastward_wind_velocity', 'northward_wind_velocity']
+                  'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
     for p in parameters:
         # The primary failure mode of the METBK is to repeat the last value it received from a sensor.
         # Use the IOOS QARTOD flat line test to identify these cases (consider it suspect if it repeats
-        # for 5+ minutes and failed if it repeats for 15+ minutes).
-        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 300, 900, 0.01)
+        # for 20+ minutes and failed if it repeats for 35+ minutes).
+        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 1200, 2100, 0.00001)
 
         # The secondary failure mode occurs when the METBK logger sets values to a NaN if no sensor data is available.
         # In the case of the sea surface conductivity and temperature data, different values are used to represent
@@ -49,10 +48,12 @@ def quality_checks(ds):
             m = ds[p] < -4.0  # use a floating point value just above -5
             flags[m] = 9
             ds[p][m] = np.nan
+            ds['sea_surface_salinity'][m] = np.nan
         elif p == 'sea_surface_conductivity':
             m = ds[p] < 0.5  # use a floating point value just above 0
             flags[m] = 9
             ds[p][m] = np.nan
+            ds['sea_surface_salinity'][m] = np.nan
         else:
             m = np.isnan(ds[p])
             flags[m] = 9
@@ -63,27 +64,20 @@ def quality_checks(ds):
             # add the new test results to the existing QC summary results
             qc = ds[qc_summary]
             flags = np.array([flags, qc.values])
-            ds[qc_summary] = ('time', flags.max(axis=0))
+            ds[qc_summary] = ('time', flags.max(axis=0, initial=1))
         else:
             # create a new QC summary variable
             ds[qc_summary] = ('time', flags)
 
-            # set up the attributes for the new variable
-            ds[qc_summary].attrs = dict({
-                'long_name': '%s QC Summary Flag' % ds[p].attrs['long_name'],
-                'comment': ('Converts the QC Results values from a bitmap to a QARTOD style summary flag, where ',
-                            'the values are 1 == pass, 2 == not evaluated, 3 == suspect or of high interest, ',
-                            '4 == fail, and 9 == missing. The QC tests, as applied by OOI, only yield pass or ',
-                            'fail values. By resetting, the QC flags become more user friendly and more nuanced.'),
-                'flag_values': np.array([1, 2, 3, 4, 9]),
-                'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing'
-            })
-
-            # add the standard name if the variable has one
-            if 'standard_name' in ds[p].attrs:
-                ds[qc_summary].attrs['standard_name'] = '%s qc_summary_flag' % ds[p].attrs['standard_name']
-
-        return ds
+        # set up the attributes for the new variable
+        ds[qc_summary].attrs = dict({
+            'long_name': '%s QC Summary Flag' % ds[p].attrs['long_name'],
+            'standard_name': 'aggregate_quality_flag',
+            'comment': ('Summary quality flag combining the results of the instrument-specific quality tests with '
+                        'existing OOI QC tests, if available, to create a single QARTOD style aggregate quality flag'),
+            'flag_values': np.array([1, 2, 3, 4, 9]),
+            'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing'
+        })
 
 
 def metbk_hourly(ds):
@@ -171,14 +165,11 @@ def metbk_datalogger(ds, burst=False):
                   'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
                   'met_spechum_qc_results'])
 
-    # reset incorrectly formatted temperature and relative humidity units
-    ds['relative_humidity'].attrs['units'] = 'percent'
-    temp_vars = ['air_temperature', 'sea_surface_temperature']
-    for var in temp_vars:
-        ds[var].attrs['units'] = 'degree_Celsius'
-
-    # rename the met_salsurf parameter
+    # rename the met_salsurf parameters
     rename = {
+        'met_salsurf': 'sea_surface_salinity',
+        'met_salsurf_qc_executed': 'sea_surface_salinity_qc_executed',
+        'met_salsurf_qc_results': 'sea_surface_salinity_qc_results',
         'met_salsurf_qartod_executed': 'sea_surface_salinity_qartod_executed',
         'met_salsurf_qartod_results': 'sea_surface_salinity_qartod_results'
     }
@@ -187,24 +178,13 @@ def metbk_datalogger(ds, burst=False):
             ds = ds.rename({key: value})
             ds[value].attrs['ooinet_variable_name'] = key
 
-    # correct the flag_values attribute for the *_qartod_results variables
-    for qresult in ['sea_surface_conductivity_qartod_results', 'sea_surface_temperature_qartod_results',
-                    'sea_surface_salinity_qartod_results']:
-        ds[qresult].attrs['flag_values'] = np.array([1, 2, 3, 4, 9])
-
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
     # run quality checks, adding the results to the QC summary flag
-    ds = quality_checks(ds)
-
-    # re-calculate the near surface salinity using the now NaN'ed out fill-values
-    ds['sea_surface_salinity'] = SP_from_C(ds['sea_surface_conductivity'] * 10, ds['sea_surface_temperature'], 1.0)
-    ds['sea_surface_salinity'].attrs = {
-        '_FillValue': np.nan
-    }
+    quality_checks(ds)
 
     if burst:   # re-sample the data to a 15-minute interval using a median average
         burst = ds
@@ -277,7 +257,6 @@ def main(argv=None):
     else:
         metbk = metbk_hourly(metbk)
 
-    # vocab = get_vocabulary(site, node, sensor)[0]
     metbk = update_dataset(metbk, 1.0)
 
     # save the data to disk

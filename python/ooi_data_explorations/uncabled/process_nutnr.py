@@ -66,7 +66,7 @@ def suna_datalogger(ds, burst=True):
     #   humidity = not measured, no need to include
     ds = ds.reset_coords()
     # CGSN update: changed function order to handle arrays kept as bytes 
-    ds['frame_type'] = ('time', [''.join(x) for x in ds.frame_type.astype(str).data])
+    ds['frame_type'] = ds['frame_type'].astype(str)
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity'])
 

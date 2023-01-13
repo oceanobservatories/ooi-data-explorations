@@ -148,12 +148,13 @@ def suna_datalogger(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
-    ds['serial_number'].attrs = dict({
-        'long_name': 'Serial Number',
+    # CGSN update: switched to simple type conversions
+    ds['serial_number'] = ds['serial_number'].astype(int)
+    #ds['serial_number'].attrs = dict({
+    #    'long_name': 'Serial Number',
         # 'units': '', deliberately left blank, unitless value
-        'comment': ('Instrument serial number'),
-    })
+    #    'comment': ('Instrument serial number'),
+    #})
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -198,6 +199,7 @@ def suna_instrument(ds, burst=True):
     #   date_of_sample = used to construct the internal_timestamp
     #   time_of_sample = used to construct the internal_timestamp
     ds = ds.reset_coords()
+    # CGSN update: switched to simple type conversion - handles byte type arrays
     ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity', 'date_of_sample', 'time_of_sample'])
@@ -262,12 +264,13 @@ def suna_instrument(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
-    ds['serial_number'].attrs = dict({
-        'long_name': 'Serial Number',
+    # CGSN update: switched to type conversions
+    ds['serial_number'] = ds['serial_number'].astype(int)
+    #ds['serial_number'].attrs = dict({
+    #    'long_name': 'Serial Number',
         # 'units': '', deliberately left blank, unitless value
-        'comment': ('Instrument serial number'),
-    })
+    #    'comment': ('Instrument serial number'),
+    #})
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high

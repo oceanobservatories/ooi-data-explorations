@@ -65,8 +65,12 @@ def suna_datalogger(ds, burst=True):
     #   frame_type = remove the dark frames if recorded, then remove
     #   humidity = not measured, no need to include
     ds = ds.reset_coords()
-    # CGSN update: changed function order to handle arrays kept as bytes 
-    ds['frame_type'] = ds['frame_type'].astype(str)
+    # CGSN update # 2: now this does a check to the shape, to determine if a 1 or 2-d array
+    # For 2-D array, may have to call .value to load into memory if working
+    if len(ds["frame_type"].shape) == 1:
+        ds['frame_type'] = ds['frame_type'].astype(str)
+    else:
+        ds['frame_type'] = ('time', [int(''.join(x.astype(str))) for x in ds.frame_type.data])
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity'])
 
@@ -148,13 +152,17 @@ def suna_datalogger(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    # CGSN update: switched to simple type conversions
-    ds['serial_number'] = ds['serial_number'].astype(int)
-    #ds['serial_number'].attrs = dict({
-    #    'long_name': 'Serial Number',
-        # 'units': '', deliberately left blank, unitless value
-    #    'comment': ('Instrument serial number'),
-    #})
+    # CGSN update # 2: now this does a check to the shape, to determine if a 1 or 2-d array
+    # For 2-D array, may have to call .value to load into memory if working
+    if len(ds['serial_number'].shape) == 1:
+        ds['serial_number'] = ds['serial_number'].astype(int)
+    else:
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+        ds['serial_number'].attrs = dict({
+            'long_name': 'Serial Number',
+            'units': '', deliberately left blank, unitless value
+            'comment': ('Instrument serial number'),
+        })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -265,13 +273,17 @@ def suna_instrument(ds, burst=True):
 
     # address incorrectly set units and variable types
     ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
-    # CGSN update: switched to type conversions
-    ds['serial_number'] = ds['serial_number'].astype(int)
-    #ds['serial_number'].attrs = dict({
-    #    'long_name': 'Serial Number',
-        # 'units': '', deliberately left blank, unitless value
-    #    'comment': ('Instrument serial number'),
-    #})
+    # CGSN update # 2: now this does a check to the shape, to determine if a 1 or 2-d array
+    # For 2-D array, may have to call .value to load into memory if working
+    if len(ds['serial_number'].shape) == 1:
+        ds['serial_number'] = ds['serial_number'].astype(int)
+    else:
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+        ds['serial_number'].attrs = dict({
+            'long_name': 'Serial Number',
+            'units': '', deliberately left blank, unitless value
+            'comment': ('Instrument serial number'),
+        })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high

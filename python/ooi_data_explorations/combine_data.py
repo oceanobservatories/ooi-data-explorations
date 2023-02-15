@@ -170,6 +170,10 @@ def main(argv=None):
     resample_time = args.resample
     outfile = args.outfile
 
+    # check to see if the resample_time is 0 (e.g. don't resample)
+    if resample_time == 0:
+        resample_time = None
+
     # load the data from the different data delivery methods
     tdata = None
     rhdata = None
@@ -178,19 +182,19 @@ def main(argv=None):
         # load the telemetered data file
         tfile = glob.glob(os.path.join(data_directory, '*.deploy{:02d}.telemetered.*.nc'.format(deployment)))
         if tfile:
-            tdata = xr.load_dataset(tfile[0])
+            tdata = xr.load_dataset(tfile[0], engine='h5netcdf')
 
     if recovered_host:
         # load the recovered_host data file
         rhfile = glob.glob(os.path.join(data_directory, '*.deploy{:02d}.recovered_host.*.nc'.format(deployment)))
         if rhfile:
-            rhdata = xr.load_dataset(rhfile[0])
+            rhdata = xr.load_dataset(rhfile[0], engine='h5netcdf')
 
     if recovered_inst:
         # load the recovered_inst data file
         rifile = glob.glob(os.path.join(data_directory, '*.deploy{:02d}.recovered_inst.*.nc'.format(deployment)))
         if rifile:
-            ridata = xr.load_dataset(rifile[0])
+            ridata = xr.load_dataset(rifile[0], engine='h5netcdf')
 
     # combine the data into a single dataset and save the combined and resampled data to disk
     if tdata or rhdata or ridata:

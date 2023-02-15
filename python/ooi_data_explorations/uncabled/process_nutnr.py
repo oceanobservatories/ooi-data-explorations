@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import datetime
+import numpy as np
+import os
+
 from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, \
     get_vocabulary, update_dataset, ENCODINGS
 from ooi_data_explorations.qartod.qc_processing import parse_qc
@@ -44,9 +48,6 @@ ATTRS = {
     }
 }
 
-import datetime
-import numpy as np
-import os
 
 def quality_checks(ds):
     """
@@ -121,7 +122,7 @@ def suna_datalogger(ds, burst=True):
     if len(ds["frame_type"].shape) == 1:
         ds['frame_type'] = ds['frame_type'].astype(str)
     else:
-        ds['frame_type'] = ('time', [int(''.join(x.astype(str))) for x in ds.frame_type.data])
+        ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity'])
 
@@ -211,8 +212,8 @@ def suna_datalogger(ds, burst=True):
         ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
         ds['serial_number'].attrs = dict({
             'long_name': 'Serial Number',
-            'units': '', # deliberately left blank, unitless value
-            'comment': ('Instrument serial number'),
+            # 'units': '', # deliberately left blank, unit-less value
+            'comment': 'Instrument serial number',
         })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
@@ -335,8 +336,8 @@ def suna_instrument(ds, burst=True):
         ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
         ds['serial_number'].attrs = dict({
             'long_name': 'Serial Number',
-            'units': '', #deliberately left blank, unitless value
-            'comment': ('Instrument serial number'),
+            # 'units': '', # deliberately left blank, unit-less value
+            'comment': 'Instrument serial number',
         })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the

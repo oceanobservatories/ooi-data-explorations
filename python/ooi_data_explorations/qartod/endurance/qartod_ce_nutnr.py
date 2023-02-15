@@ -176,7 +176,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # set the parameters and the gross range limits
     parameters = ['nitrate_concentration', 'corrected_nitrate_concentration']
-    limits = [[0.0, 100], [-1.5, 100]]
+    limits = [[-2.0, 300.0], [-1.5, 300.0]]
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor, stream='suna')
@@ -184,13 +184,23 @@ def generate_qartod(site, node, sensor, cut_off):
     # add the stream name(s) and the source comment
     if node in ['RID16', 'RID26']:
         # replicate it twice for the different streams
-        gr_lookup = pd.concat([gr_lookup] * 2, ignore_index=True)
+        gr_lookup = pd.concat([gr_lookup] * 7, ignore_index=True)
 
         # re-work the gross range entries for the different streams
         gr_lookup['stream'][0] = 'suna_dcl_recovered'
-        gr_lookup['stream'][1] = 'suna_instrument_recovered'
-        gr_lookup['stream'][2] = 'suna_dcl_recovered'
+        gr_lookup['stream'][1] = 'suna_dcl_recovered'
+        gr_lookup['stream'][2] = 'suna_instrument_recovered'
         gr_lookup['stream'][3] = 'suna_instrument_recovered'
+        gr_lookup['stream'][4] = 'nutnr_b_dcl_conc_instrument'
+        gr_lookup['stream'][5] = 'delete_me_I_am_just_a_placeholder'
+        gr_lookup['stream'][6] = 'nutnr_b_dcl_conc_instrument_recovered'
+        gr_lookup['stream'][7] = 'nutnr_b_dcl_conc_instrument_recovered'
+        gr_lookup['stream'][8] = 'nutnr_b_dcl_full_instrument'
+        gr_lookup['stream'][9] = 'nutnr_b_dcl_full_instrument'
+        gr_lookup['stream'][10] = 'nutnr_b_dcl_full_instrument_recovered'
+        gr_lookup['stream'][11] = 'nutnr_b_dcl_full_instrument_recovered'
+        gr_lookup['stream'][12] = 'nutnr_b_instrument_recovered'
+        gr_lookup['stream'][13] = 'nutnr_b_instrument_recovered'
     else:
         gr_lookup['stream'] = 'nutnr_j_cspp_instrument_recovered'
 
@@ -212,13 +222,23 @@ def generate_qartod(site, node, sensor, cut_off):
     # add the stream name(s) and the source comment
     if node in ['RID16', 'RID26']:
         # replicate it twice for the different streams
-        clm_lookup = pd.concat([clm_lookup] * 2, ignore_index=True)
+        clm_lookup = pd.concat([clm_lookup] * 7, ignore_index=True)
 
         # re-work the climatology entries for the different streams
         clm_lookup['stream'][0] = 'suna_dcl_recovered'
-        clm_lookup['stream'][1] = 'suna_instrument_recovered'
-        clm_lookup['stream'][2] = 'suna_dcl_recovered'
+        clm_lookup['stream'][1] = 'suna_dcl_recovered'
+        clm_lookup['stream'][2] = 'suna_instrument_recovered'
         clm_lookup['stream'][3] = 'suna_instrument_recovered'
+        clm_lookup['stream'][4] = 'nutnr_b_dcl_conc_instrument'
+        clm_lookup['stream'][5] = 'delete_me_I_am_just_a_placeholder'
+        clm_lookup['stream'][6] = 'nutnr_b_dcl_conc_instrument_recovered'
+        clm_lookup['stream'][7] = 'nutnr_b_dcl_conc_instrument_recovered'
+        clm_lookup['stream'][8] = 'nutnr_b_dcl_full_instrument'
+        clm_lookup['stream'][9] = 'nutnr_b_dcl_full_instrument'
+        clm_lookup['stream'][10] = 'nutnr_b_dcl_full_instrument_recovered'
+        clm_lookup['stream'][11] = 'nutnr_b_dcl_full_instrument_recovered'
+        clm_lookup['stream'][12] = 'nutnr_b_instrument_recovered'
+        clm_lookup['stream'][13] = 'nutnr_b_instrument_recovered'
     else:
         clm_lookup['stream'] = 'nutnr_j_cspp_instrument_recovered'
 

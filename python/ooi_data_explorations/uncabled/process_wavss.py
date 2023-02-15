@@ -15,16 +15,16 @@ ATTRS = {
         'comment': ('Wave height is defined as the vertical distance from a wave trough to the following wave crest. '
                     'The mean wave height is the mean trough to crest distance measured during the observation period. '
                     'This is calculated from the average zero down-crossing wave height'),
-        'data_product_identifier': 'WAVSTAT-HAVG_L0',
+        'data_product_identifier': 'WAVSTAT-HAVG_L2',
     },
     'max_wave_height': {
         'long_name': 'Maximum wave height',
         'standard_name': 'sea_surface_wave_maximum_height',
         'units': 'm',
         'comment': ('Wave height is defined as the vertical distance from a wave trough to the following wave crest. '
-                    'The maximum wave height is the greatest trough to crest distance measured during the observation period. '
-                    'This is calculated from the maximum zero down-crossing wave height.'),
-        'data_product_identifier': 'WAVSTAT-HMAX_L0',
+                    'The maximum wave height is the greatest trough to crest distance measured during the observation '
+                    'period. This is calculated from the maximum zero down-crossing wave height.'),
+        'data_product_identifier': 'WAVSTAT-HMAX_L2',
     },
     'mean_direction': {
         'long_name': 'Mean Direction of Wave Field',
@@ -34,7 +34,7 @@ ATTRS = {
                     'construction X_to_direction and indicates the direction towards which the velocity vector of '
                     ' X is headed. The direction is a bearing in the usual geographical sense, measured positive '
                     ' clockwise from due north.'),
-        'data_product_identifier': 'WAVSTAT-D_L0',
+        'data_product_identifier': 'WAVSTAT-D_L2',
     },
     'mean_spectral_period': {
         'long_name': 'Mean Wave Period Computed from Second Frequency Moment',
@@ -62,17 +62,16 @@ ATTRS = {
         'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
                     'troughs or upward passes through the mean level. Wave mean period is the mean period measured '
                     'over the observation duration. Calculated as the average zero down-crossing wave period. '),
-        'data_product_identifier': 'WAVSTAT-TAVG_L0'
+        'data_product_identifier': 'WAVSTAT-TAVG_L2'
     },
     'peak_wave_period': {
         'long_name': 'Peak Wave Period',
         'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum',
         'units': 's',
         'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
-                    'troughs or upward passes through the mean level. The sea_surface_wave_period_at_variance_spectral_density_maximum, '
-                    'sometimes called peak wave period, is the period of the most energetic waves in the total wave '
-                    'spectrum at a specific location.'),
-        'data_product_identifier': 'WAVSTAT-TP_L0',
+                    'troughs or upward passes through the mean level. The peak wave period, is the period of the most '
+                    'energetic waves in the total wave spectrum at a specific location.'),
+        'data_product_identifier': 'WAVSTAT-TP_L2',
     },
     'significant_period': {
         'long_name': 'Significant Wave Period',
@@ -81,7 +80,7 @@ ATTRS = {
         'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
                     'troughs or upward passes through the mean level. The significant wave period is the mean period '
                     'of the highest one-third of waves. Calculated from the significant zero down-crossing waves.'),
-        'data_product_identifier': 'WAVSTAT-TSIG_L0',
+        'data_product_identifier': 'WAVSTAT-TSIG_L2',
     },
     'significant_wave_height': {
         'long_name': 'Significant Wave Height',
@@ -91,7 +90,7 @@ ATTRS = {
                     'The significant wave height is the mean trough to crest distance measured during the observation '
                     'period of the highest one-third of waves. Calculated from the zero down-crossing significant wave '
                     'height.'),
-        'data_product_identifier': 'WAVSTAT-HSIG_L0',
+        'data_product_identifier': 'WAVSTAT-HSIG_L2',
     },
     'wave_height_10': {
         'long_name': 'Mean Wave Height of Highest Tenth',
@@ -100,7 +99,7 @@ ATTRS = {
         'comment': ('Wave height is defined as the vertical distance from a wave trough to the following '
                     'wave crest. The height of the highest tenth is defined as the mean of the highest '
                     'ten per cent of trough to crest distances measured during the observation period.'),
-        'data_product_identifier': 'WAVSTAT-H10_L0',
+        'data_product_identifier': 'WAVSTAT-H10_L2',
     },
     'wave_height_hmo': {
         'long_name': 'Significant Wave Height from Spectral Moment 0',
@@ -110,7 +109,7 @@ ATTRS = {
                     'wave crest. The significant wave height (hm0) is the mean wave height of the highest '
                     'one-third of waves as estimated from the zeroth-spectral moment m0, where '
                     'hm0 = 4*sqrt(m0), and m0 is the intregral of the S(f)*df with f = F1 to F2 in Hz'),
-        'data_product_identifier': 'WAVSTAT-HMO_L0',
+        'data_product_identifier': 'WAVSTAT-HMO_L2',
     },
     'wave_period_10': {
         'long_name': 'Mean Wave Period of Highest Tenth',
@@ -119,35 +118,33 @@ ATTRS = {
         'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
                     'troughs or upward passes through the mean level. The mean wave period of highest tenth is the '
                     'mean period of the highest one-tenth of waves during the observation duration.'),
-        'data_product_identifier': 'WAVSTAT-T10_L0',        
+        'data_product_identifier': 'WAVSTAT-T10_L2',
     },
     'wave_period_tp5': {
         'long_name': 'Peak Wave Period - Read Method',
-        #'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum_read_method',
+        # 'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum_read_method',
         'units': 's',
         'comment': ('Peak wave period in seconds as computed by the READ method. Tp5 has less statistical '
                     'variability than Tp because it is based on spectral moments. The Tp5 is determined '
                     'from calculating Fp5 which is the average frequency computed with the weighting '
                     'function S(f)**5 over the defined upper and lower frequency range.'),
-        'data_product_identifier': 'WAVSTAT-TP5_L0',
+        'data_product_identifier': 'WAVSTAT-TP5_L2',
     },
 }
 
-
-# +
 
 def ratio_tp_to_hm0(tp, hm0):
     """
     This test evaluates the ratio of sig wave height to period.
     
-    These tests are only applicable to values derived from the
-    spectral analysis. Data products produced from the zero-
-    crossing methods are unaffected. The results of this test
-    are attributable to directional wave statistics products, i.e.
-    those derived from the spectral variance values.
+    These tests are only applicable to values derived from the spectral
+    analysis. Data products produced from the zero-crossing methods are
+    unaffected. The results of this test are attributable to directional
+    wave statistics products, i.e. those derived from the spectral variance
+    values.
     
     :param tp: Peak wave period from the WAVSS (Tp) 
-    :param hm0: Significant wave height calculated from spectral variance (hm0)
+    :param hm0: Significant wave height calculated from spectral variance (Hm0)
     :return qc_flags: a numpy array of flags indicating pass/fail (1/4) of the
         ratio test
     """
@@ -167,33 +164,35 @@ def ratio_tp_to_hm0(tp, hm0):
     return qc_flag
 
 
-def hsig_to_tavg(Hsig, Tavg):
+def hsig_to_tavg(hsig, tavg):
     """
     This test evaluates wave heights against average wave periods.
     
-    This test is based on empiriical fitting by NDBC. It tests wave
-    height (Hsig) as a function of the average wave period to identify
-    outliers. It is split into two regimes: one for Tavg < 5 sec and one
-    for Tavg >=5 sec:
+    This test is based on empirical fitting by NDBC. It tests the significant
+    wave height (Hsig) as a function of the average wave period (Tavg) to
+    identify outliers. It is split into two regimes: one for Tavg < 5 sec and
+    one for Tavg >= 5 sec:
+    
         * If Tavg < 5 sec: Hsig < 2.55 + (Tavg / 4)
-        * If Tavg >= 5 sec: Hsig < (1.16 * Tavg) -2
+        * If Tavg >= 5 sec: Hsig < (1.16 * Tavg) - 2
+    
     When Hsig exceeds those thresholds, it is flagged as suspicious.
     
-    :param Hsig: Significant wave height calculated from the zero-down-crossing
-        method
-    :param Tavg: Average wave period
+    :param hsig: Significant wave height calculated from the zero-down-crossing
+        method (Hsig)
+    :param tavg: Average wave period
     :return qc_flag: a numpy array of flags indicating pass/suspicious (1/3)
     """
     # Find the breaks in the wave regime
-    u5 = np.where(Tavg < 5)[0]
-    o5 = np.where(Tavg >= 5)[0]
+    u5 = np.where(tavg < 5)[0]
+    o5 = np.where(tavg >= 5)[0]
     
     # Run the comparison
-    u5_good = (Hsig[u5] < (2.55 + (Tavg[u5] / 4)) )
-    o5_good = (Hsig[o5] < ((1.16 * Tavg) - 2) )
+    u5_good = (hsig[u5] < (2.55 + (tavg[u5] / 4)))
+    o5_good = (hsig[o5] < ((1.16 * tavg) - 2))
     
     # Make the qc flags
-    qc_flag = np.ones(Hsig.size)
+    qc_flag = np.ones(hsig.size)
     qc_flag[u5[~u5_good]] = 3
     qc_flag[o5[~o5_good]] = 3
     
@@ -202,11 +201,11 @@ def hsig_to_tavg(Hsig, Tavg):
 
 def quality_checks(ds):
     """
-    Assignment of QARTOD style quality flags to the WAVSS bulk wave 
-    statistics. The two tests are the Tp-to-hm0 ratio test, which checks
-    the data quality for parameters derived from spectral variance, and
-    the Hsig-to-Tavg test, which test the significant wave height values.
-    The assigned flag values are:
+    Assignment of QARTOD style quality flags to the WAVSS bulk wave statistics.
+    The two tests are the Tp-to-hm0 ratio test, which checks the data quality
+    for parameters derived from spectral variance, and the Hsig-to-Tavg test,
+    which test the significant wave height values. The assigned flag values
+    are:
 
         1 = Pass
         3 = Suspect or of High Interest
@@ -220,6 +219,10 @@ def quality_checks(ds):
     :return ds: dataset with QARTOD style quality flags added to the record
         per variable tested.
     """
+    # Test for and eliminate duplicate time stamps
+    _, index = np.unique(ds['time'], return_index=True)
+    ds = ds.isel(time=index)
+
     # Test the directional parameters quality
     directional_parameters = ["mean_direction", "mean_spectral_period", "mean_spread",
                               "peak_wave_period", "wave_height_hmo", "wave_period_tp5"]
@@ -285,16 +288,15 @@ def quality_checks(ds):
     return ds
 
 
-# -
-
 def wavss_datalogger(ds):
     """
     Takes WAVSS bulk wave statistics data recorded by the data loggers used in
-    the CGSN/EA moorings and cleans up the data set to make it more user-friendly. 
-    Primary task is renaming the alphabet soup parameter names and dropping some 
-    parameters that are of no use/value.
+    the CGSN/EA moorings and cleans up the data set to make it more
+    user-friendly. Primary task is renaming the alphabet soup parameter names
+    and dropping some parameters that are of no use/value.
 
-    :param ds: initial WAVSS bulk wave statistics data set downloaded from OOI via the M2M system
+    :param ds: initial WAVSS bulk wave statistics data set downloaded from OOI
+        via the M2M system
     :return ds: cleaned up data set
     """
     drop_list = ['dcl_controller_timestamp', 'internal_timestamp', 'time_string',
@@ -318,3 +320,69 @@ def wavss_datalogger(ds):
     ds = quality_checks(ds)
 
     return ds
+
+
+def main(argv=None):
+    # set up the input arguments
+    args = inputs(argv)
+    site = args.site
+    node = args.node
+    sensor = args.sensor
+    method = args.method
+    stream = args.stream
+    deploy = args.deploy
+    start = args.start
+    stop = args.stop
+
+    # check if we are specifying a deployment or a specific date and time range
+    if not deploy or (start and stop):
+        return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
+
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
+    if deploy:
+        # download the data for the deployment
+        tag = ('.*deployment%04d.*WAVSS.*\\.nc$' % deploy)
+        wavss = load_gc_thredds(site, node, sensor, method, stream, tag)
+
+        # check to see if we downloaded any data
+        if not wavss:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
+    else:
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
+        tag = '.*WAVSS.*\\.nc$'
+        wavss = m2m_collect(r, tag)
+
+        # check to see if we downloaded any data
+        if not wavss:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
+
+    # clean-up and reorganize
+    if stream in ['wavss_a_dcl_statistics', 'wavss_a_dcl_statistics_recovered']:
+        wavss = wavss_datalogger(wavss)
+    else:
+        # ToDo: add processing for additional WAVSS streams and data products
+        pass
+
+    wavss = update_dataset(wavss, 0.0)
+
+    # save the data to disk
+    out_file = os.path.abspath(args.outfile)
+    if not os.path.exists(os.path.dirname(out_file)):
+        os.makedirs(os.path.dirname(out_file))
+
+    wavss.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
+
+
+if __name__ == '__main__':
+    main()

@@ -121,9 +121,6 @@ def generate_qartod(site, node, sensor, cut_off):
     """
     # load the combined data for the different sources of NUTNR data
     data = combine_delivery_methods(site, node, sensor)
-    data = data.sortby('time')
-    _, index = np.unique(data['time'], return_index=True)
-    data = data.isel(time=index)
 
     # create boolean arrays of the data marked as "fail" by the quality checks and generate initial
     # HITL annotations that can be combined with system annotations to create a cleaned up data set
@@ -194,7 +191,7 @@ def generate_qartod(site, node, sensor, cut_off):
         gr_lookup['stream'][4] = 'nutnr_b_dcl_conc_instrument'
         gr_lookup['stream'][5] = 'delete_me_I_am_just_a_placeholder'
         gr_lookup['stream'][6] = 'nutnr_b_dcl_conc_instrument_recovered'
-        gr_lookup['stream'][7] = 'nutnr_b_dcl_conc_instrument_recovered'
+        gr_lookup['stream'][7] = 'delete_me_I_am_just_a_placeholder'
         gr_lookup['stream'][8] = 'nutnr_b_dcl_full_instrument'
         gr_lookup['stream'][9] = 'nutnr_b_dcl_full_instrument'
         gr_lookup['stream'][10] = 'nutnr_b_dcl_full_instrument_recovered'
@@ -232,7 +229,7 @@ def generate_qartod(site, node, sensor, cut_off):
         clm_lookup['stream'][4] = 'nutnr_b_dcl_conc_instrument'
         clm_lookup['stream'][5] = 'delete_me_I_am_just_a_placeholder'
         clm_lookup['stream'][6] = 'nutnr_b_dcl_conc_instrument_recovered'
-        clm_lookup['stream'][7] = 'nutnr_b_dcl_conc_instrument_recovered'
+        clm_lookup['stream'][7] = 'delete_me_I_am_just_a_placeholder'
         clm_lookup['stream'][8] = 'nutnr_b_dcl_full_instrument'
         clm_lookup['stream'][9] = 'nutnr_b_dcl_full_instrument'
         clm_lookup['stream'][10] = 'nutnr_b_dcl_full_instrument_recovered'

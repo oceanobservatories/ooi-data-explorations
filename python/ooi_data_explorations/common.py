@@ -1038,7 +1038,7 @@ def update_dataset(ds, depth):
     # update some variable attributes to get somewhat closer to IOOS compliance, more importantly convert QC variables
     # to bytes and set the attributes to define the flag masks and meanings.
     ds['deployment'].attrs['long_name'] = 'Deployment Number'   # add missing long_name attribute
-    qc_pattern = re.compile(r'^.+_qc_.+$')
+    qc_pattern = re.compile(r'^(?!.*annotations).+_qc_.+$')     # don't match added annotations flags, if any
     qc_executed_pattern = re.compile(r'^.+_qc_executed$')
     qc_results_pattern = re.compile(r'^.+_qc_results$')
     qc_summary_pattern = re.compile(r'^.+_qc_summary_flag$')

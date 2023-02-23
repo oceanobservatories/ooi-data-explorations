@@ -33,11 +33,21 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     # combine the telemetered and recovered host datasets, which have the same variables,
     # dropping any 1-dimensional variables along the way.
     if tdata and rhdata:
+        # drop any one-dimensional variables in tdata and make sure we have a unique time record
+        tdata = tdata.squeeze()
+        _, index = np.unique(tdata['time'], return_index=True)
+        tdata = tdata.isel(time=index)
+
+        # drop any one-dimensional variables in rhdata and make sure we have a unique time record
+        rhdata = rhdata.squeeze()
+        _, index = np.unique(rhdata['time'], return_index=True)
+        rhdata = rhdata.isel(time=index)
+
         # first, identify any variables in tdata that are not available in rhdata
         for v in tdata.variables:
             if v not in rhdata.variables:
                 # add an empty variable of the same type and dimensions to rhdata
-                rhdata[v] = tdata[v].broadcast_like(ridata['time'])
+                rhdata[v] = tdata[v].broadcast_like(rhdata['time'])
 
         # next, identify any variables in rhdata that are not available in tdata
         for v in rhdata.variables:
@@ -52,9 +62,13 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     elif tdata and not rhdata:
         # telemetered data, but no recovered host data
         ds = tdata.squeeze()
+        _, index = np.unique(ds['time'], return_index=True)
+        ds = ds.isel(time=index)
     elif rhdata and not tdata:
         # recovered host data, but no telemetered data
         ds = rhdata.squeeze()
+        _, index = np.unique(ds['time'], return_index=True)
+        ds = ds.isel(time=index)
     else:
         # no telemetered or recovered host data
         ds = None
@@ -95,9 +109,10 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
         itime = '{:d}Min'.format(resample_time)
         btime = int(resample_time / 2)
         loff = '{:d}Min'.format(btime)
+        delta = '-{:d}Min'.format(btime)
         gtime = '{:d}Min'.format(resample_time * 3)
         ds = ds.sortby('time')
-        avg = ds.resample(time=itime, base=btime, loffset=loff, skipna=True).median(keep_attrs=True)
+        avg = ds.resample(time=itime, offset=delta, loffset=loff, skipna=True).median(keep_attrs=True)
         avg = avg.interpolate_na(dim='time', max_gap=gtime)
         avg = avg.where(~np.isnan(avg.deployment), drop=True)
 

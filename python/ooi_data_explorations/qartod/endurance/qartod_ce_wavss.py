@@ -92,6 +92,10 @@ def generate_qartod(site, node, sensor, cut_off):
     # load the combined telemetered and recovered_host data
     wavss = combine_delivery_methods(site, node, sensor)
 
+    # the CF card on CE02SHSM was corrupted during deployment 4, all of that deployments data is bad
+    if site == 'CE02SHSM':
+        wavss = wavss.where(wavss.deployment != 4, drop=True)
+
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
     annotations = pd.DataFrame(annotations)

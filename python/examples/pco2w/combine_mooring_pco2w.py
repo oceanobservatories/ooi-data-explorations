@@ -10,6 +10,9 @@ import os
 import pandas as pd
 import xarray as xr
 
+from cgsn_processing.process.finding_calibrations import find_calibration
+from cgsn_processing.process.proc_pco2w import Calibrations
+
 from ooi_data_explorations.common import ENCODINGS, get_annotations, get_vocabulary, get_calibrations_by_refdes, \
     load_gc_thredds, add_annotation_qc_flags, update_dataset
 from ooi_data_explorations.combine_data import combine_datasets
@@ -31,8 +34,8 @@ def combine_delivery_methods(site, node, sensor):
     :return merged:
     """
     # download the telemetered data and re-process it to create a more useful and coherent data set
-    tag = '.*PCO2W.*\\.nc$'
-    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'pco2w_abcdef_dcl_instrument', tag)
+    tag = '^(?!.*blank).*PCO2W.*nc$'
+    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'pco2w_abc_dcl_instrument', tag)
     print('# Group the telemetered data by deployment and process the data')
     deployments = []
     grps = list(telem.groupby('deployment'))
@@ -46,7 +49,7 @@ def combine_delivery_methods(site, node, sensor):
     telem = xr.concat(deployments, 'time')
 
     # download the recovered host data and re-process it to create a more useful and coherent data set
-    rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'pco2w_abcdef_dcl_instrument_recovered', tag)
+    rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'pco2w_abc_dcl_instrument_recovered', tag)
     print('# Group the recovered host data by deployment and process the data')
     deployments = []
     grps = list(rhost.groupby('deployment'))
@@ -60,7 +63,7 @@ def combine_delivery_methods(site, node, sensor):
     rhost = xr.concat(deployments, 'time')
 
     # download the recovered instrument data and re-process it to create a more useful and coherent data set
-    rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'pco2w_abcdef_instrument', tag)
+    rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'pco2w_abc_instrument', tag)
     print('# Group the recovered instrument data by deployment and process the data')
     deployments = []
     grps = list(rinst.groupby('deployment'))
@@ -78,10 +81,10 @@ def combine_delivery_methods(site, node, sensor):
     return merged
 
 
-def apply_quality_flags(data, calibrations, site, node, sensor):
+def apply_quality_flags(data, site, node, sensor):
     """
     Use the quality flags, based on criteria set by the vendor for the raw
-    data, to identify and remove bad pH data (by replacing with a NaN) prior
+    data, to identify and remove bad pCO2 data (by replacing with a NaN) prior
     to any subsequent calculations. Additionally, loads any system annotations
     for the instrument and uses time ranges marked as fail by the operators
     to exclude bad data.
@@ -93,14 +96,26 @@ def apply_quality_flags(data, calibrations, site, node, sensor):
         reference designator
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
-    :return: xarray dataset with the quality flags used to NaN the seawater pH
+    :return: xarray dataset with the quality flags used to NaN the seawater pCO2
         values that failed the quality tests.
     """
+    # pull in the calibration coefficients from the GitHub Asset Management repo
+    cal = Calibrations(None)
+    csv_url = find_calibration('PCO2W', data.SerialNumber, (data.time.values.astype('int64') * 10 ** -9)[0])
+    cal.read_csv(csv_url)
+
+    # NaN calculated pCO2 values that exceed the cal range by more than 25%
+    lower = cal.coeffs['cal_range'][0] - (cal.coeffs['cal_range'][0] * 0.25)
+    upper = cal.coeffs['cal_range'][1] + (cal.coeffs['cal_range'][1] * 0.25)
+    m = (data.pco2_seawater < lower) | (data.pco2_seawater > upper)
+    data.pco2_seawater[m] = np.NaN
+    data.pco2_seawater_quality_flag[m] = 4
+
     # create a boolean array of the data marked as "fail" by the pCO2 quality checks and generate initial
     # HITL annotations that can be combined with system annotations and pCO2 quality checks to create
     # a cleaned up data set prior to calculating the QARTOD test values
     fail = data.pco2_seawater_quality_flag.where(data.pco2_seawater_quality_flag == 4).notnull()
-    blocks = identify_blocks(fail, [48, 72])
+    blocks = identify_blocks(fail, [24, 72])
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
@@ -125,7 +140,7 @@ def apply_quality_flags(data, calibrations, site, node, sensor):
 
 def combine_mooring_pco2w(site, node, sensor):
     """
-    Download all the pH data for a site and combine it into a 3-hour, median
+    Download all the pCO2 data for a site and combine it into a 3-hour, median
     averaged dataset with the quality flags used to remove bad data points
     prior to the averaging
 
@@ -135,11 +150,11 @@ def combine_mooring_pco2w(site, node, sensor):
         reference designator
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
-    :return: xarray dataset with all the pH data for a particular mooring
+    :return: xarray dataset with all the pCO2 data for a particular mooring
         combined into a single 3-hour, median averaged data set with the bad
-        seawater pH values NaN'ed out.
+        seawater pCO2 values NaN'ed out.
     """
-    # gather and combine all the pH data for a particular site, node sensor combination
+    # gather and combine all the pCO2 data for a particular site, node sensor combination
     data = combine_delivery_methods(site, node, sensor)
 
     # update the dataset prior to exporting as a NetCDF file
@@ -161,14 +176,11 @@ def main(argv=None):
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
-    # download the calibration values for the instrument (need the cal_range for QC flagging)
-    calibrations = get_calibrations_by_refdes(site, node, sensor)
-
     # gather the data ...
-    data = combine_mooring_pco2w(site, node, sensor, calibrations)
+    data = combine_mooring_pco2w(site, node, sensor)
 
     # ... and save the results to disk
-    out_file = ('%s-%s-%s.combined_seawater_ph.nc' % (site, node, sensor))
+    out_file = ('%s-%s-%s.combined_seawater_pco2.nc' % (site, node, sensor))
     nc_out = os.path.join(out_path, out_file)
     data.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 

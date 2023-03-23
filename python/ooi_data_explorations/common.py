@@ -537,7 +537,9 @@ def add_annotation_qc_flags(ds, annotations):
         long_name = f"{key} qc_flag"
         attrs = {
             "comment": comment,
-            "long_name": long_name
+            "long_name": long_name,
+            "flag_values": np.array([1, 2, 3, 4, 9]),
+            "flag_meanings": "pass not_evaluated suspect_or_of_high_interest fail missing_data"
         }
 
         # Now add to the dataset

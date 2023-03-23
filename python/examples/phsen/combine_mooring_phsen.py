@@ -100,7 +100,7 @@ def apply_quality_flags(data, site, node, sensor):
     # HITL annotations that can be combined with system annotations and pH quality checks to create
     # a cleaned up data set
     fail = data.seawater_ph_quality_flag.where(data.seawater_ph_quality_flag == 4).notnull()
-    blocks = identify_blocks(fail, [24, 24])
+    blocks = identify_blocks(fail, [24, 48])
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
@@ -118,7 +118,7 @@ def apply_quality_flags(data, site, node, sensor):
     data = add_annotation_qc_flags(data, annotations)
 
     # clean-up the data, NaN-ing values that fail the pH quality checks or were marked as fail in the annotations
-    m = (data.seawater_ph_quality_flag == 4) | (data.rollup_annotations_qc_results == 4)
+    m = (data.seawater_ph_quality_flag >= 3) | (data.rollup_annotations_qc_results >= 3)
     data.seawater_ph[m] = np.nan
     return data
 

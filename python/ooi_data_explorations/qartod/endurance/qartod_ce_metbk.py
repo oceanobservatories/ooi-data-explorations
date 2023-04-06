@@ -171,7 +171,7 @@ def generate_qartod(site, node, sensor, cut_off):
     # create the initial gross range entries. Sensor ranges from the module specifications section of the ASIMET
     # Documentation Page (https://uop.whoi.edu/UOPinstruments/frodo/asimet/index.html).
     limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 50], [0, 2800],
-              [-5, 45], [0, 7], [0, 42], [-65, 65], [-65, 65]]
+              [-5, 45], [0, 7], [0, 42], [-45, 45], [-45, 45]]
     gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor)
 
     # replicate it twice for the different streams
@@ -192,7 +192,7 @@ def generate_qartod(site, node, sensor, cut_off):
     parameters = ['barometric_pressure', 'relative_humidity', 'air_temperature', 'longwave_irradiance',
                   'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_salinity',
                   'eastward_wind_velocity', 'northward_wind_velocity']
-    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45], [0, 42], [-65, 65], [-65, 65]]
+    limits = [[850, 1050], [0, 100], [-40, 60], [0, 700], [0, 2800], [-5, 45], [0, 42], [-45, 45], [-45, 45]]
 
     clm_lookup, clm_table = process_climatology(data, parameters, limits, site=site, node=node, sensor=sensor)
 

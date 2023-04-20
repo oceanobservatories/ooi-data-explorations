@@ -161,28 +161,6 @@ ATTRS = dict({
 })
 
 
-def quality_checks(ds):
-    """
-    Assessment of the raw data and the calculated parameters for quality
-    using a susbset of the QARTOD flags to indicate the quality. QARTOD
-    flags used are:
-
-        1 = Pass
-        3 = Suspect or of High Interest
-        4 = Fail
-
-    The final flag value represents the worst case assessment of the data
-    quality.
-
-    :param ds: xarray dataset with the raw signal data and the calculated
-               bio-optical parameters
-    :return beta_flag: QARTOD quality flags for the backscatter measurements
-    :return cdom_flag: QARTOD quality flags for the CDOM measurements
-    :return chl_flag: QARTOD quality flags for the chlorophyll measurements
-    """
-    return None
-
-
 def spkir_datalogger(ds, burst=False):
     """
     Takes spkir data recorded by the data loggers used in the CGSN/EA moorings
@@ -214,6 +192,16 @@ def spkir_datalogger(ds, burst=False):
     }
     ds = ds.rename(rename)
 
+    if len(ds['serial_number'].shape) == 1:
+        ds['serial_number'] = ds['serial_number'].astype(int)
+    else:
+        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
+        ds['serial_number'].attrs = dict({
+            'long_name': 'Serial Number',
+            # 'units': '', # deliberately left blank, unit-less value
+            'comment': 'Instrument serial number',
+        })
+
     # convert raw voltages and the instrument temperature to engineering units
     ds['input_voltage'] = ds['input_voltage'] * 0.03
     ds['analog_rail_voltage'] = ds['analog_rail_voltage'] * 0.03
@@ -242,15 +230,10 @@ def spkir_datalogger(ds, burst=False):
     # remove the original 2D variables
     ds = ds.drop_vars(['spectra', 'channel_array', 'spkir_abj_cspp_downwelling_vector'])
 
-    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
-    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
-    # interest == 3, and fail == 4.
-    ds = parse_qc(ds)
-
     if burst:
-        # re-sample the data collected in burst mode using a 15-minute median average
-        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
-
+        # calculate the median of the remaining data per burst measurement
+        burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
+                                                                                        keep_attrs=True)
         # remove the missing rows
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 

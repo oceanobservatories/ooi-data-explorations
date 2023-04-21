@@ -174,13 +174,15 @@ def spkir_datalogger(ds, burst=False):
     """
     # drop some of the variables:
     #   instrument_id == captured in global metadata (always the OCR-507)
+    #   serial_number == captured in global metadata
     #   dcl_controller_timestamp == empty string
     #   passed_checksum == not ingested if it doesn't pass, don't need to restate that here
     #   internal_timestamp == superseded by time, redundant so can remove
+    #   frame_counter = not used
     #   sample_delay == superseded by time, redundant so can remove
     #   timer == superseded by time, redundant so can remove
-    drop_vars = ['instrument_id', 'dcl_controller_timestamp', 'passed_checksum',
-                 'internal_timestamp', 'sample_delay', 'timer']
+    drop_vars = ['instrument_id', 'serial_number', 'dcl_controller_timestamp', 'passed_checksum',
+                 'internal_timestamp', 'frame_counter', 'sample_delay', 'timer']
     for var in ds.variables:
         if var in drop_vars:
             ds = ds.drop_vars(var)
@@ -191,16 +193,6 @@ def spkir_datalogger(ds, burst=False):
         'va_sense': 'analog_rail_voltage'
     }
     ds = ds.rename(rename)
-
-    if len(ds['serial_number'].shape) == 1:
-        ds['serial_number'] = ds['serial_number'].astype(int)
-    else:
-        ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
-        ds['serial_number'].attrs = dict({
-            'long_name': 'Serial Number',
-            # 'units': '', # deliberately left blank, unit-less value
-            'comment': 'Instrument serial number',
-        })
 
     # convert raw voltages and the instrument temperature to engineering units
     ds['input_voltage'] = ds['input_voltage'] * 0.03
@@ -230,15 +222,20 @@ def spkir_datalogger(ds, burst=False):
     # remove the original 2D variables
     ds = ds.drop_vars(['spectra', 'channel_array', 'spkir_abj_cspp_downwelling_vector'])
 
-    if burst:
-        # calculate the median of the remaining data per burst measurement
-        burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
-                                                                                        keep_attrs=True)
-        # remove the missing rows
-        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
 
-        # save the newly average data
-        ds = burst
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
 
     return ds
 
@@ -254,108 +251,56 @@ def spkir_cspp(ds):
     :return ds: cleaned up data set
     """
     # drop some of the variables:
-    #   internal_timestamp == superseded by time, redundant so can remove
+    #   instrument_id == captured in global metadata (always the OCR-507)
+    #   internal_timestamp == time, redundant so can remove
+    #   profiler_timestamp == time, redundant so can remove
     #   suspect_timestamp = not used
-    #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   seawater_scattering_coefficient == not used
-    ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                  'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
+    #   frame_counter = not used
+    #   sample_delay == superseded by time, redundant so can remove
+    #   timer == superseded by time, redundant so can remove
+    drop_vars = ['instrument_id', 'internal_timestamp', 'profiler_timestamp',
+                 'suspect_timestamp', 'frame_counter', 'sample_delay', 'timer']
+    for var in ds.variables:
+        if var in drop_vars:
+            ds = ds.drop_vars(var)
 
-    # lots of renaming here to get a better defined data set with cleaner attributes
+    # rename here for consistency across other data sets
     rename = {
+        'vin_sense': 'input_voltage',
+        'va_sense': 'analog_rail_voltage',
         'pressure': 'seawater_pressure',
         'pressure_qc_executed': 'seawater_pressure_qc_executed',
         'pressure_qc_results': 'seawater_pressure_qc_results',
-        'temperature': 'seawater_temperature',
-        'salinity': 'practical_salinity',
-        'raw_signal_chl': 'raw_chlorophyll',
-        'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
-        'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
-        'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
-        'raw_signal_beta': 'raw_backscatter',
-        'total_volume_scattering_coefficient': 'beta_700',
-        'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
-        'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
-        'optical_backscatter': 'bback',
-        'optical_backscatter_qc_executed': 'bback_qc_executed',
-        'optical_backscatter_qc_results': 'bback_qc_results',
     }
     ds = ds.rename(rename)
 
-    # reset some attributes
-    for key, value in ATTRS.items():
-        for atk, atv in value.items():
-            if key in ds.variables:
-                ds[key].attrs[atk] = atv
+    # convert raw voltages and the instrument temperature to engineering units
+    ds['input_voltage'] = ds['input_voltage'] * 0.03
+    ds['analog_rail_voltage'] = ds['analog_rail_voltage'] * 0.03
+    ds['internal_temperature'] = -50 + ds['internal_temperature'] * 0.5
 
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+    # add the raw downwelling spectral irradiance measurements to the data set split out by wavelength
+    raw = ds['channel_array']
+    ds['raw_irradiance_412'] = raw[:, 0]
+    ds['raw_irradiance_444'] = raw[:, 1]
+    ds['raw_irradiance_490'] = raw[:, 2]
+    ds['raw_irradiance_510'] = raw[:, 3]
+    ds['raw_irradiance_555'] = raw[:, 4]
+    ds['raw_irradiance_620'] = raw[:, 5]
+    ds['raw_irradiance_683'] = raw[:, 6]
 
-    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
-    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
-    # interest == 3, and fail == 4.
-    ds = parse_qc(ds)
+    # add the converted downwelling spectral irradiance measurements to the data set split out by wavelength
+    ed = ds['spkir_abj_cspp_downwelling_vector']
+    ds['downwelling_irradiance_412'] = ed[:, 0]
+    ds['downwelling_irradiance_444'] = ed[:, 1]
+    ds['downwelling_irradiance_490'] = ed[:, 2]
+    ds['downwelling_irradiance_510'] = ed[:, 3]
+    ds['downwelling_irradiance_555'] = ed[:, 4]
+    ds['downwelling_irradiance_620'] = ed[:, 5]
+    ds['downwelling_irradiance_683'] = ed[:, 6]
 
-    # create qc flags for the data and add them to the OOI qc flags
-    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
-    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0, initial=1))
-    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0, initial=1))
-    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0, initial=1))
-
-    return ds
-
-
-def spkir_wfp(ds, grid=False):
-    """
-    Takes SPKIR data recorded by the Wire-Following Profilers (used by CGSN/EA
-    as part of the coastal and global arrays) and cleans up the data set to
-    make it more user-friendly.  Primary task is renaming parameters and
-    dropping some that are of limited use. Additionally, re-organize some of
-    the variables to permit better assessments of the data.
-
-    :param ds: initial SPKIR data set downloaded from OOI via the M2M system
-    :param grid: boolean flag for whether the data should be gridded
-    :return ds: cleaned up data set
-    """
-    # drop some of the variables:
-    #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = not used
-    #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   seawater_scattering_coefficient == not used
-    #   raw_internal_temp == not available, NaN filled
-    ds = ds.reset_coords()
-    drop_vars = ['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
-                 'measurement_wavelength_cdom', 'measurement_wavelength_chl', 'raw_internal_temp']
-    for v in drop_vars:
-        if v in ds.variables:
-            ds = ds.drop_vars(v)
-
-    # lots of renaming here to get a better defined data set with cleaner attributes
-    rename = {
-        'int_ctd_pressure': 'seawater_pressure',
-        'ctdpf_ckl_seawater_temperature': 'seawater_temperature',
-        'raw_signal_chl': 'raw_chlorophyll',
-        'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
-        'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
-        'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
-        'raw_signal_beta': 'raw_backscatter',
-        'total_volume_scattering_coefficient': 'beta_700',
-        'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
-        'total_volume_scattering_coefficient_qc_results': 'beta_700_qc_results',
-        'optical_backscatter': 'bback',
-        'optical_backscatter_qc_executed': 'bback_qc_executed',
-        'optical_backscatter_qc_results': 'bback_qc_results',
-    }
-    for key in rename.keys():
-        if key in ds.variables:
-            ds = ds.rename({key: rename.get(key)})
+    # remove the original 2D variables
+    ds = ds.drop_vars(['spectra', 'channel_array', 'spkir_abj_cspp_downwelling_vector'])
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -371,62 +316,6 @@ def spkir_wfp(ds, grid=False):
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
-
-    # create qc flags for the data and add them to the OOI qc flags
-    beta_flag, cdom_flag, chl_flag = quality_checks(ds)
-    ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
-                                                         beta_flag])).max(axis=0, initial=1))
-    ds['fluorometric_cdom_qc_summary_flag'] = ('time', (np.array([ds.fluorometric_cdom_qc_summary_flag,
-                                                                 cdom_flag])).max(axis=0, initial=1))
-    ds['estimated_chlorophyll_qc_summary_flag'] = ('time', (np.array([ds.estimated_chlorophyll_qc_summary_flag,
-                                                                      chl_flag])).max(axis=0, initial=1))
-
-    if grid:
-        # clear out any duplicate time stamps
-        _, index = np.unique(ds['time'], return_index=True)
-        ds = ds.isel(time=index)
-
-        # since the scipy griddata function cannot use the time values as is (get converted to nanoseconds, which
-        # is too large of a value), we need to temporarily convert them to a floating point number in days since
-        # the start of the data record; we can then use that temporary date/time array for the gridding.
-        base_time = ds['time'].min().values
-        dt = (ds['time'] - base_time).astype(float) / 1e9 / 60 / 60 / 24
-
-        # construct the new grid, using 1 m depth bins from 30 to 510 m, and daily intervals from the start of
-        # the record to the end (centered on noon UTC).
-        depth_range = np.arange(30, 511, 1)
-        time_range = np.arange(0.5, np.ceil(dt.max()) + 0.5, 1)
-        gridded_time = base_time.astype('M8[D]') + pd.to_timedelta(time_range, unit='D')
-
-        # grid the data, adding the results to a list of data arrays
-        gridded = []
-        for v in ds.variables:
-            if v not in ['time', 'depth']:
-                # grid the data for each variable
-                gdata = griddata((dt.values, ds['depth'].values), ds[v].values,
-                                 (time_range[None, :], depth_range[:, None]),
-                                 method='linear')
-
-                # add the data to a data array
-                da = xr.DataArray(name=v, data=gdata, coords=[("depth", depth_range), ("time", gridded_time)])
-                da.attrs = ds[v].attrs
-
-                # reset the data types and fill values for floats and ints
-                if ds[v].dtype == np.dtype(int):
-                    da = da.where(np.isnan is True, FILL_INT)
-                    da.attrs['_FillValue'] = FILL_INT
-                    da = da.astype(int)
-                else:
-                    da.attrs['_FillValue'] = np.nan
-                    da = da.astype(float)
-
-                # add to the list
-                gridded.append(da)
-
-        # recombine the gridded data arrays into a single dataset
-        gridded = xr.merge(gridded)
-        gridded.attrs = ds.attrs
-        ds = gridded
 
     return ds
 
@@ -478,17 +367,8 @@ def main(argv=None):
     if node == 'SP001':
         # this SPKIR is part of a CSPP
         spkir = spkir_cspp(spkir)
-    elif node == 'WFP01':
-        # this SPKIR is part of a Wire-Following Profiler
-        spkir = spkir_wfp(spkir)
-    elif node == 'SBD17':
-        # this SPKIR is connected to the CTDBP on an EA Inshore Surface Mooring
-        spkir = spkir_instrument(spkir)
-        if not spkir:
-            # there was no data after removing all the 0's
-            sys.exit()
     else:
-        # this SPKIR is stand-alone on one of the moorings
+        # this SPKIR is standalone on one of the Surface Moorings
         spkir = spkir_datalogger(spkir, burst)
 
     vocab = get_vocabulary(site, node, sensor)[0]

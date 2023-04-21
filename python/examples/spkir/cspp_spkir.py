@@ -37,7 +37,7 @@ def main():
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
-    out_file = ('%s.%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, deploy, method, stream))
+    out_file = ('%s.%s.%s.deploy17.%s.%s.nc' % (site.lower(), level, instrmt, method, stream))
     nc_out = os.path.join(out_path, out_file)
 
     spkir.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)

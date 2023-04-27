@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-
 import numpy as np
 import os
-import pandas as pd
-import xarray as xr
-
-from scipy.interpolate import griddata
 
 from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, get_vocabulary, \
     update_dataset, ENCODINGS
@@ -236,6 +230,20 @@ def spkir_datalogger(ds, burst=False):
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
+
+    if burst:   # re-sample the data to a defined time interval using a median average
+        # create the burst averaging
+        burst = ds
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # reset the attributes...which keep_attrs should do...
+        burst.attrs = ds.attrs
+        for v in burst.variables:
+            burst[v].attrs = ds[v].attrs
+
+        # save the newly average data
+        ds = burst
 
     return ds
 

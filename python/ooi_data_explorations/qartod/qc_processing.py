@@ -309,7 +309,7 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
     clm = Climatology()
 
     # create an empty panda dataframe and list to hold the results
-    clm_lookup = pd.DataFrame()
+    clm_lookup = []
     clm_tables = []
 
     # check the type of the depth bins, and set to an empty array if NoneType
@@ -344,7 +344,8 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                                                             stream, fixed_lower)
 
                     # append the dictionary to the dataframe and build the depth table
-                    clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
+                    df = (pd.Series(qc_dict).to_frame()).transpose()
+                    clm_lookup.append(df)
                     if depth_tables:
                         depth_tables += clm_table[114:]
                     else:
@@ -363,10 +364,12 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                                                         site, node, sensor, stream, fixed_lower)
 
                 # append the dictionary to the dataframe and the table to the list
-                clm_lookup = clm_lookup.append(qc_dict, ignore_index=True)
+                df = (pd.Series(qc_dict).to_frame()).transpose()
+                clm_lookup.append(df)
                 clm_tables.append(clm_table)
 
     # return the results
+    clm_lookup = pd.concat(clm_lookup, ignore_index=True, sort=False)
     return clm_lookup, clm_tables
 
 
@@ -443,7 +446,7 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
     stream = kwargs.get('stream')
 
     # create an empty pandas dataframe to hold the results
-    gross_range = pd.DataFrame()
+    gross_range = []
 
     # loop through the parameter(s) of interest
     sensor_range = np.atleast_2d(sensor_range).tolist()
@@ -451,27 +454,30 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
         if param in ds.variables:
             # roughly estimate if the data is normally distributed using a bootstrap analysis to randomly select
             # 4500 data points to use, running the test a total of 5000 times
-            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-            # ---------------------------------------------------------------------
+
             # Utilize dask to parallelize the random choice and calculate the pnorm
             random_choice = dask.delayed(np.random.choice)
+
             # Select out the dataarray of the desired param. This speeds up the process
+            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
             da = ds[param][m]
             vals = []
             for i in range(5000):
                 vals.append(random_choice(da, 4500))
-            # Now compute
+
+            # Now compute the pnorm values via dask.delayed
             with ProgressBar():
                 print("Testing data for normality: %s" % param)
                 pvals = dask.compute(*vals)
+
             pnorm = [normaltest(v).pvalue for v in pvals]
-            if np.mean(pnorm) < 0.01:
+            if np.mean(pnorm) < 0.05:
                 # Even with a log-normal transformation, the data is not normally distributed, so we will
                 # set the user range using percentiles that approximate the Empirical Rule, covering
                 # 99.7% of the data
                 lower = np.nanpercentile(da, 0.15)
                 upper = np.nanpercentile(da, 99.85)
-                source = ('User range based on percentiles of the observations, which are not normally distributed. '
+                notes = ('User range based on percentiles of the observations, which are not normally distributed. '
                           'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
             else:
                 # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
@@ -479,7 +485,7 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
                 sd = da.std().value[0]
                 lower = mu - sd * 3
                 upper = mu + sd * 3
-                source = 'User range based on the mean +- 3 standard deviations of all observations.'
+                notes = 'User range based on the mean +- 3 standard deviations of all observations.'
 
             # reset the lower and upper ranges if they exceed the sensor ranges
             if lower < sensor_range[idx][0]:
@@ -490,12 +496,14 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
 
             # create the formatted dictionary
             user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
-            qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, source)
+            qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, notes)
 
             # append the dictionary to the dataframe
-            gross_range = gross_range.append(qc_dict, ignore_index=True)
+            df = (pd.Series(qc_dict).to_frame()).transpose()
+            gross_range.append(df)
 
     # return the results
+    gross_range = pd.concat(gross_range, ignore_index=True, sort=False)
     return gross_range
 
 

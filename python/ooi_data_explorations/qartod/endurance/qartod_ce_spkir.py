@@ -38,7 +38,7 @@ def combine_delivery_methods(site, node, sensor):
     tag = '.*SPKIR.*\\.nc$'
     if node == 'SP001':
         print('##### Downloading the recovered_cspp SPKIR data for %s #####' % site)
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'spkir_j_cspp_instrument_recovered', tag)
+        rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'spkir_abj_cspp_instrument_recovered', tag)
         deployments = []
         print('# -- Group the data by deployment and process the data')
         grps = list(rhost.groupby('deployment'))
@@ -48,7 +48,7 @@ def combine_delivery_methods(site, node, sensor):
         deployments = [i for i in deployments if i]
         merged = xr.concat(deployments, 'time')
     else:
-        # this SPKIR is standalone on one of the NSIFs and includes the telemetered and recovered_host data
+        # this SPKIR is standalone on one of the NSIFs and includes telemetered and recovered_host data.
         # data is collected in bursts (3 minutes at 1 Hz). process each data set per-deployment
         print('##### Downloading the telemetered SPKIR data for %s #####' % site)
         telem = load_gc_thredds(site, node, sensor, 'telemetered', 'spkir_abj_dcl_instrument', tag)

@@ -16,8 +16,8 @@ import xarray as xr
 from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_spkir import spkir_datalogger, spkir_cspp
-from ooi_data_explorations.qartod.qc_processing import identify_blocks, create_annotations, process_gross_range, \
-    process_climatology, woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
+from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, \
+    woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
 
 
 def combine_delivery_methods(site, node, sensor):
@@ -141,6 +141,7 @@ def generate_qartod(site, node, sensor, cut_off):
         src_date = cut.strftime('%Y-%m-%d')
 
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
+    start_date = str(data.time[0].values.min())[:10]
 
     # NaN out downwelling irradiance data measured outside solar noon. Will only use the nominal max values from
     # each day (approximately solar noon) to create the gross range and climatology (min value will always be 0).
@@ -156,8 +157,9 @@ def generate_qartod(site, node, sensor, cut_off):
     gr_lookup = process_gross_range(data, parameters, limits, site=site,
                                     node=node, sensor=sensor, stream='temporary_spkir_stream_name')
 
-    # add the stream name and the source comment
-    gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
+    # add the source comment
+    gr_lookup['source'] = ('User Gross Range based on data collected from {} through to {}.'.format(start_date,
+                                                                                                    src_date))
 
     # based on the node, determine if we need a depth based climatology
     depth_bins = np.array([])
@@ -173,7 +175,10 @@ def generate_qartod(site, node, sensor, cut_off):
                                                 site=site, node=node, sensor=sensor,
                                                 stream='temporary_spkir_stream_name')
 
-    return annotations, gr_lookup, clm_lookup, clm_table
+    # add the source comment
+    clm_lookup['source'] = ('Climatology based on data collected from {} through to {}.'.format(start_date, src_date))
+
+    return data, annotations, gr_lookup, clm_lookup, clm_table
 
 
 def main(argv=None):
@@ -181,7 +186,7 @@ def main(argv=None):
     Download the SPKIR data from the Gold Copy THREDDS server and create the
     QARTOD gross range and climatology test lookup tables.
     """
-    # setup the input arguments
+    # set up the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node
@@ -189,7 +194,7 @@ def main(argv=None):
     cut_off = args.cut_off
 
     # create the QARTOD gross range and climatology lookup values and tables
-    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
+    data, annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
     # save the downloaded annotations and qartod lookups and tables
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/spkir')

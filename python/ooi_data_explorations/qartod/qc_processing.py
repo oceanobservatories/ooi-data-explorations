@@ -478,7 +478,7 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
                 lower = np.nanpercentile(da, 0.15)
                 upper = np.nanpercentile(da, 99.85)
                 notes = ('User range based on percentiles of the observations, which are not normally distributed. '
-                          'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
+                         'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
             else:
                 # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
                 mu = da.mean().values[0]

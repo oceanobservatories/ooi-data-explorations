@@ -49,7 +49,7 @@ ATTRS = dict({
         'long_name': 'Seawater Pressure',
         'standard_name': 'sea_water_pressure_due_to_sea_water',
         'units': 'dbar',
-        'comment': 'Instrument pressure sensor value recorded in mbar and converted to dbar.',
+        'comment': 'Instrument pressure sensor value recorded in 0.1 mbar and converted to dbar.',
     },
     'status_code': {
         'long_name': 'Status Code',
@@ -57,10 +57,9 @@ ATTRS = dict({
         'comment': 'Instrument status codes.',
         'flag_mask': np.array([1, 1, 2, 2, 4, 8, 48, 48, 48, 48, 192, 192, 192, 192], dtype=object).astype(np.intc),
         'flag_values': np.array([0, 1, 0, 2, 4, 8, 0, 16, 32, 48, 0, 64, 128, 192], dtype=object).astype(np.intc),
-        'flag_meanings': ('orientation_up orientation_down sacaling_mm_per_second scaling_0.1mm_per_second '
-                          'pitch_out_of_range roll_out_of_range wakeup_state_bad_power wakeup_state_break '
-                          'wakeup_state_power_applied wakeup_state_rtc_alarm power_level_high power_level_mid_high '
-                          'power_level_mid_low power_level_low')
+        'flag_meanings': ('orientation_up orientation_down not_used not_used pitch_out_of_range roll_out_of_range '
+                          'wakeup_state_bad_power wakeup_state_break wakeup_state_power_applied wakeup_state_rtc_alarm '
+                          'power_level_high power_level_mid_high power_level_mid_low power_level_low')
         # Per https://cfconventions.org/cf-conventions/cf-conventions.html#flags, a blend of flag masks, flag values,
         # and flag meanings are used "to describe a blend of independent Boolean conditions and enumerated status
         # codes."
@@ -153,6 +152,48 @@ ATTRS = dict({
 })
 
 
+def quality_checks(ds):
+    """
+    Quality assessment of the raw and calculated nitrate concentration data
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
+
+        1 = Pass
+        3 = Suspect or of High Interest
+        4 = Fail
+
+    The final flag value represents the worst case assessment of the data quality.
+
+    :param ds: xarray dataset with the raw signal data and the calculated
+               seawater pH
+    :return qc_flag: array of flag values indicating seawater pH quality
+    """
+    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+
+    # test for pitch and roll out of range (greater than 30 degrees)
+    m = np.abs(ds['pitch']) > 20
+    qc_flag[m] = 3
+    m = np.abs(ds['pitch']) >= 30
+    qc_flag[m] = 4
+
+    m = np.abs(ds['roll']) > 20
+    qc_flag[m] = 3
+    m = np.abs(ds['roll']) >= 30
+    qc_flag[m] = 4
+
+    # test for pressure out of range (catch those periods when the instrument is out of the water)
+    if ds.attrs['node'] in ['SBD11', 'SBD12', 'SBD17']:
+        # surface buoy, pressure is nominally 1.25 dbar
+        m = ds['seawater_pressure'] <= 0
+    else:
+        # subsurface platform (NSIF or MFN), pressure is always greater than 3 dbar
+        m = ds['seawater_pressure'] <= 3
+
+    qc_flag[m] = 4
+
+    return qc_flag
+
+
 def velpt_datalogger(ds):
     """
     Takes VELPT (Nortek Aquadopp) data recorded by the data loggers used in the
@@ -175,10 +216,10 @@ def velpt_datalogger(ds):
     #   velocity_beam3_qc_executed == QC tests are not applied to L0 data
     #   velocity_beam3_qc_results == QC tests are not applied to L0 data
     drop_vars = ['analog1', 'internal_timestamp', 'date_time_string',
-        'velocity_beam1_qc_executed', 'velocity_beam1_qc_results',
-        'velocity_beam2_qc_executed', 'velocity_beam2_qc_results',
-        'velocity_beam3_qc_executed', 'velocity_beam3_qc_results'
-    ]
+                 'velocity_beam1_qc_executed', 'velocity_beam1_qc_results',
+                 'velocity_beam2_qc_executed', 'velocity_beam2_qc_results',
+                 'velocity_beam3_qc_executed', 'velocity_beam3_qc_results'
+                 ]
     for var in ds.variables:
         if var in drop_vars:
             ds = ds.drop_vars(var)
@@ -189,6 +230,7 @@ def velpt_datalogger(ds):
         'heading_decidegree': 'heading',
         'pitch_decidegree': 'pitch',
         'roll_decidegree': 'roll',
+        'status': 'status_code',
         'sea_water_pressure_mbar': 'seawater_pressure',
         'sea_water_pressure_mbar_qc_executed': 'seawater_pressure_qc_executed',
         'sea_water_pressure_mbar_qc_results': 'seawater_pressure_qc_results',
@@ -214,7 +256,7 @@ def velpt_datalogger(ds):
     ds['pitch'] = ds['pitch'] / 10.0  # convert from ddeg to deg
     ds['roll'] = ds['roll'] / 10.0  # convert from ddeg to deg
     ds['battery_voltage'] = ds['battery_voltage'] / 10.0  # convert from dV to V
-    ds['seawater_pressure'] = ds['seawater_pressure'] / 1000.0  # convert from mm to m
+    ds['seawater_pressure'] = ds['seawater_pressure'] / 1000.0  # parser doesn't include this needed scaling term
     ds['seawater_temperature'] = ds['seawater_temperature'] / 100.0  # convert from cdeg C to deg C
     ds['speed_of_sound'] = ds['speed_of_sound'] / 10.0  # convert from dm/s to m/s
 
@@ -233,6 +275,8 @@ def velpt_datalogger(ds):
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
+    # test the data quality using additional instrument variables
+    ds['aquadopp_sensor_quality_flag'] = quality_checks(ds)
     return ds
 
 

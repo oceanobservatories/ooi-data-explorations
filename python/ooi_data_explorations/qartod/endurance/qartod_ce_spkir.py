@@ -43,10 +43,13 @@ def combine_delivery_methods(site, node, sensor):
         print('# -- Group the data by deployment and process the data')
         grps = list(rhost.groupby('deployment'))
         for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
+            print('# -- Processing recovered_cspp deployment %s' % grp[0])
             deployments.append(spkir_cspp(grp[1]))
         deployments = [i for i in deployments if i]
         merged = xr.concat(deployments, 'time')
+        merged = merged.sortby(['deployment', 'time'])
+        _, index = np.unique(merged['time'], return_index=True)
+        merged = merged.isel(time=index)
     else:
         # this SPKIR is standalone on one of the NSIFs and includes telemetered and recovered_host data.
         # data is collected in bursts (3 minutes at 1 Hz). process each data set per-deployment
@@ -112,20 +115,20 @@ def generate_qartod(site, node, sensor, cut_off):
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-    # create an annotation-based quality flag and remove any data that has been flagged as bad
+    # create annotation-based quality flags and remove any data that has been flagged as bad (removing the flag
+    # variables after they are used)
     data = add_annotation_qc_flags(data, annotations)
     if 'rollup_annotations_qc_results' in data.variables:
         data = data.where(data.rollup_annotations_qc_results != 4)
+        data = data.drop('rollup_annotations_qc_results')
 
     if 'spkir_abj_cspp_downwelling_vector_annotations_qc_results' in data.variables:
         data = data.where(data.spkir_abj_cspp_downwelling_vector_annotations_qc_results != 4)
+        data = data.drop('spkir_abj_cspp_downwelling_vector_annotations_qc_results')
 
     if 'channel_array_annotations_qc_results' in data.variables:
         data = data.where(data.channel_array_annotations_qc_results != 4)
-
-    # drop the QC variables related to the 2D variables
-    data = data.drop(['spkir_abj_cspp_downwelling_vector_annotations_qc_results',
-                      'channel_array_annotations_qc_results'])
+        data = data.drop('channel_array_annotations_qc_results')
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.
@@ -151,11 +154,12 @@ def generate_qartod(site, node, sensor, cut_off):
     parameters = ['downwelling_irradiance_412', 'downwelling_irradiance_444', 'downwelling_irradiance_490',
                   'downwelling_irradiance_510', 'downwelling_irradiance_555', 'downwelling_irradiance_620',
                   'downwelling_irradiance_683']
-    limits = [[0.10, 300], [0.10, 300], [0.10, 300], [0.10, 300], [0.10, 300], [0.10, 300], [0.10, 300]]
+    limits = [[0, 300], [0, 300], [0, 300], [0, 300], [0, 300], [0, 300], [0, 300]]
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site,
-                                    node=node, sensor=sensor, stream='temporary_spkir_stream_name')
+                                    node=node, sensor=sensor, stream='temporary_spkir_stream_name',
+                                    fixed_lower=True)
 
     # add the source comment
     gr_lookup['source'] = ('User Gross Range based on data collected from {} through to {}.'.format(start_date,
@@ -173,7 +177,8 @@ def generate_qartod(site, node, sensor, cut_off):
     # create and format the climatology lookups and tables for the data
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
                                                 site=site, node=node, sensor=sensor,
-                                                stream='temporary_spkir_stream_name')
+                                                stream='temporary_spkir_stream_name',
+                                                fixed_lower=True)
 
     # add the source comment
     clm_lookup['source'] = ('Climatology based on data collected from {} through to {}.'.format(start_date, src_date))

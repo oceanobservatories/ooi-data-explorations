@@ -206,7 +206,8 @@ def create_annotations(site, node, sensor, blocks):
     return output
 
 
-def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sensor, stream, fixed_lower):
+def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sensor, stream,
+                       fixed_lower, fixed_upper):
     """
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Climatology lookup tables.
@@ -223,6 +224,7 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
         the reference designator
     :param stream: Stream name that contains the data of interest
     :param fixed_lower:
+    :param fixed_upper:
     :return: dictionary with the sensor and user gross range values
         added in the formatting expected by the QC lookup
     """
@@ -262,7 +264,7 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
             cmin = sensor_range[0]
 
         cmax = mu + clm.monthly_std.values[idx] * 3
-        if cmax > sensor_range[1] or cmax < sensor_range[0]:
+        if fixed_upper or (cmax > sensor_range[1] or cmax < sensor_range[0]):
             cmax = sensor_range[1]
 
         # append the data to ranges
@@ -304,6 +306,7 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
     sensor = kwargs.get('sensor')
     stream = kwargs.get('stream')
     fixed_lower = kwargs.get('fixed_lower')
+    fixed_upper = kwargs.get('fixed_upper')
 
     # initialize the Climatology class
     clm = Climatology()
@@ -341,7 +344,7 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
 
                     # create the formatted dictionary for the lookup tables
                     qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
-                                                            stream, fixed_lower)
+                                                            stream, fixed_lower, fixed_upper)
 
                     # append the dictionary to the dataframe and build the depth table
                     df = (pd.Series(qc_dict).to_frame()).transpose()
@@ -361,7 +364,7 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
 
                 # create the formatted dictionary for the lookup tables
                 qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
-                                                        site, node, sensor, stream, fixed_lower)
+                                                        site, node, sensor, stream, fixed_lower, fixed_upper)
 
                 # append the dictionary to the dataframe and the table to the list
                 df = (pd.Series(qc_dict).to_frame()).transpose()
@@ -444,6 +447,8 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
     node = kwargs.get('node')
     sensor = kwargs.get('sensor')
     stream = kwargs.get('stream')
+    fixed_lower = kwargs.get('fixed_lower')
+    fixed_upper = kwargs.get('fixed_upper')
 
     # create an empty pandas dataframe to hold the results
     gross_range = []
@@ -488,10 +493,10 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
                 notes = 'User range based on the mean +- 3 standard deviations of all observations.'
 
             # reset the lower and upper ranges if they exceed the sensor ranges
-            if lower < sensor_range[idx][0]:
+            if fixed_lower or lower < sensor_range[idx][0]:
                 lower = sensor_range[idx][0]
 
-            if upper > sensor_range[idx][1]:
+            if fixed_upper or upper > sensor_range[idx][1]:
                 upper = sensor_range[idx][1]
 
             # create the formatted dictionary

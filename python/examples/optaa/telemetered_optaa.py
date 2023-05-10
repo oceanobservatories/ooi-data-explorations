@@ -17,7 +17,6 @@ def main():
     sensor = '01-OPTAAD000'                       # OOI Net sensor designator
     stream = 'optaa_dj_dcl_instrument'            # OOI Net stream name
     method = 'telemetered'                        # OOI Net data delivery method
-    use_dask = True                               # OPTAA data requires the use of dask to handle large data volumes
     level = 'nsif'                                # local directory name, level below site
     instrmt = 'optaa'                             # local directory name, instrument below level
 
@@ -30,7 +29,7 @@ def main():
 
     # request and download the data
     r = m2m_request(site, node, sensor, method, stream, start, stop)
-    optaa = m2m_collect(r, '.*OPTAA.*\\.nc$', use_dask)
+    optaa = m2m_collect(r, '.*OPTAA.*\\.nc$')
     optaa = optaa.where(optaa.deployment == deploy, drop=True)  # limit to the deployment of interest
 
     # clean-up and reorganize

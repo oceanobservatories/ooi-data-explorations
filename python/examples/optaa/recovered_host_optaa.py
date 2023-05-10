@@ -17,7 +17,6 @@ def main():
     stream = 'optaa_dj_dcl_instrument_recovered'  # OOI Net stream name
     method = 'recovered_host'                     # OOI Net data delivery method
     tag = '.*deployment0003.*OPTAA.*\\.nc$'       # limit request to OPTAA NetCDF files from Deployment 3
-    use_dask = True                               # OPTAA data requires the use of dask to handle large data volumes
     level = 'nsif'                                # local directory name, level below site
     instrmt = 'optaa'                             # local directory name, instrument below level
 
@@ -26,7 +25,7 @@ def main():
     vocab = get_vocabulary(site, node, sensor)[0]
 
     # recovered host data is best downloaded from the Gold Copy THREDDS catalog (much faster than an M2M request)
-    optaa = load_gc_thredds(site, node, sensor, method, stream, tag, use_dask)
+    optaa = load_gc_thredds(site, node, sensor, method, stream, tag)
 
     # clean-up and reorganize
     optaa = optaa_datalogger(optaa)

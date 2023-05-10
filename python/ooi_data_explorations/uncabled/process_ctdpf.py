@@ -1,120 +1,80 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import numpy as np
 import os
 
-from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, get_deployment_dates, \
-    get_vocabulary, dt64_epoch, update_dataset, ENCODINGS
+from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, get_deployment_dates, \
+    get_vocabulary, update_dataset, ENCODINGS
+from ooi_data_explorations.profilers import create_profile_id
+from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 
 def ctdpf_wfp(ds):
     """
+    Takes CTD data recorded by the WFP and lightly re-works it into a xarray
+    dataset for further work by the user. Primary task is dropping a
+    variable, renaming three raw variables to be explicit and converting the
+    original OOI QC variables from bitmaps to a QARTOD style flag.
+    Additionally, adds a variable for the profile number.
 
-    :param ds: initial ctdbp data set downloaded from OOI via the M2M system
+    :param ds: initial CTDPF data set downloaded from OOI
     :return ds: cleaned up data set
     """
     # drop some of the variables:
-    #   dcl_controller_timestamp == time, redundant so can remove
-    #   date_time_string = internal_timestamp, redundant so can remove
+    #   internal_timestamp == time, redundant so can remove
     ds = ds.reset_coords()
-    drop_vars = ['dcl_controller_timestamp', 'date_time_string']
+    drop_vars = ['internal_timestamp']
     for v in drop_vars:
         if v in ds.variables:
             ds = ds.drop(v)
 
-    # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
-    ds['internal_timestamp'] = ('time', dt64_epoch(ds.internal_timestamp))
-    ds['internal_timestamp'].attrs = dict({
-        'long_name': 'Internal CTD Clock Time',
-        'standard_name': 'time',
-        'units': 'seconds since 1970-01-01 00:00:00 0:00',
-        'calendar': 'gregorian',
-        'comment': ('Comparing the instrument internal clock versus the GPS referenced sampling time will allow for '
-                    'calculations of the instrument clock offset and drift. Useful when working with the '
-                    'recovered instrument data where no external GPS referenced clock is available.')
-    })
-
     # rename some of the variables for better clarity
     rename = {
-        'conductivity': 'seawater_conductivity',
-        'conductivity_qc_executed': 'seawater_conductivity_qc_executed',
-        'conductivity_qc_results': 'seawater_conductivity_qc_results',
-        'conductivity_qartod_executed': 'seawater_conductivity_qartod_executed',
-        'conductivity_qartod_results': 'seawater_conductivity_qartod_results',
-        'temp': 'seawater_temperature',
-        'temp_qc_executed': 'seawater_temperature_qc_executed',
-        'temp_qc_results': 'seawater_temperature_qc_results',
-        'temp_qartod_results': 'seawater_temperature_qartod_results',
-        'temp_qartod_executed': 'seawater_temperature_qartod_executed',
-        'pressure': 'seawater_pressure',
-        'pressure_qc_executed': 'seawater_pressure_qc_executed',
-        'pressure_qc_results': 'seawater_pressure_qc_results',
-        'pressure_qartod_results': 'seawater_pressure_qartod_results',
-        'pressure_qartod_executed': 'seawater_pressure_qartod_executed'
+        'conductivity': 'raw_sea_water_electrical_conductivity',
+        'temperature': 'raw_sea_water_temperature',
+        'pressure': 'raw_sea_water_pressure',
     }
     for key, value in rename.items():
         if key in ds.variables:
             ds = ds.rename({key: value})
             ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # add a variable for the profile number
+    ds = create_profile_id(ds)
 
     return ds
 
 
 def ctdpf_cspp(ds):
     """
-    Takes ctdbp data recorded by internally by the instrument, and cleans up the data set to make it more
-    user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
-    of no use/value.
+    Takes CTD data recorded by the CSPP controller and lightly re-works it into
+    a xarray dataset for further work by the user. Primary task is dropping two
+    redundant variables and converting the original OOI QC variables from
+    bitmaps to a QARTOD style flag. Additionally, adds a variable for the
+    profile number.
 
-    :param ds: initial ctdbp data set downloaded from OOI via the M2M system
-    :return: cleaned up data set
-    """
-    """
-    Takes ctdbp data recorded by internally by the instrument, and cleans up the data set to make it more
-    user-friendly. Primary task is renaming the alphabet soup parameter names and dropping some parameters that are
-    of no use/value.
-
-    :param ds: initial ctdbp data set downloaded from OOI via the M2M system
-    :param burst: resample the data to the defined time interval
+    :param ds: initial CTDPF data set downloaded from OOI
     :return: cleaned up data set
     """
     # drop some of the variables:
-    #   ctd_time == time, redundant so can remove
     #   internal_timestamp == time, redundant so can remove
-    #   conductivity_qc_*, pressure_qc_* == raw measurements, no QC tests should be run
-    ds = ds.reset_coords()
-    drop_vars = ['ctd_time', 'internal_timestamp', 'conductivity_qc_executed', 'conductivity_qc_results',
-                  'pressure_qc_executed', 'pressure_qc_results']
+    #   profiler_timestamp == internal_timestamp, redundant so can remove
+    drop_vars = ['internal_timestamp', 'profiler_timestamp']
     for v in drop_vars:
         if v in ds.variables:
             ds = ds.drop(v)
 
-    # rename some of the variables for better clarity, two blocks to keep from stepping on ourselves
-    rename = {
-        'conductivity': 'raw_seawater_conductivity',
-        'ctdbp_seawater_conductivity': 'seawater_conductivity',
-        'ctdbp_seawater_conductivity_qc_executed': 'seawater_conductivity_qc_executed',
-        'ctdbp_seawater_conductivity_qc_results': 'seawater_conductivity_qc_results',
-        'ctdbp_seawater_conductivity_qartod_executed': 'seawater_conductivity_qartod_executed',
-        'ctdbp_seawater_conductivity_qartod_results': 'seawater_conductivity_qartod_results',
-        'temperature': 'raw_seawater_temperature',
-        'ctdbp_seawater_temperature': 'seawater_temperature',
-        'ctdbp_seawater_temperature_qc_executed': 'seawater_temperature_qc_executed',
-        'ctdbp_seawater_temperature_qc_results': 'seawater_temperature_qc_results',
-        'ctdbp_seawater_temperature_qartod_executed': 'seawater_temperature_qartod_executed',
-        'ctdbp_seawater_temperature_qartod_results': 'seawater_temperature_qartod_results',
-        'pressure_temp': 'raw_pressure_temperature',
-        'pressure': 'raw_seawater_pressure',
-        'ctdbp_seawater_pressure': 'seawater_pressure',
-        'ctdbp_seawater_pressure_qc_executed': 'seawater_pressure_qc_executed',
-        'ctdbp_seawater_pressure_qc_results': 'seawater_pressure_qc_results',
-        'ctdbp_seawater_pressure_qartod_executed': 'seawater_pressure_qartod_executed',
-        'ctdbp_seawater_pressure_qartod_results': 'seawater_pressure_qartod_results',
-    }
-    for key, value in rename.items():
-        if key in ds.variables:
-            ds = ds.rename({key: value})
-            ds[value].attrs['ooinet_variable_name'] = key
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # add a variable for the profile number
+    ds = create_profile_id(ds)
 
     return ds
 
@@ -129,52 +89,55 @@ def main(argv=None):
     deploy = args.deploy
     start = args.start
     stop = args.stop
-    burst = args.burst
 
-    # determine the start and stop times for the data request based on either the deployment number or user entered
-    # beginning and ending dates.
+    # check if we are specifying a deployment or a specific date and time range
     if not deploy or (start and stop):
         return SyntaxError('You must specify either a deployment number or beginning and end dates of interest.')
-    else:
-        if deploy:
-            # Determine start and end dates based on the deployment number
-            start, stop = get_deployment_dates(site, node, sensor, deploy)
-            if not start or not stop:
-                exit_text = ('Deployment dates are unavailable for %s-%s-%s, deployment %02d.' % (site, node, sensor,
-                                                                                                  deploy))
-                raise SystemExit(exit_text)
 
-    # Request the data for download
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    if not r:
-        exit_text = ('Request failed for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # Valid request, start downloading the data
+    # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        ctdbp = m2m_collect(r, ('.*deployment%04d.*CTDBP.*\\.nc$' % deploy))
-    else:
-        ctdbp = m2m_collect(r, '.*CTDBP.*\\.nc$')
+        # download the data for the deployment
+        ctdpf = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*CTDPF.*\\.nc$' % deploy))
 
-    if not ctdbp:
-        exit_text = ('Data unavailable for %s-%s-%s. Check request.' % (site, node, sensor))
-        raise SystemExit(exit_text)
-
-    # clean-up and reorganize
-    if method in ['telemetered', 'recovered_host']:
-        ctdbp = ctdbp_datalogger(ctdbp, burst)
+        # check to see if we downloaded any data
+        if not ctdpf:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                    stream, deploy))
+            raise SystemExit(exit_text)
     else:
-        ctdbp = ctdbp_instrument(ctdbp, burst)
+        # otherwise, request the data for download from OOINet via the M2M API using the specified dates
+        r = m2m_request(site, node, sensor, method, stream, start, stop)
+        if not r:
+            exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                  stream, start, stop))
+            raise SystemExit(exit_text)
+
+        # Valid M2M request, start downloading the data
+        ctdpf = m2m_collect(r, '.*CTDPF.*\\.nc$')
+
+        # check to see if we downloaded any data
+        if not ctdpf:
+            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                    stream, start, stop))
+            raise SystemExit(exit_text)
+
+    # clean-up and reorganize the data
+    if node == 'SP001':
+        # this CTDPF is part of a CSPP
+        ctdpf = ctdpf_cspp(ctdpf)
+    else:
+        # this CTDPF is on a WFP
+        ctdpf = ctdpf_wfp(ctdpf)
 
     vocab = get_vocabulary(site, node, sensor)[0]
-    ctdbp = update_dataset(ctdbp, vocab['maxdepth'])
+    ctdpf = update_dataset(ctdpf, vocab['maxdepth'])
 
     # save the data to disk
     out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
 
-    ctdbp.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
+    ctdpf.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 
 if __name__ == '__main__':

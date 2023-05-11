@@ -27,8 +27,17 @@ def main():
     # recovered host data is best downloaded from the Gold Copy THREDDS catalog (much faster than an M2M request)
     optaa = load_gc_thredds(site, node, sensor, method, stream, tag)
 
+    # set up the calibration file path and name
+    cal_path = os.path.join(os.path.expanduser('~'), 'ooidata/m2m', site.lower(), level, instrmt)
+    cal_path = os.path.abspath(cal_path)
+    if not os.path.exists(cal_path):
+        os.makedirs(cal_path)
+
+    cal_file = ('%s.%s.%s.deploy%02d.cal_coeffs.json' % (site.lower(), level, instrmt, 3))
+    cal_file = os.path.join(cal_path, cal_file)
+
     # clean-up and reorganize
-    optaa = optaa_datalogger(optaa)
+    optaa = optaa_datalogger(optaa, cal_file)
     optaa = update_dataset(optaa, vocab['maxdepth'])
 
     # save the data

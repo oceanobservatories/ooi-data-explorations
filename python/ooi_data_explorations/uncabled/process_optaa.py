@@ -1,19 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import dask
 import dateutil.parser as parser
 import numpy as np
 import os
 import pytz
+import re
 import xarray as xr
 
+from copy import copy
+from dask.diagnostics import ProgressBar
 from datetime import timedelta
 from scipy.interpolate import CubicSpline
 
 from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, load_gc_thredds, \
     list_deployments, get_deployment_dates, get_vocabulary, update_dataset, ENCODINGS
+from ooi_data_explorations.profilers import create_profile_id
 
 from cgsn_processing.process.finding_calibrations import find_calibration
-from cgsn_processing.process.proc_optaa import Calibrations, apply_dev, apply_tscorr, apply_scatcorr
+from cgsn_processing.process.proc_optaa import Calibrations
 
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 from pyseas.data.opt_functions_tscor import tscor
@@ -242,7 +247,7 @@ ATTRS = dict({
         'ancillary_variables': 'wavelength_a apg_ts',
         '_FillValue': np.nan
     },
-    'cpd': {
+    'cpg': {
         'long_name': 'Particulate and Dissolved Attenuation',
         'units': 'm-1',
         'comment': ('The optical beam attenuation coefficient is the rate that the intensity of a beam of light will '
@@ -255,7 +260,7 @@ ATTRS = dict({
                                 'c_signal_dark c_reference_dark'),
         '_FillValue': np.nan
     },
-    'cpd_ts': {
+    'cpg_ts': {
         'long_name': 'Particulate and Dissolved Attenuation with TS Correction',
         'units': 'm-1',
         'comment': ('The optical beam attenuation coefficient corrected for the effects of temperature and salinity. '
@@ -263,7 +268,7 @@ ATTRS = dict({
                     'co-located CTD data is available, will assume a constant salinity of 33 psu and will use '
                     'the OPTAA''s external temperature sensor.'),
         'data_product_identifier': 'OPTATTN_L2',
-        'ancillary_variables': 'wavelength_c sea_water_temperature sea_water_practical_salinity external_temp cpd',
+        'ancillary_variables': 'wavelength_c sea_water_temperature sea_water_practical_salinity external_temp cpg',
         '_FillValue': np.nan
     },
     'estimated_chlorophyll': {
@@ -284,7 +289,7 @@ ATTRS = dict({
         'comment': ('Uses the particulate beam attenuation coefficient at 660 nm and a coefficient of 380 ug/L/m. This '
                     'calculation is not robust in response to biofouling and is expected to breakdown as biofouling '
                     'begins to dominate the signal.'),
-        'ancillary_variables': 'cpd_ts',
+        'ancillary_variables': 'cpg_ts',
         '_FillValue': np.nan
     },
     'ratio_cdom': {
@@ -332,12 +337,71 @@ ATTRS = dict({
 })
 
 
+def load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time):
+    """
+
+    :param cal_file:
+    :param serial_number:
+    :param time:
+    :return:
+    """
+    # load the instrument calibration data
+    dev = Calibrations(cal_file)  # initialize calibration class
+
+    # check for the source of calibration coeffs and load accordingly
+    if os.path.isfile(cal_file):
+        # we always want to use this file if it already exists
+        dev.load_coeffs()
+    else:
+        # load from the CI hosted CSV files
+        csv_url = find_calibration('OPTAA', serial_number, start_time)
+        if csv_url:
+            tca_url = re.sub('.csv', '__CC_taarray.ext', csv_url)
+            tcc_url = re.sub('.csv', '__CC_tcarray.ext', csv_url)
+            dev.read_devurls(csv_url, tca_url, tcc_url)
+
+            # determine the grating index
+            awlngths = copy(dev.coeffs['a_wavelengths'])
+            awlngths[(awlngths < 545) | (awlngths > 605)] = np.nan
+            cwlngths = copy(dev.coeffs['c_wavelengths'])
+            cwlngths[(cwlngths < 545) | (cwlngths > 605)] = np.nan
+            grate_index = np.nanargmin(np.diff(awlngths) + np.diff(cwlngths))
+            dev.coeffs['grate_index'] = grate_index
+
+    # check the device file coefficients against the data file contents
+    if dev.coeffs['serial_number'] != int(serial_number):
+        raise Exception('Serial Number mismatch between AC-S data and the device file.')
+    elif dev.coeffs['num_wavelengths'] != num_wavelengths:
+        raise Exception('Number of wavelengths mismatch between AC-S data and the device file.')
+    else:
+        dev.save_coeffs()
+
+    return dev
+
+
+@dask.delayed
+def _temp_corr(degC, t0, t1, dt0, dt1):
+    """
+    Internal function to calculate the linear temperature correction via dask.
+
+    :param degC: internal instrument temperature [deg_C]
+    :param t0: first bracketing temperature from the temperature bins [deg_C]
+    :param t1: second bracketing temperature from the temperature bins [deg_C]
+    :param dt0: first bracketing temperature correction coefficients [m-1]
+    :param dt1: second bracketing temperature correction coefficients [m-1]
+    :return: linear temperature correction factor [m-1]
+    """
+    tcorr = dt0 + ((degC - t0) / (t1 - t0)) * (dt1 - dt0)
+    return tcorr
+
+
 def pd_calc(ref, sig, offset, tintrn, tbins, tarray):
     """
     Convert the raw reference and signal measurements to scientific units. Uses
-    a simplified version of the opt_pd_calc function from the pyseas library (
-    fork of the OOI ion_functions code converted to Python 3) to take advantage
-    of numpy arrays and the ability to "vectorize" some of the calculations.
+    a simplified version of the opt_pd_calc function from the pyseas library
+    (a fork of the OOI ion_functions code converted to Python 3) to take
+    advantage of numpy arrays and the ability to vectorize some of the
+    calculations.
 
     :param ref: raw reference light measurements (OPTCREF_L0 or OPTAREF_L0, as
         appropriate) [counts]
@@ -354,7 +418,7 @@ def pd_calc(ref, sig, offset, tintrn, tbins, tarray):
     :return: uncorrected beam attenuation/optical absorption coefficients [m-1]
     """
     # create a linear temperature correction factor based on the internal instrument temperature
-    temp_corr = sig * np.nan
+    tcorr = []
     for i, degC in enumerate(tintrn.values):
         # find the indexes in the temperature bins corresponding to the values bracketing the internal temperature.
         ind1 = np.nonzero(tbins - degC < 0)[0][-1]
@@ -365,16 +429,17 @@ def pd_calc(ref, sig, offset, tintrn, tbins, tarray):
         # Calculate the linear temperature correction.
         dt0 = tarray[:, ind1]
         dt1 = tarray[:, ind2]
-        temp_corr[i, :] = dt0 + ((degC - t0) / (t1 - t0)) * (dt1 - dt0)
+        tcorr.append(_temp_corr(degC, t0, t1, dt0, dt1))
 
-    # Calculate the uncorrected signal [m-1]; the pathlength is 0.25m.
-    # Apply the corrections for the clean water offsets (offset) and
-    # the instrument's internal temperature (deltaT).
-    pd = (offset - (1. / 0.25) * np.log(sig / ref)) - temp_corr
+    # Apply the corrections for the clean water offsets (offset) and the instrument's internal temperature (tcorr).
+    with ProgressBar():
+        print(" ... Computing the instrument temperature correction")
+        tcorr = dask.compute(*tcorr)
+    pd = (offset - (1. / 0.25) * np.log(sig / ref)) - tcorr
     return pd
 
-
-def holo_grater(wlngths, spectra, index):
+@dask.delayed(nout=2)
+def _holo_grater(wlngths, spectra, index):
     """
     Derived from the Matlab HoloGrater function in Jesse Bausell's
     acsPROCESS_INTERACTIVE toolbox (link below) used in preparing
@@ -382,7 +447,7 @@ def holo_grater(wlngths, spectra, index):
     original source:
 
     "This function performs the holographic grating correction for raw
-    ac-s spectra. For each individual spectrum it calculates expected
+    AC-S spectra. For each individual spectrum it calculates expected
     absorption/attenuation at the lowest wavelength of the second grating
     (upper wavelengths) using matlab's spline function. It then subtracts
     this value from the observed absorption/attenuation creating an offset."
@@ -391,6 +456,11 @@ def holo_grater(wlngths, spectra, index):
     same correction.
 
     For original code see https://github.com/JesseBausell/acsPROCESS_INTERACTIVE
+
+    :param wlngths: absorption or attenuation channel wavelengths [nm]
+    :param spectra: absorption or attenuation spectra [m-1]
+    :param index: index of the second holographic grating
+    :return: corrected spectra and offset
     """
     # Interpolate between holographic gratings and calculate the offset
     spl = CubicSpline(wlngths[index - 2:index + 1], spectra[index - 2:index + 1])
@@ -409,7 +479,8 @@ def apply_dev(optaa, coeffs):
     """
     Processes the raw data contained in the optaa dictionary and applies the
     factory calibration coefficents contained in the coeffs dictionary to
-    convert the data into initial science units.
+    convert the data into initial science units. Processing includes correcting
+    for the holographic grating offset common to AC-S instruments.
 
     :param optaa: xarray dataset with the raw absorption and beam attenuation
         measurements.
@@ -419,53 +490,55 @@ def apply_dev(optaa, coeffs):
         measurements converted into particulate and beam attenuation values
         with the factory pure water calibration values subtracted.
     """
-    # convert internal and external temperature sensors
-    optaa['internal_temp'] = opt_internal_temp(optaa['internal_temp_raw'])
-    optaa['external_temp'] = opt_external_temp(optaa['external_temp_raw'])
-
     # calculate the L1 OPTAA data products (uncorrected beam attenuation and absorbance) for particulate
     # and dissolved organic matter with pure water removed.
-    apd = pd_calc(optaa['a_reference_counts'], optaa['a_signal_counts'], coeffs['a_offsets'],
+    print("Calculating the L1 OPTAA data products for the absorption channel ...")
+    apg = pd_calc(optaa['a_reference'], optaa['a_signal'], coeffs['a_offsets'],
                   optaa['internal_temp'], coeffs['temp_bins'], coeffs['ta_array'])
-    cpd = pd_calc(optaa['c_reference_counts'], optaa['c_signal_counts'], coeffs['c_offsets'],
+    print("Calculating the L1 OPTAA data products for the attenuation channel ...")
+    cpg = pd_calc(optaa['c_reference'], optaa['c_signal'], coeffs['c_offsets'] ,
                   optaa['internal_temp'], coeffs['temp_bins'], coeffs['tc_array'])
 
+    apg = apg.where(np.isfinite(apg), np.nan)
+    cpg = cpg.where(np.isfinite(cpg), np.nan)
+
     # correct the spectral "jump" often observed between the two halves of the linear variable filter
-    nrows = apd.shape[0]
-    offsets = np.ones([nrows, 2]) * np.nan
+    nrows = apg.shape[0]
+    a = []
+    a_offsets = []
+    c = []
+    c_offsets = []
     if coeffs['grate_index']:
         for i in range(nrows):
-            apd[i, ~np.isfinite(apd[i, :])] = np.nan
-            cpd[i, ~np.isfinite(cpd[i, :])] = np.nan
-            try:
-                apd[i, :], offsets[i, 0] = holo_grater(coeffs['a_wavelengths'], apd[i, :], coeffs['grate_index'])
-            except ValueError:
-                # if the spectra is badly malformed (can happen with bubbles or other fouling), we can
-                # get NaN's or Inf's in the spectra. If this happens, NaN out the whole spectra
-                apd[i, :] = apd[i, :] * np.nan
+            spectra, offset = _holo_grater(coeffs['a_wavelengths'], apg[i, :], coeffs['grate_index'])
+            a.append(spectra), a_offsets.append(offset)
+            spectra, offset = _holo_grater(coeffs['c_wavelengths'], cpg[i, :], coeffs['grate_index'])
+            c.append(spectra), c_offsets.append(offset)
 
-            try:
-                cpd[i, :], offsets[i, 1] = holo_grater(coeffs['c_wavelengths'], cpd[i, :], coeffs['grate_index'])
-            except:
-                # if the spectra is badly malformed (can happen with bubbles or other fouling), we can
-                # get NaN's or Inf's in the spectra. If this happens, NaN out the whole spectra
-                cpd[i, :] = cpd[i, :] * np.nan
+    # put it all back together, adding the jump offsets to the data set
+    with ProgressBar():
+        print("Applying the spectral jump correction for the absorption channel")
+        a = [*dask.compute(*a)]
+        a_offsets = [*dask.compute(*a_offsets)]
 
-    # put it all back together, adding the jump offsets
-    optaa['apd'] = apd
-    optaa['cpd'] = cpd
-    optaa['a_jump_offsets'] = ('time', offsets[:, 0])
-    optaa['c_jump_offsets'] = ('time', offsets[:, 1])
+    with ProgressBar():
+        print("Applying the spectral jump correction for the attenuation channel")
+        c = [*dask.compute(*c)]
+        c_offsets = [*dask.compute(*c_offsets)]
 
     # return the optaa dictionary with the factory calibrations applied and the spectral jump between
     # linear variable filter halves corrected
+    optaa['apg'] = xr.concat(a, dim='time')
+    optaa['a_jump_offsets'] = xr.concat(a_offsets, dim='time')
+    optaa['cpg'] = xr.concat(c, dim='time')
+    optaa['c_jump_offsets'] = xr.concat(c_offsets, dim='time')
     return optaa
 
 
 def tempsal_corr(channel, pd, wlngth, tcal, degC, salinity):
     """
     Apply temperature and salinity corrections to the converted absorption
-    and attenuation data. Uses a simplified version of the opt_pd_calc
+    and attenuation data. Uses a simplified version of the opt_tempsal_corr
     function from the pyseas library (fork of the OOI ion_functions code
     converted to Python 3) to take advantage of numpy arrays and the
     ability to "vectorize" some of the calculations.
@@ -501,25 +574,27 @@ def tempsal_corr(channel, pd, wlngth, tcal, degC, salinity):
     return pd_ts
 
 
-def apply_tscorr(optaa, coeffs, temp, salinity):
+def apply_tscorr(optaa, coeffs, temperature, salinity):
     """
     Corrects the absorption and beam attenuation data for the absorption
     of seawater as a function of the seawater temperature and salinity (the
     calibration blanking offsets are determined using pure water.)
 
-    If inputs temp or salinity are not supplied as calling arguments, then the
-    following default values are used.
+    If inputs temperature or salinity are not supplied as calling arguments,
+    or all of the temperature or salinity values are NaN, then the following
+    default values are used.
 
-        temp: temperature values recorded by the ac-s's external thermistor.
-        salinity: 33.0 psu
+        temperature: temperature values recorded by the AC-S's external
+            thermistor (note, this would not be valid for an AC-S on a
+            profiling platform)
+        salinity: 34.0 psu
 
     Otherwise, each of the arguments for temp and salinity should be either a
     scalar, or a 1D array or a row or column vector with the same number of time
     points as 'a' and 'c'.
 
-    :param optaa: xarray dataset with the temperature and salinity corrected
-        absorbance data array that will be corrected for the effects of
-        scattering.
+    :param optaa: xarray dataset with the raw absorption and attenuation data
+        converted to absorption and attenuation coefficients
     :param coeffs: Factory calibration coefficients in a dictionary structure
     :param temp: In-situ seawater temperature, ideally from a co-located CTD
     :param salinity: In-situ seawater salinity, ideally from a co-located CTD
@@ -527,11 +602,34 @@ def apply_tscorr(optaa, coeffs, temp, salinity):
     :return optaa: xarray dataset with the temperature and salinity corrected
         absorbance and attenuation data arrays added.
     """
+    # check the temperature and salinity inputs. If they are not supplied, use the
+    # external thermistor temperature and a salinity of 34.0 psu
+    if temperature is None:
+        temperature = optaa['external_temp']
+    if salinity is None:
+        salinity = np.ones_like(temperature) * 34.0
+
+    # additionally check if all the temperature and salinity values are NaNs. If they are,
+    # then use the external thermistor temperature and a salinity of 34.0 psu (will occur
+    # if the CTD is not connected).
+    if np.all(np.isnan(temperature)):
+        temperature = optaa['external_temp']
+    if np.all(np.isnan(salinity)):
+        salinity = np.ones_like(temperature) * 34.0
+
+    # test if the temperature and salinity are the same size as the absorption and attenuation
+    # data. If they are not, then they should be a scalar value, and we can tile them to the
+    # correct size.
+    if temperature.size != optaa['time'].size:
+        temperature = np.tile(temperature, optaa['time'].size)
+    if salinity.size != optaa['time'].size:
+        salinity = np.tile(salinity, optaa['time'].size)
+
     # apply the temperature and salinity corrections
-    optaa['apd_ts'] = tempsal_corr('a', optaa['apd'], coeffs['a_wavelengths'], coeffs['temp_calibration'],
-                                   temp, salinity)
-    optaa['cpd_ts'] = tempsal_corr('c', optaa['cpd'], coeffs['c_wavelengths'], coeffs['temp_calibration'],
-                                   temp, salinity)
+    optaa['apg_ts'] = tempsal_corr('a', optaa['apg'], coeffs['a_wavelengths'], coeffs['temp_calibration'],
+                                   temperature, salinity)
+    optaa['cpg_ts'] = tempsal_corr('c', optaa['cpg'], coeffs['c_wavelengths'], coeffs['temp_calibration'],
+                                   temperature, salinity)
 
     return optaa
 
@@ -540,7 +638,10 @@ def apply_scatcorr(optaa, coeffs):
     """
     Correct the absorbance data for scattering using Method 1, with the
     wavelength closest to 715 nm used as the reference wavelength for the
-    scattering correction.
+    scattering correction. This is the simpliest method for correcting for
+    scattering, but other methods are available. Users are encouraged to
+    explore the other methods and determine which is best for their
+    application.
 
     :param optaa: xarray dataset with the temperature and salinity corrected
         absorbance data array that will be corrected for the effects of
@@ -555,13 +656,13 @@ def apply_scatcorr(optaa, coeffs):
     idx = np.argmin(np.abs(coeffs['a_wavelengths'] - reference_wavelength))
 
     # use that wavelength as our scatter correction wavelength
-    apd_ts = optaa['apd_ts']
-    optaa['apd_ts_s'] = apd_ts - apd_ts[:, idx]
+    apg_ts = optaa['apg_ts']
+    optaa['apg_ts_s'] = apg_ts - apg_ts[:, idx]
 
     return optaa
 
 
-def estimate_chl_poc(optaa, coeffs):
+def estimate_chl_poc(optaa, coeffs, chl_line_height=0.020):
     """
     Derive estimates of Chlorophyll-a and particulate organic carbon (POC)
     concentrations from the temperature, salinity and scatter corrected
@@ -579,7 +680,7 @@ def estimate_chl_poc(optaa, coeffs):
     m715 = np.argmin(np.abs(coeffs['a_wavelengths'] - 715.0))  # find the closest wavelength to 715 nm
     apg = optaa['apg_ts_s']
     aphi = apg[:, m676] - 39 / 65 * apg[:, m650] - 26 / 65 * apg[:, m715]
-    optaa['estimated_chlorophyll'] = aphi / 0.020
+    optaa['estimated_chlorophyll'] = aphi / chl_line_height
 
     # estimate the POC concentration from the attenuation at 660 nm
     m660 = np.argmin(np.abs(coeffs['c_wavelengths'] - 660.0))  # find the closest wavelength to 660 nm
@@ -596,9 +697,9 @@ def calculate_ratios(optaa):
     light history or bloom health and age. Calculated ratios are:
 
     * CDOM Ratio -- ratio of CDOM absorption in the violet portion of the
-        spectrum at 412 nm relative to chlorophyll
-    * absorption at 440 nm. Ratios greater than 1 indicate a preponderance of
-        CDOM absorption relative to chlorophyll.
+        spectrum at 412 nm relative to chlorophyll absorption at 440 nm.
+        Ratios greater than 1 indicate a preponderance of CDOM absorption
+        relative to chlorophyll.
     * Carotenoid Ratio -- ratio of carotenoid absorption in the blue-green
         portion of the spectrum at 490 nm relative to chlorophyll absorption at
         440 nm. A changing carotenoid to chlorophyll ratio may indicate a shift
@@ -639,65 +740,28 @@ def calculate_ratios(optaa):
     return optaa
 
 
-def adjusted_dates(site, node, sensor, deploy):
-    """
-    Due to a bug in the way the system is currently assigning the calibration
-    coefficients, we need to bound the data requests for each deployment
-    based on the start and end times of the neighboring deployments. We cannot
-    take advantage of the overlapping deployments as that may result in the
-    wrong calibration coefficients being applied to the record.
-
-    :param site: Site designator, extracted from the first part of the
-        reference designator
-    :param node: Node designator, extracted from the second part of the
-        reference designator
-    :param sensor: Sensor designator, extracted from the third and fourth part
-        of the reference designator
-    :param deploy: sensor deployment number
-    :return start: Deployment start date, adjusted to ensure no overlap with
-        the previous deployment, if any
-    :return stop: Deployment stop date, adjusted to ensure no overlap with
-        the following deployment, if any
-    """
-    deployments = list_deployments(site, node, sensor)
-    start, stop = get_deployment_dates(site, node, sensor, deploy)
-    if deploy == deployments[0]:
-        # First deployment, use the deployment start date and adjust the stop date
-        if deploy + 1 in deployments:
-            stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
-            stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
-            stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-    elif deploy == deployments[-1]:
-        # Last deployment, use the deployment end date and adjust the start date
-        if deploy - 1 in deployments:
-            start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
-            start = start.astimezone(pytz.utc) + timedelta(hours=1)
-            start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-    else:
-        # middle deployments, adjust the start and stop dates
-        if deploy - 1 in deployments:
-            start = parser.parse(get_deployment_dates(site, node, sensor, deploy - 1)[1])
-            start = start.astimezone(pytz.utc) + timedelta(hours=1)
-            start = start.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-
-        if deploy + 1 in deployments:
-            stop = parser.parse(get_deployment_dates(site, node, sensor, deploy + 1)[0])
-            stop = stop.astimezone(pytz.utc) - timedelta(hours=1)
-            stop = stop.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-
-    return start, stop
-
-
-def optaa_datalogger(ds):
+def optaa_datalogger(ds, cal_file):
     """
     Takes OPTAA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
-    re-organize some of the variables to permit better assessments of the data.
+    re-calculate the intermedite products (e.g. absorption and attenuation) and
+    add them to the data set.  Finally, add the estimated chlorophyll and POC
+    concentrations to the data set.
+
+    Will test the data set to determine if more than one deployment is present.
+    If so, will gracefully exit with an error message.  AC-S processing requires
+    that the data be processed one deployment at a time in order to properly
+    assign calibration coefficients.
 
     :param ds: initial optaa data set downloaded from OOI via the M2M system
     :return ds: cleaned up data set
     """
+    # check to see if there is more than one deployment in the data set
+    if len(np.unique(ds['deployment'].values)) > 1:
+        raise ValueError('More than one deployment in the data set.  Please structure processing request to process '
+                         'one deployment at a time.')
+
     # drop some of the variables:
     #   internal_timestamp == time, redundant so can remove
     #   pressure_counts == none of the OOI OPTAAs have a pressure sensor
@@ -712,7 +776,7 @@ def optaa_datalogger(ds):
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
     ds = ds.drop('num_wavelengths')
 
-    # remove the units from the variable name and rename temp to seawater_temperature
+    # remove the units from the variable names
     rename = {
         'a_signal_dark_counts': 'a_signal_dark',
         'a_reference_dark_counts': 'a_reference_dark',
@@ -722,7 +786,6 @@ def optaa_datalogger(ds):
         'c_reference_dark_counts': 'c_reference_dark',
         'c_signal_counts': 'c_signal',
         'c_reference_counts': 'c_reference',
-        'temp': 'seawater_temperature',
         'wavelength': 'wavelength_number'
     }
     ds = ds.rename(rename)
@@ -735,7 +798,24 @@ def optaa_datalogger(ds):
     burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
                                                                                     keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
-    burst = burst.compute()
+
+    # convert internal and external temperature sensors from raw counts to degrees Celsius
+    burst['internal_temp'] = opt_internal_temp(burst['internal_temp_raw'])
+    burst['external_temp'] = opt_external_temp(burst['external_temp_raw'])
+
+    # re-process the raw data in order to create the intermediate variables, correcting for the holographic
+    # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
+    # to the absorption data. All intermediate processing outputs are added to the data set.
+    serial_number = burst.attrs['SerialNumber'][4:]
+    start_time = burst['time'][0].values.astype(float) / 10 ** 9
+    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
+    burst = apply_dev(burst, cal.coeffs)
+    burst = apply_tscorr(burst, cal.coeffs, burst.sea_water_temperature, burst.sea_water_practical_salinity)
+    burst = apply_scatcorr(burst, cal.coeffs)
+
+    # estimate chlorophyll and POC and calculate select absorption ratios
+    burst = estimate_chl_poc(burst, cal.coeffs)
+    burst = calculate_ratios(burst)
 
     # create a xarray dataset of the 2D variables, padding the number of wavelengths to a consistent
     # length of 100 using fill values.
@@ -779,10 +859,6 @@ def optaa_datalogger(ds):
     optaa.attrs = ds.attrs
     for v in optaa.variables:
         optaa[v].attrs = ds[v].attrs
-
-    # convert internal and external temperature sensors from raw counts to degrees Celsius
-    optaa['internal_temp'] = opt_internal_temp(optaa['internal_temp_raw'])
-    optaa['external_temp'] = opt_external_temp(optaa['external_temp_raw'])
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -905,6 +981,9 @@ def optaa_cspp(ds):
 
     # add the actual number of wavelengths to the dataset as an attribute
     optaa['wavelength_number'].attrs['actual_wavelengths'] = num_wavelengths
+
+    # add a profile number to the dataset
+    optaa = create_profile_id(optaa)
 
     return optaa
 

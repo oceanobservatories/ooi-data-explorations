@@ -17,7 +17,8 @@ def main():
     sensor = '04-OPTAAJ000'     # OOI Net sensor designator
     stream = 'optaa_dj_cspp_instrument_recovered'  # OOI Net stream name
     method = 'recovered_cspp'   # OOI Net data delivery method
-    instrmt = 'optaa'           # local directory name, instrument below site
+    level = 'cspp'              # local directory name, level below site
+    instrmt = 'optaa'           # local directory name, instrument below level
 
     # We are after the recovered data. Determine list of deployments and use data from one of the earlier deployments
     vocab = get_vocabulary(site, node, sensor)[0]
@@ -27,8 +28,17 @@ def main():
     # download the data from the Gold Copy THREDDS server
     optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
 
+    # set up the calibration file path and name
+    cal_path = os.path.join(os.path.expanduser('~'), 'ooidata/m2m', site.lower(), level, instrmt)
+    cal_path = os.path.abspath(cal_path)
+    if not os.path.exists(cal_path):
+        os.makedirs(cal_path)
+
+    cal_file = ('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), level, instrmt, deploy))
+    cal_file = os.path.join(cal_path, cal_file)
+
     # clean-up and reorganize
-    optaa = optaa_cspp(optaa)
+    optaa = optaa_cspp(optaa, cal_file)
     optaa = update_dataset(optaa, vocab['maxdepth'])
 
     # save the data

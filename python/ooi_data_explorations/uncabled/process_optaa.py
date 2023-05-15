@@ -1,20 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import dask
-import dateutil.parser as parser
 import numpy as np
 import os
-import pytz
 import re
 import xarray as xr
 
 from copy import copy
 from dask.diagnostics import ProgressBar
-from datetime import timedelta
 from scipy.interpolate import CubicSpline
 
 from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, load_gc_thredds, \
-    list_deployments, get_deployment_dates, get_vocabulary, update_dataset, ENCODINGS
+    get_vocabulary, update_dataset, ENCODINGS
 from ooi_data_explorations.profilers import create_profile_id
 
 from cgsn_processing.process.finding_calibrations import find_calibration
@@ -226,6 +223,16 @@ ATTRS = dict({
                                 'a_signal_dark a_reference_dark'),
         '_FillValue': np.nan
     },
+    'a_jump_offsets': {
+        'long_name': 'Absorption Channel Holographic Grater Jump Offset',
+        'units': 'm-1',
+        'comment': ('Offset used to correct for spectral jumps commonly seen in the AC-S data where the sensor uses '
+                    'two holographic gratings to span the full spectral range. Adding the offset to all values '
+                    'from the grate_index (included as an additional attribute) to the end of the spectra will '
+                    'restore the AC-S data to values reported by the sensor.'),
+        'grate_index': 0,  # Will update in the processing script
+        'ancillary_variables': 'wavelength_a apg',
+    },
     'apg_ts': {
         'long_name': 'Particulate and Dissolved Absorbance with TS Correction',
         'units': 'm-1',
@@ -259,6 +266,16 @@ ATTRS = dict({
         'ancillary_variables': ('wavelength_c internal_temp c_signal_raw c_reference_raw '
                                 'c_signal_dark c_reference_dark'),
         '_FillValue': np.nan
+    },
+    'c_jump_offsets': {
+        'long_name': 'Attenuation Channel Filter Offsets',
+        'units': 'm-1',
+        'comment': ('Offset used to correct for spectral jumps commonly seen in the AC-S data where the sensor uses '
+                    'two holographic gratings to span the full spectral range. Adding the offset to all values '
+                    'from the grate_index (included as an additional attribute) to the end of the spectra will '
+                    'restore the AC-S data to values reported by the sensor.'),
+        'grate_index': 0,  # Will update in the processing script
+        'ancillary_variables': 'wavelength_c cpg',
     },
     'cpg_ts': {
         'long_name': 'Particulate and Dissolved Attenuation with TS Correction',
@@ -380,22 +397,7 @@ def load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time):
 
 
 @dask.delayed
-def _temp_corr(degC, t0, t1, dt0, dt1):
-    """
-    Internal function to calculate the linear temperature correction via dask.
-
-    :param degC: internal instrument temperature [deg_C]
-    :param t0: first bracketing temperature from the temperature bins [deg_C]
-    :param t1: second bracketing temperature from the temperature bins [deg_C]
-    :param dt0: first bracketing temperature correction coefficients [m-1]
-    :param dt1: second bracketing temperature correction coefficients [m-1]
-    :return: linear temperature correction factor [m-1]
-    """
-    tcorr = dt0 + ((degC - t0) / (t1 - t0)) * (dt1 - dt0)
-    return tcorr
-
-
-def pd_calc(ref, sig, offset, tintrn, tbins, tarray):
+def _pd_calc(ref, sig, offset, tintrn, tbins, tarray):
     """
     Convert the raw reference and signal measurements to scientific units. Uses
     a simplified version of the opt_pd_calc function from the pyseas library
@@ -418,23 +420,19 @@ def pd_calc(ref, sig, offset, tintrn, tbins, tarray):
     :return: uncorrected beam attenuation/optical absorption coefficients [m-1]
     """
     # create a linear temperature correction factor based on the internal instrument temperature
-    tcorr = []
-    for i, degC in enumerate(tintrn.values):
-        # find the indexes in the temperature bins corresponding to the values bracketing the internal temperature.
-        ind1 = np.nonzero(tbins - degC < 0)[0][-1]
-        ind2 = np.nonzero(degC - tbins < 0)[0][0]
-        t0 = tbins[ind1]  # set first bracketing temperature
-        t1 = tbins[ind2]  # set second bracketing temperature
+    # find the temperature bins corresponding to the values bracketing the internal temperature.
+    t0 = tbins[tbins - tintrn < 0][-1]  # set first bracketing temperature
+    t1 = tbins[tintrn - tbins < 0][0]   # set second bracketing temperature
 
-        # Calculate the linear temperature correction.
-        dt0 = tarray[:, ind1]
-        dt1 = tarray[:, ind2]
-        tcorr.append(_temp_corr(degC, t0, t1, dt0, dt1))
+    # use the temperature bins to select the calibration coefficients bracketing the internal
+    tbins = list(tbins)
+    dt0 = tarray[:, tbins.index(t0)]
+    dt1 = tarray[:, tbins.index(t1)]
 
-    # Apply the corrections for the clean water offsets (offset) and the instrument's internal temperature (tcorr).
-    with ProgressBar():
-        print(" ... Computing the instrument temperature correction")
-        tcorr = dask.compute(*tcorr)
+    # Calculate the linear temperature correction.
+    tcorr = dt0 + ((tintrn - t0) / (t1 - t0)) * (dt1 - dt0)
+
+    # convert the raw data to the uncorrected spectra
     pd = (offset - (1. / 0.25) * np.log(sig / ref)) - tcorr
     return pd
 
@@ -492,46 +490,46 @@ def apply_dev(optaa, coeffs):
     """
     # calculate the L1 OPTAA data products (uncorrected beam attenuation and absorbance) for particulate
     # and dissolved organic matter with pure water removed.
-    print("Calculating the L1 OPTAA data products for the absorption channel ...")
-    apg = pd_calc(optaa['a_reference'], optaa['a_signal'], coeffs['a_offsets'],
-                  optaa['internal_temp'], coeffs['temp_bins'], coeffs['ta_array'])
-    print("Calculating the L1 OPTAA data products for the attenuation channel ...")
-    cpg = pd_calc(optaa['c_reference'], optaa['c_signal'], coeffs['c_offsets'] ,
-                  optaa['internal_temp'], coeffs['temp_bins'], coeffs['tc_array'])
+    nrows = optaa['a_reference'].shape[0]
+    pg = []
+    for i in range(nrows):
+        temp_internal = optaa['internal_temp'][i].values
+        pg += _pd_calc(optaa['a_reference'][i, :], optaa['a_signal'][i, :], coeffs['a_offsets'],
+                       temp_internal, coeffs['temp_bins'], coeffs['ta_array']),
+        pg += _pd_calc(optaa['c_reference'][i, :], optaa['c_signal'][i, :], coeffs['c_offsets'],
+                       temp_internal, coeffs['temp_bins'], coeffs['tc_array']),
 
+    with ProgressBar():
+        print("Calculating the L1 OPTAA data products for the absorption and attenuation channels")
+        pg = [*dask.compute(*pg)]
+
+    apg = xr.concat(pg[0::2], dim='time')
     apg = apg.where(np.isfinite(apg), np.nan)
+    cpg = xr.concat(pg[1::2], dim='time')
     cpg = cpg.where(np.isfinite(cpg), np.nan)
 
     # correct the spectral "jump" often observed between the two halves of the linear variable filter
-    nrows = apg.shape[0]
-    a = []
-    a_offsets = []
-    c = []
-    c_offsets = []
     if coeffs['grate_index']:
+        jumps = []
         for i in range(nrows):
             spectra, offset = _holo_grater(coeffs['a_wavelengths'], apg[i, :], coeffs['grate_index'])
-            a.append(spectra), a_offsets.append(offset)
+            jumps += spectra,
+            jumps += offset,
             spectra, offset = _holo_grater(coeffs['c_wavelengths'], cpg[i, :], coeffs['grate_index'])
-            c.append(spectra), c_offsets.append(offset)
+            jumps += spectra,
+            jumps += offset,
 
-    # put it all back together, adding the jump offsets to the data set
-    with ProgressBar():
-        print("Applying the spectral jump correction for the absorption channel")
-        a = [*dask.compute(*a)]
-        a_offsets = [*dask.compute(*a_offsets)]
-
-    with ProgressBar():
-        print("Applying the spectral jump correction for the attenuation channel")
-        c = [*dask.compute(*c)]
-        c_offsets = [*dask.compute(*c_offsets)]
+        # put it all back together, adding the jump offsets to the data set
+        with ProgressBar():
+            print("Adjusting the spectra for the jump often observed between filter halves")
+            jumps = [*dask.compute(*jumps)]
 
     # return the optaa dictionary with the factory calibrations applied and the spectral jump between
     # linear variable filter halves corrected
-    optaa['apg'] = xr.concat(a, dim='time')
-    optaa['a_jump_offsets'] = xr.concat(a_offsets, dim='time')
-    optaa['cpg'] = xr.concat(c, dim='time')
-    optaa['c_jump_offsets'] = xr.concat(c_offsets, dim='time')
+    optaa['apg'] = xr.concat(jumps[0::4], dim='time')
+    optaa['a_jump_offsets'] = xr.concat(jumps[1::4], dim='time')
+    optaa['cpg'] = xr.concat(jumps[2::4], dim='time')
+    optaa['c_jump_offsets'] = xr.concat(jumps[3::4], dim='time')
     return optaa
 
 
@@ -745,16 +743,18 @@ def optaa_datalogger(ds, cal_file):
     Takes OPTAA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
-    re-calculate the intermedite products (e.g. absorption and attenuation) and
+    re-calculate the intermediate products (e.g. absorption and attenuation) and
     add them to the data set.  Finally, add the estimated chlorophyll and POC
     concentrations to the data set.
 
     Will test the data set to determine if more than one deployment is present.
-    If so, will gracefully exit with an error message.  AC-S processing requires
-    that the data be processed one deployment at a time in order to properly
-    assign calibration coefficients.
+    If so, will raise an exception with an error message.  AC-S processing
+    requires that the data be processed one deployment at a time in order to
+    properly assign calibration coefficients.
 
     :param ds: initial optaa data set downloaded from OOI via the M2M system
+    :param cal_file: file name (can include path) to store the calibration
+        coefficients
     :return ds: cleaned up data set
     """
     # check to see if there is more than one deployment in the data set
@@ -776,6 +776,11 @@ def optaa_datalogger(ds, cal_file):
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
     ds = ds.drop('num_wavelengths')
 
+    # load the calibration coefficients
+    serial_number = ds.attrs['SerialNumber'][4:]
+    start_time = ds['time'][0].values.astype(float) / 10 ** 9
+    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
+
     # remove the units from the variable names
     rename = {
         'a_signal_dark_counts': 'a_signal_dark',
@@ -794,21 +799,18 @@ def optaa_datalogger(ds, cal_file):
     ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time / 1000 > 60)
     ds = ds.dropna(dim='time', subset=['elapsed_run_time'])
 
+    # convert internal and external temperature sensors from raw counts to degrees Celsius
+    ds['internal_temp'] = opt_internal_temp(ds['internal_temp_raw'])
+    ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
+
     # calculate the median of the remaining data per burst measurement
     burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
                                                                                     keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
-    # convert internal and external temperature sensors from raw counts to degrees Celsius
-    burst['internal_temp'] = opt_internal_temp(burst['internal_temp_raw'])
-    burst['external_temp'] = opt_external_temp(burst['external_temp_raw'])
-
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
     # to the absorption data. All intermediate processing outputs are added to the data set.
-    serial_number = burst.attrs['SerialNumber'][4:]
-    start_time = burst['time'][0].values.astype(float) / 10 ** 9
-    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
     burst = apply_dev(burst, cal.coeffs)
     burst = apply_tscorr(burst, cal.coeffs, burst.sea_water_temperature, burst.sea_water_practical_salinity)
     burst = apply_scatcorr(burst, cal.coeffs)
@@ -824,26 +826,33 @@ def optaa_datalogger(ds, cal_file):
     fill_nan = np.tile(np.ones(pad) * np.nan, (len(burst.time), 1))
     fill_int = np.tile(np.ones(pad) * -9999999, (len(burst.time), 1))
 
-    wavelength_a = np.concatenate([burst.wavelength_a.values, fill_nan[0, :]], axis=0)
-    wavelength_c = np.concatenate([burst.wavelength_c.values, fill_nan[0, :]], axis=0)
+    wavelength_a = np.concatenate([burst.wavelength_a.values, fill_nan], axis=1)
+    wavelength_c = np.concatenate([burst.wavelength_c.values, fill_nan], axis=1)
 
     ac = xr.Dataset({
-        'wavelength_a': (['wavelength_number'], wavelength_a),
+        'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
         'a_signal': (['time', 'wavelength_number'], np.concatenate([burst.a_signal.astype(int), fill_int], axis=1)),
         'a_reference': (['time', 'wavelength_number'], np.concatenate([burst.a_reference.astype(int), fill_int],
                                                                       axis=1)),
         'optical_absorption': (['time', 'wavelength_number'], np.concatenate([burst.optical_absorption, fill_nan],
                                                                              axis=1)),
-        'wavelength_c': (['wavelength_number'], wavelength_c),
+        'apg': (['time', 'wavelength_number'], np.concatenate([burst.apg, fill_nan], axis=1)),
+        'apg_ts': (['time', 'wavelength_number'], np.concatenate([burst.apg_ts, fill_nan], axis=1)),
+        'apg_ts_s': (['time', 'wavelength_number'], np.concatenate([burst.apg_ts_s, fill_nan], axis=1)),
+        'wavelength_c': (['time', 'wavelength_number'], wavelength_c),
         'c_signal': (['time', 'wavelength_number'], np.concatenate([burst.c_signal.astype(int), fill_int], axis=1)),
         'c_reference': (['time', 'wavelength_number'], np.concatenate([burst.c_reference.astype(int), fill_int],
                                                                       axis=1)),
-        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([burst.beam_attenuation, fill_nan], axis=1))
+        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([burst.beam_attenuation, fill_nan], axis=1)),
+        'cpg': (['time', 'wavelength_number'], np.concatenate([burst.cpg, fill_nan], axis=1)),
+        'cpg_ts': (['time', 'wavelength_number'], np.concatenate([burst.cpg_ts, fill_nan], axis=1)),
     }, coords={'time': (['time'], burst.time.values), 'wavelength_number': wavelength_number})
 
     # drop the original 2D variables from the burst data set
-    drop = burst.drop(['wavelength_number', 'wavelength_a', 'a_signal', 'a_reference', 'optical_absorption',
-                       'wavelength_c', 'c_signal', 'c_reference', 'beam_attenuation'])
+    drop = burst.drop(['wavelength_number', 'wavelength_a', 'a_signal', 'a_reference',
+                       'optical_absorption', 'apg', 'apg_ts', 'apg_ts_s',
+                       'wavelength_c', 'c_signal', 'c_reference',
+                       'beam_attenuation', 'cpg', 'cpg_ts'])
 
     # reset the data type for the 'a' and 'c' signal and reference dark values, and the other raw parameters
     int_arrays = ['a_signal_dark', 'a_reference_dark', 'c_signal_dark', 'c_reference_dark',
@@ -873,19 +882,38 @@ def optaa_datalogger(ds, cal_file):
     # add the actual number of wavelengths to the dataset as an attribute
     optaa['wavelength_number'].attrs['actual_wavelengths'] = num_wavelengths
 
+    # if the filter index was used to adjust the spectral jumps, add that attribute to the data set
+    if cal.coeffs['grate_index']:
+        optaa['a_jump_offsets'].attrs['grate_index'] = cal.coeffs['grate_index']
+        optaa['c_jump_offsets'].attrs['grate_index'] = cal.coeffs['grate_index']
+
     return optaa
 
 
-def optaa_cspp(ds):
+def optaa_cspp(ds, cal_file):
     """
     Takes OPTAA data recorded by the Coastal Surface-Piercing Profiler (CSPP)
     and cleans up the data set to make it more user-friendly.  Primary task is
-    renaming parameters and dropping some that are of limited use. Additionally,
-    re-organize some of the variables to permit better assessments of the data.
+    renaming parameters and dropping some that are of limited use.  Additionally,
+    re-calculate the intermediate products (e.g. absorption and attenuation) and
+    add them to the data set.  Finally, add the estimated chlorophyll and POC
+    concentrations to the data set.
+
+    Will test the data set to determine if more than one deployment is present.
+    If so, will raise an exception with an error message.  AC-S processing
+    requires that the data be processed one deployment at a time in order to
+    properly assign calibration coefficients.
 
     :param ds: initial optaa data set downloaded from OOI via the M2M system
+    :param cal_file: file name (can include path) to store the calibration
+        coefficients
     :return ds: cleaned up data set
     """
+    # check to see if there is more than one deployment in the data set
+    if len(np.unique(ds['deployment'].values)) > 1:
+        raise ValueError('More than one deployment in the data set.  Please structure processing request to process '
+                         'one deployment at a time.')
+
     # drop some of the variables:
     #   internal_timestamp == time, redundant so can remove
     #   profiler_timestamp == internal_timestamp == time, redundant so can remove
@@ -901,6 +929,11 @@ def optaa_cspp(ds):
     # pull out the number of wavelengths and then drop the variable (will add to the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
     ds = ds.drop('num_wavelengths')
+
+    # load the calibration coefficients
+    serial_number = ds.attrs['SerialNumber'][4:]
+    start_time = ds['time'][0].values.astype(float) / 10 ** 9
+    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
 
     # remove the units from the variable name
     rename = {
@@ -922,37 +955,93 @@ def optaa_cspp(ds):
     ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time > 60)
     ds = ds.dropna(dim='time', subset=['elapsed_run_time'])
 
+    # convert internal and external temperature sensors from raw counts to degrees Celsius
+    ds['internal_temp'] = opt_internal_temp(ds['internal_temp_raw'])
+    ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
+
+    # create a profile variable to uniquely identify profiles within the dataset
+    ds = create_profile_id(ds)
+
+    # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the CSPP)
+    vocab = get_vocabulary(ds.attrs['subsite'], ds.attrs['node'], ds.attrs['sensor'])[0]
+    site_depth = vocab['maxdepth'] - 2
+    binned = []
+    profiles = ds.groupby('profile')
+    for profile in profiles:
+        # test the length of the profile, short ones will be skipped
+        if len(profile[1]['time']) <= 9:
+            continue
+
+        # smooth the data to help minimize some of the noisiness common to profiling bio-optical sensors
+        smth = profile[1].rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+        smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+
+        # bin the data into 25 cm depth bins (center bins by using a 1/2 bin size offset)
+        bins = smth.groupby_bins('depth', np.arange(0.125, site_depth + 0.125, 0.25))
+        binning = []
+        for grp in bins:
+            avg = grp[1].mean('time', keepdims=True, keep_attrs=True)
+            avg = avg.assign_coords({'time': np.atleast_1d(grp[1].time.mean().values)})  # add time back
+            avg['wavelength_a'] = avg.wavelength_a.transpose()  # swap dimension order
+            avg['wavelength_c'] = avg.wavelength_c.transpose()  # swap dimension order
+            avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
+            binning += avg,  # append to the list
+
+        binned += xr.concat(binning, 'time'),
+
+    # reset the dataset now using binned profiles
+    binned = xr.concat(binned, 'time')
+    binned = binned.sortby('time')
+
+    # re-process the raw data in order to create the intermediate variables, correcting for the holographic
+    # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
+    # to the absorption data. All intermediate processing outputs are added to the data set.
+    binned = apply_dev(binned, cal.coeffs)
+    binned = apply_tscorr(binned, cal.coeffs, binned.sea_water_temperature, binned.sea_water_practical_salinity)
+    binned = apply_scatcorr(binned, cal.coeffs)
+
+    # estimate chlorophyll and POC and calculate select absorption ratios
+    binned = estimate_chl_poc(binned, cal.coeffs)
+    binned = calculate_ratios(binned)
+
     # create a xarray dataset of the 2D variables, padding the number of wavelengths to a consistent
     # length of 100 using fill values.
     wavelength_number = np.arange(100).astype(int)  # used as a dimensional variable
     pad = 100 - num_wavelengths
-    fill_nan = np.tile(np.ones(pad) * np.nan, (len(ds.time), 1))
-    fill_int = np.tile(np.ones(pad) * -9999999, (len(ds.time), 1))
+    fill_nan = np.tile(np.ones(pad) * np.nan, (len(binned.time), 1))
+    fill_int = np.tile(np.ones(pad) * -9999999, (len(binned.time), 1))
 
-    wavelength_a = np.concatenate([ds.wavelength_a.values, fill_nan], axis=0)
-    wavelength_c = np.concatenate([ds.wavelength_c.values, fill_nan], axis=0)
+    wavelength_a = np.concatenate([binned.wavelength_a.values, fill_nan], axis=0)
+    wavelength_c = np.concatenate([binned.wavelength_c.values, fill_nan], axis=0)
 
     ac = xr.Dataset({
-        'wavelength_a': (['wavelength_number'], wavelength_a),
-        'a_signal': (['time', 'wavelength_number'], np.concatenate([ds.a_signal.astype(int), fill_int], axis=1)),
-        'a_reference': (['time', 'wavelength_number'], np.concatenate([ds.a_reference.astype(int), fill_int],
+        'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
+        'a_signal': (['time', 'wavelength_number'], np.concatenate([binned.a_signal.astype(int), fill_int], axis=1)),
+        'a_reference': (['time', 'wavelength_number'], np.concatenate([binned.a_reference.astype(int), fill_int],
                                                                       axis=1)),
-        'optical_absorption': (['time', 'wavelength_number'], np.concatenate([ds.optical_absorption, fill_nan],
+        'optical_absorption': (['time', 'wavelength_number'], np.concatenate([binned.optical_absorption, fill_nan],
                                                                              axis=1)),
-        'wavelength_c': (['wavelength_number'], wavelength_c),
-        'c_signal': (['time', 'wavelength_number'], np.concatenate([ds.c_signal.astype(int), fill_int], axis=1)),
-        'c_reference': (['time', 'wavelength_number'], np.concatenate([ds.c_reference.astype(int), fill_int],
+        'apg': (['time', 'wavelength_number'], np.concatenate([binned.apg, fill_nan], axis=1)),
+        'apg_ts': (['time', 'wavelength_number'], np.concatenate([binned.apg_ts, fill_nan], axis=1)),
+        'apg_ts_s': (['time', 'wavelength_number'], np.concatenate([binned.apg_ts_s, fill_nan], axis=1)),
+        'wavelength_c': (['time', 'wavelength_number'], wavelength_c),
+        'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal.astype(int), fill_int], axis=1)),
+        'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference.astype(int), fill_int],
                                                                       axis=1)),
-        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([ds.beam_attenuation, fill_nan], axis=1))
-    }, coords={'time': (['time'], ds.time.values), 'wavelength_number': wavelength_number})
+        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan], axis=1)),
+        'cpg': (['time', 'wavelength_number'], np.concatenate([binned.cpg, fill_nan], axis=1)),
+        'cpg_ts': (['time', 'wavelength_number'], np.concatenate([binned.cpg_ts, fill_nan], axis=1)),
+    }, coords={'time': (['time'], binned.time.values), 'wavelength_number': wavelength_number})
 
-    # drop the original 2D variables from the ds data set
-    drop = ds.drop(['wavelength_number', 'wavelength_a', 'a_signal', 'a_reference', 'optical_absorption',
-                    'wavelength_c', 'c_signal', 'c_reference', 'beam_attenuation'])
+    # drop the original 2D variables from the binned data set
+    drop = binned.drop(['wavelength_number', 'wavelength_a', 'a_signal', 'a_reference',
+                       'optical_absorption', 'apg', 'apg_ts', 'apg_ts_s',
+                       'wavelength_c', 'c_signal', 'c_reference',
+                       'beam_attenuation', 'cpg', 'cpg_ts'])
 
     # reset the data type for the 'a' and 'c' signal and reference dark values, and the other raw parameters
     int_arrays = ['a_signal_dark', 'a_reference_dark', 'c_signal_dark', 'c_reference_dark',
-                  'internal_temp_raw', 'external_temp_raw', 'deployment']
+                  'internal_temp_raw', 'external_temp_raw', 'deployment', 'profile']
     for k in drop.variables:
         if k in int_arrays:
             drop[k] = drop[k].astype(int)
@@ -961,13 +1050,9 @@ def optaa_cspp(ds):
     optaa = xr.merge([drop, ac])
 
     # reset the attributes, which the merging drops
-    optaa.attrs = ds.attrs
+    optaa.attrs = binned.attrs
     for v in optaa.variables:
-        optaa[v].attrs = ds[v].attrs
-
-    # convert internal and external temperature sensors from raw counts to degrees Celsius
-    optaa['internal_temp'] = opt_internal_temp(optaa['internal_temp_raw'])
-    optaa['external_temp'] = opt_external_temp(optaa['external_temp_raw'])
+        optaa[v].attrs = binned[v].attrs
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -981,9 +1066,6 @@ def optaa_cspp(ds):
 
     # add the actual number of wavelengths to the dataset as an attribute
     optaa['wavelength_number'].attrs['actual_wavelengths'] = num_wavelengths
-
-    # add a profile number to the dataset
-    optaa = create_profile_id(optaa)
 
     return optaa
 

@@ -2,16 +2,18 @@
 # -*- coding: utf-8 -*-
 import os
 
-from ooi_data_explorations.common import list_deployments, get_vocabulary, m2m_request, m2m_collect, \
+from ooi_data_explorations.common import list_deployments, get_vocabulary, load_gc_thredds, \
     update_dataset, CONFIG, ENCODINGS
-from ooi_data_explorations.uncabled.process_optaa import adjusted_dates, optaa_datalogger
+from ooi_data_explorations.uncabled.process_optaa import optaa_datalogger
 
 
 def main():
-    # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
-    # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two parameters (level and instrmt) will set path and naming
-    # conventions to save the data to the local disk.
+    # Setup needed parameters for the request, the user would need to vary
+    # these to suit their own needs and sites/instruments of interest. Site,
+    # node, sensor, stream and delivery method names can be obtained from the
+    # Ocean Observatories Initiative website. The last two parameters (level
+    # and instrmt) will set path and naming conventions to save the data to the
+    # local disk.
     site = 'CE02SHSM'                             # OOI Net site designator
     node = 'RID27'                                # OOI Net node designator
     sensor = '01-OPTAAD000'                       # OOI Net sensor designator
@@ -25,15 +27,22 @@ def main():
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[-1]
-    start, stop = adjusted_dates(site, node, sensor, deploy)
+    tag = '.*deployment{:04d}.*OPTAA.*\\.nc$'.format(deploy)  # download OPTAA files from the current deployment
 
-    # request and download the data
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    optaa = m2m_collect(r, '.*OPTAA.*\\.nc$')
-    optaa = optaa.where(optaa.deployment == deploy, drop=True)  # limit to the deployment of interest
+    # OPTAA data is best downloaded from the Gold Copy THREDDS catalog (much faster than an M2M request)
+    optaa = load_gc_thredds(site, node, sensor, method, stream, tag)
+
+    # set up the calibration file path and name
+    cal_path = os.path.join(os.path.expanduser('~'), 'ooidata/m2m', site.lower(), level, instrmt)
+    cal_path = os.path.abspath(cal_path)
+    if not os.path.exists(cal_path):
+        os.makedirs(cal_path)
+
+    cal_file = ('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), level, instrmt, deploy))
+    cal_file = os.path.join(cal_path, cal_file)
 
     # clean-up and reorganize
-    optaa = optaa_datalogger(optaa)
+    optaa = optaa_datalogger(optaa, cal_file)
     optaa = update_dataset(optaa, vocab['maxdepth'])
 
     # save the data

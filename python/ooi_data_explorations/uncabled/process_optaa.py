@@ -386,13 +386,13 @@ def load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time):
             grate_index = np.nanargmin(np.diff(awlngths) + np.diff(cwlngths))
             dev.coeffs['grate_index'] = grate_index
 
-    # check the device file coefficients against the data file contents
-    if dev.coeffs['serial_number'] != int(serial_number):
-        raise Exception('Serial Number mismatch between AC-S data and the device file.')
-    elif dev.coeffs['num_wavelengths'] != num_wavelengths:
-        raise Exception('Number of wavelengths mismatch between AC-S data and the device file.')
-    else:
-        dev.save_coeffs()
+            # check the device file coefficients against the data file contents
+            if dev.coeffs['serial_number'] != int(serial_number):
+                raise Exception('Serial Number mismatch between AC-S data and the device file.')
+            elif dev.coeffs['num_wavelengths'] != num_wavelengths:
+                raise Exception('Number of wavelengths mismatch between AC-S data and the device file.')
+            else:
+                dev.save_coeffs()
 
     return dev
 

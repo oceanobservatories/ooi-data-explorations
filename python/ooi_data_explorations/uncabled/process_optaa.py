@@ -9,6 +9,7 @@ import xarray as xr
 from copy import copy
 from dask.diagnostics import ProgressBar
 from scipy.interpolate import CubicSpline
+from tqdm import tqdm
 
 from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, load_gc_thredds, \
     get_vocabulary, update_dataset, ENCODINGS
@@ -436,6 +437,7 @@ def _pd_calc(ref, sig, offset, tintrn, tbins, tarray):
     pd = (offset - (1. / 0.25) * np.log(sig / ref)) - tcorr
     return pd
 
+
 @dask.delayed(nout=2)
 def _holo_grater(wlngths, spectra, index):
     """
@@ -492,44 +494,49 @@ def apply_dev(optaa, coeffs):
     # and dissolved organic matter with pure water removed.
     nrows = optaa['a_reference'].shape[0]
     pg = []
-    for i in range(nrows):
-        temp_internal = optaa['internal_temp'][i].values
-        pg += _pd_calc(optaa['a_reference'][i, :], optaa['a_signal'][i, :], coeffs['a_offsets'],
-                       temp_internal, coeffs['temp_bins'], coeffs['ta_array']),
-        pg += _pd_calc(optaa['c_reference'][i, :], optaa['c_signal'][i, :], coeffs['c_offsets'],
-                       temp_internal, coeffs['temp_bins'], coeffs['tc_array']),
+    with tqdm(total=nrows, desc="Collecting data prior to computing the L1 data products") as pbar:
+        for i in range(nrows):
+            temp_internal = optaa['internal_temp'][i].values
+            pg += _pd_calc(optaa['a_reference'][i, :], optaa['a_signal'][i, :], coeffs['a_offsets'],
+                           temp_internal, coeffs['temp_bins'], coeffs['ta_array']),
+            pg += _pd_calc(optaa['c_reference'][i, :], optaa['c_signal'][i, :], coeffs['c_offsets'],
+                           temp_internal, coeffs['temp_bins'], coeffs['tc_array']),
+            pbar.update()
 
     with ProgressBar():
-        print("Calculating the L1 OPTAA data products for the absorption and attenuation channels")
-        pg = [*dask.compute(*pg)]
+        print("Calculating the L1 data products for the absorption and attenuation channels")
+        pg = [*dask.compute(*pg, scheduler='processes', num_workers=10)]
 
-    apg = xr.concat(pg[0::2], dim='time')
+    # create data arrays of the L1 data products
+    apg = xr.concat(pg[0::2], dim='time').sortby('time')
     apg = apg.where(np.isfinite(apg), np.nan)
-    cpg = xr.concat(pg[1::2], dim='time')
+    cpg = xr.concat(pg[1::2], dim='time').sortby('time')
     cpg = cpg.where(np.isfinite(cpg), np.nan)
 
     # correct the spectral "jump" often observed between the two halves of the linear variable filter
     if coeffs['grate_index']:
         jumps = []
-        for i in range(nrows):
-            spectra, offset = _holo_grater(coeffs['a_wavelengths'], apg[i, :], coeffs['grate_index'])
-            jumps += spectra,
-            jumps += offset,
-            spectra, offset = _holo_grater(coeffs['c_wavelengths'], cpg[i, :], coeffs['grate_index'])
-            jumps += spectra,
-            jumps += offset,
+        with tqdm(total=nrows, desc="Collecting data to adjust for spectral jumps between filter halves") as pbar:
+            for i in range(nrows):
+                spectra, offset = _holo_grater(coeffs['a_wavelengths'], apg[i, :], coeffs['grate_index'])
+                jumps += spectra,
+                jumps += offset,
+                spectra, offset = _holo_grater(coeffs['c_wavelengths'], cpg[i, :], coeffs['grate_index'])
+                jumps += spectra,
+                jumps += offset,
+                pbar.update()
 
         # put it all back together, adding the jump offsets to the data set
         with ProgressBar():
             print("Adjusting the spectra for the jump often observed between filter halves")
-            jumps = [*dask.compute(*jumps)]
+            jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=10)]
 
-    # return the optaa dictionary with the factory calibrations applied and the spectral jump between
-    # linear variable filter halves corrected
-    optaa['apg'] = xr.concat(jumps[0::4], dim='time')
-    optaa['a_jump_offsets'] = xr.concat(jumps[1::4], dim='time')
-    optaa['cpg'] = xr.concat(jumps[2::4], dim='time')
-    optaa['c_jump_offsets'] = xr.concat(jumps[3::4], dim='time')
+        optaa['a_jump_offsets'] = xr.concat(jumps[1::4], dim='time').sortby('time')
+        optaa['c_jump_offsets'] = xr.concat(jumps[3::4], dim='time').sortby('time')
+
+    # return the L1 data with the factory calibrations applied and the spectral jump corrected (if available)
+    optaa['apg'] = xr.concat(jumps[0::4], dim='time').sortby('time')
+    optaa['cpg'] = xr.concat(jumps[2::4], dim='time').sortby('time')
     return optaa
 
 
@@ -668,7 +675,11 @@ def estimate_chl_poc(optaa, coeffs, chl_line_height=0.020):
 
     :param optaa: xarray dataset with the scatter corrected absorbance data.
     :param coeffs: Factory calibration coefficients in a dictionary structure
-
+    :param chl_line_height: Extinction coefficient for estimating the
+        chlorophyll concentration. This value may vary regionally and/or
+        seasonally. A default value of 0.020 is used if one is not entered,
+        but users may to adjust this based on cross-comparisons with other
+        measures of chlorophyll
     :return optaa: xarray dataset with the estimates for chlorophyll and POC
         concentrations added.
     """
@@ -815,6 +826,11 @@ def optaa_datalogger(ds, cal_file):
     burst = apply_tscorr(burst, cal.coeffs, burst.sea_water_temperature, burst.sea_water_practical_salinity)
     burst = apply_scatcorr(burst, cal.coeffs)
 
+    # add the jump offsets as NaN's if the grating index correction was not used
+    if 'a_jump_offsets' not in ds.variables:
+        ds['a_jump_offsets'] = ('time', ds['deployment'].data * np.nan)
+        ds['c_jump_offsets'] = ('time', ds['deployment'].data * np.nan)
+
     # estimate chlorophyll and POC and calculate select absorption ratios
     burst = estimate_chl_poc(burst, cal.coeffs)
     burst = calculate_ratios(burst)
@@ -960,6 +976,7 @@ def optaa_cspp(ds, cal_file):
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
     # create a profile variable to uniquely identify profiles within the dataset
+    print('Creating and adding a profile variable to the data set.')
     ds = create_profile_id(ds)
 
     # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the CSPP)
@@ -967,31 +984,34 @@ def optaa_cspp(ds, cal_file):
     site_depth = vocab['maxdepth'] - 2
     binned = []
     profiles = ds.groupby('profile')
-    for profile in profiles:
-        # test the length of the profile, short ones will be skipped
-        if len(profile[1]['time']) <= 9:
-            continue
+    with tqdm(total=len(profiles), desc='Smoothing and binning the profiles') as pbar:
+        for profile in profiles:
+            # test the length of the profile, short ones (less than 5 seconds) will be skipped
+            if len(profile[1]['time']) <= 20:
+                pbar.update()
+                continue
 
-        # smooth the data to help minimize some of the noisiness common to profiling bio-optical sensors
-        smth = profile[1].rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
-        smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+            # use a set of median boxcar filters to help despike the data
+            smth = profile[1].rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+            smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
 
-        # bin the data into 25 cm depth bins (center bins by using a 1/2 bin size offset)
-        bins = smth.groupby_bins('depth', np.arange(0.125, site_depth + 0.125, 0.25))
-        binning = []
-        for grp in bins:
-            avg = grp[1].mean('time', keepdims=True, keep_attrs=True)
-            avg = avg.assign_coords({'time': np.atleast_1d(grp[1].time.mean().values)})  # add time back
-            avg['wavelength_a'] = avg.wavelength_a.transpose()  # swap dimension order
-            avg['wavelength_c'] = avg.wavelength_c.transpose()  # swap dimension order
-            avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
-            binning += avg,  # append to the list
+            # bin the data into 25 cm depth bins (center bins by using a 1/2 bin size offset)
+            bins = smth.groupby_bins('depth', np.arange(0.125, site_depth + 0.125, 0.25))
+            binning = []
+            for grp in bins:
+                avg = grp[1].mean('time', keepdims=True, keep_attrs=True)
+                avg = avg.assign_coords({'time': np.atleast_1d(grp[1].time.mean().values)})  # add time back
+                avg['wavelength_a'] = avg.wavelength_a.transpose()  # swap dimension order
+                avg['wavelength_c'] = avg.wavelength_c.transpose()  # swap dimension order
+                avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
+                binning += avg,  # append to the list
 
-        binned += xr.concat(binning, 'time'),
+            binned += xr.concat(binning, 'time'),
+            pbar.update()
 
-    # reset the dataset now using binned profiles
-    binned = xr.concat(binned, 'time')
-    binned = binned.sortby('time')
+        # reset the dataset now using binned profiles
+        binned = xr.concat(binned, 'time')
+        binned = binned.sortby('time')
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
@@ -999,6 +1019,11 @@ def optaa_cspp(ds, cal_file):
     binned = apply_dev(binned, cal.coeffs)
     binned = apply_tscorr(binned, cal.coeffs, binned.sea_water_temperature, binned.sea_water_practical_salinity)
     binned = apply_scatcorr(binned, cal.coeffs)
+
+    # add the jump offsets as NaN's if the grating index correction was not used
+    if 'a_jump_offsets' not in ds.variables:
+        ds['a_jump_offsets'] = ('time', ds['deployment'].data * np.nan)
+        ds['c_jump_offsets'] = ('time', ds['deployment'].data * np.nan)
 
     # estimate chlorophyll and POC and calculate select absorption ratios
     binned = estimate_chl_poc(binned, cal.coeffs)
@@ -1011,8 +1036,8 @@ def optaa_cspp(ds, cal_file):
     fill_nan = np.tile(np.ones(pad) * np.nan, (len(binned.time), 1))
     fill_int = np.tile(np.ones(pad) * -9999999, (len(binned.time), 1))
 
-    wavelength_a = np.concatenate([binned.wavelength_a.values, fill_nan], axis=0)
-    wavelength_c = np.concatenate([binned.wavelength_c.values, fill_nan], axis=0)
+    wavelength_a = np.concatenate([binned.wavelength_a.values, fill_nan], axis=1)
+    wavelength_c = np.concatenate([binned.wavelength_c.values, fill_nan], axis=1)
 
     ac = xr.Dataset({
         'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
@@ -1035,9 +1060,9 @@ def optaa_cspp(ds, cal_file):
 
     # drop the original 2D variables from the binned data set
     drop = binned.drop(['wavelength_number', 'wavelength_a', 'a_signal', 'a_reference',
-                       'optical_absorption', 'apg', 'apg_ts', 'apg_ts_s',
-                       'wavelength_c', 'c_signal', 'c_reference',
-                       'beam_attenuation', 'cpg', 'cpg_ts'])
+                        'optical_absorption', 'apg', 'apg_ts', 'apg_ts_s',
+                        'wavelength_c', 'c_signal', 'c_reference',
+                        'beam_attenuation', 'cpg', 'cpg_ts'])
 
     # reset the data type for the 'a' and 'c' signal and reference dark values, and the other raw parameters
     int_arrays = ['a_signal_dark', 'a_reference_dark', 'c_signal_dark', 'c_reference_dark',
@@ -1067,6 +1092,11 @@ def optaa_cspp(ds, cal_file):
     # add the actual number of wavelengths to the dataset as an attribute
     optaa['wavelength_number'].attrs['actual_wavelengths'] = num_wavelengths
 
+    # if the filter index was used to adjust the spectral jumps, add that attribute to the data set
+    if cal.coeffs['grate_index']:
+        optaa['a_jump_offsets'].attrs['grate_index'] = cal.coeffs['grate_index']
+        optaa['c_jump_offsets'].attrs['grate_index'] = cal.coeffs['grate_index']
+
     return optaa
 
 
@@ -1088,6 +1118,7 @@ def main(argv=None):
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
         optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
+        cal_file = ('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
 
         # check to see if we downloaded any data
         if not optaa:
@@ -1117,16 +1148,25 @@ def main(argv=None):
 
         # loop through the deployments and download the data for each one
         optaa = []
+        cal_file = []
         for deploy in deployments:
             # Valid M2M request, download the data on a per-deployment basis
-            optaa.append(m2m_collect(r, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy)))
+            data = m2m_collect(r, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
+            if data:
+                optaa.append(data)
+                cal_file.append('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
 
         # check to see if we downloaded any data (remove empty/none entries from the list)
-        optaa = [i for i in optaa if i]
         if not optaa:
             exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
                                                                                     stream, start, stop))
             raise SystemExit(exit_text)
+
+    # set up the calibration file path and name(s)
+    out_file = os.path.abspath(args.outfile)
+    cal_path = os.path.dirname(out_file)
+    if not os.path.exists(cal_path):
+        os.makedirs(cal_path)
 
     # clean-up and reorganize the data
     multi = isinstance(optaa, list)
@@ -1134,18 +1174,21 @@ def main(argv=None):
         # this OPTAA is part of a CSPP
         if multi:
             for i, ds in enumerate(optaa):
-                optaa[i] = optaa_cspp(ds)
+                cfile = os.path.join(cal_path, cal_file[i])
+                optaa[i] = optaa_cspp(ds, cfile)
             optaa = xr.concat(optaa, dim='time')
         else:
-            optaa = optaa_cspp(optaa)
+            cal_file = os.path.join(cal_path, cal_file)
+            optaa = optaa_cspp(optaa, cal_file)
     else:
         # this OPTAA is stand-alone on one of the moorings
         if multi:
             for i, ds in enumerate(optaa):
-                optaa[i] = optaa_datalogger(ds)
+                cfile = os.path.join(cal_path, cal_file[i])
+                optaa[i] = optaa_datalogger(ds, cfile)
             optaa = xr.concat(optaa, dim='time')
         else:
-            optaa = optaa_datalogger(optaa)
+            optaa = optaa_datalogger(optaa, cal_file)
 
     # get the vocabulary information for the site, node, and sensor and update the dataset attributes
     vocab = get_vocabulary(site, node, sensor)[0]
@@ -1153,10 +1196,8 @@ def main(argv=None):
     optaa = update_dataset(optaa, vocab['maxdepth'])
 
     # save the data to disk
-    out_file = os.path.abspath(args.outfile)
     if not os.path.exists(os.path.dirname(out_file)):
         os.makedirs(os.path.dirname(out_file))
-
     optaa.to_netcdf(out_file, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
 

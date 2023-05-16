@@ -881,9 +881,9 @@ def optaa_datalogger(ds, cal_file):
     optaa = xr.merge([drop, ac])
 
     # reset the attributes, which the merging drops
-    optaa.attrs = ds.attrs
+    optaa.attrs = burst.attrs
     for v in optaa.variables:
-        optaa[v].attrs = ds[v].attrs
+        optaa[v].attrs = burst[v].attrs
 
     # reset some attributes
     for key, value in ATTRS.items():

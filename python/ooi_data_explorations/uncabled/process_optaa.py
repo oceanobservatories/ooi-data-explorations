@@ -24,6 +24,7 @@ from pyseas.data.opt_functions_tscor import tscor
 
 # reset the variable level attributes and set some global defaults
 N_CORES = int(os.cpu_count() / 2) - 1
+N_WORKERS = int(os.cpu_count() / 4) - 1
 FILL_INT = -9999999
 ATTRS = dict({
     # parsed (raw) variables and attributes
@@ -583,7 +584,7 @@ def apply_dev(optaa, coeffs):
 
     with ProgressBar():
         print("Calculating the L1 data products for the absorption and attenuation channels")
-        pg = [*dask.compute(*pg, scheduler='processes', num_workers=N_CORES)]
+        pg = [*dask.compute(*pg, scheduler='processes', num_workers=N_WORKERS)]
 
     # create data arrays of the L1 data products
     apg = np.array(pg[0::2])
@@ -609,7 +610,7 @@ def apply_dev(optaa, coeffs):
         # put it all back together, adding the jump offsets to the data set
         with ProgressBar():
             print("Adjusting the spectra for the jump often observed between filter halves")
-            jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=N_CORES)]
+            jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=N_WORKERS)]
 
         optaa['a_jump_offsets'] = ('time', np.array(jumps[1::4]))
         optaa['c_jump_offsets'] = ('time', np.array(jumps[3::4]))

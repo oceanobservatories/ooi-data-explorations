@@ -1,0 +1,41 @@
+---
+"test_parameters":
+    "average_wave_height": 
+        - 0
+        - 40
+    "max_wave_height":
+        - 0
+        - 40
+    "mean_direction":
+        - 0
+        - 360
+    "mean_spectral_period":
+        - 1.5
+        - 33
+    "mean_spread":
+        - 0
+        - 90
+    "mean_wave_period":
+        - 1.5
+        - 33
+    "peak_wave_period":
+        - 1.5
+        - 33
+    "significant_period":
+        - 1.5
+        - 33
+    "significant_wave_height":
+        - 0
+        - 40
+    "wave_height_10":
+        - 0
+        - 40
+    "wave_height_hmo":
+        - 0
+        - 40
+    "wave_period_10":
+        - 1.5
+        - 33
+    "wave_period_tp5":
+        - 1.5
+        - 33

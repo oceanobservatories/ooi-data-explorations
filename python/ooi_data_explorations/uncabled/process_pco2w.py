@@ -237,13 +237,13 @@ def pco2w_datalogger(ds):
     Takes PCO2W data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly. Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
-    re-organize some of the variables to permit better assessments of the data.
+    re-organize some variables to permit better assessments of the data.
 
     :param ds: initial PCO2W data set recorded by the data logger system and
         downloaded from OOI via the M2M system
     :return: cleaned up and reorganized data set
     """
-    # drop some of the variables:
+    # drop some variables:
     #   passed_checksum == not used
     #   record_type == not used
     #   record_time == not used
@@ -272,10 +272,10 @@ def pco2w_datalogger(ds):
 
     # check for missing blank data, stripped from the record and treated as a co-located sensor.
     if 'absorbance_blank_434' not in ds.variables:
-        ds['absorbance_blank_434'] = ('time', ds['deployment'] * 0 - 9999999)
-        ds['absorbance_blank_620'] = ('time', ds['deployment'] * 0 - 9999999)
+        ds['absorbance_blank_434'] = ('time', ds['deployment'].data * 0 - 9999999)
+        ds['absorbance_blank_620'] = ('time', ds['deployment'].data * 0 - 9999999)
 
-    # rename some of the variables for better clarity
+    # rename some variables for better clarity
     rename = {
         'voltage_battery': 'raw_battery_voltage',
         'thermistor_raw': 'raw_thermistor',
@@ -312,7 +312,7 @@ def pco2w_datalogger(ds):
     # calculate the battery voltage
     ds['battery_voltage'] = ds['raw_battery_voltage'] * 15. / 4096.
 
-    # reset some of the data types
+    # reset some data types
     data_types = ['deployment', 'raw_thermistor', 'unique_id', 'raw_battery_voltage',
                   'absorbance_blank_434', 'absorbance_blank_620', 'absorbance_ratio_434',
                   'absorbance_ratio_620']
@@ -350,7 +350,7 @@ def pco2w_instrument(ds):
         downloaded from OOI via the M2M system
     :return: cleaned up and reorganized data set
     """
-    # drop some of the variables:
+    # drop some variables:
     #   record_type == not used
     #   record_time == internal_timestamp == time, redundant so can remove
     #   absorbance_ratio_*_qc_results == incorrectly set tests, ignoring
@@ -363,7 +363,7 @@ def pco2w_instrument(ds):
         if v in ds.variables:
             ds = ds.drop(v)
 
-    # rename some of the variables for better clarity
+    # rename some variables for better clarity
     rename = {
         'voltage_battery': 'raw_battery_voltage',
         'thermistor_raw': 'raw_thermistor',
@@ -400,7 +400,7 @@ def pco2w_instrument(ds):
     # calculate the battery voltage
     ds['battery_voltage'] = ds['raw_battery_voltage'] * 15. / 4096.
 
-    # reset some of the data types
+    # reset some data types
     data_types = ['deployment', 'raw_thermistor', 'raw_battery_voltage',
                   'absorbance_blank_434', 'absorbance_blank_620', 'absorbance_ratio_434',
                   'absorbance_ratio_620']
@@ -428,7 +428,7 @@ def pco2w_instrument(ds):
 
 
 def main(argv=None):
-    # setup the input arguments
+    # set up the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node

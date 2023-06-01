@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import datetime
+import numpy as np
+import os
+
 from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, \
-    get_vocabulary, update_dataset, dict_update, ENCODINGS
+    get_vocabulary, update_dataset, ENCODINGS
 from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 # load configuration settings
@@ -44,9 +48,57 @@ ATTRS = {
     }
 }
 
-import datetime
-import numpy as np
-import os
+
+def quality_checks(ds):
+    """
+    Quality assessment of the raw and calculated nitrate concentration data
+    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    flags used are:
+
+        1 = Pass
+        3 = Suspect or of High Interest
+        4 = Fail
+
+    The final flag value represents the worst case assessment of the data quality.
+
+    :param ds: xarray dataset with the raw signal data and the calculated
+               seawater pH
+    :return qc_flag: array of flag values indicating seawater pH quality
+    """
+    qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
+
+    # "RMSE: The root-mean-square error parameter from the SUNA V2 can be used to make
+    # an estimate of how well the nitrate spectral fit is. This should usually be less than 1E-3. If
+    # it is higher, there is spectral shape (likely due to CDOM) that adversely impacts the nitrate
+    # estimate." SUNA V2 vendor documentation (Sea-Bird Scientific Document# SUNA180725)
+    m = ds.fit_rmse > 0.001  # per the vendor documentation
+    qc_flag[m] = 3
+    m = ds.fit_rmse > 0.100  # based on experience with the instrument data sets
+    qc_flag[m] = 4
+
+    # "Absorption: The data output of the SUNA V2 is the absorption at 350 nm and 254 nm
+    # (A350 and A254). These wavelengths are outside the nitrate absorption range and can be
+    # used to make an estimate of the impact of CDOM. If absorption is high (>1.3 AU), the
+    # SUNA will not be able to collect adequate light to make a measurement." SUNA V2 vendor
+    # documentation (Sea-Bird Scientific Document# SUNA180725)
+    m254 = ds.absorbance_at_254_nm > 1.3
+    qc_flag[m254] = 4
+    m350 = ds.absorbance_at_350_nm > 1.3
+    qc_flag[m350] = 4
+
+    # test for failed dark value measurements (can't be less than 0)
+    m = ds.dark_value_used_for_fit <= 0
+    qc_flag[m] = 4
+
+    # test for a blocked absorption channel (or a failed lamp)
+    m = ds.spectrum_average < 10000
+    qc_flag[m] = 4
+
+    # test for out of range corrected dissolved nitrate readings
+    m = (ds.corrected_nitrate_concentration.values < -2.0) | (ds.corrected_nitrate_concentration.values > 3000)
+    qc_flag[m] = 4
+
+    return qc_flag
 
 
 def suna_datalogger(ds, burst=True):
@@ -70,7 +122,7 @@ def suna_datalogger(ds, burst=True):
     if len(ds["frame_type"].shape) == 1:
         ds['frame_type'] = ds['frame_type'].astype(str)
     else:
-        ds['frame_type'] = ('time', [int(''.join(x.astype(str))) for x in ds.frame_type.data])
+        ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
     ds = ds.drop(['checksum', 'frame_type', 'humidity'])
 
@@ -160,14 +212,17 @@ def suna_datalogger(ds, burst=True):
         ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
         ds['serial_number'].attrs = dict({
             'long_name': 'Serial Number',
-            'units': '', # deliberately left blank, unitless value
-            'comment': ('Instrument serial number'),
+            # 'units': '', # deliberately left blank, unit-less value
+            'comment': 'Instrument serial number',
         })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
+
+    # test the data quality using additional instrument variables
+    ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
@@ -281,14 +336,17 @@ def suna_instrument(ds, burst=True):
         ds['serial_number'] = ('time', [int(''.join(x.astype(str))) for x in ds.serial_number.data])
         ds['serial_number'].attrs = dict({
             'long_name': 'Serial Number',
-            'units': '', #deliberately left blank, unitless value
-            'comment': ('Instrument serial number'),
+            # 'units': '', # deliberately left blank, unit-less value
+            'comment': 'Instrument serial number',
         })
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
+
+    # test the data quality using additional instrument variables
+    ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
@@ -305,6 +363,97 @@ def suna_instrument(ds, burst=True):
                       'raw_spectral_measurements']
         for v in data_types:
             ds[v] = ds[v].astype('int32')
+
+    return ds
+
+
+def suna_cspp(ds):
+    """
+    Takes SUNA data recorded by the CSPP loggers used by the Endurance Array
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use. Additionally,
+    re-organize some variables to permit better assessments of the data.
+
+    :param ds: initial NUTNR data set downloaded from OOI as NetCDF file
+    :return ds: cleaned up data set
+    """
+    # re-join the frame type into a single string rather than an array
+    ds = ds.reset_coords()
+    ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
+    ds = ds.where(ds.frame_type == 'SLB', drop=True)  # keep the light frames, dropping the dark frames
+
+    # drop some variables:
+    #   suspect_timestamp = not used
+    #   internal_timestamp = not accurate, don't use
+    #   day_of_year = used to construct the internal_timestamp, not accurate
+    #   time_of_sample = used to construct the internal_timestamp, not accurate
+    #   year = used to construct the internal_timestamp, not accurate
+    #   ctd_time_uint32 = filled with 0's, dropping
+    #   profiler_timestamp == time, redundant
+    #   frame_type = no longer needed after using to filter above
+    #   nutnr_nitrogen_in_nitrate_qc_* = incorrectly applied QC tests
+    #   sea_water_*_qc_* = surprisingly, gross range tests against fill values fail....
+    drop_list = ['suspect_timestamp', 'internal_timestamp', 'day_of_year', 'time_of_sample', 'year',
+                 'ctd_time_uint32', 'profiler_timestamp', 'frame_type',
+                 'nutnr_nitrogen_in_nitrate_qc_executed', 'nutnr_nitrogen_in_nitrate_qc_results',
+                 'sea_water_pressure_qc_executed', 'sea_water_pressure_qc_results',
+                 'sea_water_temperature_qc_executed', 'sea_water_temperature_qc_results',
+                 'sea_water_practical_salinity_qc_executed', 'sea_water_practical_salinity_qc_results']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
+
+    # rename some variables for better clarity
+    rename = {
+        'nutnr_absorbance_at_254_nm': 'absorbance_at_254_nm',
+        'nutnr_absorbance_at_350_nm': 'absorbance_at_350_nm',
+        'nutnr_bromide_trace': 'bromide_trace',
+        'nutnr_current_main': 'current_main',
+        'nutnr_dark_value_used_for_fit': 'dark_value_used_for_fit',
+        'nutnr_fit_base_1': 'fit_base_1',
+        'nutnr_fit_base_2': 'fit_base_2',
+        'nutnr_fit_rmse': 'fit_rmse',
+        'nutnr_integration_time_factor': 'integration_time_factor',
+        'nutnr_nitrogen_in_nitrate': 'nitrogen_in_nitrate',
+        'nutnr_spectrum_average': 'spectrum_average',
+        'nutnr_voltage_int': 'voltage_instrument',
+        'temp_spectrometer': 'temperature_spectrometer',
+        'temp_lamp': 'temperature_lamp',
+        'temp_interior': 'temperature_interior',
+        'spectral_channels': 'raw_spectral_measurements',
+        'salinity_corrected_nitrate': 'corrected_nitrate_concentration',
+        'salinity_corrected_nitrate_qc_results': 'corrected_nitrate_concentration_qc_results',
+        'salinity_corrected_nitrate_qc_executed': 'corrected_nitrate_concentration_qc_executed',
+        'wavelength': 'wavelength_index'
+    }
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # properly assign the co-located CTD data to the correct variable names
+    ds['sea_water_pressure'] = ds['int_ctd_pressure']
+    ds['sea_water_temperature'] = ds['ctdpf_j_cspp_instrument_recovered-sea_water_temperature']
+    ds['sea_water_practical_salinity'] = ds['ctdpf_j_cspp_instrument_recovered-sea_water_practical_salinity']
+    ds = ds.drop(['int_ctd_pressure', 'ctdpf_j_cspp_instrument_recovered-sea_water_practical_salinity',
+                  'ctdpf_j_cspp_instrument_recovered-sea_water_temperature'])
+
+    # address incorrectly set units and variable types
+    ds['dark_value_used_for_fit'].attrs['units'] = 'counts'
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # test the data quality using additional instrument variables
+    ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     return ds
 
@@ -356,10 +505,14 @@ def main(argv=None):
             raise SystemExit(exit_text)
 
     # clean-up and reorganize
-    if method in ['telemetered', 'recovered_host']:
-        nutnr = suna_datalogger(nutnr, burst)
+    if node == 'SP001':
+        # this NUTNR is part of a CSPP
+        nutnr = suna_cspp(nutnr)
     else:
-        nutnr = suna_instrument(nutnr, burst)
+        if method in ['telemetered', 'recovered_host']:
+            nutnr = suna_datalogger(nutnr, burst)
+        else:
+            nutnr = suna_instrument(nutnr, burst)
 
     vocab = get_vocabulary(site, node, sensor)[0]
     nutnr = update_dataset(nutnr, vocab['maxdepth'])

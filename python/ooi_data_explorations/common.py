@@ -537,7 +537,9 @@ def add_annotation_qc_flags(ds, annotations):
         long_name = f"{key} qc_flag"
         attrs = {
             "comment": comment,
-            "long_name": long_name
+            "long_name": long_name,
+            "flag_values": np.array([1, 2, 3, 4, 9]),
+            "flag_meanings": "pass not_evaluated suspect_or_of_high_interest fail missing_data"
         }
 
         # Now add to the dataset
@@ -918,6 +920,8 @@ def merge_frames(frames):
         warnings.warn(message)
 
     data = data.sortby(['deployment', 'time'])
+    _, index = np.unique(data['time'], return_index=True)
+    data = data.isel(time=index)
     data.attrs['time_coverage_start'] = ('%sZ' % data.time.min().values)
     data.attrs['time_coverage_end'] = ('%sZ' % data.time.max().values)
     data.attrs['time_coverage_resolution'] = ('P%.2fS' % (np.mean(data.time.diff('time').values).astype(float) / 1e9))
@@ -966,14 +970,8 @@ def update_dataset(ds, depth):
     :param depth: instrument deployment depth
     :return ds: The updated data set
     """
-    # add a default station identifier as a coordinate variable to the data set
-    ds.coords['station'] = ds.attrs['subsite'].upper()
+    # add a station dimension to the data set
     ds = ds.expand_dims('station', axis=None)
-    ds['station'].attrs = dict({
-        'cf_role': 'timeseries_id',
-        'long_name': 'Station Identifier',
-        'comment': ds.attrs['subsite'].upper()
-    })
 
     # determine if the latitude and longitude are set as global attribute or a variable, and parse accordingly
     if 'lat' in ds.variables:
@@ -990,18 +988,32 @@ def update_dataset(ds, depth):
         del(ds.attrs['lat'])
         del(ds.attrs['lon'])
 
-    # add the geospatial coordinates using the station identifier from above as the dimension
+    # use depth, if available, to set the vertical coordinate
+    if 'depth' in ds.variables:
+        deploy_depth = depth
+        min_depth = ds.depth.min().values
+        max_depth = ds.depth.max().values
+    else:
+        deploy_depth = depth
+        min_depth = depth
+        max_depth = depth
+
+    # update the global attributes with the depth ranges
+    ds.attrs['geospatial_vertical_min'] = min_depth
+    ds.attrs['geospatial_vertical_max'] = max_depth
+
+    # add the geospatial coordinates using the station dimension from above
     geo_coords = xr.Dataset({
+        'station_name': ('station', [ds.attrs['subsite'].upper()]),
         'lat': ('station', [lat]),
         'lon': ('station', [lon]),
-        'z': ('station', [depth])
-    }, coords={'station': [ds.attrs['subsite'].upper()]})
+        'z': ('station', [deploy_depth])
+    })
 
     geo_attrs = dict({
-        'station': {
-            'cf_role': 'timeseries_id',
-            'long_name': 'Station Identifier',
-            'comment': ds.attrs['subsite'].upper()
+        'station_name': {
+            'long_name': 'Station Name',
+            'cf_role': 'timeseries_id'
         },
         'lon': {
             'long_name': 'Longitude',
@@ -1021,7 +1033,8 @@ def update_dataset(ds, depth):
             'long_name': 'Depth',
             'standard_name': 'depth',
             'units': 'm',
-            'comment': 'Instrument deployment depth',
+            'comment': ('Depth of the instrument, either from the deployment depth (e.g. 7 m for an NSIF) or the '
+                        'average depth calculated from the instrument pressure record.'),
             'positive': 'down',
             'axis': 'Z'
         }
@@ -1034,7 +1047,7 @@ def update_dataset(ds, depth):
 
     # update coordinate attributes for all variables
     for v in ds.variables:
-        if v not in ['time', 'lat', 'lon', 'z', 'station']:
+        if v not in ['time', 'lat', 'lon', 'z', 'station_name']:
             # remove older coordinates encoding if it exists
             if 'coordinates' in ds[v].encoding.keys():
                 del ds[v].encoding['coordinates']
@@ -1044,7 +1057,7 @@ def update_dataset(ds, depth):
     # update some variable attributes to get somewhat closer to IOOS compliance, more importantly convert QC variables
     # to bytes and set the attributes to define the flag masks and meanings.
     ds['deployment'].attrs['long_name'] = 'Deployment Number'   # add missing long_name attribute
-    qc_pattern = re.compile(r'^.+_qc_.+$')
+    qc_pattern = re.compile(r'^(?!.*annotations).+_qc_.+$')     # don't match added annotations flags, if any
     qc_executed_pattern = re.compile(r'^.+_qc_executed$')
     qc_results_pattern = re.compile(r'^.+_qc_results$')
     qc_summary_pattern = re.compile(r'^.+_qc_summary_flag$')

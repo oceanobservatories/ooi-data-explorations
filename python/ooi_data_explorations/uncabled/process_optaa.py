@@ -4,19 +4,20 @@ import dask
 import numpy as np
 import os
 import re
+import sys
 import xarray as xr
 
 from copy import copy
+from concurrent.futures import ProcessPoolExecutor
+from functools import partial
 from dask.diagnostics import ProgressBar
 from scipy.interpolate import CubicSpline
 from tqdm import tqdm
 
-from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, load_gc_thredds, \
-    get_vocabulary, update_dataset, ENCODINGS
-from ooi_data_explorations.profilers import create_profile_id
-
-from cgsn_processing.process.finding_calibrations import find_calibration
-from cgsn_processing.process.proc_optaa import Calibrations
+from ooi_data_explorations.calibrations import Coefficients
+from ooi_data_explorations.common import inputs, get_vocabulary, get_calibrations_by_uid, m2m_request, \
+    list_files, m2m_collect, load_gc_thredds, update_dataset, ENCODINGS
+from ooi_data_explorations.profilers import create_profile_id, bin_profiles
 
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 from pyseas.data.opt_functions_tscor import tscor
@@ -36,13 +37,13 @@ ATTRS = dict({
         'units': 'count',
         'data_product_identifier': 'OPTTEMP_L0',
         'comment': ('Raw measurements, reported in counts, from the AC-S external temperature sensor. This sensor '
-                    'measures the in-situ seawater termperature.')
+                    'measures the in-situ seawater temperature.')
     },
     'internal_temp_raw': {
         'long_name': 'Raw Internal Instrument Temperature',
         'units': 'count',
         'comment': ('Raw measurements, reported in counts, from the AC-S internal temperature sensor. This sensor '
-                    'measures the internal instrument termperature and is used in converting the raw optical '
+                    'measures the internal instrument temperature and is used in converting the raw optical '
                     'measurements into absorbance and attenuation estimates.')
     },
     'elapsed_run_time': {
@@ -148,7 +149,7 @@ ATTRS = dict({
         'standard_name': 'sea_water_practical_salinity',
         'units': '1',
         'comment': ('Salinity is generally defined as the concentration of dissolved salt in a parcel of sea water. '
-                    'Practical Salinity is a more specific unitless quantity calculated from the conductivity of '
+                    'Practical Salinity is a more specific unit-less quantity calculated from the conductivity of '
                     'sea water and adjusted for temperature and pressure. It is approximately equivalent to Absolute '
                     'Salinity (the mass fraction of dissolved salt in sea water), but they are not interchangeable. '
                     'Measurements are from a co-located CTD.'),
@@ -238,7 +239,7 @@ ATTRS = dict({
         'long_name': 'Particulate and Dissolved Absorbance with TS Correction',
         'units': 'm-1',
         'comment': ('The optical absorption coefficient corrected for the effects of temperature and salinity. '
-                    'Utilizes data from a co-located CTD for the temperaure and salinity, if available. If no '
+                    'Utilizes data from a co-located CTD for the temperature and salinity, if available. If no '
                     'co-located CTD data is available, will assume a constant salinity of 33 psu and will use '
                     'the OPTAA''s external temperature sensor.'),
         'ancillary_variables': 'wavelength_a sea_water_temperature sea_water_practical_salinity external_temp apg',
@@ -282,7 +283,7 @@ ATTRS = dict({
         'long_name': 'Particulate and Dissolved Attenuation with TS Correction',
         'units': 'm-1',
         'comment': ('The optical beam attenuation coefficient corrected for the effects of temperature and salinity. '
-                    'Utilizes data from a co-located CTD for the temperaure and salinity, if available. If no '
+                    'Utilizes data from a co-located CTD for the temperature and salinity, if available. If no '
                     'co-located CTD data is available, will assume a constant salinity of 33 psu and will use '
                     'the OPTAA''s external temperature sensor.'),
         'data_product_identifier': 'OPTATTN_L2',
@@ -296,7 +297,7 @@ ATTRS = dict({
         'comment': ('Uses the absorption line height at 676 nm, above a linear background between 650 and 715 nm, with '
                     'a chlorophyll specific absorption of 0.020 L/ug/m to estimate the concentration of chlorophyll. '
                     'This method has been shown to be significantly related to extracted chlorophyll concentrations '
-                    'and is robust in response to mild to moderate biofouling.'),
+                    'and is robust in response to mild to moderate bio-fouling.'),
         'ancillary_variables': 'apg_ts_s',
         '_FillValue': np.nan
     },
@@ -305,7 +306,7 @@ ATTRS = dict({
         'standard_name': 'mass_concentration_of_organic_detritus_expressed_as_carbon_in_sea_water',
         'units': 'ug L-1',
         'comment': ('Uses the particulate beam attenuation coefficient at 660 nm and a coefficient of 380 ug/L/m. This '
-                    'calculation is not robust in response to biofouling and is expected to breakdown as biofouling '
+                    'calculation is not robust in response to bio-fouling and is expected to breakdown as bio-fouling '
                     'begins to dominate the signal.'),
         'ancillary_variables': 'cpg_ts',
         '_FillValue': np.nan
@@ -355,13 +356,89 @@ ATTRS = dict({
 })
 
 
-def load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time):
-    """
+class Calibrations(Coefficients):
+    def __init__(self, coeff_file):
+        """
+        Loads the OPTAA factory calibration coefficients for a unit. Values
+        come from either a serialized object created per instrument and
+        deployment (calibration coefficients do not change in the middle of a
+        deployment), or from the calibration data available from the OOI M2M
+        API.
+        """
+        # assign the inputs
+        Coefficients.__init__(self, coeff_file)
 
-    :param cal_file:
-    :param serial_number:
-    :param time:
-    :return:
+    def parse_m2m_cals(self, serial_number, cals, cal_idx):
+        """
+        Parse the calibration data from the M2M object store. The calibration
+        data is stored as an unsorted list of dictionaries. The cal_idx is
+        used to identify the calibration data of interest in each dictionary.
+
+        :param serial_number: instrument serial number
+        :param cals: list of calibration dictionaries
+        :param cal_idx: dictionary of calibration indices
+        :return: dictionary of calibration coefficients
+        """
+        # create the device file dictionary and assign values
+        coeffs = {}
+
+        # parse the calibration data
+        for cal in cals:
+            # beam attenuation and absorption channel clear water offsets
+            if cal['name'] == 'CC_acwo':
+                coeffs['a_offsets'] = np.array(cal['calData'][cal_idx['CC_acwo']]['value'])
+            if cal['name'] == 'CC_ccwo':
+                coeffs['c_offsets'] = np.array(cal['calData'][cal_idx['CC_ccwo']]['value'])
+            # beam attenuation and absorption channel wavelengths
+            if cal['name'] == 'CC_awlngth':
+                coeffs['a_wavelengths'] = np.array(cal['calData'][cal_idx['CC_awlngth']]['value'])
+            if cal['name'] == 'CC_cwlngth':
+                coeffs['c_wavelengths'] = np.array(cal['calData'][cal_idx['CC_cwlngth']]['value'])
+            # internal temperature compensation values
+            if cal['name'] == 'CC_tbins':
+                coeffs['temp_bins'] = np.array(cal['calData'][cal_idx['CC_tbins']]['value'])
+            # temperature of calibration water
+            if cal['name'] == 'CC_tcal':
+                coeffs['temp_calibration'] = cal['calData'][cal_idx['CC_tcal']]['value']
+            # temperature compensation values as f(wavelength, temperature) for the attenuation and absorption channels
+            if cal['name'] == 'CC_tcarray':
+                coeffs['tc_array'] = np.array(cal['calData'][cal_idx['CC_tcarray']]['value'])
+            if cal['name'] == 'CC_taarray':
+                coeffs['ta_array'] = np.array(cal['calData'][cal_idx['CC_tcarray']]['value'])
+
+        # number of wavelengths
+        coeffs['num_wavelengths'] = len(coeffs['a_wavelengths'])
+        # number of internal temperature compensation bins
+        coeffs['num_temp_bins'] = len(coeffs['temp_bins'])
+        # pressure coefficients, set to 0 since not included in the CI csv files
+        coeffs['pressure_coeff'] = [0, 0]
+
+        # determine the grating index
+        awlngths = copy(coeffs['a_wavelengths'])
+        awlngths[(awlngths < 545) | (awlngths > 605)] = np.nan
+        cwlngths = copy(coeffs['c_wavelengths'])
+        cwlngths[(cwlngths < 545) | (cwlngths > 605)] = np.nan
+        grate_index = np.nanargmin(np.diff(awlngths) + np.diff(cwlngths))
+        coeffs['grate_index'] = grate_index
+
+        # serial number, stripping off all but the numbers
+        coeffs['serial_number'] = int(re.sub('[^0-9]', '', serial_number))
+
+        # save the resulting dictionary
+        self.coeffs = coeffs
+
+
+def load_cal_coefficients(cal_file, uid, start_time):
+    """
+    Load the calibration coefficients for the instrument and deployment from
+    the OOI M2M system or from a local file. If the local file does not exist,
+    the calibration coefficients will be downloaded from the OOI M2M system and
+    saved to the local file for future use.
+
+    :param cal_file: path to the local calibration file
+    :param uid: instrument unique identifier (UID)
+    :param start_time: deployment start time in seconds since 1970-01-01
+    :return: calibration coefficients dictionary
     """
     # load the instrument calibration data
     dev = Calibrations(cal_file)  # initialize calibration class
@@ -371,28 +448,24 @@ def load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time):
         # we always want to use this file if it already exists
         dev.load_coeffs()
     else:
-        # load from the CI hosted CSV files
-        csv_url = find_calibration('OPTAA', serial_number, start_time)
-        if csv_url:
-            tca_url = re.sub('.csv', '__CC_taarray.ext', csv_url)
-            tcc_url = re.sub('.csv', '__CC_tcarray.ext', csv_url)
-            dev.read_devurls(csv_url, tca_url, tcc_url)
+        # load from the OOI M2M system and create a list of calibration events relative to the deployment start date
+        cals = get_calibrations_by_uid(uid)
+        cal_idx = {}
+        for cal in cals['calibration']:
+            # for each instance of a calibration event for this instrument...
+            tdiff = []
+            for data in cal['calData']:
+                # calculate the time difference between the start of the deployment and the calibration event
+                tdiff.append(data['eventStartTime'] / 1000 - start_time)
 
-            # determine the grating index
-            awlngths = copy(dev.coeffs['a_wavelengths'])
-            awlngths[(awlngths < 545) | (awlngths > 605)] = np.nan
-            cwlngths = copy(dev.coeffs['c_wavelengths'])
-            cwlngths[(cwlngths < 545) | (cwlngths > 605)] = np.nan
-            grate_index = np.nanargmin(np.diff(awlngths) + np.diff(cwlngths))
-            dev.coeffs['grate_index'] = grate_index
+            # find the calibration event closest to the start of the deployment
+            cal_idx[cal['name']] = np.argmin(np.abs(tdiff))
 
-            # check the device file coefficients against the data file contents
-            if dev.coeffs['serial_number'] != int(serial_number):
-                raise Exception('Serial Number mismatch between AC-S data and the device file.')
-            elif dev.coeffs['num_wavelengths'] != num_wavelengths:
-                raise Exception('Number of wavelengths mismatch between AC-S data and the device file.')
-            else:
-                dev.save_coeffs()
+        # load the calibration coefficients
+        dev.parse_m2m_cals(cals['serialNumber'], cals['calibration'], cal_idx)
+
+        # save the calibration coefficients
+        dev.save_coeffs()
 
     return dev
 
@@ -478,7 +551,7 @@ def _holo_grater(wlngths, spectra, index):
 def apply_dev(optaa, coeffs):
     """
     Processes the raw data contained in the optaa dictionary and applies the
-    factory calibration coefficents contained in the coeffs dictionary to
+    factory calibration coefficients contained in the coeffs dictionary to
     convert the data into initial science units. Processing includes correcting
     for the holographic grating offset common to AC-S instruments.
 
@@ -494,13 +567,17 @@ def apply_dev(optaa, coeffs):
     # and dissolved organic matter with pure water removed.
     nrows = optaa['a_reference'].shape[0]
     pg = []
+    a_ref = optaa['a_reference'].values
+    a_sig = optaa['a_signal'].values
+    c_ref = optaa['c_reference'].values
+    c_sig = optaa['c_signal'].values
+    temp_internal = optaa['internal_temp'].values
     with tqdm(total=nrows, desc="Collecting data prior to computing the L1 data products") as pbar:
         for i in range(nrows):
-            temp_internal = optaa['internal_temp'][i].values
-            pg += _pd_calc(optaa['a_reference'][i, :], optaa['a_signal'][i, :], coeffs['a_offsets'],
-                           temp_internal, coeffs['temp_bins'], coeffs['ta_array']),
-            pg += _pd_calc(optaa['c_reference'][i, :], optaa['c_signal'][i, :], coeffs['c_offsets'],
-                           temp_internal, coeffs['temp_bins'], coeffs['tc_array']),
+            pg += _pd_calc(a_ref[i, :], a_sig[i, :], coeffs['a_offsets'], temp_internal[i],
+                           coeffs['temp_bins'], coeffs['ta_array']),
+            pg += _pd_calc(c_ref[i, :], c_sig[i, :], coeffs['c_offsets'], temp_internal[i],
+                           coeffs['temp_bins'], coeffs['tc_array']),
             pbar.update()
 
     with ProgressBar():
@@ -508,10 +585,12 @@ def apply_dev(optaa, coeffs):
         pg = [*dask.compute(*pg, scheduler='processes', num_workers=10)]
 
     # create data arrays of the L1 data products
-    apg = xr.concat(pg[0::2], dim='time').sortby('time')
-    apg = apg.where(np.isfinite(apg), np.nan)
-    cpg = xr.concat(pg[1::2], dim='time').sortby('time')
-    cpg = cpg.where(np.isfinite(cpg), np.nan)
+    apg = np.array(pg[0::2])
+    m = ~np.isfinite(apg)
+    apg[m] = np.nan
+    cpg = np.array(pg[1::2])
+    m = ~np.isfinite(cpg)
+    cpg[m] = np.nan
 
     # correct the spectral "jump" often observed between the two halves of the linear variable filter
     if coeffs['grate_index']:
@@ -531,16 +610,16 @@ def apply_dev(optaa, coeffs):
             print("Adjusting the spectra for the jump often observed between filter halves")
             jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=10)]
 
-        optaa['a_jump_offsets'] = xr.concat(jumps[1::4], dim='time').sortby('time')
-        optaa['c_jump_offsets'] = xr.concat(jumps[3::4], dim='time').sortby('time')
+        optaa['a_jump_offsets'] = ('time', np.array(jumps[1::4]))
+        optaa['c_jump_offsets'] = ('time', np.array(jumps[3::4]))
 
     # return the L1 data with the factory calibrations applied and the spectral jump corrected (if available)
-    optaa['apg'] = xr.concat(jumps[0::4], dim='time').sortby('time')
-    optaa['cpg'] = xr.concat(jumps[2::4], dim='time').sortby('time')
+    optaa['apg'] = (('time', 'wavelength_number'), np.array(jumps[0::4]))
+    optaa['cpg'] = (('time', 'wavelength_number'), np.array(jumps[2::4]))
     return optaa
 
 
-def tempsal_corr(channel, pd, wlngth, tcal, degC, salinity):
+def tempsal_corr(channel, pd, wlngth, tcal, temperature, salinity):
     """
     Apply temperature and salinity corrections to the converted absorption
     and attenuation data. Uses a simplified version of the opt_tempsal_corr
@@ -554,19 +633,19 @@ def tempsal_corr(channel, pd, wlngth, tcal, degC, salinity):
     :param wlngth: absorption or attenuation channel wavelengths from the
         calibration coefficients
     :param tcal: temperature of the pure water used in the calibrations
-    :param degC: in-situ temperature, ideally from a co-located CTD
+    :param temperature: in-situ temperature, ideally from a co-located CTD
     :param salinity: in-situ salinity, ideally from a co-located CTD
     :return: temperature and salinity corrected data
     """
     # create the temperature and salinity correction arrays for each wavelength
     cor_coeffs = np.array([tscor[ii] for ii in wlngth])
-    nrows = len(degC)
+    nrows = len(temperature)
 
     temp_corr = np.tile(cor_coeffs[:, 0], [nrows, 1])
     saln_c_corr = np.tile(cor_coeffs[:, 1], [nrows, 1])
     saln_a_corr = np.tile(cor_coeffs[:, 2], [nrows, 1])
 
-    delta_temp = np.atleast_2d(degC - tcal).T
+    delta_temp = np.atleast_2d(temperature - tcal).T
     salinity = np.atleast_2d(salinity).T
 
     if channel == 'a':
@@ -601,8 +680,8 @@ def apply_tscorr(optaa, coeffs, temperature, salinity):
     :param optaa: xarray dataset with the raw absorption and attenuation data
         converted to absorption and attenuation coefficients
     :param coeffs: Factory calibration coefficients in a dictionary structure
-    :param temp: In-situ seawater temperature, ideally from a co-located CTD
-    :param salinity: In-situ seawater salinity, ideally from a co-located CTD
+    :param temperature: In-situ seawater temperature, from a co-located CTD
+    :param salinity: In-situ seawater salinity, from a co-located CTD
 
     :return optaa: xarray dataset with the temperature and salinity corrected
         absorbance and attenuation data arrays added.
@@ -643,7 +722,7 @@ def apply_scatcorr(optaa, coeffs):
     """
     Correct the absorbance data for scattering using Method 1, with the
     wavelength closest to 715 nm used as the reference wavelength for the
-    scattering correction. This is the simpliest method for correcting for
+    scattering correction. This is the simplest method for correcting for
     scattering, but other methods are available. Users are encouraged to
     explore the other methods and determine which is best for their
     application.
@@ -701,7 +780,7 @@ def estimate_chl_poc(optaa, coeffs, chl_line_height=0.020):
 
 def calculate_ratios(optaa):
     """
-    Pigment ratios can be calculated to assess the impacts of biofouling,
+    Pigment ratios can be calculated to assess the impacts of bio-fouling,
     sensor calibration drift, potential changes in community composition,
     light history or bloom health and age. Calculated ratios are:
 
@@ -726,9 +805,9 @@ def calculate_ratios(optaa):
         red region. A decrease in the ratio of the intensity of the Soret band
         at 440 nm to that of the Q band at 676 nm may indicate a change in
         phytoplankton community structure. All phytoplankton contain
-        chlorophyll a as the primary light harvesting pigment, but green algae
-        and dinoflagellates contain chlorophyll b and c, respectively, which
-        are spectrally redshifted compared to chlorophyll a.
+        chlorophyll 'a' as the primary light harvesting pigment, but green
+        algae and dinoflagellates contain chlorophyll 'b' and 'c', respectively,
+        which are spectrally redshifted compared to chlorophyll 'a'.
 
     :param optaa: xarray dataset with the scatter corrected absorbance data.
     :return optaa: xarray dataset with the estimates for chlorophyll and POC
@@ -783,14 +862,21 @@ def optaa_datalogger(ds, cal_file):
         ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
         ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
 
-    # pull out the number of wavelengths and then drop the variable (will add to the metadata)
+    # pull out the number of wavelengths and serial number and then drop the variable (part of the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
+    serial_number = int(re.sub('[^0-9]', '', ds.attrs['SerialNumber']))
     ds = ds.drop('num_wavelengths')
 
     # load the calibration coefficients
-    serial_number = ds.attrs['SerialNumber'][4:]
+    uid = ds.attrs['AssetUniqueID']
     start_time = ds['time'][0].values.astype(float) / 10 ** 9
-    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
+    cal = load_cal_coefficients(cal_file, uid, start_time)
+
+    # check the calibration coefficients against the deployment data
+    if cal.coeffs['serial_number'] != serial_number:
+        raise Exception('Serial Number mismatch between ac-s data and the device file.')
+    if cal.coeffs['num_wavelengths'] != num_wavelengths:
+        raise Exception('Number of wavelengths mismatch between ac-s data and the device file.')
 
     # remove the units from the variable names
     rename = {
@@ -815,6 +901,7 @@ def optaa_datalogger(ds, cal_file):
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
     # calculate the median of the remaining data per burst measurement
+    print('Calculating burst averages...')
     burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
                                                                                     keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
@@ -942,14 +1029,21 @@ def optaa_cspp(ds, cal_file):
         ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
         ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
 
-    # pull out the number of wavelengths and then drop the variable (will add to the metadata)
+    # pull out the number of wavelengths and serial number and then drop the variable (part of the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
+    serial_number = int(re.sub('[^0-9]', '', ds.attrs['SerialNumber']))
     ds = ds.drop('num_wavelengths')
 
     # load the calibration coefficients
-    serial_number = ds.attrs['SerialNumber'][4:]
+    uid = ds.attrs['AssetUniqueID']
     start_time = ds['time'][0].values.astype(float) / 10 ** 9
-    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
+    cal = load_cal_coefficients(cal_file, uid, start_time)
+
+    # check the calibration coefficients against the deployment data
+    if cal.coeffs['serial_number'] != serial_number:
+        raise Exception('Serial Number mismatch between ac-s data and the device file.')
+    if cal.coeffs['num_wavelengths'] != num_wavelengths:
+        raise Exception('Number of wavelengths mismatch between ac-s data and the device file.')
 
     # remove the units from the variable name
     rename = {
@@ -982,36 +1076,22 @@ def optaa_cspp(ds, cal_file):
     # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the CSPP)
     vocab = get_vocabulary(ds.attrs['subsite'], ds.attrs['node'], ds.attrs['sensor'])[0]
     site_depth = vocab['maxdepth'] - 2
-    binned = []
     profiles = ds.groupby('profile')
-    with tqdm(total=len(profiles), desc='Smoothing and binning the profiles') as pbar:
-        for profile in profiles:
-            # test the length of the profile, short ones (less than 5 seconds) will be skipped
-            if len(profile[1]['time']) <= 20:
-                pbar.update()
-                continue
+    profiles = [profile[1] for profile in profiles]
+    partial_binning = partial(bin_profiles, site_depth=site_depth, bin_size=0.25)
+    with ProcessPoolExecutor(max_workers=10) as executor:
+        binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
+                           desc='Smoothing and binning each profile into 25 cm depth bins', file=sys.stdout))
 
-            # use a set of median boxcar filters to help despike the data
-            smth = profile[1].rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
-            smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+    # reset the dataset now using binned profiles
+    binned = [i[0] for i in binned if i is not None]
+    binned = xr.concat(binned, 'time')
+    binned = binned.sortby(['profile', 'time'])
 
-            # bin the data into 25 cm depth bins (center bins by using a 1/2 bin size offset)
-            bins = smth.groupby_bins('depth', np.arange(0.125, site_depth + 0.125, 0.25))
-            binning = []
-            for grp in bins:
-                avg = grp[1].mean('time', keepdims=True, keep_attrs=True)
-                avg = avg.assign_coords({'time': np.atleast_1d(grp[1].time.mean().values)})  # add time back
-                avg['wavelength_a'] = avg.wavelength_a.transpose()  # swap dimension order
-                avg['wavelength_c'] = avg.wavelength_c.transpose()  # swap dimension order
-                avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
-                binning += avg,  # append to the list
-
-            binned += xr.concat(binning, 'time'),
-            pbar.update()
-
-        # reset the dataset now using binned profiles
-        binned = xr.concat(binned, 'time')
-        binned = binned.sortby('time')
+    # confirm dimension order is correct for the wavelength arrays (sometimes the order gets flipped
+    # during the binning process)
+    binned['wavelength_a'] = binned.wavelength_a.transpose(*['time', 'wavelength_number'])
+    binned['wavelength_c'] = binned.wavelength_c.transpose(*['time', 'wavelength_number'])
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
@@ -1053,7 +1133,8 @@ def optaa_cspp(ds, cal_file):
         'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal.astype(int), fill_int], axis=1)),
         'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference.astype(int), fill_int],
                                                                       axis=1)),
-        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan], axis=1)),
+        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan],
+                                                                           axis=1)),
         'cpg': (['time', 'wavelength_number'], np.concatenate([binned.cpg, fill_nan], axis=1)),
         'cpg_ts': (['time', 'wavelength_number'], np.concatenate([binned.cpg_ts, fill_nan], axis=1)),
     }, coords={'time': (['time'], binned.time.values), 'wavelength_number': wavelength_number})
@@ -1101,6 +1182,12 @@ def optaa_cspp(ds, cal_file):
 
 
 def main(argv=None):
+    """
+    Command line interface for processing OOI OPTAA NetCDF file(s) from the
+    Endurance, Pioneer or Global surface moorings, or the Endurance surface
+    piercing profilers. Creates a cleaned and processed xarray dataset of the
+    OPTAA data saved to a NetCDF file.
+    """
     args = inputs(argv)
     site = args.site
     node = args.node

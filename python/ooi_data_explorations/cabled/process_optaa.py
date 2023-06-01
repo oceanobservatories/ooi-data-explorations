@@ -2,37 +2,41 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
+import re
+import sys
 import xarray as xr
 
+from concurrent.futures import ProcessPoolExecutor
+from functools import partial
 from tqdm import tqdm
 
-from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, load_gc_thredds, \
-    get_vocabulary, update_dataset, ENCODINGS
-from ooi_data_explorations.profilers import create_profile_id
-from ooi_data_explorations.uncabled.process_optaa import ATTRS, apply_dev, apply_tscorr, apply_scatcorr, \
-    estimate_chl_poc, calculate_ratios
+from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, \
+    load_gc_thredds, get_vocabulary, update_dataset, ENCODINGS
+from ooi_data_explorations.profilers import create_profile_id, bin_profiles
+from ooi_data_explorations.uncabled.process_optaa import ATTRS, load_cal_coefficients, apply_dev, apply_tscorr, \
+    apply_scatcorr, estimate_chl_poc, calculate_ratios
 
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 
 
 def optaa_benthic(ds, cal_file):
     """
-    Takes OPTAA data recorded by the data loggers used in the CGSN/EA moorings
-    and cleans up the data set to make it more user-friendly.  Primary task is
-    renaming parameters and dropping some that are of limited use. Additionally,
-    re-calculate the intermediate products (e.g. absorption and attenuation) and
-    add them to the data set.  Finally, add the estimated chlorophyll and POC
-    concentrations to the data set.
+    Takes OPTAA data streamed to shore from the Cabled Array benthic platforms
+    and cleans up the data set to make it more user-friendly. Primary task is
+    renaming parameters and dropping some that are of limited use.
+    Additionally, re-calculate the intermediate products (e.g. absorption and
+    attenuation) and add them to the data set. Finally, add the estimated
+    chlorophyll and POC concentrations to the data set.
 
     Will test the data set to determine if more than one deployment is present.
-    If so, will raise an exception with an error message.  AC-S processing
+    If so, will raise an exception with an error message. AC-S processing
     requires that the data be processed one deployment at a time in order to
-    properly assign calibration coefficients.
+    properly assign calibration coefficients and pad wavelength arrays.
 
     :param ds: initial optaa data set downloaded from OOI via the M2M system
     :param cal_file: file name (can include path) to store the calibration
         coefficients
-    :return ds: cleaned up data set
+    :return ds: cleaned up and reprocessed data set
     """
     # check to see if there is more than one deployment in the data set
     if len(np.unique(ds['deployment'].values)) > 1:
@@ -42,21 +46,34 @@ def optaa_benthic(ds, cal_file):
     # drop some of the variables:
     #   internal_timestamp == time, redundant so can remove
     #   pressure_counts == none of the OOI OPTAAs have a pressure sensor
-    ds = ds.drop(['internal_timestamp', 'pressure_counts'])
+    #   serial_number == available in the global attributes
+    #   meter_type == always the same, not needed
+    #   packet_type == always the same, not needed
+    #   record_length == always the same, not needed
+    #   checksum == not needed, used in data parsing
+    ds = ds.drop(['internal_timestamp', 'pressure_counts', 'serial_number', 'meter_type', 'packet_type',
+                  'record_length', 'checksum'])
 
     # check for data from a co-located CTD, if not present create the variables using NaN's as the fill value
     if 'sea_water_temperature' not in ds.variables:
         ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
         ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
 
-    # pull out the number of wavelengths and then drop the variable (will add to the metadata)
+    # pull out the number of wavelengths and serial number and then drop the variables (part of the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
+    serial_number = int(re.sub('[^0-9]', '', ds.attrs['SerialNumber']))
     ds = ds.drop('num_wavelengths')
 
     # load the calibration coefficients
-    serial_number = ds.attrs['SerialNumber'][4:]
+    uid = ds.attrs['AssetUniqueID']
     start_time = ds['time'][0].values.astype(float) / 10 ** 9
-    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
+    cal = load_cal_coefficients(cal_file, uid, start_time)
+
+    # check the calibration coefficients against the deployment data
+    if cal.coeffs['serial_number'] != serial_number:
+        raise Exception('Serial Number mismatch between ac-s data and the device file.')
+    if cal.coeffs['num_wavelengths'] != num_wavelengths:
+        raise Exception('Number of wavelengths mismatch between ac-s data and the device file.')
 
     # remove the units from the variable names
     rename = {
@@ -80,9 +97,10 @@ def optaa_benthic(ds, cal_file):
     ds['internal_temp'] = opt_internal_temp(ds['internal_temp_raw'])
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
-    # calculate the median of the remaining data per burst measurement
-    burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
-                                                                                    keep_attrs=True)
+    # calculate the median of the remaining data per burst measurement (configured to run hourly for 3 minutes)
+    print('Calculating burst averages...')
+    burst = ds.resample(time='3600s', base=1800, loffset='1800s', skipna=True).reduce(np.median, dim='time',
+                                                                                      keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
@@ -174,22 +192,22 @@ def optaa_benthic(ds, cal_file):
 
 def optaa_profiler(ds, cal_file):
     """
-    Takes OPTAA data recorded by the Coastal Surface-Piercing Profiler (CSPP)
-    and cleans up the data set to make it more user-friendly.  Primary task is
-    renaming parameters and dropping some that are of limited use.  Additionally,
-    re-calculate the intermediate products (e.g. absorption and attenuation) and
-    add them to the data set.  Finally, add the estimated chlorophyll and POC
-    concentrations to the data set.
+    Takes OPTAA data recorded by the Cabled Shallow Profiler system and cleans
+    up the data set to make it more user-friendly.  Primary task is renaming
+    parameters and dropping some that are of limited use.  Additionally,
+    re-calculate the intermediate products (e.g. absorption and attenuation)
+    and add them to the data set.  Finally, add the estimated chlorophyll and
+    POC concentrations to the data set.
 
     Will test the data set to determine if more than one deployment is present.
-    If so, will raise an exception with an error message.  AC-S processing
+    If so, will raise an exception with an error message. AC-S processing
     requires that the data be processed one deployment at a time in order to
-    properly assign calibration coefficients.
+    properly assign calibration coefficients and pad wavelength arrays.
 
     :param ds: initial optaa data set downloaded from OOI via the M2M system
     :param cal_file: file name (can include path) to store the calibration
         coefficients
-    :return ds: cleaned up data set
+    :return ds: cleaned up and reprocessed data set
     """
     # check to see if there is more than one deployment in the data set
     if len(np.unique(ds['deployment'].values)) > 1:
@@ -199,27 +217,34 @@ def optaa_profiler(ds, cal_file):
     # drop some of the variables:
     #   internal_timestamp == time, redundant so can remove
     #   pressure_counts == none of the OOI OPTAAs have a pressure sensor
-    #   serial_number == set in the metadata, attributes
-    #   meter_type == all are the same, so not needed
-    #   packet_type == all are the same, so not needed
-    #   record_length == all are the same, so not needed
+    #   serial_number == available in the global attributes
+    #   meter_type == always the same, not needed
+    #   packet_type == always the same, not needed
+    #   record_length == always the same, not needed
     #   checksum == not needed, used in data parsing
-    ds = ds.drop(['internal_timestamp', 'pressure_counts', 'meter_type', 'packet_type', 'record_length',
-                  'checksum', 'serial_number'])
+    ds = ds.drop(['internal_timestamp', 'pressure_counts', 'serial_number', 'meter_type', 'packet_type',
+                  'record_length', 'checksum'])
 
     # check for data from a co-located CTD, if not present create the variables using NaN's as the fill value
     if 'sea_water_temperature' not in ds.variables:
         ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
         ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * np.nan)
 
-    # pull out the number of wavelengths and then drop the variable (will add to the metadata)
+    # pull out the number of wavelengths and serial number and then drop the variable (part of the metadata)
     num_wavelengths = ds.num_wavelengths.values[0].astype(int)
+    serial_number = int(re.sub('[^0-9]', '', ds.attrs['SerialNumber']))
     ds = ds.drop('num_wavelengths')
 
     # load the calibration coefficients
-    serial_number = ds.attrs['AssetUniqueID']
+    uid = ds.attrs['AssetUniqueID']
     start_time = ds['time'][0].values.astype(float) / 10 ** 9
-    cal = load_cal_coefficients(cal_file, serial_number, num_wavelengths, start_time)
+    cal = load_cal_coefficients(cal_file, uid, start_time)
+
+    # check the calibration coefficients against the deployment data
+    if cal.coeffs['serial_number'] != serial_number:
+        raise Exception('Serial Number mismatch between ac-s data and the device file.')
+    if cal.coeffs['num_wavelengths'] != num_wavelengths:
+        raise Exception('Number of wavelengths mismatch between ac-s data and the device file.')
 
     # remove the units from the variable name
     rename = {
@@ -248,39 +273,25 @@ def optaa_profiler(ds, cal_file):
     print('Creating and adding a profile variable to the data set.')
     ds = create_profile_id(ds)
 
-    # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the CSPP)
-    vocab = get_vocabulary(ds.attrs['subsite'], ds.attrs['node'], ds.attrs['sensor'])[0]
-    site_depth = vocab['maxdepth']
-    binned = []
+    # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the shallow
+    # profiler is 5 cm/s, binning at 25 cm will help to reduce the noise in the data and speed up subsequent
+    # processing).
     profiles = ds.groupby('profile')
-    with tqdm(total=len(profiles), desc='Smoothing and binning the profiles') as pbar:
-        for profile in profiles:
-            # test the length of the profile, short ones (less than 5 seconds) will be skipped
-            if len(profile[1]['time']) <= 20:
-                pbar.update()
-                continue
+    profiles = [profile[1] for profile in profiles]
+    partial_binning = partial(bin_profiles, site_depth=200, bin_size=0.25)
+    with ProcessPoolExecutor(max_workers=10) as executor:
+        binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
+                           desc='Smoothing and binning each profile into 25 cm depth bins', file=sys.stdout))
 
-            # use a set of median boxcar filters to help despike the data
-            smth = profile[1].rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
-            smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+    # reset the dataset now using binned profiles
+    binned = [i[0] for i in binned if i is not None]
+    binned = xr.concat(binned, 'time')
+    binned = binned.sortby(['profile', 'time'])
 
-            # bin the data into 25 cm depth bins (center bins by using a 1/2 bin size offset)
-            bins = smth.groupby_bins('depth', np.arange(0.125, site_depth + 0.125, 0.25))
-            binning = []
-            for grp in bins:
-                avg = grp[1].mean('time', keepdims=True, keep_attrs=True)
-                avg = avg.assign_coords({'time': np.atleast_1d(grp[1].time.mean().values)})  # add time back
-                avg['wavelength_a'] = avg.wavelength_a.transpose()  # swap dimension order
-                avg['wavelength_c'] = avg.wavelength_c.transpose()  # swap dimension order
-                avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
-                binning += avg,  # append to the list
-
-            binned += xr.concat(binning, 'time'),
-            pbar.update()
-
-        # reset the dataset now using binned profiles
-        binned = xr.concat(binned, 'time')
-        binned = binned.sortby('time')
+    # confirm dimension order is correct for the wavelength arrays (sometimes the order gets flipped
+    # during the binning process)
+    binned['wavelength_a'] = binned.wavelength_a.transpose(*['time', 'wavelength_number'])
+    binned['wavelength_c'] = binned.wavelength_c.transpose(*['time', 'wavelength_number'])
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
@@ -322,7 +333,8 @@ def optaa_profiler(ds, cal_file):
         'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal.astype(int), fill_int], axis=1)),
         'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference.astype(int), fill_int],
                                                                       axis=1)),
-        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan], axis=1)),
+        'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan],
+                                                                           axis=1)),
         'cpg': (['time', 'wavelength_number'], np.concatenate([binned.cpg, fill_nan], axis=1)),
         'cpg_ts': (['time', 'wavelength_number'], np.concatenate([binned.cpg_ts, fill_nan], axis=1)),
     }, coords={'time': (['time'], binned.time.values), 'wavelength_number': wavelength_number})
@@ -370,6 +382,11 @@ def optaa_profiler(ds, cal_file):
 
 
 def main(argv=None):
+    """
+    Command line interface for processing OOI OPTAA NetCDF file(s) from the
+    Cabled Array benthic or shallow profiler platforms. Creates a cleaned and
+    processed xarray dataset of the OPTAA data saved to a NetCDF file.
+    """
     args = inputs(argv)
     site = args.site
     node = args.node
@@ -439,25 +456,25 @@ def main(argv=None):
 
     # clean-up and reorganize the data
     multi = isinstance(optaa, list)
-    if node == 'SP001':
-        # this OPTAA is part of a CSPP
+    if node in ['SF01A', 'SF01B', 'SF03A']:
+        # this OPTAA is on a shallow profiler
         if multi:
             for i, ds in enumerate(optaa):
                 cfile = os.path.join(cal_path, cal_file[i])
-                optaa[i] = optaa_cspp(ds, cfile)
+                optaa[i] = optaa_profiler(ds, cfile)
             optaa = xr.concat(optaa, dim='time')
         else:
             cal_file = os.path.join(cal_path, cal_file)
-            optaa = optaa_cspp(optaa, cal_file)
+            optaa = optaa_profiler(optaa, cal_file)
     else:
-        # this OPTAA is stand-alone on one of the moorings
+        # this OPTAA is on one of the two benthic platforms
         if multi:
             for i, ds in enumerate(optaa):
                 cfile = os.path.join(cal_path, cal_file[i])
-                optaa[i] = optaa_datalogger(ds, cfile)
+                optaa[i] = optaa_benthic(ds, cfile)
             optaa = xr.concat(optaa, dim='time')
         else:
-            optaa = optaa_datalogger(optaa, cal_file)
+            optaa = optaa_benthic(optaa, cal_file)
 
     # get the vocabulary information for the site, node, and sensor and update the dataset attributes
     vocab = get_vocabulary(site, node, sensor)[0]

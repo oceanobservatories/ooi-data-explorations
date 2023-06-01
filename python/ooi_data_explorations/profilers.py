@@ -13,6 +13,9 @@ def create_profile_id(ds):
     Use a combination of the deployment number and profile sequence within a
     deployment to create a unique profile identifier for each profile in the
     data set.
+
+    :param ds: data set containing the profile data
+    :return: data set with a profile variable added
     """
     # create an initial profile number for each record in the data set
     ds['profile'] = ds['deployment'].astype('int32') * 0
@@ -53,7 +56,7 @@ def split_profiles(ds):
     collection of data from a single deployment and profile sequence. The
     resulting data sets are returned in a list.
 
-    :param ds:
+    :param ds: data set containing the profile data
     :return: a list of data sets, one for each profile
     """
     # split the data into profiles, assuming at least 120 seconds between profiles
@@ -76,3 +79,35 @@ def split_profiles(ds):
     profile = ds.sel(time=slice(d, ds['time'].values[-1]))
     profiles.append(profile)
     return profiles
+
+
+def bin_profiles(profile, site_depth, bin_size=0.25):
+    """
+    Bin the data in the profile into a set of bins of a given size (default is
+    25 cm). The bin depth is set to the center of the bin, using the median
+    value of the data in each bin.
+
+    :param profile: data set containing the profile data
+    :param site_depth: maximum depth of the site, used to set binning range
+    :param bin_size: size of the bin, in meters
+    :return: a data set containing the binned data
+    """
+    # test the length of the profile, short ones (less than 15 seconds) will be skipped
+    if (profile.time[-1] - profile.time[0]) / 10 ** 9 < 15:
+        return None
+
+    # use a set of median boxcar filters to help despike the data
+    smth = profile.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+    smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+
+    # bin the data using the center of the bin as the depth value
+    bins = smth.groupby_bins('depth', np.arange(bin_size / 2, site_depth + bin_size / 2, bin_size))
+    binning = []
+    for grp in bins:
+        avg = grp[1].mean('time', keepdims=True, keep_attrs=True)
+        avg = avg.assign_coords({'time': np.atleast_1d(grp[1].time.mean().values)})  # add time back
+        avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
+        binning += avg,  # append to the list
+
+    binned = xr.concat(binning, 'time'),
+    return binned

@@ -828,7 +828,7 @@ def kdata_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     files = glob.glob(kdata + '/' + tag)
 
     # Process the data files found above and concatenate them into a single list
-    print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
+    print('Downloading %d data file(s) from the OOI local kdata directory' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
         frames = [process_file(file, gc='KDATA', use_dask=use_dask) for file in tqdm(files, desc='Loading and '

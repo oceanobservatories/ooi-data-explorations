@@ -20,7 +20,7 @@ level = 'cspp'                                  # local directory name, level be
 instrmt = 'optaa'                               # local directory name, instrument below level
 
 # download the data from the Gold Copy THREDDS server
-optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
+optaa = load_gc_thredds(site, node, sensor, method, stream, tag)
 vocab = get_vocabulary(site, node, sensor)[0]
 
 # set up the calibration file path and name

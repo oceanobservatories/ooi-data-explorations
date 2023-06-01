@@ -22,7 +22,8 @@ from ooi_data_explorations.profilers import create_profile_id, bin_profiles
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 from pyseas.data.opt_functions_tscor import tscor
 
-# reset the variable level attributes
+# reset the variable level attributes and set some global defaults
+N_CORES = int(os.cpu_count() / 2) - 1
 FILL_INT = -9999999
 ATTRS = dict({
     # parsed (raw) variables and attributes
@@ -404,7 +405,7 @@ class Calibrations(Coefficients):
             if cal['name'] == 'CC_tcarray':
                 coeffs['tc_array'] = np.array(cal['calData'][cal_idx['CC_tcarray']]['value'])
             if cal['name'] == 'CC_taarray':
-                coeffs['ta_array'] = np.array(cal['calData'][cal_idx['CC_tcarray']]['value'])
+                coeffs['ta_array'] = np.array(cal['calData'][cal_idx['CC_taarray']]['value'])
 
         # number of wavelengths
         coeffs['num_wavelengths'] = len(coeffs['a_wavelengths'])
@@ -582,7 +583,7 @@ def apply_dev(optaa, coeffs):
 
     with ProgressBar():
         print("Calculating the L1 data products for the absorption and attenuation channels")
-        pg = [*dask.compute(*pg, scheduler='processes', num_workers=10)]
+        pg = [*dask.compute(*pg, scheduler='processes', num_workers=N_CORES)]
 
     # create data arrays of the L1 data products
     apg = np.array(pg[0::2])
@@ -608,7 +609,7 @@ def apply_dev(optaa, coeffs):
         # put it all back together, adding the jump offsets to the data set
         with ProgressBar():
             print("Adjusting the spectra for the jump often observed between filter halves")
-            jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=10)]
+            jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=N_CORES)]
 
         optaa['a_jump_offsets'] = ('time', np.array(jumps[1::4]))
         optaa['c_jump_offsets'] = ('time', np.array(jumps[3::4]))
@@ -1079,7 +1080,7 @@ def optaa_cspp(ds, cal_file):
     profiles = ds.groupby('profile')
     profiles = [profile[1] for profile in profiles]
     partial_binning = partial(bin_profiles, site_depth=site_depth, bin_size=0.25)
-    with ProcessPoolExecutor(max_workers=10) as executor:
+    with ProcessPoolExecutor(max_workers=N_CORES) as executor:
         binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
                            desc='Smoothing and binning each profile into 25 cm depth bins', file=sys.stdout))
 

@@ -13,8 +13,8 @@ from tqdm import tqdm
 from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, \
     load_gc_thredds, get_vocabulary, update_dataset, ENCODINGS
 from ooi_data_explorations.profilers import create_profile_id, bin_profiles
-from ooi_data_explorations.uncabled.process_optaa import ATTRS, load_cal_coefficients, apply_dev, apply_tscorr, \
-    apply_scatcorr, estimate_chl_poc, calculate_ratios
+from ooi_data_explorations.uncabled.process_optaa import ATTRS, N_CORES, load_cal_coefficients, apply_dev, \
+    apply_tscorr, apply_scatcorr, estimate_chl_poc, calculate_ratios
 
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 
@@ -279,7 +279,7 @@ def optaa_profiler(ds, cal_file):
     profiles = ds.groupby('profile')
     profiles = [profile[1] for profile in profiles]
     partial_binning = partial(bin_profiles, site_depth=200, bin_size=0.25)
-    with ProcessPoolExecutor(max_workers=10) as executor:
+    with ProcessPoolExecutor(max_workers=N_CORES) as executor:
         binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
                            desc='Smoothing and binning each profile into 25 cm depth bins', file=sys.stdout))
 

@@ -584,7 +584,7 @@ def apply_dev(optaa, coeffs):
 
     with ProgressBar():
         print("Calculating the L1 data products for the absorption and attenuation channels")
-        pg = [*dask.compute(*pg, scheduler='processes', num_workers=N_WORKERS)]
+        pg = [*dask.compute(*pg, scheduler='threads')]
 
     # create data arrays of the L1 data products
     apg = np.array(pg[0::2])
@@ -610,7 +610,7 @@ def apply_dev(optaa, coeffs):
         # put it all back together, adding the jump offsets to the data set
         with ProgressBar():
             print("Adjusting the spectra for the jump often observed between filter halves")
-            jumps = [*dask.compute(*jumps, scheduler='processes', num_workers=N_WORKERS)]
+            jumps = [*dask.compute(*jumps, scheduler='threads')]
 
         optaa['a_jump_offsets'] = ('time', np.array(jumps[1::4]))
         optaa['c_jump_offsets'] = ('time', np.array(jumps[3::4]))

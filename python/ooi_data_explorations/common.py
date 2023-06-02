@@ -39,6 +39,12 @@ retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 SESSION.mount('https://', adapter)
 
+# set up constants used in parallel processing and dask arrays
+CHUNKSIZE = "auto"  # allows dask to determine the optimal chunksize (default is 128 MB)
+N_CORES = int(os.cpu_count() / 2) - 1  # number of cores to use for parallel processing
+if N_CORES < 1:
+    N_CORES = 1
+
 # set the base URL for the M2M interface
 BASE_URL = 'https://ooinet.oceanobservatories.org/api/m2m/'  # base M2M URL
 try:
@@ -64,8 +70,7 @@ try:
     nrc = netrc.netrc()
     AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
     if AUTH is None:
-        raise RuntimeError(
-            'No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
+        raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
 except FileNotFoundError as e:
     raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
 
@@ -689,7 +694,7 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='M2M', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
@@ -763,7 +768,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='GC', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
@@ -778,7 +783,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     return data
 
 
-def load_kdata(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask=False):
+def load_kdata(site, node, sensor, method, stream, tag='*.nc', use_dask=False):
     """
     Download data from the JupyterHub kdata directories, using the reference
     designator parameters to select the catalog of interest and the regex tag
@@ -807,10 +812,10 @@ def load_kdata(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask=Fals
     return data
 
 
-def kdata_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
+def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
     """
     Use a regex tag combined with the dataset ID to collect data from the OOI
-    JupyterHub kdata directory. The collected data is gathered into n xarray
+    JupyterHub kdata directory. The collected data is gathered into an xarray
     dataset for further processing.
 
     :param dataset_id: dataset ID as a string
@@ -828,7 +833,7 @@ def kdata_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     files = glob.glob(kdata + '/' + tag)
 
     # Process the data files found above and concatenate them into a single list
-    print('Downloading %d data file(s) from the OOI local kdata directory' % len(files))
+    print('Downloading %d data file(s) from the local kdata directory' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
         frames = [process_file(file, gc='KDATA', use_dask=use_dask) for file in tqdm(files, desc='Loading and '
@@ -837,7 +842,7 @@ def kdata_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='KDATA', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Loading and Processing Data Files', file=sys.stdout))
 
@@ -914,7 +919,7 @@ def process_file(catalog_file, gc=None, use_dask=False):
         raise InputError('gc must be either GC, M2M, or KDATA')
 
     if use_dask:
-        ds = xr.open_dataset(data, decode_cf=False, chunks=10000)
+        ds = xr.open_dataset(data, decode_cf=False, chunks=CHUNKSIZE)
     else:
         ds = xr.load_dataset(data, decode_cf=False)
 

@@ -16,15 +16,13 @@ from tqdm import tqdm
 
 from ooi_data_explorations.calibrations import Coefficients
 from ooi_data_explorations.common import inputs, get_vocabulary, get_calibrations_by_uid, m2m_request, \
-    list_files, m2m_collect, load_gc_thredds, update_dataset, ENCODINGS
+    list_files, m2m_collect, load_gc_thredds, update_dataset, N_CORES, ENCODINGS
 from ooi_data_explorations.profilers import create_profile_id, bin_profiles
 
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 from pyseas.data.opt_functions_tscor import tscor
 
 # reset the variable level attributes and set some global defaults
-N_CORES = int(os.cpu_count() / 2) - 1
-N_WORKERS = int(os.cpu_count() / 4) - 1
 FILL_INT = -9999999
 ATTRS = dict({
     # parsed (raw) variables and attributes

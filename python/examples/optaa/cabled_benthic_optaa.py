@@ -5,10 +5,11 @@ import os
 from ooi_data_explorations.common import get_vocabulary, load_gc_thredds, update_dataset, ENCODINGS
 from ooi_data_explorations.cabled.process_optaa import optaa_benthic
 
-# Setup needed parameters for the request, the user would need to vary these to suit their own needs and
-# sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-# Ocean Observatories Initiative web site. The last two will set path and naming conventions to save the data
-# to the local disk
+# Setup needed parameters for the request, the user would need to vary these to
+# suit their own needs and sites/instruments of interest. Site, node, sensor,
+# stream and delivery method names can be obtained from the Ocean Observatories
+# Initiative website. The last two will set path and naming conventions to save
+# the data to the local disk
 site = 'CE02SHBP'                               # OOI Net site designator
 node = 'LJ01D'                                  # OOI Net node designator
 sensor = '08-OPTAAD106'                         # OOI Net sensor designator

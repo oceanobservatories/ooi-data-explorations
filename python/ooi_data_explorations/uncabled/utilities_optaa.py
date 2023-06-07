@@ -130,7 +130,7 @@ def load_cal_coefficients(cal_file, uid, start_time):
     return dev
 
 
-def _convert_raw(ref, sig, tintrn, offset, tbins, tarray):
+def convert_raw(ref, sig, tintrn, offset, tarray, tbins):
     """
     Convert the raw reference and signal measurements to scientific units. Uses
     a simplified version of the opt_pd_calc function from the pyseas library
@@ -145,11 +145,11 @@ def _convert_raw(ref, sig, tintrn, offset, tbins, tarray):
     :param tintrn: internal instrument temperature [deg_C]
     :param offset: 'a' or 'c' (as appropriate) clear water offsets from the
         AC-S device file [m-1]
-    :param tbins: instrument specific internal temperature calibration bin
-        values from AC-S device file [deg_C]
     :param tarray: instrument, wavelength and channel ('c' or 'a') specific
         internal temperature calibration correction coefficients from AC-S
         device file [m-1]
+    :param tbins: instrument specific internal temperature calibration bin
+        values from AC-S device file [deg_C]
     :return: uncorrected beam attenuation/optical absorption coefficients [m-1]
     """
     # create a linear temperature correction factor based on the internal instrument temperature
@@ -170,7 +170,7 @@ def _convert_raw(ref, sig, tintrn, offset, tbins, tarray):
     return pg
 
 
-def _holo_grater(wlngths, spectra, index):
+def holo_grater(wlngths, spectra, index):
     """
     Derived from the Matlab HoloGrater function in Jesse Bausell's
     acsPROCESS_INTERACTIVE toolbox (link below) used in preparing
@@ -206,25 +206,38 @@ def _holo_grater(wlngths, spectra, index):
     return spectra, offset
 
 
-def _pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grating, wavelengths):
+def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grating, wavelengths):
     """
+    Combines the convert_raw and holo_grater functions to calculate the L1 data
+    products for the AC-S (the uncorrected optical absorption and the beam
+    attenuation). This function is intended to be wrapped by the apply_dev
+    function to facilitate multiprocessing of the potentially large data arrays
+    common to the AC-S.
 
-    :param reference:
-    :param signal:
-    :param internal_temperature:
-    :param offset:
-    :param tarray:
-    :param tbins:
-    :param grating:
-    :param wavelengths:
-    :return:
+    :param reference: raw reference light measurements
+    :param signal: raw signal light measurements
+    :param internal_temperature: internal instrument temperature converted from
+        raw counts to degrees Celsius
+    :param offset: 'a' or 'c' (as appropriate) clear water offsets from the
+        AC-S device file
+    :param tarray: instrument, wavelength and channel ('c' or 'a') specific
+        internal temperature calibration correction coefficients from AC-S
+        device file
+    :param tbins: instrument specific internal temperature calibration bin
+        values from AC-S device file
+    :param grating: index of the for the start of the second half of the
+        filter sets
+    :param wavelengths: instrument, wavelength and channel ('c' or 'a') specific
+        wavelengths from the AC-S device file
+    :return: converted optical absorption or beam attenuation measurements
+        along with the offset correction for the holographic grating.
     """
     # convert the raw measurements to uncorrected absorption/attenuation values
-    pg = _convert_raw(reference, signal, internal_temperature, offset, tbins, tarray)
+    pg = convert_raw(reference, signal, internal_temperature, offset, tarray, tbins)
 
     # if the grating index is set, correct for the often observed jump at the mid-point of the spectra
     if grating:
-        pg, jump = _holo_grater(wavelengths, pg, grating)
+        pg, jump = holo_grater(wavelengths, pg, grating)
     else:
         jump = np.nan
 
@@ -255,36 +268,42 @@ def apply_dev(optaa, coeffs):
     temp_internal = optaa['internal_temp'].values
 
     # create a set of partial functions for concurrent.futures (maps static elements to iterables)
-    apg_calc = partial(_pg_calc, coeffs['a_offsets'], coeffs['ta_array'], coeffs['temp_bins'],
-                       coeffs['grate_index'], coeffs['a_wavelengths'])
-    cpg_calc = partial(_pg_calc, coeffs['c_offsets'], coeffs['tc_array'], coeffs['temp_bins'],
-                       coeffs['grate_index'], coeffs['c_wavelengths'])
+    apg_calc = partial(pg_calc, offset=coeffs['a_offsets'], tarray=coeffs['ta_array'],
+                       tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
+                       wavelengths=coeffs['a_wavelengths'])
+    cpg_calc = partial(pg_calc, offset=coeffs['c_offsets'], tarray=coeffs['tc_array'],
+                       tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
+                       wavelengths=coeffs['c_wavelengths'])
 
     # calculate the L1 OPTAA data products (uncorrected beam attenuation and absorbance) for particulate
     # and dissolved organic matter with pure water removed.
     with ProcessPoolExecutor(max_workers=N_CORES) as executor:
-        apg = list(tqdm(executor.map(apg_calc, a_ref, a_sig, temp_internal), total=nrows,
-                        desc='Re-calculating the absorption channel measurements from the raw data',
-                        file=sys.stdout))
-
-        cpg = list(tqdm(executor.map(cpg_calc, c_ref, c_sig, temp_internal), total=nrows,
-                        desc='Re-calculating the attenuation channel measurements from the raw data',
-                        file=sys.stdout))
+        pg = list(tqdm(executor.map(apg_calc, a_ref, a_sig, temp_internal), total=nrows,
+                       desc='Re-calculating the absorption channel measurements from the raw data',
+                       file=sys.stdout))
 
     # create data arrays of the L1 data products
-    apg = np.array(apg[0])
+    apg = np.array([row[0] for row in pg])
+    a_jumps = np.array([row[1] for row in pg])
     m = ~np.isfinite(apg)
     apg[m] = np.nan
-    cpg = np.array(cpg[1::2])
+
+    with ProcessPoolExecutor(max_workers=N_CORES) as executor:
+        pg = list(tqdm(executor.map(cpg_calc, c_ref, c_sig, temp_internal), total=nrows,
+                  desc='Re-calculating the attenuation channel measurements from the raw data',
+                  file=sys.stdout))
+
+    # create data arrays of the L1 data products
+    cpg = np.array([row[0] for row in pg])
+    c_jumps = np.array([row[1] for row in pg])
     m = ~np.isfinite(cpg)
     cpg[m] = np.nan
 
-    optaa['a_jump_offsets'] = ('time', np.array(jumps[1::4]))
-    optaa['c_jump_offsets'] = ('time', np.array(jumps[3::4]))
-
     # return the L1 data with the factory calibrations applied and the spectral jump corrected (if available)
-    optaa['apg'] = (('time', 'wavelength_number'), np.array(jumps[0::4]))
-    optaa['cpg'] = (('time', 'wavelength_number'), np.array(jumps[2::4]))
+    optaa['apg'] = (('time', 'wavelength_number'), apg)
+    optaa['cpg'] = (('time', 'wavelength_number'), cpg)
+    optaa['a_jump_offsets'] = ('time', a_jumps)
+    optaa['c_jump_offsets'] = ('time', c_jumps)
     return optaa
 
 

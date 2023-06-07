@@ -154,7 +154,7 @@ ATTRS = dict({
 
 def quality_checks(ds):
     """
-    Quality assessment of the raw and calculated nitrate concentration data
+    Quality assessment of the pitch, roll, and pressure values for the VELPT
     using a susbset of the QARTOD flags to indicate the quality. QARTOD
     flags used are:
 
@@ -164,9 +164,8 @@ def quality_checks(ds):
 
     The final flag value represents the worst case assessment of the data quality.
 
-    :param ds: xarray dataset with the raw signal data and the calculated
-               seawater pH
-    :return qc_flag: array of flag values indicating seawater pH quality
+    :param ds: xarray dataset with the pitch, roll, and seawater pressure
+    :return qc_flag: array of flag values indicating data quality
     """
     qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
@@ -198,6 +197,92 @@ def velpt_datalogger(ds):
     """
     Takes VELPT (Nortek Aquadopp) data recorded by the data loggers used in the
     CGSN/EA moorings and cleans up the data set to make it more user-friendly.
+    Primary task is renaming parameters and dropping some that are of limited
+    use. Additionally, re-organize some of the variables to permit better
+    assessments of the data.
+
+    :param ds: initial velpt data set downloaded from OOI via the M2M system
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   analog1 == not used, not data
+    #   internal_timestamp == time, redundant so can remove
+    #   date_time_string == time, redundant so can remove
+    #   velocity_beam1_qc_executed == QC tests are not applied to L0 data
+    #   velocity_beam1_qc_results == QC tests are not applied to L0 data
+    #   velocity_beam2_qc_executed == QC tests are not applied to L0 data
+    #   velocity_beam2_qc_results == QC tests are not applied to L0 data
+    #   velocity_beam3_qc_executed == QC tests are not applied to L0 data
+    #   velocity_beam3_qc_results == QC tests are not applied to L0 data
+    drop_vars = ['analog1', 'internal_timestamp', 'date_time_string',
+                 'velocity_beam1_qc_executed', 'velocity_beam1_qc_results',
+                 'velocity_beam2_qc_executed', 'velocity_beam2_qc_results',
+                 'velocity_beam3_qc_executed', 'velocity_beam3_qc_results'
+                 ]
+    for var in ds.variables:
+        if var in drop_vars:
+            ds = ds.drop_vars(var)
+
+    # rename some parameters here to get a better defined data set with cleaner attributes
+    rename = {
+        'battery_voltage_dv': 'battery_voltage',
+        'heading_decidegree': 'heading',
+        'pitch_decidegree': 'pitch',
+        'roll_decidegree': 'roll',
+        'status': 'status_code',
+        'sea_water_pressure_mbar': 'seawater_pressure',
+        'sea_water_pressure_mbar_qc_executed': 'seawater_pressure_qc_executed',
+        'sea_water_pressure_mbar_qc_results': 'seawater_pressure_qc_results',
+        'sound_speed_dms': 'speed_of_sound',
+        'temperature_centidegree': 'seawater_temperature',
+        'velocity_beam1': 'velocity_east',
+        'velocity_beam2': 'velocity_north',
+        'velocity_beam3': 'velocity_upward',
+        'eastward_velocity': 'eastward_seawater_velocity',
+        'eastward_velocity_qc_executed': 'eastward_seawater_velocity_qc_executed',
+        'eastward_velocity_qc_results': 'eastward_seawater_velocity_qc_results',
+        'northward_velocity': 'northward_seawater_velocity',
+        'northward_velocity_qc_executed': 'northward_seawater_velocity_qc_executed',
+        'northward_velocity_qc_results': 'northward_seawater_velocity_qc_results',
+        'upward_velocity': 'upward_seawater_velocity',
+        'upward_velocity_qc_executed': 'upward_seawater_velocity_qc_executed',
+        'upward_velocity_qc_results': 'upward_seawater_velocity_qc_results'
+    }
+    ds = ds.rename(rename)
+
+    # convert some variables to more standard units
+    ds['heading'] = ds['heading'] / 10.0  # convert from ddeg to deg
+    ds['pitch'] = ds['pitch'] / 10.0  # convert from ddeg to deg
+    ds['roll'] = ds['roll'] / 10.0  # convert from ddeg to deg
+    ds['battery_voltage'] = ds['battery_voltage'] / 10.0  # convert from dV to V
+    ds['seawater_pressure'] = ds['seawater_pressure'] / 1000.0  # parser doesn't include this needed scaling term
+    ds['seawater_temperature'] = ds['seawater_temperature'] / 100.0  # convert from cdeg C to deg C
+    ds['speed_of_sound'] = ds['speed_of_sound'] / 10.0  # convert from dm/s to m/s
+
+    # reset some attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # test the data quality using additional instrument variables
+    ds['aquadopp_sensor_quality_flag'] = quality_checks(ds)
+    return ds
+
+
+def velpt_instrument(ds):
+    """
+    Takes VELPT (Nortek Aquadopp) data recorded internally by the instrument
+    used and cleans up the data set to make it more user-friendly.
     Primary task is renaming parameters and dropping some that are of limited
     use. Additionally, re-organize some of the variables to permit better
     assessments of the data.

@@ -41,9 +41,7 @@ SESSION.mount('https://', adapter)
 
 # set up constants used in parallel processing and dask arrays
 CHUNKSIZE = "auto"  # allows dask to determine the optimal chunksize (default is 128 MB)
-N_CORES = int(os.cpu_count() / 2) - 1  # number of cores to use for parallel processing
-if N_CORES < 1:
-    N_CORES = 1
+N_CORES = min(32, os.cpu_count() - 1)  # number of cores to use for parallel processing
 
 # set the base URL for the M2M interface
 BASE_URL = 'https://ooinet.oceanobservatories.org/api/m2m/'  # base M2M URL

@@ -111,3 +111,111 @@ def bin_profiles(profile, site_depth, bin_size=0.25):
 
     binned = xr.concat(binning, 'time'),
     return binned
+
+
+def updown(db, db_level):
+    """
+    Creates an indexing array marking when a moving profiler has changed
+    directions. Also creates a flag array, equal in length to the original
+    data, indicating the direction of travel. Note, the direction is relative
+    to the pressure record's syntax.
+
+    :param db: depth/pressure record
+    :param db_level: threshold indicating a "true" change in direction.
+    :return pks: indexing array marking when the direction of travel (up or
+        down) changes.
+    :return dzdt: flag array indicating the direction the profiler is moving,
+        equal in length to db (note: dzdt is relative to pressure record
+        syntax).
+    """
+    # determine the up/down cycle of the profiler and mark the local min/max extrema
+    # via an indexing array.
+    j = np.sign(np.diff(np.concatenate(([-np.inf], db, [-np.inf]))))
+    j = np.where(np.diff(j + (j == 0)) == -2)[0]
+    k = np.sign(np.diff(np.concatenate(([np.inf], db, [np.inf]))))
+    k = np.where(np.diff(k + (k == 0)) == 2)[0]
+    pks = np.sort(np.concatenate((k, j)))
+
+    # mark and delete index locations where there isn't a "true" direction change
+    cnt = 0
+    step = 1
+    m = np.ones(len(pks), dtype=bool)
+    while cnt < len(pks):
+        if cnt + step == len(pks):
+            break
+
+        # compare the magnitude of the difference between the extrema
+        dz1 = db[pks[cnt]] - db[pks[cnt + step]]  # magnitude of difference
+        sg1 = np.sign(dz1)  # sign of difference
+
+        if abs(dz1) < db_level:  # change is not large enough
+            m[cnt + step] = False  # mark extrema for deletion
+            step += 1  # bump the stepper
+        else:  # change is large enough, but does it qualify as a direction change?
+            if cnt + step == len(pks):
+                break
+
+            j = cnt + step
+            dz2 = db[pks[j]] - db[pks[j + 1]]  # magnitude of difference
+            sg2 = np.sign(dz2)  # sign of difference
+
+            if abs(dz2) < db_level:  # change is not large enough -- or is it ???
+                if sg1 == sg2:  # nahh, we're still going the same way
+                    m[j] = False  # mark extrema for deletion
+                    step = step + 1  # bump the stepper
+                else:  # maybe -- this slows things down
+                    # find extrema > db_level to the left of the current point
+                    lft = db[pks[:j]] - db[pks[j]]
+                    i = np.where(np.abs(lft) > db_level)[0]
+
+                    if len(i) == 0:
+                        a = 0
+                    else:
+                        a = i[-1]
+
+                    # find extrema > db_level to the right of the current point
+                    rght = db[pks[j]+1:] - db[pks[j]]
+                    i = np.where(np.abs(rght) > db_level)[0]
+
+                    if len(i) == 0:
+                        b = len(pks)
+                    else:
+                        b = j + i[0]
+
+                    # set the min and max of the window
+                    mn = np.min(db[pks[a:b]])
+                    mx = np.max(db[pks[a:b]])
+
+                    # see if our point is a min or max of this window
+                    if mx == db[pks[j]] or mn == db[pks[j]]:
+                        # we have a valid turn -- reset the counters
+                        cnt = j
+                        step = 1
+                    else:  # it's not a valid peak
+                        m[j] = False  # mark extrema for deletion
+                        step = step + 1  # bump the stepper
+            else:  # we have a valid turn -- reset the counters
+                cnt = j
+                step = 1
+
+    pks = pks[m]  # remove non-valid extrema
+
+    # mark the tail
+    if pks[-1] != len(db):
+        pks = np.concatenate((pks, [len(db) - 1]))
+
+    # refine the pks array to catch minor, mid-profile changes that slipped through
+    flg = np.ones(len(pks)).astype(bool)
+    for i in range(1, len(pks) - 1):
+        flg[i] = (db[pks[i]] > db[pks[i - 1]]) & (db[pks[i]] > db[pks[i + 1]]) or \
+                 (db[pks[i]] < db[pks[i - 1]]) & (db[pks[i]] < db[pks[i + 1]])
+
+    pks = pks[flg]  # remove mid-profile changes
+
+    # create the direction array
+    dz = np.sign(np.diff(db[pks])).astype(int)
+    dzdt = np.zeros(len(db)).astype(int)
+    for i in range(len(pks) - 1):
+        dzdt[pks[i]:pks[i + 1]+1] = dz[i]
+
+    return pks, dzdt

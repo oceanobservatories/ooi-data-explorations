@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, \
     load_gc_thredds, get_vocabulary, update_dataset, ENCODINGS
-from ooi_data_explorations.profilers import create_profile_id, bin_profiles
+from ooi_data_explorations.profilers import create_profile_id, bin_profiles, updown
 from ooi_data_explorations.uncabled.process_optaa import ATTRS, N_CORES, load_cal_coefficients, apply_dev, \
     apply_tscorr, apply_scatcorr, estimate_chl_poc, calculate_ratios
 
@@ -269,41 +269,58 @@ def optaa_profiler(ds, cal_file):
     ds['internal_temp'] = opt_internal_temp(ds['internal_temp_raw'])
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
-    # create a profile variable to uniquely identify profiles within the dataset
-    print('Creating and adding a profile variable to the data set.')
-    ds = create_profile_id(ds)
+    # create a profile variable to uniquely identify profiles within the dataset...if the profiler moved
+    print('Determining profiler movement...')
+    pks, dzdt = updown(ds['depth'].values, 10)
+    if len(pks) == 2 and (pks[0] == 0 and pks[1] == len(dzdt) - 1):
+        # the profiler never moved, so treat the whole data set as a time series
+        print('Profiler was parked for the entire deployment, treating data as a time series using burst averaging.')
+        ds['profile'] = ('time', np.zeros(len(ds['time'])).astype(int) - 1)
 
-    # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the shallow
-    # profiler is 5 cm/s, binning at 25 cm will help to reduce the noise in the data and speed up subsequent
-    # processing).
-    profiles = ds.groupby('profile')
-    profiles = [profile[1] for profile in profiles]
-    partial_binning = partial(bin_profiles, site_depth=200, bin_size=0.25)
-    with ProcessPoolExecutor(max_workers=N_CORES) as executor:
-        binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
-                           desc='Smoothing and binning each profile into 25 cm depth bins', file=sys.stdout))
+        # calculate the median of the remaining data per burst measurement (configured to run hourly for 3 minutes)
+        print('Calculating burst averages...')
+        binned = ds.resample(time='3600s', base=1800, loffset='1800s', skipna=True).reduce(np.median, dim='time',
+                                                                                           keep_attrs=True)
+        binned = binned.where(~np.isnan(binned.deployment), drop=True)
+    else:
+        # the profiler moved, so treat the data as a series of profiles
+        print('Profiler moved during the deployment, treating data as a series of profiles.')
+        print('Sub-selecting upcast data only from the data set...')
+        dzdt = xr.DataArray(dzdt, dims='time', coords={'time': ds['time']})
+        ds = ds.where(dzdt < 0, drop=True)
+        print('Creating and adding a profile variable to the data set...')
+        ds = create_profile_id(ds)
 
-    # reset the dataset now using binned profiles
-    binned = [i[0] for i in binned if i is not None]
-    binned = xr.concat(binned, 'time')
-    binned = binned.sortby(['profile', 'time'])
+        # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the shallow
+        # profiler is 5 cm/s, binning at 25 cm will help to reduce the noise in the data and speed up subsequent
+        # processing).
+        profiles = ds.groupby('profile')
+        profiles = [profile[1] for profile in profiles]
+        partial_binning = partial(bin_profiles, site_depth=200, bin_size=0.25)
+        with ProcessPoolExecutor(max_workers=N_CORES) as executor:
+            binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
+                               desc='Smoothing and binning each profile into 25 cm depth bins...', file=sys.stdout))
 
-    # confirm dimension order is correct for the wavelength arrays (sometimes the order gets flipped
-    # during the binning process)
-    binned['wavelength_a'] = binned.wavelength_a.transpose(*['time', 'wavelength_number'])
-    binned['wavelength_c'] = binned.wavelength_c.transpose(*['time', 'wavelength_number'])
+        # reset the dataset now using binned profiles
+        binned = [i[0] for i in binned if i is not None]
+        binned = xr.concat(binned, 'time')
+        binned = binned.sortby(['profile', 'time'])
+
+        # confirm dimension order is correct for the wavelength arrays (sometimes the order gets flipped
+        # during the binning process)
+        binned['wavelength_a'] = binned.wavelength_a.transpose(*['time', 'wavelength_number'])
+        binned['wavelength_c'] = binned.wavelength_c.transpose(*['time', 'wavelength_number'])
+
+    # reclaim some memory
+    del ds, pks, dzdt, profiles, partial_binning, executor
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
     # to the absorption data. All intermediate processing outputs are added to the data set.
+    print('Re-processing the raw data, creating intermediate data products...')
     binned = apply_dev(binned, cal.coeffs)
     binned = apply_tscorr(binned, cal.coeffs, binned.sea_water_temperature, binned.sea_water_practical_salinity)
     binned = apply_scatcorr(binned, cal.coeffs)
-
-    # add the jump offsets as NaN's if the grating index correction was not used
-    if 'a_jump_offsets' not in ds.variables:
-        ds['a_jump_offsets'] = ('time', ds['deployment'].data * np.nan)
-        ds['c_jump_offsets'] = ('time', ds['deployment'].data * np.nan)
 
     # estimate chlorophyll and POC and calculate select absorption ratios
     binned = estimate_chl_poc(binned, cal.coeffs)

@@ -3,16 +3,14 @@
 import numpy as np
 import os
 import re
-import sys
 
 from copy import copy
-from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 from scipy.interpolate import CubicSpline
 from tqdm import tqdm
 
 from ooi_data_explorations.calibrations import Coefficients
-from ooi_data_explorations.common import get_calibrations_by_uid, N_CORES
+from ooi_data_explorations.common import get_calibrations_by_uid
 from pyseas.data.opt_functions_tscor import tscor
 
 
@@ -260,6 +258,8 @@ def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grat
     """
     # convert the raw measurements to uncorrected absorption/attenuation values
     pg = convert_raw(reference, signal, internal_temperature, offset, tarray, tbins)
+    m = ~np.isfinite(pg)
+    pg[m] = np.nan
 
     # if the grating index is set, correct for the often observed jump at the mid-point of the spectra
     if grating:
@@ -301,29 +301,24 @@ def apply_dev(optaa, coeffs):
                        tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
                        wavelengths=coeffs['c_wavelengths'])
 
-    # calculate the L1 OPTAA data products (uncorrected beam attenuation and absorbance) for particulate
-    # and dissolved organic matter with pure water removed.
-    with ProcessPoolExecutor(max_workers=N_CORES) as executor:
-        pg = list(tqdm(executor.map(apg_calc, a_ref, a_sig, temp_internal), total=nrows,
-                       desc='Re-calculating the absorption channel measurements from the raw data',
-                       file=sys.stdout))
+    # apply the partial functions to the data arrays, calculating the L1 data products
+    apg = [apg_calc(a_ref[i, :], a_sig[i, :], temp_internal[i]) for i in tqdm(range(nrows),
+                                                                              desc='Converting absorption data...')]
+    cpg = [cpg_calc(c_ref[i, :], c_sig[i, :], temp_internal[i]) for i in tqdm(range(nrows),
+                                                                              desc='Converting attenuation data...')]
 
     # create data arrays of the L1 data products
-    apg = np.array([row[0] for row in pg])
-    a_jumps = np.array([row[1] for row in pg])
+    apg, a_jumps = zip(*[row for row in apg])
+    apg = np.array(apg)
     m = ~np.isfinite(apg)
     apg[m] = np.nan
+    a_jumps = np.array(a_jumps)
 
-    with ProcessPoolExecutor(max_workers=N_CORES) as executor:
-        pg = list(tqdm(executor.map(cpg_calc, c_ref, c_sig, temp_internal), total=nrows,
-                  desc='Re-calculating the attenuation channel measurements from the raw data',
-                  file=sys.stdout))
-
-    # create data arrays of the L1 data products
-    cpg = np.array([row[0] for row in pg])
-    c_jumps = np.array([row[1] for row in pg])
+    cpg, c_jumps = zip(*[row for row in cpg])
+    cpg = np.array(cpg)
     m = ~np.isfinite(cpg)
     cpg[m] = np.nan
+    c_jumps = np.array(c_jumps)
 
     # return the L1 data with the factory calibrations applied and the spectral jump corrected (if available)
     optaa['apg'] = (('time', 'wavelength_number'), apg)

@@ -28,6 +28,16 @@ class Calibrations(Coefficients):
         # assign the inputs
         Coefficients.__init__(self, coeff_file)
 
+    def _compare_names(self, cal_name, data_source):
+        if not cal_name:
+            cal_name = data_source
+        else:
+            if cal_name != data_source:
+                raise ValueError('Calibration data file name inconsistent, unable to properly parse the '
+                                 'calibration data.')
+
+        return cal_name
+
     def parse_m2m_cals(self, serial_number, cals, cal_idx):
         """
         Parse the calibration data from the M2M object store. The calibration
@@ -41,31 +51,41 @@ class Calibrations(Coefficients):
         """
         # create the device file dictionary and assign values
         coeffs = {}
-
+        cal_name = None
         # parse the calibration data
         for cal in cals:
             # beam attenuation and absorption channel clear water offsets
             if cal['name'] == 'CC_acwo':
                 coeffs['a_offsets'] = np.array(cal['calData'][cal_idx['CC_acwo']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_acwo']]['dataSource'])
             if cal['name'] == 'CC_ccwo':
                 coeffs['c_offsets'] = np.array(cal['calData'][cal_idx['CC_ccwo']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_ccwo']]['dataSource'])
             # beam attenuation and absorption channel wavelengths
             if cal['name'] == 'CC_awlngth':
                 coeffs['a_wavelengths'] = np.array(cal['calData'][cal_idx['CC_awlngth']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_awlngth']]['dataSource'])
             if cal['name'] == 'CC_cwlngth':
                 coeffs['c_wavelengths'] = np.array(cal['calData'][cal_idx['CC_cwlngth']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_cwlngth']]['dataSource'])
             # internal temperature compensation values
             if cal['name'] == 'CC_tbins':
                 coeffs['temp_bins'] = np.array(cal['calData'][cal_idx['CC_tbins']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_tbins']]['dataSource'])
             # temperature of calibration water
             if cal['name'] == 'CC_tcal':
                 coeffs['temp_calibration'] = cal['calData'][cal_idx['CC_tcal']]['value']
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_tcal']]['dataSource'])
             # temperature compensation values as f(wavelength, temperature) for the attenuation and absorption channels
             if cal['name'] == 'CC_tcarray':
                 coeffs['tc_array'] = np.array(cal['calData'][cal_idx['CC_tcarray']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_tcarray']]['dataSource'])
             if cal['name'] == 'CC_taarray':
                 coeffs['ta_array'] = np.array(cal['calData'][cal_idx['CC_taarray']]['value'])
+                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_taarray']]['dataSource'])
 
+        # calibration data file name
+        coeffs['source_file'] = cal_name
         # number of wavelengths
         coeffs['num_wavelengths'] = len(coeffs['a_wavelengths'])
         # number of internal temperature compensation bins
@@ -116,7 +136,13 @@ def load_cal_coefficients(cal_file, uid, start_time):
             tdiff = []
             for data in cal['calData']:
                 # calculate the time difference between the start of the deployment and the calibration event
-                tdiff.append(data['eventStartTime'] / 1000 - start_time)
+                td = (data['eventStartTime'] / 1000) - start_time
+                if td <= 0:
+                    # valid cals must come before the deployment start date/time
+                    tdiff.append(td)
+                else:
+                    # use a ridiculously large number to avoid selecting this cal event
+                    tdiff.append(10**20)
 
             # find the calibration event closest to the start of the deployment
             cal_idx[cal['name']] = np.argmin(np.abs(tdiff))

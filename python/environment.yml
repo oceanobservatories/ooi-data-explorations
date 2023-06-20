@@ -13,6 +13,7 @@ dependencies:
   - configobj
   - dask
   - erddapy
+  - flox
   - geos
   - gsw
   - hdf4

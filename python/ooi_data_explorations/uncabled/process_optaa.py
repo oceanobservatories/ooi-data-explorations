@@ -4,6 +4,7 @@ import numpy as np
 import os
 import re
 import sys
+import time
 import xarray as xr
 
 from concurrent.futures import ProcessPoolExecutor
@@ -425,9 +426,13 @@ def optaa_datalogger(ds, cal_file):
 
     # calculate the median of the remaining data per burst measurement
     print('Calculating burst averages...')
+    start_time = time.time()
     burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
                                                                                     keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
+    stop_time = time.time()
+    elapsed_time = stop_time - start_time
+    print('...burst averaging complete.  Elapsed time: %f seconds' % elapsed_time)
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction

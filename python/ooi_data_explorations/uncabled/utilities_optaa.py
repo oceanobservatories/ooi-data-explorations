@@ -14,6 +14,25 @@ from ooi_data_explorations.common import get_calibrations_by_uid
 from pyseas.data.opt_functions_tscor import tscor
 
 
+def _compare_names(cal_name, data_source):
+    """
+    Internal function to compare the calibration data file name to the data
+    source name. If the names are inconsistent, raise an error.
+
+    :param cal_name: name of the calibration data file
+    :param data_source: name of the data source
+    :return: name of the calibration data file
+    """
+    if not cal_name:
+        cal_name = data_source
+    else:
+        if cal_name != data_source:
+            raise ValueError('Calibration data file name inconsistent, unable to properly parse the '
+                             'calibration data.')
+
+    return cal_name
+
+
 class Calibrations(Coefficients):
     def __init__(self, coeff_file):
         """
@@ -25,16 +44,6 @@ class Calibrations(Coefficients):
         """
         # assign the inputs
         Coefficients.__init__(self, coeff_file)
-
-    def _compare_names(self, cal_name, data_source):
-        if not cal_name:
-            cal_name = data_source
-        else:
-            if cal_name != data_source:
-                raise ValueError('Calibration data file name inconsistent, unable to properly parse the '
-                                 'calibration data.')
-
-        return cal_name
 
     def parse_m2m_cals(self, serial_number, cals, cal_idx):
         """
@@ -55,32 +64,32 @@ class Calibrations(Coefficients):
             # beam attenuation and absorption channel clear water offsets
             if cal['name'] == 'CC_acwo':
                 coeffs['a_offsets'] = np.array(cal['calData'][cal_idx['CC_acwo']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_acwo']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_acwo']]['dataSource'])
             if cal['name'] == 'CC_ccwo':
                 coeffs['c_offsets'] = np.array(cal['calData'][cal_idx['CC_ccwo']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_ccwo']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_ccwo']]['dataSource'])
             # beam attenuation and absorption channel wavelengths
             if cal['name'] == 'CC_awlngth':
                 coeffs['a_wavelengths'] = np.array(cal['calData'][cal_idx['CC_awlngth']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_awlngth']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_awlngth']]['dataSource'])
             if cal['name'] == 'CC_cwlngth':
                 coeffs['c_wavelengths'] = np.array(cal['calData'][cal_idx['CC_cwlngth']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_cwlngth']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_cwlngth']]['dataSource'])
             # internal temperature compensation values
             if cal['name'] == 'CC_tbins':
                 coeffs['temp_bins'] = np.array(cal['calData'][cal_idx['CC_tbins']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_tbins']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_tbins']]['dataSource'])
             # temperature of calibration water
             if cal['name'] == 'CC_tcal':
                 coeffs['temp_calibration'] = cal['calData'][cal_idx['CC_tcal']]['value']
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_tcal']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_tcal']]['dataSource'])
             # temperature compensation values as f(wavelength, temperature) for the attenuation and absorption channels
             if cal['name'] == 'CC_tcarray':
                 coeffs['tc_array'] = np.array(cal['calData'][cal_idx['CC_tcarray']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_tcarray']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_tcarray']]['dataSource'])
             if cal['name'] == 'CC_taarray':
                 coeffs['ta_array'] = np.array(cal['calData'][cal_idx['CC_taarray']]['value'])
-                cal_name = self._compare_names(cal_name, cal['calData'][cal_idx['CC_taarray']]['dataSource'])
+                cal_name = _compare_names(cal_name, cal['calData'][cal_idx['CC_taarray']]['dataSource'])
 
         # calibration data file name
         coeffs['source_file'] = cal_name
@@ -258,8 +267,6 @@ def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grat
     """
     # convert the raw measurements to uncorrected absorption/attenuation values
     pg = convert_raw(reference, signal, internal_temperature, offset, tarray, tbins)
-    m = ~np.isfinite(pg)
-    pg[m] = np.nan
 
     # if the grating index is set, correct for the often observed jump at the mid-point of the spectra
     if grating:
@@ -293,6 +300,12 @@ def apply_dev(optaa, coeffs):
     c_sig = optaa['c_signal'].values
     temp_internal = optaa['internal_temp'].values
 
+    # replace any 0's in the signal or reference with 1's to avoid divide by zero errors
+    a_sig[a_sig == 0] = 1
+    a_ref[a_ref == 0] = 1
+    c_sig[c_sig == 0] = 1
+    c_ref[c_ref == 0] = 1
+
     # create a set of partial functions for concurrent.futures (maps static elements to iterables)
     apg_calc = partial(pg_calc, offset=coeffs['a_offsets'], tarray=coeffs['ta_array'],
                        tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
@@ -303,9 +316,9 @@ def apply_dev(optaa, coeffs):
 
     # apply the partial functions to the data arrays, calculating the L1 data products
     apg = [apg_calc(a_ref[i, :], a_sig[i, :], temp_internal[i]) for i in tqdm(range(nrows),
-                                                                              desc='Converting absorption data...')]
+                                                                              desc='Converting absorption data ...')]
     cpg = [cpg_calc(c_ref[i, :], c_sig[i, :], temp_internal[i]) for i in tqdm(range(nrows),
-                                                                              desc='Converting attenuation data...')]
+                                                                              desc='Converting attenuation data ...')]
 
     # create data arrays of the L1 data products
     apg, a_jumps = zip(*[row for row in apg])

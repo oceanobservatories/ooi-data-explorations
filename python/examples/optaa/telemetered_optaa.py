@@ -35,7 +35,7 @@ cal_path = os.path.abspath(cal_path)
 if not os.path.exists(cal_path):
     os.makedirs(cal_path)
 
-cal_file = ('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), level, instrmt, deploy))
+cal_file = ('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), level, instrmt, deploy))
 cal_file = os.path.join(cal_path, cal_file)
 
 # clean-up and reorganize

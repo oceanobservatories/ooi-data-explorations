@@ -19,6 +19,7 @@ from ooi_data_explorations.uncabled.utilities_optaa import load_cal_coefficients
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 
 # reset the variable level attributes and set some global defaults
+_ = np.seterr(all='ignore', divide='warn')
 FILL_INT = -9999999
 ATTRS = dict({
     # parsed (raw) variables and attributes
@@ -425,14 +426,14 @@ def optaa_datalogger(ds, cal_file):
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
     # calculate the median of the remaining data per burst measurement
-    print('Calculating burst averages...')
+    print('Calculating burst averages ...')
     start_time = time.time()
     burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
                                                                                     keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
     stop_time = time.time()
     elapsed_time = stop_time - start_time
-    print('...burst averaging complete.  Elapsed time: %f seconds' % elapsed_time)
+    print('... burst averaging complete.  Elapsed time: %f seconds' % elapsed_time)
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
@@ -455,25 +456,25 @@ def optaa_datalogger(ds, cal_file):
     wavelength_number = np.arange(100).astype(int)  # used as a dimensional variable
     pad = 100 - num_wavelengths
     fill_nan = np.tile(np.ones(pad) * np.nan, (len(burst.time), 1))
-    fill_int = np.tile(np.ones(pad) * -9999999, (len(burst.time), 1))
+    fill_int = np.tile(np.ones(pad) * FILL_INT, (len(burst.time), 1))
 
     wavelength_a = np.concatenate([burst.wavelength_a.values, fill_nan], axis=1)
     wavelength_c = np.concatenate([burst.wavelength_c.values, fill_nan], axis=1)
 
     ac = xr.Dataset({
         'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
-        'a_signal': (['time', 'wavelength_number'], np.concatenate([burst.a_signal.astype(int), fill_int], axis=1)),
-        'a_reference': (['time', 'wavelength_number'], np.concatenate([burst.a_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'a_signal': (['time', 'wavelength_number'], np.concatenate([burst.a_signal, fill_int], axis=1).astype(int)),
+        'a_reference': (['time', 'wavelength_number'], np.concatenate([burst.a_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'optical_absorption': (['time', 'wavelength_number'], np.concatenate([burst.optical_absorption, fill_nan],
                                                                              axis=1)),
         'apg': (['time', 'wavelength_number'], np.concatenate([burst.apg, fill_nan], axis=1)),
         'apg_ts': (['time', 'wavelength_number'], np.concatenate([burst.apg_ts, fill_nan], axis=1)),
         'apg_ts_s': (['time', 'wavelength_number'], np.concatenate([burst.apg_ts_s, fill_nan], axis=1)),
         'wavelength_c': (['time', 'wavelength_number'], wavelength_c),
-        'c_signal': (['time', 'wavelength_number'], np.concatenate([burst.c_signal.astype(int), fill_int], axis=1)),
-        'c_reference': (['time', 'wavelength_number'], np.concatenate([burst.c_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'c_signal': (['time', 'wavelength_number'], np.concatenate([burst.c_signal, fill_int], axis=1).astype(int)),
+        'c_reference': (['time', 'wavelength_number'], np.concatenate([burst.c_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([burst.beam_attenuation, fill_nan], axis=1)),
         'cpg': (['time', 'wavelength_number'], np.concatenate([burst.cpg, fill_nan], axis=1)),
         'cpg_ts': (['time', 'wavelength_number'], np.concatenate([burst.cpg_ts, fill_nan], axis=1)),
@@ -598,7 +599,7 @@ def optaa_cspp(ds, cal_file):
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
     # create a profile variable to uniquely identify profiles within the dataset
-    print('Creating and adding a profile variable to the data set.')
+    print('Creating and adding a profile variable to the data set ...')
     ds = create_profile_id(ds)
 
     # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the CSPP)
@@ -642,25 +643,25 @@ def optaa_cspp(ds, cal_file):
     wavelength_number = np.arange(100).astype(int)  # used as a dimensional variable
     pad = 100 - num_wavelengths
     fill_nan = np.tile(np.ones(pad) * np.nan, (len(binned.time), 1))
-    fill_int = np.tile(np.ones(pad) * -9999999, (len(binned.time), 1))
+    fill_int = np.tile(np.ones(pad) * FILL_INT, (len(binned.time), 1))
 
     wavelength_a = np.concatenate([binned.wavelength_a.values, fill_nan], axis=1)
     wavelength_c = np.concatenate([binned.wavelength_c.values, fill_nan], axis=1)
 
     ac = xr.Dataset({
         'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
-        'a_signal': (['time', 'wavelength_number'], np.concatenate([binned.a_signal.astype(int), fill_int], axis=1)),
-        'a_reference': (['time', 'wavelength_number'], np.concatenate([binned.a_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'a_signal': (['time', 'wavelength_number'], np.concatenate([binned.a_signal, fill_int], axis=1).astype(int)),
+        'a_reference': (['time', 'wavelength_number'], np.concatenate([binned.a_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'optical_absorption': (['time', 'wavelength_number'], np.concatenate([binned.optical_absorption, fill_nan],
                                                                              axis=1)),
         'apg': (['time', 'wavelength_number'], np.concatenate([binned.apg, fill_nan], axis=1)),
         'apg_ts': (['time', 'wavelength_number'], np.concatenate([binned.apg_ts, fill_nan], axis=1)),
         'apg_ts_s': (['time', 'wavelength_number'], np.concatenate([binned.apg_ts_s, fill_nan], axis=1)),
         'wavelength_c': (['time', 'wavelength_number'], wavelength_c),
-        'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal.astype(int), fill_int], axis=1)),
-        'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal, fill_int], axis=1).astype(int)),
+        'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan],
                                                                            axis=1)),
         'cpg': (['time', 'wavelength_number'], np.concatenate([binned.cpg, fill_nan], axis=1)),
@@ -733,7 +734,7 @@ def main(argv=None):
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
         optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
-        cal_file = ('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), node.lower(), sensor.lower(), deploy))
+        cal_file = ('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), node.lower(), sensor.lower(), deploy))
 
         # check to see if we downloaded any data
         if not optaa:
@@ -769,7 +770,7 @@ def main(argv=None):
             data = m2m_collect(r, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
             if data:
                 optaa.append(data)
-                cal_file.append('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), node.lower(),
+                cal_file.append('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), node.lower(),
                                                                                sensor.lower(), deploy))
 
         # check to see if we downloaded any data (remove empty/none entries from the list)
@@ -778,7 +779,7 @@ def main(argv=None):
                                                                                     stream, start, stop))
             raise SystemExit(exit_text)
 
-    # set up the calibration file path and name(s)
+    # set up the calibration file path
     out_file = os.path.abspath(args.outfile)
     cal_path = os.path.dirname(out_file)
     if not os.path.exists(cal_path):

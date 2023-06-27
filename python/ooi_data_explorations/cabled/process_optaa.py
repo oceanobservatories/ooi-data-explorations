@@ -4,6 +4,7 @@ import numpy as np
 import os
 import re
 import sys
+import time
 import xarray as xr
 
 from concurrent.futures import ProcessPoolExecutor
@@ -11,12 +12,15 @@ from functools import partial
 from tqdm import tqdm
 
 from ooi_data_explorations.common import inputs, m2m_request, list_files, m2m_collect, \
-    load_gc_thredds, get_vocabulary, update_dataset, ENCODINGS
+    load_gc_thredds, get_vocabulary, update_dataset, N_CORES, ENCODINGS
 from ooi_data_explorations.profilers import create_profile_id, bin_profiles, updown
-from ooi_data_explorations.uncabled.process_optaa import ATTRS, N_CORES, load_cal_coefficients, apply_dev, \
+from ooi_data_explorations.uncabled.process_optaa import ATTRS, FILL_INT, load_cal_coefficients, apply_dev, \
     apply_tscorr, apply_scatcorr, estimate_chl_poc, calculate_ratios
 
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
+
+# set floating-point error handling for numpy
+_ = np.seterr(all='ignore', divide='warn')
 
 
 def optaa_benthic(ds, cal_file):
@@ -98,10 +102,15 @@ def optaa_benthic(ds, cal_file):
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
     # calculate the median of the remaining data per burst measurement (configured to run hourly for 3 minutes)
-    print('Calculating burst averages...')
+    # calculate the median of the remaining data per burst measurement
+    print('Calculating burst averages ...')
+    start_time = time.time()
     burst = ds.resample(time='3600s', base=1800, loffset='1800s', skipna=True).reduce(np.median, dim='time',
                                                                                       keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
+    stop_time = time.time()
+    elapsed_time = stop_time - start_time
+    print('... burst averaging complete.  Elapsed time: %f seconds' % elapsed_time)
 
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
@@ -124,25 +133,25 @@ def optaa_benthic(ds, cal_file):
     wavelength_number = np.arange(100).astype(int)  # used as a dimensional variable
     pad = 100 - num_wavelengths
     fill_nan = np.tile(np.ones(pad) * np.nan, (len(burst.time), 1))
-    fill_int = np.tile(np.ones(pad) * -9999999, (len(burst.time), 1))
+    fill_int = np.tile(np.ones(pad) * FILL_INT, (len(burst.time), 1))
 
     wavelength_a = np.concatenate([burst.wavelength_a.values, fill_nan], axis=1)
     wavelength_c = np.concatenate([burst.wavelength_c.values, fill_nan], axis=1)
 
     ac = xr.Dataset({
         'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
-        'a_signal': (['time', 'wavelength_number'], np.concatenate([burst.a_signal.astype(int), fill_int], axis=1)),
-        'a_reference': (['time', 'wavelength_number'], np.concatenate([burst.a_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'a_signal': (['time', 'wavelength_number'], np.concatenate([burst.a_signal, fill_int], axis=1).astype(int)),
+        'a_reference': (['time', 'wavelength_number'], np.concatenate([burst.a_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'optical_absorption': (['time', 'wavelength_number'], np.concatenate([burst.optical_absorption, fill_nan],
                                                                              axis=1)),
         'apg': (['time', 'wavelength_number'], np.concatenate([burst.apg, fill_nan], axis=1)),
         'apg_ts': (['time', 'wavelength_number'], np.concatenate([burst.apg_ts, fill_nan], axis=1)),
         'apg_ts_s': (['time', 'wavelength_number'], np.concatenate([burst.apg_ts_s, fill_nan], axis=1)),
         'wavelength_c': (['time', 'wavelength_number'], wavelength_c),
-        'c_signal': (['time', 'wavelength_number'], np.concatenate([burst.c_signal.astype(int), fill_int], axis=1)),
-        'c_reference': (['time', 'wavelength_number'], np.concatenate([burst.c_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'c_signal': (['time', 'wavelength_number'], np.concatenate([burst.c_signal, fill_int], axis=1).astype(int)),
+        'c_reference': (['time', 'wavelength_number'], np.concatenate([burst.c_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([burst.beam_attenuation, fill_nan], axis=1)),
         'cpg': (['time', 'wavelength_number'], np.concatenate([burst.cpg, fill_nan], axis=1)),
         'cpg_ts': (['time', 'wavelength_number'], np.concatenate([burst.cpg_ts, fill_nan], axis=1)),
@@ -270,7 +279,7 @@ def optaa_profiler(ds, cal_file):
     ds['external_temp'] = opt_external_temp(ds['external_temp_raw'])
 
     # create a profile variable to uniquely identify profiles within the dataset...if the profiler moved
-    print('Determining profiler movement...')
+    print('Determining profiler movement ...')
     pks, dzdt = updown(ds['depth'].values, 10)
     if len(pks) == 2 and (pks[0] == 0 and pks[1] == len(dzdt) - 1):
         # the profiler never moved, so treat the whole data set as a time series
@@ -278,17 +287,21 @@ def optaa_profiler(ds, cal_file):
         ds['profile'] = ('time', np.zeros(len(ds['time'])).astype(int) - 1)
 
         # calculate the median of the remaining data per burst measurement (configured to run hourly for 3 minutes)
-        print('Calculating burst averages...')
+        print('Calculating burst averages ...')
+        start_time = time.time()
         binned = ds.resample(time='3600s', base=1800, loffset='1800s', skipna=True).reduce(np.median, dim='time',
                                                                                            keep_attrs=True)
         binned = binned.where(~np.isnan(binned.deployment), drop=True)
+        stop_time = time.time()
+        elapsed_time = stop_time - start_time
+        print('... burst averaging complete.  Elapsed time: %f seconds' % elapsed_time)
     else:
         # the profiler moved, so treat the data as a series of profiles
         print('Profiler moved during the deployment, treating data as a series of profiles.')
-        print('Sub-selecting upcast data only from the data set...')
+        print('Sub-selecting upcast data only from the data set ...')
         dzdt = xr.DataArray(dzdt, dims='time', coords={'time': ds['time']})
         ds = ds.where(dzdt < 0, drop=True)
-        print('Creating and adding a profile variable to the data set...')
+        print('Creating and adding a profile variable to the data set ...')
         ds = create_profile_id(ds)
 
         # group the data by profile number and bin the data into 25 cm depth bins (nominal ascent rate of the shallow
@@ -299,7 +312,7 @@ def optaa_profiler(ds, cal_file):
         partial_binning = partial(bin_profiles, site_depth=200, bin_size=0.25)
         with ProcessPoolExecutor(max_workers=N_CORES) as executor:
             binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
-                               desc='Smoothing and binning each profile into 25 cm depth bins...', file=sys.stdout))
+                               desc='Smoothing and binning each profile into 25 cm depth bins ...', file=sys.stdout))
 
         # reset the dataset now using binned profiles
         binned = [i[0] for i in binned if i is not None]
@@ -317,7 +330,7 @@ def optaa_profiler(ds, cal_file):
     # re-process the raw data in order to create the intermediate variables, correcting for the holographic
     # grating, applying the temperature and salinity corrections and applying a baseline scatter correction
     # to the absorption data. All intermediate processing outputs are added to the data set.
-    print('Re-processing the raw data, creating intermediate data products...')
+    print('Re-processing the raw data, creating intermediate data products ...')
     binned = apply_dev(binned, cal.coeffs)
     binned = apply_tscorr(binned, cal.coeffs, binned.sea_water_temperature, binned.sea_water_practical_salinity)
     binned = apply_scatcorr(binned, cal.coeffs)
@@ -331,25 +344,25 @@ def optaa_profiler(ds, cal_file):
     wavelength_number = np.arange(100).astype(int)  # used as a dimensional variable
     pad = 100 - num_wavelengths
     fill_nan = np.tile(np.ones(pad) * np.nan, (len(binned.time), 1))
-    fill_int = np.tile(np.ones(pad) * -9999999, (len(binned.time), 1))
+    fill_int = np.tile(np.ones(pad) * FILL_INT, (len(binned.time), 1))
 
     wavelength_a = np.concatenate([binned.wavelength_a.values, fill_nan], axis=1)
     wavelength_c = np.concatenate([binned.wavelength_c.values, fill_nan], axis=1)
 
     ac = xr.Dataset({
         'wavelength_a': (['time', 'wavelength_number'], wavelength_a),
-        'a_signal': (['time', 'wavelength_number'], np.concatenate([binned.a_signal.astype(int), fill_int], axis=1)),
-        'a_reference': (['time', 'wavelength_number'], np.concatenate([binned.a_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'a_signal': (['time', 'wavelength_number'], np.concatenate([binned.a_signal, fill_int], axis=1).astype(int)),
+        'a_reference': (['time', 'wavelength_number'], np.concatenate([binned.a_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'optical_absorption': (['time', 'wavelength_number'], np.concatenate([binned.optical_absorption, fill_nan],
                                                                              axis=1)),
         'apg': (['time', 'wavelength_number'], np.concatenate([binned.apg, fill_nan], axis=1)),
         'apg_ts': (['time', 'wavelength_number'], np.concatenate([binned.apg_ts, fill_nan], axis=1)),
         'apg_ts_s': (['time', 'wavelength_number'], np.concatenate([binned.apg_ts_s, fill_nan], axis=1)),
         'wavelength_c': (['time', 'wavelength_number'], wavelength_c),
-        'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal.astype(int), fill_int], axis=1)),
-        'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference.astype(int), fill_int],
-                                                                      axis=1)),
+        'c_signal': (['time', 'wavelength_number'], np.concatenate([binned.c_signal, fill_int], axis=1).astype(int)),
+        'c_reference': (['time', 'wavelength_number'], np.concatenate([binned.c_reference, fill_int],
+                                                                      axis=1).astype(int)),
         'beam_attenuation': (['time', 'wavelength_number'], np.concatenate([binned.beam_attenuation, fill_nan],
                                                                            axis=1)),
         'cpg': (['time', 'wavelength_number'], np.concatenate([binned.cpg, fill_nan], axis=1)),
@@ -421,7 +434,7 @@ def main(argv=None):
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
         optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
-        cal_file = ('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
+        cal_file = ('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
 
         # check to see if we downloaded any data
         if not optaa:
@@ -457,7 +470,7 @@ def main(argv=None):
             data = m2m_collect(r, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
             if data:
                 optaa.append(data)
-                cal_file.append('{}.{}.{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
+                cal_file.append('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
 
         # check to see if we downloaded any data (remove empty/none entries from the list)
         if not optaa:

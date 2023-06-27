@@ -16,7 +16,7 @@ sensor = '08-OPTAAD106'                         # OOI Net sensor designator
 stream = 'optaa_sample'                         # OOI Net stream name
 method = 'streamed'                             # OOI Net data delivery method
 tag = '.*deployment0006.*OPTAA.*\\.nc$'         # limit request to OPTAA NetCDF files from Deployment 6
-level = 'profiler'                              # local directory name, level below site
+level = 'bep'                                   # local directory name, level below site
 instrmt = 'optaa'                               # local directory name, instrument below level
 
 # OPTAA data is best downloaded from the Gold Copy THREDDS catalog (much faster than an M2M request)
@@ -29,7 +29,7 @@ cal_path = os.path.abspath(cal_path)
 if not os.path.exists(cal_path):
     os.makedirs(cal_path)
 
-cal_file = ('{}-{}-{}.deploy06.cal_coeffs.json'.format(site.lower(), level, instrmt))
+cal_file = ('{}.{}.{}.deploy06.cal_coeffs.json'.format(site.lower(), level, instrmt))
 cal_file = os.path.join(cal_path, cal_file)
 
 # clean-up and reorganize

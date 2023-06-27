@@ -42,7 +42,7 @@ retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 SESSION.mount('https://', adapter)
 
-# set up constants used in parallel processing and dask arrays
+# set up constants used in parallel and multithreading processing
 N_CORES = min(16, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
 N_THREADS = min(16, int(os.cpu_count() / 2) + 4)  # number of threads to use for multithreading operations
 

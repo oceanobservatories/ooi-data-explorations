@@ -29,7 +29,7 @@ cal_path = os.path.abspath(cal_path)
 if not os.path.exists(cal_path):
     os.makedirs(cal_path)
 
-cal_file = ('{}-{}-{}.deploy06.cal_coeffs.json'.format(site.lower(), level, instrmt))
+cal_file = ('{}.{}.{}.deploy06.cal_coeffs.json'.format(site.lower(), level, instrmt))
 cal_file = os.path.join(cal_path, cal_file)
 
 # clean-up and reorganize
@@ -42,7 +42,7 @@ out_path = os.path.abspath(out_path)
 if not os.path.exists(out_path):
     os.makedirs(out_path)
 
-out_file = ('%s.%s.%s.deploy06.%s.%s.nc' % (site.lower(), level, instrmt, method, stream))
+out_file = ('{}.{}.{}.deploy06.{}.{}.nc'.format(site.lower(), level, instrmt, method, stream))
 nc_out = os.path.join(out_path, out_file)
 
 optaa.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)

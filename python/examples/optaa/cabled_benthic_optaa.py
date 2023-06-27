@@ -42,7 +42,7 @@ out_path = os.path.abspath(out_path)
 if not os.path.exists(out_path):
     os.makedirs(out_path)
 
-out_file = ('%s.%s.%s.deploy06.%s.%s.nc' % (site.lower(), level, instrmt, method, stream))
+out_file = ('{}.{}.{}.deploy06.{}.{}.nc'.format(site.lower(), level, instrmt, method, stream))
 nc_out = os.path.join(out_path, out_file)
 
 optaa.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)

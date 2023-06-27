@@ -734,7 +734,7 @@ def main(argv=None):
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
         optaa = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
-        cal_file = ('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), node.lower(), sensor.lower(), deploy))
+        cal_file = ('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
 
         # check to see if we downloaded any data
         if not optaa:
@@ -770,8 +770,7 @@ def main(argv=None):
             data = m2m_collect(r, ('.*deployment%04d.*OPTAA.*\\.nc$' % deploy))
             if data:
                 optaa.append(data)
-                cal_file.append('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site.lower(), node.lower(),
-                                                                               sensor.lower(), deploy))
+                cal_file.append('{}-{}-{}.deploy{:02d}.cal_coeffs.json'.format(site, node, sensor, deploy))
 
         # check to see if we downloaded any data (remove empty/none entries from the list)
         if not optaa:

@@ -93,8 +93,13 @@ def optaa_benthic(ds, cal_file):
     }
     ds = ds.rename(rename)
 
-    # Delete the first 60 seconds of the data record per recommendation from the vendor
-    ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time / 1000 > 60)
+    # Delete the first 45 seconds of the data record per recommendation from the vendor. Note, originally the vendor
+    # recommended deleting the first 45 seconds, then 60 seconds and then 120 seconds.  They never provided a data
+    # based reason for the change in recommendation. Within OOI, instruments were programmed to run for 60 seconds,
+    # then 120 seconds and then 240 seconds ... and it is all mixed up across the various data sets.  So, we are
+    # going to use the 45-second recommendation and apply it to all data sets. If the vendor ever provides an analysis
+    # justifying the change in recommendation, we can revisit this.
+    ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time / 1000 > 45)
     ds = ds.dropna(dim='time', subset=['elapsed_run_time'])
 
     # convert internal and external temperature sensors from raw counts to degrees Celsius
@@ -270,8 +275,13 @@ def optaa_profiler(ds, cal_file):
     }
     ds = ds.rename(rename)
 
-    # Delete the first 60 seconds of the data record per recommendation from the vendor
-    ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time > 60)
+    # Delete the first 45 seconds of the data record per recommendation from the vendor. Note, originally the vendor
+    # recommended deleting the first 45 seconds, then 60 seconds and then 120 seconds.  They never provided a data
+    # based reason for the change in recommendation. Within OOI, instruments were programmed to run for 60 seconds,
+    # then 120 seconds and then 240 seconds ... and it is all mixed up across the various data sets.  So, we are
+    # going to use the 45-second recommendation and apply it to all data sets. If the vendor ever provides an analysis
+    # justifying the change in recommendation, we can revisit this.
+    ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time / 1000 > 45)
     ds = ds.dropna(dim='time', subset=['elapsed_run_time'])
 
     # convert internal and external temperature sensors from raw counts to degrees Celsius

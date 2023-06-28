@@ -80,29 +80,25 @@ import xarray as xr
 
 from ooi_data_explorations.common import AUTH
 
-#CE01ISSP URLs
-CE01ISSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
+# CE01ISSP URLs
 CE01ISSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE01ISSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE01ISSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
 CE01ISSP_WINCH = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE01ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_wm_eng_recovered'
 
-#CE02SHSP URLs
-CE02SHSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
+# CE02SHSP URLs
 CE02SHSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE02SHSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE02SHSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
 CE02SHSP_WINCH = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE02SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_wm_eng_recovered'
 
-#CE06ISSP URLs
-CE06ISSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
+# CE06ISSP URLs
 CE06ISSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE06ISSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE06ISSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
 CE06ISSP_WINCH = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE06ISSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_wm_eng_recovered'
 
-#CE07SHSP URLs
-CE07SHSP_CTDPF = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered'
+# CE07SHSP URLs
 CE07SHSP_BATTS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_dbg_pdbg_batt_eng_recovered'
 CE07SHSP_CPASS = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_hmr_eng_recovered'
 CE07SHSP_SBE50 = 'https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/CE07SHSP/SP001/00-SPPENG000/recovered_cspp/cspp_eng_cspp_wc_sbe_eng_recovered'
@@ -182,36 +178,6 @@ class OOIM2M():
         else:
             depth = 87
         return site,depth  #Return the site and depth for use later.
-    
-    def cspp_ctd(nc):
-        site,depth = OOIM2M.find_site(nc)
-        data = pd.DataFrame()  #Create a placeholder dataframe.
-        for remote in nc:  #For each remote netcdf location
-            dataset = xr.open_dataset(remote)  #Open the dataset.
-            d = ({'datetime':dataset['profiler_timestamp'],   #Pull the following variables.
-                  'pressure':dataset['pressure'], 
-                  'temperature':dataset['temperature'], 
-                  'salinity':dataset['salinity'], 
-                  'density':dataset['density'],
-                  'conductivity':dataset['conductivity']})   
-            d = pd.DataFrame(data = d) #Put the variables in a dataframe.
-            data = pd.concat([data,d])  #Concatenate the new dataframe with the old dataframe.
-        data = data[data.pressure < depth]  #Remove obviously bad values.
-        data = data[data.pressure > 0]
-        data = data[data.temperature > 0]
-        data = data[data.salinity > 2]
-        data = data[data.salinity < 42]
-        data = data.dropna()  #Remove rows with any NaNs.
-        data = data.sort_values('datetime')  #Sort the data chronologically.
-        data = data.reset_index(drop=True)  #Reset the index.
-        print('CTD data for ' + site + ' available.')
-        print('CTD datetime in UTC.')
-        print('CTD pressure in dbars.')
-        print('CTD temperature in degC.')
-        print('CTD salinity in PSU.')
-        print('CTD density in kg m^-3.')
-        print('CTD conductivity in S m^-1.')
-        return data
 
     def cspp_batts(nc):  #Returns two dataframes, one for each battery.
         site,depth = OOIM2M.find_site(nc)

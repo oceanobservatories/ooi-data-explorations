@@ -11,11 +11,11 @@ import xarray as xr
 from scipy.interpolate import griddata
 
 from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, get_vocabulary, \
-    update_dataset, ENCODINGS
+    update_dataset, FILL_INT, FILL_FLOAT, ENCODINGS
+from ooi_data_explorations.profilers import create_profile_id
 from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 # load configuration settings
-FILL_INT = -9999999
 ATTRS = dict({
     'raw_backscatter': {
         'long_name': 'Raw Optical Backscatter at 700 nm',
@@ -78,20 +78,20 @@ ATTRS = dict({
         'comment': ('Total (particulate + water) optical backscatter at 700 nm, derived from the Volume '
                     'Scattering Function and corrected for effects of temperature and salinity.'),
         'data_product_identifier': 'FLUBSCT_L2',
-        'ancillary_variables': ('beta_700 seawater_temperature practical_salinity seawater_scattering_coefficient '
-                                'bback_qc_executed bback_qc_results'),
-        '_FillValue': np.nan
+        'ancillary_variables': ('beta_700 sea_water_temperature sea_water_practical_salinity '
+                                'sea_water_scattering_coefficient bback_qc_executed bback_qc_results'),
+        '_FillValue': FILL_FLOAT
     },
-    'seawater_scattering_coefficient': {
-        'long_name': 'Seawater Optical Backscatter at 700 nm',
+    'sea_water_scattering_coefficient': {
+        'long_name': 'Sea Water Optical Backscatter at 700 nm',
         'units': 'm-1',
         'comment': ('Theoretical estimation of the optical backscatter for pure seawater at 700 nm adjusted for the'
                     'effects of temperature and salinity. This value is added to the particulate optical backscatter '
                     'measurement to create the total optical backscatter measurement contained in this data set.'),
-        'ancillary_variables': 'seawater_temperature practical_salinity',
-        '_FillValue': np.nan
+        'ancillary_variables': 'sea_water_temperature sea_water_practical_salinity',
+        '_FillValue': FILL_FLOAT
     },
-    'practical_salinity': {
+    'sea_water_practical_salinity': {
         'long_name': 'Practical Salinity',
         'standard_name': 'sea_water_practical_salinity',
         'units': '1',
@@ -101,16 +101,16 @@ ATTRS = dict({
                     'Salinity (the mass fraction of dissolved salt in sea water), but they are not interchangeable. '
                     'Measurements are from a co-located CTD.'),
         'data_product_identifier': 'PRACSAL_L2',
-        '_FillValue': np.nan
+        '_FillValue': FILL_FLOAT
     },
-    'seawater_temperature': {
-        'long_name': 'Seawater Temperature',
+    'sea_water_temperature': {
+        'long_name': 'Sea Water Temperature',
         'standard_name': 'sea_water_temperature',
         'units': 'degree_Celsius',
         'comment': ('Sea water temperature is the in situ temperature of the sea water. Measurements are from a '
                     'co-located CTD'),
         'data_product_identifier': 'TEMPWAT_L1',
-        '_FillValue': np.nan
+        '_FillValue': FILL_FLOAT
     },
 })
 
@@ -118,7 +118,7 @@ ATTRS = dict({
 def quality_checks(ds):
     """
     Assessment of the raw data and the calculated parameters for quality
-    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    using a subset of the QARTOD flags to indicate the quality. QARTOD
     flags used are:
 
         1 = Pass
@@ -160,20 +160,19 @@ def quality_checks(ds):
 
 def flort_datalogger(ds, burst=False):
     """
-    Takes flort data recorded by the data loggers used in the CGSN/EA moorings
+    Takes FLORT data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
     renaming parameters and dropping some that are of limited use. Additionally,
     re-organize some of the variables to permit better assessments of the data.
 
-    :param ds: initial flort data set downloaded from OOI via the M2M system
+    :param ds: initial FLORT data set downloaded from OOI via the M2M system
     :param burst: resample the data to the defined time interval
     :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = not used
+    #   suspect_timestamp = not used (from the CSPP data, not part of the mooring data)
     #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
     drop_vars = ['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                  'measurement_wavelength_cdom', 'measurement_wavelength_chl']
     for var in ds.variables:
@@ -182,15 +181,14 @@ def flort_datalogger(ds, burst=False):
 
     # check for data from a co-located CTD, if not present add it and reset the fill value for the optical
     # backscatter derived values
-    if 'temp' not in ds.variables and "seawater_temperature" not in ds.variables:
-        ds['temp'] = ('time', ds['deployment'].data * np.nan)
-        ds['practical_salinity'] = ('time', ds['deployment'].data * np.nan)
-        ds['optical_backscatter'] = ds['optical_backscatter'] * np.nan
-        ds['seawater_scattering_coefficient'] = ds['seawater_scattering_coefficient'] * np.nan
+    if 'sea_water_temperature' not in ds.variables:
+        ds['sea_water_temperature'] = ('time', ds['deployment'].data * FILL_FLOAT)
+        ds['sea_water_practical_salinity'] = ('time', ds['deployment'].data * FILL_FLOAT)
+        ds['optical_backscatter'] = ds['optical_backscatter'] * FILL_FLOAT
+        ds['seawater_scattering_coefficient'] = ds['seawater_scattering_coefficient'] * FILL_FLOAT
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'temp': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -203,6 +201,7 @@ def flort_datalogger(ds, burst=False):
         'optical_backscatter': 'bback',
         'optical_backscatter_qc_executed': 'bback_qc_executed',
         'optical_backscatter_qc_results': 'bback_qc_results',
+        'seawater_scattering_coefficient': 'sea_water_scattering_coefficient',
     }
     ds = ds.rename(rename)
 
@@ -231,10 +230,9 @@ def flort_datalogger(ds, burst=False):
                                                                       chl_flag])).max(axis=0, initial=1))
 
     if burst:
-        # Add a load step due to updates in xarray to be allowed to us nanmedian
-        ds.load()
-        # re-sample the data collected in burst mode using a 15-minute median average
-        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+        # resample the data to the defined time interval
+        burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
+                                                                                        keep_attrs=True)
 
         # for each of the three FLORT measurements, calculate stats (min, max, and the standard deviation)
         # for each of the bursts
@@ -266,27 +264,25 @@ def flort_datalogger(ds, burst=False):
 
 def flort_instrument(ds):
     """
-    Takes flort data recorded by the Sea-Bird Electronics SBE16Plus used in the
+    Takes FLORT data recorded by the Sea-Bird Electronics SBE16Plus used in the
     CGSN/EA moorings and cleans up the data set to make it more user-friendly.
     Primary task is renaming parameters and dropping some that are of limited
     use. Additionally, re-organize some of the variables to permit better
     assessments of the data.
 
-    :param ds: initial flort data set downloaded from OOI via the M2M system
+    :param ds: initial FLORT data set downloaded from OOI via the M2M system
     :return ds: cleaned up data set
     """
     # drop some of the variables:
     #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = not used
+    #   suspect_timestamp = not used (from the CSPP data, not part of the mooring data)
     #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   pressure_depth == variable assigned if this was a FLORT on a CSPP, not with moorings
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'temp': 'seawater_temperature',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -299,6 +295,7 @@ def flort_instrument(ds):
         'optical_backscatter': 'bback',
         'optical_backscatter_qc_executed': 'bback_qc_executed',
         'optical_backscatter_qc_results': 'bback_qc_results',
+        'seawater_scattering_coefficient': 'sea_water_scattering_coefficient'
     }
     ds = ds.rename(rename)
 
@@ -349,20 +346,17 @@ def flort_cspp(ds):
     """
     # drop some of the variables:
     #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = not used
+    #   suspect_timestamp = not used, nor well-defined by the CSPP software
     #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   seawater_scattering_coefficient == not used
     ds = ds.reset_coords()
     ds = ds.drop(['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
                   'measurement_wavelength_cdom', 'measurement_wavelength_chl'])
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'pressure': 'seawater_pressure',
-        'pressure_qc_executed': 'seawater_pressure_qc_executed',
-        'pressure_qc_results': 'seawater_pressure_qc_results',
-        'temperature': 'seawater_temperature',
-        'salinity': 'practical_salinity',
+        'pressure': 'sea_water_pressure',
+        'pressure_qc_executed': 'sea_water_pressure_qc_executed',
+        'pressure_qc_results': 'sea_water_pressure_qc_results',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -375,6 +369,7 @@ def flort_cspp(ds):
         'optical_backscatter': 'bback',
         'optical_backscatter_qc_executed': 'bback_qc_executed',
         'optical_backscatter_qc_results': 'bback_qc_results',
+        'seawater_scattering_coefficient': 'sea_water_scattering_coefficient'
     }
     ds = ds.rename(rename)
 
@@ -387,6 +382,10 @@ def flort_cspp(ds):
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
         ds[value].attrs['ooinet_variable_name'] = key
+
+    # create a profile variable to uniquely identify profiles within the dataset
+    print('Creating and adding a profile variable to the data set ...')
+    ds = create_profile_id(ds)
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
@@ -419,9 +418,8 @@ def flort_wfp(ds, grid=False):
     """
     # drop some of the variables:
     #   internal_timestamp == superseded by time, redundant so can remove
-    #   suspect_timestamp = not used
+    #   suspect_timestamp = not used (from the CSPP data, not part of the WFP data)
     #   measurement_wavelength_* == metadata, move into variable attributes.
-    #   seawater_scattering_coefficient == not used
     #   raw_internal_temp == not available, NaN filled
     ds = ds.reset_coords()
     drop_vars = ['internal_timestamp', 'suspect_timestamp', 'measurement_wavelength_beta',
@@ -432,8 +430,7 @@ def flort_wfp(ds, grid=False):
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {
-        'int_ctd_pressure': 'seawater_pressure',
-        'ctdpf_ckl_seawater_temperature': 'seawater_temperature',
+        'int_ctd_pressure': 'sea_water_pressure',
         'raw_signal_chl': 'raw_chlorophyll',
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
@@ -446,6 +443,7 @@ def flort_wfp(ds, grid=False):
         'optical_backscatter': 'bback',
         'optical_backscatter_qc_executed': 'bback_qc_executed',
         'optical_backscatter_qc_results': 'bback_qc_results',
+        'seawater_scattering_coefficient': 'sea_water_scattering_coefficient'
     }
     for key in rename.keys():
         if key in ds.variables:
@@ -511,7 +509,7 @@ def flort_wfp(ds, grid=False):
                     da.attrs['_FillValue'] = FILL_INT
                     da = da.astype(int)
                 else:
-                    da.attrs['_FillValue'] = np.nan
+                    da.attrs['_FillValue'] = FILL_FLOAT
                     da = da.astype(float)
 
                 # add to the list
@@ -521,6 +519,10 @@ def flort_wfp(ds, grid=False):
         gridded = xr.merge(gridded)
         gridded.attrs = ds.attrs
         ds = gridded
+    else:
+        # create a profile variable to uniquely identify profiles within the dataset
+        print('Creating and adding a profile variable to the data set ...')
+        ds = create_profile_id(ds)
 
     return ds
 

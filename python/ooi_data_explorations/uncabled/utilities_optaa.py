@@ -185,8 +185,14 @@ def convert_raw(ref, sig, tintrn, offset, tarray, tbins):
         values from AC-S device file [deg_C]
     :return: uncorrected beam attenuation/optical absorption coefficients [m-1]
     """
-    # create a linear temperature correction factor based on the internal instrument temperature
-    # find the temperature bins corresponding to the values bracketing the internal temperature.
+    # create a linear temperature correction factor based on the internal instrument temperature by interpolating
+    # between the temperature bins in the calibration file that bracket the internal temperature.
+    if tintrn < tbins[0] or tintrn > tbins[-1]:
+        # if the internal temperature is out of range, return NaNs. this can happen if the internal temperature sensor
+        # is not working properly (rare, but it has happened).
+        pg = np.ones(sig.shape) * np.nan
+        return pg
+
     t0 = tbins[tbins - tintrn < 0][-1]  # set first bracketing temperature
     t1 = tbins[tintrn - tbins < 0][0]   # set second bracketing temperature
 
@@ -269,7 +275,7 @@ def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grat
     pg = convert_raw(reference, signal, internal_temperature, offset, tarray, tbins)
 
     # if the grating index is set, correct for the often observed jump at the mid-point of the spectra
-    if grating:
+    if grating and np.all(~np.isnan(pg)):
         pg, jump = holo_grater(wavelengths, pg, grating)
     else:
         jump = np.nan

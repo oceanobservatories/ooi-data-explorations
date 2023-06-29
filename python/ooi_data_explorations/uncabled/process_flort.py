@@ -29,7 +29,7 @@ ATTRS = dict({
         'comment': 'Raw chlorophyll fluorescence (470 nm excitation/695 nm emission) measurements.',
         'data_product_identifier': 'CHLAFLO_L0'
     },
-    'raw_cdom': {
+    'raw_fluorometric_cdom': {
         'long_name': 'Raw CDOM Fluorescence',
         'units': 'counts',
         'comment': 'Raw CDOM fluorescence (370 nm excitation/460 nm emission) measurements.',
@@ -56,7 +56,7 @@ ATTRS = dict({
                     'plant and animal matter, and can enter coastal areas in river run-off containing organic '
                     'materials leached from soils.'),
         'data_product_identifier': 'CDOMFLO_L1',
-        'ancillary_variables': 'raw_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results'
+        'ancillary_variables': 'raw_fluorometric_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results'
     },
     'beta_700': {
         'long_name': 'Volume Scattering Function at 700 nm',
@@ -142,7 +142,7 @@ def quality_checks(ds):
     # test the min/max values of the raw measurements
     m = (ds.raw_backscatter <= 0) | (ds.raw_backscatter > max_counts)
     beta_flag[m] = 4    # raw volume scattering coefficient values off scale
-    m = (ds.raw_cdom <= 0) | (ds.raw_cdom > max_counts)
+    m = (ds.raw_fluorometric_cdom <= 0) | (ds.raw_fluorometric_cdom > max_counts)
     cdom_flag[m] = 4    # raw CDOM values off scale
     m = (ds.raw_chlorophyll <= 0) | (ds.raw_chlorophyll > max_counts)
     chl_flag[m] = 4     # raw chlorophyll values off scale
@@ -193,7 +193,7 @@ def flort_datalogger(ds, burst=False):
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
+        'raw_signal_cdom': 'raw_fluorometric_cdom',
         'raw_signal_beta': 'raw_backscatter',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
@@ -236,13 +236,13 @@ def flort_datalogger(ds, burst=False):
 
         # for each of the three FLORT measurements, calculate stats (min, max, and the standard deviation)
         # for each of the bursts
-        cdom = ds['fluorometric_cdom'].resample(time='900s', skipna=True)
+        cdom = ds['fluorometric_cdom'].resample(time='900s', base=3150, loffset='450s', skipna=True)
         cdom = np.array([cdom.min('time').values, cdom.max('time').values, cdom.std('time').values])
 
-        chl = ds['estimated_chlorophyll'].resample(time='900s', skipna=True)
+        chl = ds['estimated_chlorophyll'].resample(time='900s', base=3150, loffset='450s', skipna=True)
         chl = np.array([chl.min('time').values, chl.max('time').values, chl.std('time').values])
 
-        beta = ds['beta_700'].resample(time='900s', skipna=True)
+        beta = ds['beta_700'].resample(time='900s', base=3150, loffset='450s', skipna=True)
         beta = np.array([beta.min('time').values, beta.max('time').values, beta.std('time').values])
 
         # create a data set with the burst statistics for the variables
@@ -287,7 +287,7 @@ def flort_instrument(ds):
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
+        'raw_signal_cdom': 'raw_fluorometric_cdom',
         'raw_signal_beta': 'raw_backscatter',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
@@ -311,7 +311,7 @@ def flort_instrument(ds):
 
     # check if the raw data for all three channels is 0, if so the FLORT wasn't talking to the CTD and these are
     # all just fill values that can be removed.
-    ds = ds.where(ds['raw_backscatter'] + ds['raw_cdom'] + ds['raw_chlorophyll'] > 0, drop=True)
+    ds = ds.where(ds['raw_backscatter'] + ds['raw_fluorometric_cdom'] + ds['raw_chlorophyll'] > 0, drop=True)
     if len(ds.time) == 0:
         # this was one of those deployments where the FLORT was never able to communicate with the CTD.
         warnings.warn('Communication failure between the FLORT and the CTDBP. No data was recorded.')
@@ -361,7 +361,7 @@ def flort_cspp(ds):
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
+        'raw_signal_cdom': 'raw_fluorometric_cdom',
         'raw_signal_beta': 'raw_backscatter',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',
@@ -435,7 +435,7 @@ def flort_wfp(ds, grid=False):
         'fluorometric_chlorophyll_a': 'estimated_chlorophyll',
         'fluorometric_chlorophyll_a_qc_executed': 'estimated_chlorophyll_qc_executed',
         'fluorometric_chlorophyll_a_qc_results': 'estimated_chlorophyll_qc_results',
-        'raw_signal_cdom': 'raw_cdom',
+        'raw_signal_cdom': 'raw_fluorometric_cdom',
         'raw_signal_beta': 'raw_backscatter',
         'total_volume_scattering_coefficient': 'beta_700',
         'total_volume_scattering_coefficient_qc_executed': 'beta_700_qc_executed',

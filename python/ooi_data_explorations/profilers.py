@@ -14,8 +14,8 @@ def create_profile_id(ds):
     deployment to create a unique profile identifier for each profile in the
     data set.
 
-    :param ds: data set containing the profile data
-    :return: data set with a profile variable added
+    :param ds: dataset containing the profile data
+    :return: dataset with a profile variable added
     """
     # create an initial profile number for each record in the data set
     ds['profile'] = ds['deployment'].astype('int32') * 0
@@ -152,7 +152,7 @@ def updown(db, db_level):
             m[cnt + step] = False  # mark extrema for deletion
             step += 1  # bump the stepper
         else:  # change is large enough, but does it qualify as a direction change?
-            if cnt + step == len(pks):
+            if cnt + step + 1 == len(pks):
                 break
 
             j = cnt + step
@@ -163,24 +163,22 @@ def updown(db, db_level):
                 if sg1 == sg2:  # nahh, we're still going the same way
                     m[j] = False  # mark extrema for deletion
                     step = step + 1  # bump the stepper
-                else:  # maybe -- this slows things down
+                else:  # maybe -- this slows things down quite a bit
                     # find extrema > db_level to the left of the current point
-                    lft = db[pks[:j]] - db[pks[j]]
-                    i = np.where(np.abs(lft) > db_level)[0]
-
-                    if len(i) == 0:
+                    extrema = np.abs(db[pks[:j]] - db[pks[j]])
+                    lft = extrema[extrema > db_level]
+                    if len(lft) == 0:
                         a = 0
                     else:
-                        a = i[-1]
+                        a = np.where(extrema == lft[-1])[0][0]
 
                     # find extrema > db_level to the right of the current point
-                    rght = db[pks[j]+1:] - db[pks[j]]
-                    i = np.where(np.abs(rght) > db_level)[0]
-
-                    if len(i) == 0:
+                    extrema = np.abs(db[pks[j]+1:] - db[pks[j]])
+                    rght = extrema[extrema > db_level]
+                    if len(rght) == 0:
                         b = len(pks)
                     else:
-                        b = j + i[0]
+                        b = j + np.where(extrema == rght[0])[0][0]
 
                     # set the min and max of the window
                     mn = np.min(db[pks[a:b]])

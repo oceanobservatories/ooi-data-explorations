@@ -2,16 +2,18 @@
 # -*- coding: utf-8 -*-
 import os
 
-from ooi_data_explorations.common import list_deployments, get_deployment_dates, get_vocabulary, m2m_request, \
-    m2m_collect, update_dataset, CONFIG, ENCODINGS
+from ooi_data_explorations.common import list_deployments, get_vocabulary, load_gc_thredds, \
+    update_dataset, CONFIG, ENCODINGS
 from ooi_data_explorations.uncabled.process_flort import flort_instrument
 
 
 def main():
-    # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
-    # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two will set path and naming conventions to save the data
-    # to the local disk
+    # Setup needed parameters for the request, the user would need to vary
+    # these to suit their own needs and sites/instruments of interest. Site,
+    # node, sensor, stream and delivery method names can be obtained from the
+    # Ocean Observatories Initiative website. The last two parameters (level
+    # and instrmt) will set path and naming conventions to save the data to the
+    # local disk.
     site = 'CE01ISSM'           # OOI Net site designator
     node = 'SBD17'              # OOI Net node designator
     sensor = '06-FLORTD000'     # OOI Net sensor designator
@@ -20,17 +22,14 @@ def main():
     level = 'buoy'              # local directory name, level below site
     instrmt = 'flort'           # local directory name, instrument below level
 
-    # We are after recovered instrument data. Determine list of deployments and use a more recent deployment to
-    # determine the start and end dates for our request.
+    # We are after recovered instrument data, let's use the 6th deployment cause why not?
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
     deploy = deployments[5]
-    start, stop = get_deployment_dates(site, node, sensor, deploy)
 
-    # request and download the data
-    r = m2m_request(site, node, sensor, method, stream, start, stop)
-    flort = m2m_collect(r, '.*FLORT.*\\.nc$')
-    flort = flort.where(flort.deployment == deploy, drop=True)  # limit to the deployment of interest
+    # download the data
+    tag = 'deployment{:04g}.*FLORT.*\\.nc$'.format(deploy)
+    flort = load_gc_thredds(site, node, sensor, method, stream, tag)
 
     # clean-up and reorganize
     flort = flort_instrument(flort)

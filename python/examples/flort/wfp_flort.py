@@ -4,7 +4,7 @@ import os
 
 from ooi_data_explorations.common import list_deployments, get_vocabulary, load_gc_thredds, \
     update_dataset, CONFIG, ENCODINGS
-from ooi_data_explorations.uncabled.process_flort import flort_datalogger
+from ooi_data_explorations.uncabled.process_flort import flort_wfp
 
 
 def main():
@@ -14,25 +14,24 @@ def main():
     # Ocean Observatories Initiative website. The last two parameters (level
     # and instrmt) will set path and naming conventions to save the data to the
     # local disk.
-    site = 'CE01ISSM'           # OOI Net site designator
-    node = 'RID16'              # OOI Net node designator
-    sensor = '02-FLORTD000'     # OOI Net sensor designator
+    site = 'CE09OSPM'           # OOI Net site designator
+    node = 'WFP01'              # OOI Net node designator
+    sensor = '04-FLORTK000'     # OOI Net sensor designator
     stream = 'flort_sample'     # OOI Net stream name
-    method = 'telemetered'      # OOI Net data delivery method
-    level = 'nsif'              # local directory name, level below site
-    instrmt = 'flort'           # local directory name, instrument below level
+    method = 'recovered_wfp'   # OOI Net data delivery method
+    level = 'profiler'          # local directory name, level below site
+    instrmt = 'flort'           # local directory name, instrument below site
 
-    # We are after telemetered data. Determine list of deployments and use the most recent (presumably active).
+    # We are after the recovered data. Determine list of deployments and use data from one of the earlier deployments
     vocab = get_vocabulary(site, node, sensor)[0]
     deployments = list_deployments(site, node, sensor)
-    deploy = deployments[-1]
+    deploy = deployments[-4]
 
-    # download the data
-    tag = 'deployment{:04g}.*FLORT.*\\.nc$'.format(deploy)
-    flort = load_gc_thredds(site, node, sensor, method, stream, tag)
+    # download the data from the Gold Copy THREDDS server
+    flort = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*FLORT.*\\.nc$' % deploy))
 
     # clean-up and reorganize
-    flort = flort_datalogger(flort, burst=True)
+    flort = flort_wfp(flort, grid=False)
     flort = update_dataset(flort, vocab['maxdepth'])
 
     # save the data
@@ -41,7 +40,7 @@ def main():
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
-    out_file = ('%s.%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), level, instrmt, deploy, method, stream))
+    out_file = ('%s.%s.deploy%02d.%s.%s.nc' % (site.lower(), instrmt, deploy, method, stream))
     nc_out = os.path.join(out_path, out_file)
 
     flort.to_netcdf(nc_out, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)

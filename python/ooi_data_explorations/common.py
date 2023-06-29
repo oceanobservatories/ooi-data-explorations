@@ -66,6 +66,10 @@ VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Inform
 STREAM_URL = '12575/stream/byname/'                          # Stream Information
 PARAMETER_URL = '12575/parameter/'                           # Parameter Information
 
+# other constants used in the code
+FILL_INT = -9999999
+FILL_FLOAT = np.nan
+
 # load the access credentials
 try:
     nrc = netrc.netrc()

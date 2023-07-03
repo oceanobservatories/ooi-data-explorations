@@ -8,15 +8,18 @@ from ooi_data_explorations.uncabled.process_flort import flort_cspp
 
 
 def main():
-    # Setup needed parameters for the request, the user would need to vary these to suit their own needs and
-    # sites/instruments of interest. Site, node, sensor, stream and delivery method names can be obtained from the
-    # Ocean Observatories Initiative web site. The last two parameters (level and instrmt) will set path and naming
-    # conventions to save the data to the local disk.
+    # Setup needed parameters for the request, the user would need to vary
+    # these to suit their own needs and sites/instruments of interest. Site,
+    # node, sensor, stream and delivery method names can be obtained from the
+    # Ocean Observatories Initiative website. The last two parameters (level
+    # and instrmt) will set path and naming conventions to save the data to the
+    # local disk.
     site = 'CE02SHSP'           # OOI Net site designator
     node = 'SP001'              # OOI Net node designator
     sensor = '07-FLORTJ000'     # OOI Net sensor designator
     stream = 'flort_sample'     # OOI Net stream name
     method = 'recovered_cspp'   # OOI Net data delivery method
+    level = 'profiler'          # local directory name, level below site
     instrmt = 'flort'           # local directory name, instrument below site
 
     # We are after the recovered data. Determine list of deployments and use data from one of the earlier deployments
@@ -32,7 +35,7 @@ def main():
     flort = update_dataset(flort, vocab['maxdepth'])
 
     # save the data
-    out_path = os.path.join(CONFIG['base_dir']['m2m_base'], site.lower(), instrmt)
+    out_path = os.path.join(CONFIG['base_dir']['m2m_base'], site.lower(), level, instrmt)
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)

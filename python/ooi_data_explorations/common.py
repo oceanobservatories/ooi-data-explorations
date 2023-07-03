@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 """
 @author Christopher Wingard
-@brief Provides common base classes, definitions and other utilities used to access and download OOI data via the
-    M2M interface
+@brief Provides common base classes, definitions and other utilities used to
+    access and download OOI data via the M2M interface, the Gold Copy THREDDS
+    catalog, and the internal JupyterHub kdata folders. Additional utilities
+    are provided to process and clean-up the data, as well as to save the data
+    to the local disk.
 """
 import argparse
+import glob
+
 import dask
 import io
 import netrc
@@ -31,13 +36,28 @@ from urllib3.util import Retry
 # filter future warnings for now
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# setup constants used to access the data from the different M2M interfaces
+# set up constants used to access the data from the different M2M interfaces
 SESSION = requests.Session()
-retry = Retry(connect=5, backoff_factor=0.5)
+retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 SESSION.mount('https://', adapter)
 
+# set up constants used in parallel and multithreading processing
+N_CORES = min(16, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
+N_THREADS = min(16, int(os.cpu_count() / 2) + 4)  # number of threads to use for multithreading operations
+
+# set the base URL for the M2M interface
 BASE_URL = 'https://ooinet.oceanobservatories.org/api/m2m/'  # base M2M URL
+try:
+    # check to see if we are on the internal network, if so use that URL instead
+    intra = SESSION.get('https://ooinet.intra.oceanobservatories.org', timeout=1)
+    intra.raise_for_status()
+    BASE_URL = 'https://ooinet.intra.oceanobservatories.org/api/m2m/'  # base intranet M2M URL
+    INTRANET = True
+except requests.exceptions.RequestException as e:
+    INTRANET = False
+
+# add the different M2M interfaces to the base URL
 ANNO_URL = '12580/anno/'                                     # Annotation Information
 ASSET_URL = '12587/asset/'                                   # Asset and Calibration Information
 DEPLOY_URL = '12587/events/deployment/inv/'                  # Deployment Information
@@ -46,17 +66,20 @@ VOCAB_URL = '12586/vocab/inv/'                               # Vocabulary Inform
 STREAM_URL = '12575/stream/byname/'                          # Stream Information
 PARAMETER_URL = '12575/parameter/'                           # Parameter Information
 
+# other constants used in the code
+FILL_INT = -9999999
+FILL_FLOAT = np.nan
+
 # load the access credentials
 try:
     nrc = netrc.netrc()
     AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
     if AUTH is None:
-        raise RuntimeError(
-            'No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
+        raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
 except FileNotFoundError as e:
     raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
 
-# setup a default location to save the data
+# set up a default location to save the data
 home = os.path.expanduser('~')
 CONFIG = {
     'base_dir': {
@@ -111,7 +134,7 @@ def list_nodes(site):
     Based on the site name, list the nodes that are available.
 
     :param site: Site name to query
-    :return: List of the the available nodes for this site
+    :return: List of the available nodes for this site
     """
     r = SESSION.get(BASE_URL + DEPLOY_URL + site, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
@@ -126,7 +149,7 @@ def list_sensors(site, node):
 
     :param site: Site name to query
     :param node: Node name to query
-    :return: list of the the available sensors for this site and node
+    :return: list of the available sensors for this site and node
     """
     r = SESSION.get(BASE_URL + DEPLOY_URL + site + '/' + node, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
@@ -607,7 +630,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     :return data: The results of the data request detailing where the data is
         located for download
     """
-    # setup the beginning and ending date/time
+    # set up the beginning and ending date/time
     if start:
         begin_date = '?beginDT=' + start
     else:
@@ -618,7 +641,7 @@ def m2m_request(site, node, sensor, method, stream, start=None, stop=None):
     else:
         end_date = '&endDT=' + datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
-    options = begin_date + end_date + '&format=application/netcdf'
+    options = begin_date + end_date + '&format=application/netcdf&email=None'
     r = SESSION.get(BASE_URL + SENSOR_URL + site + '/' + node + '/' + sensor + '/' + method + '/' + stream + options,
                     auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
@@ -653,7 +676,7 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     """
     Use a regex tag combined with the results of the M2M data request to
     collect the data from the THREDDS catalog. Collected data is gathered
-    into an xarray dataset for further processing.
+    into a xarray dataset for further processing.
 
     :param data: JSON object returned from M2M data request with details on
         where the data is to be found for download
@@ -661,7 +684,7 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
         collect the correct ones
     :param use_dask: Boolean flag indicating whether to load the data using
         dask arrays (default=False)
-    :return: the collected data as an xarray dataset
+    :return: the collected data as a xarray dataset
     """
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
     url = [url for url in data['allURLs'] if re.match(r'.*thredds.*', url)][0]
@@ -671,12 +694,12 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     print('Downloading %d data file(s) from the user''s OOI M2M THREDDS catalog' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
-        frames = [process_file(file, gc=False, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
+        frames = [process_file(file, gc='M2M', use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
                                                                                                'Processing Data Files')]
     else:
         # multiple files, use multithreading to download concurrently
-        part_files = partial(process_file, gc=False, use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        part_files = partial(process_file, gc='M2M', use_dask=use_dask)
+        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
@@ -697,7 +720,7 @@ def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask
     designator parameters to select the catalog of interest and the regex tag
     to select the NetCDF files of interest. In most cases, the default tag
     can be used, however for instruments that require data from a co-located
-    sensor, a more detailed regex tag will be required to insure that only data
+    sensor, a more detailed regex tag will be required to ensure that only data
     files from the instrument of interest are loaded.
 
     :param site: Site designator, extracted from the first part of the
@@ -712,7 +735,7 @@ def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask
     :param tag: regex pattern to select the NetCDF files to download
     :param use_dask: Boolean flag indicating whether to load the data using
         dask arrays (default=False)
-    :return data: All of the data, combined into a single dataset
+    :return data: All the data, combined into a single dataset
     """
     # download the data from the Gold Copy THREDDS server
     dataset_id = '-'.join([site, node, sensor, method, stream]) + '/catalog.html'
@@ -723,7 +746,7 @@ def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask
 def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     """
     Use a regex tag combined with the dataset ID to collect data from the OOI
-    Gold Copy THREDDS catalog. The collected data is gathered into an xarray
+    Gold Copy THREDDS catalog. The collected data is gathered into a xarray
     dataset for further processing.
 
     :param dataset_id: dataset ID as a string
@@ -731,7 +754,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
         collect the data files of interest
     :param use_dask: Boolean flag indicating whether to load the data using
         dask arrays (default=False)
-    :return gc: the collected Gold Copy data as an xarray dataset
+    :return gc: the collected Gold Copy data as a xarray dataset
     """
     # construct the THREDDS catalog URL based on the dataset ID
     gc_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/'
@@ -744,18 +767,92 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
     if len(files) < 4:
         # just 1 to 3 files, download sequentially
-        frames = [process_file(file, gc=True, use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
+        frames = [process_file(file, gc='GC', use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
                                                                                               'Processing Data '
                                                                                               'Files')]
     else:
         # multiple files, use multithreading to download concurrently
-        part_files = partial(process_file, gc=True, use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        part_files = partial(process_file, gc='GC', use_dask=use_dask)
+        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
     if not frames:
         message = "No data files were downloaded from the Gold Copy THREDDS server."
+        warnings.warn(message)
+        return None
+
+    # merge the data frames into a single data set
+    data = merge_frames(frames)
+
+    return data
+
+
+def load_kdata(site, node, sensor, method, stream, tag='*.nc', use_dask=False):
+    """
+    Download data from the JupyterHub kdata directories, using the reference
+    designator parameters to select the catalog of interest and the regex tag
+    to select the NetCDF files of interest. In most cases, the default tag
+    can be used, however for instruments that require data from a co-located
+    sensor, a more detailed regex tag will be required to ensure that only data
+    files from the instrument of interest are loaded.
+
+    :param site: Site designator, extracted from the first part of the
+        reference designator
+    :param node: Node designator, extracted from the second part of the
+        reference designator
+    :param sensor: Sensor designator, extracted from the third and fourth part
+        of the reference designator
+    :param method: Delivery method for the data (either telemetered,
+        recovered_host or recovered_inst)
+    :param stream: Stream name that contains the data of interest
+    :param tag: regex pattern to select the NetCDF files to download
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
+    :return data: All the data, combined into a single dataset
+    """
+    # download the data from the Gold Copy THREDDS server
+    dataset_id = '-'.join([site, node, sensor, method, stream])
+    data = kdata_collect(dataset_id, tag, use_dask)
+    return data
+
+
+def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
+    """
+    Use a regex tag combined with the dataset ID to collect data from the OOI
+    JupyterHub kdata directory. The collected data is gathered into a xarray
+    dataset for further processing.
+
+    :param dataset_id: dataset ID as a string
+    :param tag: regex tag to use in discriminating the data files, so we only
+        collect the data files of interest
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
+    :return gc: the collected Gold Copy data as a xarray dataset
+    """
+    # construct the kdata directory path with the dataset ID
+    kdata = os.path.abspath(os.path.join(os.path.expanduser('~'), 'ooi/kdata'))
+    kdata = os.path.abspath(os.path.join(kdata, dataset_id))
+
+    # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
+    files = glob.glob(kdata + '/' + tag)
+
+    # Process the data files found above and concatenate them into a single list
+    print('Downloading %d data file(s) from the local kdata directory' % len(files))
+    if len(files) < 4:
+        # just 1 to 3 files, download sequentially
+        frames = [process_file(file, gc='KDATA', use_dask=use_dask) for file in tqdm(files, desc='Loading and '
+                                                                                                 'Processing Data '
+                                                                                                 'Files')]
+    else:
+        # multiple files, use multithreading to download concurrently
+        part_files = partial(process_file, gc='KDATA', use_dask=use_dask)
+        with ThreadPoolExecutor(max_workers=N_THREADS) as executor:
+            frames = list(tqdm(executor.map(part_files, files), total=len(files),
+                               desc='Loading and Processing Data Files', file=sys.stdout))
+
+    if not frames:
+        message = "No data files were loaded from the JupyterHub kdata directory."
         warnings.warn(message)
         return None
 
@@ -780,12 +877,12 @@ def list_files(url, tag='.*\\.nc$'):
 
     soup = BeautifulSoup(page, 'html.parser')
     pattern = re.compile(tag)
-    return [node.get('href') for node in soup.find_all('a', text=pattern)]
+    return [node.get('href') for node in soup.find_all('a', string=pattern)]
 
 
-def process_file(catalog_file, gc=False, use_dask=False):
+def process_file(catalog_file, gc=None, use_dask=False):
     """
-    Function to download one of the NetCDF files as an xarray data set, convert
+    Function to download one of the NetCDF files as a xarray data set, convert
     to time as the appropriate dimension instead of obs, and drop the
     extraneous timestamp variables (these were originally not intended to be
     exposed to users and have lead to some confusion as to their meaning). The
@@ -794,38 +891,42 @@ def process_file(catalog_file, gc=False, use_dask=False):
     constraints on the processing, so they are also removed.
 
     :param catalog_file: Unique file, referenced by a URL relative to the
-        catalog, to download and then convert into an xarray data set.
-    :param gc: Boolean flag to indicate whether the file is from the Gold
-        Copy THREDDS server (gc = True), or the user's M2M THREDDS catalog
-        (gc = False, default).
+        catalog, to download and then convert into a xarray data set.
+    :param gc: String value to indicate whether the file is from the Gold
+        Copy THREDDS server (gc = GC),the user's M2M THREDDS catalog
+        (gc = M2M), or a user's JupyterHub with access to the kdata
+        (gc = KDATA). The default is None, which will cause the function
+        to abort.
     :param use_dask: Boolean flag indicating whether to load the data using
         dask arrays (default = False)
-    :return: downloaded data in an xarray dataset.
+    :return: downloaded data in a xarray dataset.
     """
-    if gc:
-        dods_url = 'https://thredds.dataexplorer.oceanobservatories.org/thredds/fileServer/'
-    else:
-        dods_url = 'https://opendap.oceanobservatories.org/thredds/fileServer/'
-
-    url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
-    r = SESSION.get(url, timeout=(3.05, 120))
-    if r.ok:
-        if use_dask:
-            ds = xr.open_dataset(io.BytesIO(r.content), decode_cf=False, chunks=10000)
+    if gc in ['GC', 'M2M', 'KDATA']:
+        if gc == 'KDATA':
+            # use the JupyterHub kdata directory
+            data = os.path.abspath(catalog_file)
         else:
-            ds = xr.load_dataset(io.BytesIO(r.content), decode_cf=False)
+            if gc == 'GC':
+                # use the Gold Copy THREDDS server
+                dods_url = 'https://thredds.dataexplorer.oceanobservatories.org/thredds/fileServer/'
+            else:
+                # use the user's M2M THREDDS server
+                dods_url = 'https://opendap.oceanobservatories.org/thredds/fileServer/'
+            url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
+            r = SESSION.get(url, timeout=(3.05, 120))
+            if r.ok:
+                data = io.BytesIO(r.content)
+            else:
+                failed_file = catalog_file.rpartition('/')
+                warnings.warn('Failed to download %s' % failed_file[-1])
+                return None
     else:
-        failed_file = catalog_file.rpartition('/')
-        warnings.warn('Failed to download %s' % failed_file[-1])
-        return None
+        raise InputError('gc must be either GC, M2M, or KDATA')
 
-    # addresses error in how the *_qartod_executed variables are set
-    # qartod_pattern = re.compile(r'^.+_qartod_executed$')
-    # for v in ds.variables:
-    #     if qartod_pattern.match(v):
-    #         # the shape of the QARTOD executed variables should compare to the provenance variable
-    #         if ds[v].shape != ds['provenance'].shape:
-    #             ds = ds.drop_vars(v)
+    if use_dask:
+        ds = xr.open_dataset(data, decode_cf=False, chunks='auto')
+    else:
+        ds = xr.load_dataset(data, decode_cf=False)
 
     # convert the dimensions from obs to time and get rid of obs and other variables we don't need
     ds = ds.swap_dims({'obs': 'time'})
@@ -867,7 +968,7 @@ def process_file(catalog_file, gc=False, use_dask=False):
 
     # update some global attributes
     ds.attrs['acknowledgement'] = 'National Science Foundation'
-    ds.attrs['comment'] = 'Data collected from the OOI M2M API and reworked for use in locally stored NetCDF files.'
+    ds.attrs['comment'] = 'Data produced by the OOI M2M API and reworked for use in locally stored NetCDF files.'
 
     return ds
 

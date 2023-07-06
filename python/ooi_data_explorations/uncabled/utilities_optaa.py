@@ -312,7 +312,7 @@ def apply_dev(optaa, coeffs):
     c_sig[c_sig == 0] = 1
     c_ref[c_ref == 0] = 1
 
-    # create a set of partial functions for concurrent.futures (maps static elements to iterables)
+    # create a set of partial functions for the subsequent list comprehension (maps static elements to iterables)
     apg_calc = partial(pg_calc, offset=coeffs['a_offsets'], tarray=coeffs['ta_array'],
                        tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
                        wavelengths=coeffs['a_wavelengths'])
@@ -496,12 +496,12 @@ def estimate_chl_poc(optaa, coeffs, chl_line_height=0.020):
     m715 = np.argmin(np.abs(coeffs['a_wavelengths'] - 715.0))  # find the closest wavelength to 715 nm
     apg = optaa['apg_ts_s']
     aphi = apg[:, m676] - 39 / 65 * apg[:, m650] - 26 / 65 * apg[:, m715]
-    optaa['estimated_chlorophyll'] = aphi / chl_line_height
+    optaa['estimated_chlorophyll'] = aphi / chl_line_height  # from Roesler and Barnard, 2013
 
     # estimate the POC concentration from the attenuation at 660 nm
     m660 = np.argmin(np.abs(coeffs['c_wavelengths'] - 660.0))  # find the closest wavelength to 660 nm
     cpg = optaa['cpg_ts']
-    optaa['estimated_poc'] = cpg[:, m660] * 380
+    optaa['estimated_poc'] = cpg[:, m660] * 381  # from Cetinic et al., 2012 and references therein
 
     return optaa
 

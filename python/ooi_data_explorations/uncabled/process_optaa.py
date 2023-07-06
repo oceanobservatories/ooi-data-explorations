@@ -12,15 +12,13 @@ from functools import partial
 from tqdm import tqdm
 
 from ooi_data_explorations.common import inputs, get_vocabulary, m2m_request, list_files, m2m_collect, \
-    load_gc_thredds, update_dataset, N_CORES, ENCODINGS
+    load_gc_thredds, update_dataset, N_CORES, ENCODINGS, FILL_INT, FILL_FLOAT
 from ooi_data_explorations.profilers import create_profile_id, bin_profiles
 from ooi_data_explorations.uncabled.utilities_optaa import load_cal_coefficients, apply_dev, apply_tscorr, \
     apply_scatcorr, estimate_chl_poc, calculate_ratios
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 
 # reset the variable level attributes and set some global defaults
-_ = np.seterr(all='ignore', divide='warn')
-FILL_INT = -9999999
 ATTRS = dict({
     # parsed (raw) variables and attributes
     'serial_number': {
@@ -601,6 +599,7 @@ def optaa_cspp(ds, cal_file):
     # then 120 seconds and then 240 seconds ... and it is all mixed up across the various data sets.  So, we are
     # going to use the 45-second recommendation and apply it to all data sets. If the vendor ever provides an analysis
     # justifying the change in recommendation, we can revisit this.
+    ds['elapsed_run_time'] = ds['elapsed_run_time'] * 1000
     ds.elapsed_run_time.values = ds.elapsed_run_time.where(ds.elapsed_run_time / 1000 > 45)
     ds = ds.dropna(dim='time', subset=['elapsed_run_time'])
 

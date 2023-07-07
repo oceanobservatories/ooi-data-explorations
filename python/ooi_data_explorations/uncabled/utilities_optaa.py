@@ -245,7 +245,7 @@ def holo_grater(wlngths, spectra, index):
     return spectra, offset
 
 
-def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grating, wavelengths):
+def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grating, wavelengths, pre_cal=None):
     """
     Combines the convert_raw and holo_grater functions to calculate the L1 data
     products for the AC-S (the uncorrected optical absorption and the beam
@@ -268,11 +268,18 @@ def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grat
         filter sets
     :param wavelengths: instrument, wavelength and channel ('c' or 'a') specific
         wavelengths from the AC-S device file
+    :param pre_cal: pure water calibration offsets for the AC-S from
+        pre-deployment calibrations device file
     :return: converted optical absorption or beam attenuation measurements
         along with the offset correction for the holographic grating.
     """
     # convert the raw measurements to uncorrected absorption/attenuation values
     pg = convert_raw(reference, signal, internal_temperature, offset, tarray, tbins)
+
+    # if pre-deployment, pure-water calibration offsets are provided, subtract them from the
+    # uncorrected absorption/attenuation values
+    if pre_cal is not None:
+        pg = pg - pre_cal    # subtract the pure water offset
 
     # if the grating index is set, correct for the often observed jump at the mid-point of the spectra
     if grating and np.all(~np.isnan(pg)):
@@ -283,7 +290,7 @@ def pg_calc(reference, signal, internal_temperature, offset, tarray, tbins, grat
     return pg, jump
 
 
-def apply_dev(optaa, coeffs):
+def apply_dev(optaa, coeffs, pre_cal=None):
     """
     Processes the raw data contained in the optaa dictionary and applies the
     factory calibration coefficients contained in the coeffs dictionary to
@@ -293,6 +300,8 @@ def apply_dev(optaa, coeffs):
     :param optaa: xarray dataset with the raw absorption and beam attenuation
         measurements.
     :param coeffs: Factory calibration coefficients in a dictionary structure
+    :param pre_cal: optional, pre-deployment, pure water calibration offsets
+        for the AC-S.
 
     :return optaa: xarray dataset with the raw absorption and beam attenuation
         measurements converted into particulate and beam attenuation values
@@ -312,13 +321,22 @@ def apply_dev(optaa, coeffs):
     c_sig[c_sig == 0] = 1
     c_ref[c_ref == 0] = 1
 
+    # if pre-deployment, pure-water calibration offsets are provided, create variables to hold them for subsequent
+    # subtraction from the uncorrected absorption/attenuation values
+    if pre_cal is None:
+        apre = None
+        cpre = None
+    else:
+        apre = pre_cal['a']
+        cpre = pre_cal['c']
+
     # create a set of partial functions for the subsequent list comprehension (maps static elements to iterables)
     apg_calc = partial(pg_calc, offset=coeffs['a_offsets'], tarray=coeffs['ta_array'],
                        tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
-                       wavelengths=coeffs['a_wavelengths'])
+                       wavelengths=coeffs['a_wavelengths'], pre_cal=apre)
     cpg_calc = partial(pg_calc, offset=coeffs['c_offsets'], tarray=coeffs['tc_array'],
                        tbins=coeffs['temp_bins'], grating=coeffs['grate_index'],
-                       wavelengths=coeffs['c_wavelengths'])
+                       wavelengths=coeffs['c_wavelengths'], pre_cal=cpre)
 
     # apply the partial functions to the data arrays, calculating the L1 data products
     apg = [apg_calc(a_ref[i, :], a_sig[i, :], temp_internal[i]) for i in tqdm(range(nrows),
@@ -467,9 +485,9 @@ def apply_scatcorr(optaa, coeffs):
     reference_wavelength = 715.0
     idx = np.argmin(np.abs(coeffs['a_wavelengths'] - reference_wavelength))
 
-    # use that wavelength as our scatter correction wavelength
+    # use that wavelength (plue/minus 1 as it isn't exact) as our scatter correction wavelength
     apg_ts = optaa['apg_ts']
-    optaa['apg_ts_s'] = apg_ts - apg_ts[:, idx]
+    optaa['apg_ts_s'] = apg_ts - apg_ts[:, idx-1:idx+2].max(axis=1)
 
     return optaa
 
@@ -490,18 +508,22 @@ def estimate_chl_poc(optaa, coeffs, chl_line_height=0.020):
     :return optaa: xarray dataset with the estimates for chlorophyll and POC
         concentrations added.
     """
-    # use the standard chlorophyll line height estimation with an extinction coefficient of 0.020.
+    # use the standard chlorophyll line height estimation with an extinction coefficient of 0.020,
+    # from Roesler and Barnard, 2013 (doi:10.4319/lom.2013.11.483)
     m650 = np.argmin(np.abs(coeffs['a_wavelengths'] - 650.0))  # find the closest wavelength to 650 nm
     m676 = np.argmin(np.abs(coeffs['a_wavelengths'] - 676.0))  # find the closest wavelength to 676 nm
     m715 = np.argmin(np.abs(coeffs['a_wavelengths'] - 715.0))  # find the closest wavelength to 715 nm
     apg = optaa['apg_ts_s']
-    aphi = apg[:, m676] - 39 / 65 * apg[:, m650] - 26 / 65 * apg[:, m715]
-    optaa['estimated_chlorophyll'] = aphi / chl_line_height  # from Roesler and Barnard, 2013
+    abl = ((apg[:, m715-1:m715+2].median(axis=1) - apg[:, m650-1:m650+2].median(axis=1)) /
+           (715 - 650)) * (676 - 650) + apg[:, m650-1:m650+2].median(axis=1)  # interpolate to 676 nm
+    aphi = apg[:, m676-1:m676+2].median(axis=1) - abl
+    optaa['estimated_chlorophyll'] = aphi / chl_line_height
 
-    # estimate the POC concentration from the attenuation at 660 nm
+    # estimate the POC concentration from the attenuation at 660 nm, from Cetinic et al., 2012 and references therein
+    # (doi:10.4319/lom.2012.10.415)
     m660 = np.argmin(np.abs(coeffs['c_wavelengths'] - 660.0))  # find the closest wavelength to 660 nm
     cpg = optaa['cpg_ts']
-    optaa['estimated_poc'] = cpg[:, m660] * 381  # from Cetinic et al., 2012 and references therein
+    optaa['estimated_poc'] = cpg[:, m660-1:m660+2].median(axis=1) * 381
 
     return optaa
 

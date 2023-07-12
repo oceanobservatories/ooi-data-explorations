@@ -70,9 +70,9 @@ for k = 1:numel(varNames)
     %data = squeeze(h5read(filename, "/" + varNames{k}));
     data = squeeze(netcdf.getVar(ncid, netcdf.inqVarID(ncid, varNames{k})));
     % pull out the variable units and comment attributes
+    units = {''}; descr = {''};
     if ~isempty(vAttributes{k})
         attr = struct2table(vAttributes{k});
-        units = {''}; descr = {''};
         for j = 1:height(attr)
             if strcmp(attr.Name(j), 'units')
                 units = attr.Value(j);
@@ -92,8 +92,6 @@ for k = 1:numel(varNames)
         else
             t = addvars(t, data, 'NewVariableNames', varNames{k});
         end %if
-        t.Properties.VariableUnits{varNames{k}} = units{:};
-        t.Properties.VariableDescriptions{varNames{k}} = descr{:};
     elseif c == rowlength
         % if the number of columns equals the RowTimes, rotate the variable
         % before adding it so the row length matches the RowTimes
@@ -102,17 +100,15 @@ for k = 1:numel(varNames)
         else
             t = addvars(t, data', 'NewVariableNames', varNames{k});
         end %if
-        t.Properties.VariableUnits{varNames{k}} = units{:};
-        t.Properties.VariableDescriptions{varNames{k}} = descr{:};
     elseif r == 1 && c == 1
         % this is a scalar variable, and it needs to replicated out to the
         % RowTimes dimension before it can be added.
         t = addvars(t, repmat(data, rowlength, 1), 'NewVariableNames', varNames{k});
-        t.Properties.VariableUnits{varNames{k}} = units{:};
-        t.Properties.VariableDescriptions{varNames{k}} = descr{:};        
     else
         % this is something weird, ignore it for now.
     end %if
+    t.Properties.VariableUnits{varNames{k}} = char(units{:});
+    t.Properties.VariableDescriptions{varNames{k}} = char(descr{:});
 end %for
 netcdf.close(ncid);
 clear ncid dt rowlength k data r c

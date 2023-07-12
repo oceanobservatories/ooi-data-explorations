@@ -6,15 +6,15 @@ function t = nc_reader(filename)
 % https://www.mathworks.com/help/parallel-computing/examples/process-big-data-in-the-cloud.html
 
 % Get information about the NetCDF data file
-fileInfo = h5info(filename);
+fileInfo = ncinfo(filename);
 
 % Extract the global and variable level attributes -- note, Matlab doesn't
 % really support these very well, so their utility is limited.
 %gAttributes = struct2table(fileInfo.Attributes);
-vAttributes = {fileInfo.Datasets.Attributes};
+vAttributes = {fileInfo.Variables.Attributes};
 
 % Extract the variable names
-varNames = string({fileInfo.Datasets.Name});
+varNames = string({fileInfo.Variables.Name});
 
 % test for presence of a variable called time
 i = 1; test = 0;
@@ -25,18 +25,34 @@ end %while
 if ~test
     error('The NetCDF file specified does not include the variable ''time''')
 end %if
-clear i test
+clear test
+
+% use the time variable metadata to set the rowtimes for the timetable
+attr = struct2table(vAttributes{i-1}); clear i
+units = "";
+for j = 1:height(attr)
+    if strcmp(attr.Name(j), 'units')
+        units = string(attr.Value(j));
+    end %if
+end %for
+if units == ""
+    % no units are defined for time (this is extremely unlikely)
+    error(['The NetCDF file has a time variable, but the units are ' ...
+        'undefined. Unable to create a rowtime variable for the data.']);
+end %if
+
+% create a file ID used to read data from the file
+ncid = netcdf.open(filename, 'NOWRITE');
 
 % Create the datetime axis from the time variable (ERDDAP uses
 % 1970, while the OOI-created NetCDF files use 1900 as their pivot years).
-nc_time = h5read(filename, '/time');   % obtain the time record
-test = nc_time(1) / 60 / 60 / 24 + datenum(1970, 1, 1, 0, 0, 0);
-if test > now
-    dt = datetime(1900, 1, 1, 'Format', 'dd-MMM-yyyy HH:mm:ss', ...
-        'TimeZone', 'UTC') + seconds(nc_time);
+%nc_time = h5read(filename, '/time');   % obtain the time record
+nc_time = netcdf.getVar(ncid, netcdf.inqVarID(ncid, 'time'));
+test = seconds(nc_time(1)) + datetime(1970, 1, 1, 0, 0, 0);
+if test > datetime("now")
+    dt = datetime(nc_time, 'ConvertFrom', 'epochtime', 'Epoch', '1900-01-01', 'TimeZone', 'UTC');
 else 
-    dt = datetime(1970, 1, 1, 'Format', 'dd-MMM-yyyy HH:mm:ss', ...
-        'TimeZone', 'UTC') + seconds(nc_time);
+    dt = datetime(nc_time, 'ConvertFrom', 'epochtime', 'Epoch', '1970-01-01', 'TimeZone', 'UTC');
 end %if
 rowlength = length(dt);
 clear test nc_time
@@ -51,7 +67,8 @@ for k = 1:numel(varNames)
         continue
     end %if
     % read the variable from the NetCDF file
-    data = squeeze(h5read(filename, "/" + varNames{k}));
+    %data = squeeze(h5read(filename, "/" + varNames{k}));
+    data = squeeze(netcdf.getVar(ncid, netcdf.inqVarID(ncid, varNames{k})));
     % pull out the variable units and comment attributes
     if ~isempty(vAttributes{k})
         attr = struct2table(vAttributes{k});
@@ -70,8 +87,8 @@ for k = 1:numel(varNames)
     if r == rowlength
         % if the number of rows == the number of RowTimes, add the variable
         % without modification.
-        if strcmp(fileInfo.Datasets(k).Datatype.Class, 'H5T_STRING')
-            t = addvars(t, cell2mat(data), 'NewVariableNames', varNames{k});
+        if strcmp(fileInfo.Variables(k).Datatype, 'char')
+            t = addvars(t, deblank(data), 'NewVariableNames', varNames{k});
         else
             t = addvars(t, data, 'NewVariableNames', varNames{k});
         end %if
@@ -80,8 +97,8 @@ for k = 1:numel(varNames)
     elseif c == rowlength
         % if the number of columns equals the RowTimes, rotate the variable
         % before adding it so the row length matches the RowTimes
-        if strcmp(fileInfo.Datasets(k).Datatype.Class, 'H5T_STRING')
-            t = addvars(t, cell2mat(data'), 'NewVariableNames', varNames{k});
+        if strcmp(fileInfo.Variables(k).Datatype, 'char')
+            t = addvars(t, deblank(data'), 'NewVariableNames', varNames{k});
         else
             t = addvars(t, data', 'NewVariableNames', varNames{k});
         end %if
@@ -97,5 +114,10 @@ for k = 1:numel(varNames)
         % this is something weird, ignore it for now.
     end %if
 end %for
-clear dt rowlength k data r c
+netcdf.close(ncid);
+clear ncid dt rowlength k data r c
+
+% clean-up the timetable making sure the times are unique and sorted
+t = unique(t);
+
 end %function

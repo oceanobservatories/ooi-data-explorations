@@ -20,7 +20,7 @@ function [uframe_dataset_name, var_list] = M2M_URLs(platform_name,node,instrumen
 %.. 2020-06-18: RADesiderio. Changed CE01ISSP and CE06ISSP telemetered flort streams to 'flort_sample'.
 %.. 2020-06-18: RADesiderio. Added CE04OSPS OPTAA stream.
 %.. 2020-07-13: CMRisien. Added RS01SBPS CTD and FLORT streams.
-%
+%.. 2023-07-13: CEWingard. Updated for changed variable names.
 %.. Explicitly construct UFrame dataset names
 %MOPAK
 if strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'MOPAK') && strcmp(method,'Telemetered')
@@ -1542,7 +1542,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE01ISSM/RID16/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1553,7 +1553,7 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE02SHSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1564,7 +1564,7 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE04OSSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1575,7 +1575,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE06ISSM/RID16/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1586,7 +1586,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE07SHSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1597,7 +1597,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE09OSSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1608,7 +1608,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE01ISSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1619,7 +1619,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE06ISSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1630,7 +1630,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE07SHSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1641,7 +1641,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE09OSSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1702,7 +1702,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE01ISSM/MFD35/02-PRESFA000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1713,7 +1713,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE06ISSM/MFD35/02-PRESFA000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1724,7 +1724,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE07SHSM/MFD35/02-PRESFB000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1735,7 +1735,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE09OSSM/MFD35/02-PRESFC000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1746,11 +1746,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1766,11 +1766,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1786,11 +1786,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1806,11 +1806,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1826,11 +1826,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1846,11 +1846,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1866,11 +1866,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1886,11 +1886,11 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1906,11 +1906,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1926,11 +1926,11 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1946,11 +1946,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1966,11 +1966,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -1990,7 +1990,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2007,7 +2007,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2024,7 +2024,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2041,7 +2041,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -2082,11 +2082,11 @@ elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE09OSPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3754,7 +3754,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE01ISSM/RID16/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3765,7 +3765,7 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE02SHSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3776,7 +3776,7 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE04OSSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3787,7 +3787,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE06ISSM/RID16/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3798,7 +3798,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE07SHSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3809,7 +3809,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE09OSSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3820,7 +3820,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE01ISSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3831,7 +3831,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE06ISSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3842,7 +3842,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE07SHSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3853,7 +3853,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE09OSSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3914,7 +3914,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE01ISSM/MFD35/02-PRESFA000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3925,7 +3925,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE06ISSM/MFD35/02-PRESFA000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3936,7 +3936,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE07SHSM/MFD35/02-PRESFB000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3947,7 +3947,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE09OSSM/MFD35/02-PRESFC000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3958,11 +3958,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3978,11 +3978,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -3998,11 +3998,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4018,11 +4018,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4038,11 +4038,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4058,11 +4058,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4078,11 +4078,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4098,11 +4098,11 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4118,11 +4118,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4138,11 +4138,11 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4158,11 +4158,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4178,11 +4178,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4202,7 +4202,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4219,7 +4219,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4236,7 +4236,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4253,7 +4253,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4454,11 +4454,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/RID16/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4474,11 +4474,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4494,11 +4494,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/SBD17/06-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4514,11 +4514,11 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/RID16/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4534,11 +4534,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4554,11 +4554,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/SBD17/06-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4574,11 +4574,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE02SHSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4594,11 +4594,11 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4614,11 +4614,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4634,11 +4634,11 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4654,11 +4654,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD37/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4674,11 +4674,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD37/03-CTDBPE000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -4694,11 +4694,11 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE09OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE09OSPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5367,7 +5367,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5384,7 +5384,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5401,7 +5401,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5418,7 +5418,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5432,8 +5432,8 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE01ISSM/MFD35/02-PRESFA000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5443,8 +5443,8 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE06ISSM/MFD35/02-PRESFA000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5454,8 +5454,8 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE07SHSM/MFD35/02-PRESFB000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5465,8 +5465,8 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE09OSSM/MFD35/02-PRESFC000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5477,7 +5477,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE01ISSM/RID16/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5488,7 +5488,7 @@ elseif strcmp(platform_name,'CE02SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE02SHSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5499,7 +5499,7 @@ elseif strcmp(platform_name,'CE04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE04OSSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5510,7 +5510,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE06ISSM/RID16/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5521,7 +5521,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE07SHSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5532,7 +5532,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CE09OSSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5543,7 +5543,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE01ISSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5554,7 +5554,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE06ISSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5565,7 +5565,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE07SHSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5576,7 +5576,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CE09OSSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5819,7 +5819,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
     var_list(3).name = 'ctd_tc_oxygen';
-    var_list(4).name = 'ctdbp_seawater_temperature';
+    var_list(4).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5833,7 +5833,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
     var_list(3).name = 'ctd_tc_oxygen';
-    var_list(4).name = 'ctdbp_seawater_temperature';
+    var_list(4).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5847,7 +5847,7 @@ elseif strcmp(platform_name,'CE01ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
     var_list(3).name = 'ctd_tc_oxygen';
-    var_list(4).name = 'ctdbp_seawater_temperature';
+    var_list(4).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5861,7 +5861,7 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
     var_list(3).name = 'ctd_tc_oxygen';
-    var_list(4).name = 'ctdbp_seawater_temperature';
+    var_list(4).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5875,7 +5875,7 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
     var_list(3).name = 'ctd_tc_oxygen';
-    var_list(4).name = 'ctdbp_seawater_temperature';
+    var_list(4).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5889,7 +5889,7 @@ elseif strcmp(platform_name,'CE09OSSM') && strcmp(node,'MFN') && strcmp(instrume
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
     var_list(3).name = 'ctd_tc_oxygen';
-    var_list(4).name = 'ctdbp_seawater_temperature';
+    var_list(4).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5929,11 +5929,11 @@ elseif strcmp(platform_name,'CE06ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE02SHBP/LJ01D/06-CTDBPN106/streamed/ctdbp_no_sample';
     var_list(1).name = 'time';
-    var_list(2).name = 'seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_no_seawater_pressure';
-    var_list(6).name = 'ctdbp_no_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -5949,11 +5949,11 @@ elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrume
 elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSBP/LJ01C/06-CTDBPO108/streamed/ctdbp_no_sample';
     var_list(1).name = 'time';
-    var_list(2).name = 'seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_no_seawater_pressure';
-    var_list(6).name = 'ctdbp_no_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6090,7 +6090,7 @@ elseif strcmp(platform_name,'CE02SHBP') && strcmp(node,'BEP') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6107,7 +6107,7 @@ elseif strcmp(platform_name,'CE04OSBP') && strcmp(node,'BEP') && strcmp(instrume
     var_list(2).name = 'vel3d_c_eastward_turbulent_velocity';
     var_list(3).name = 'vel3d_c_northward_turbulent_velocity';
     var_list(4).name = 'vel3d_c_upward_turbulent_velocity';
-    var_list(5).name = 'seawater_pressure_mbar';
+    var_list(5).name = 'sea_water_pressure_mbar';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6306,11 +6306,11 @@ elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE01ISSP/SP001/09-CTDPFJ000/telemetered/ctdpf_j_cspp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temperature';
-    var_list(3).name = 'salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6326,11 +6326,11 @@ elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE01ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temperature';
-    var_list(3).name = 'salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6346,11 +6346,11 @@ elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE06ISSP/SP001/09-CTDPFJ000/telemetered/ctdpf_j_cspp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temperature';
-    var_list(3).name = 'salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6366,11 +6366,11 @@ elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE06ISSP/SP001/09-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temperature';
-    var_list(3).name = 'salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6508,7 +6508,7 @@ elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(5).name = 'heading';
     var_list(6).name = 'roll';
     var_list(7).name = 'pitch';
-    var_list(8).name = 'temperature';
+    var_list(8).name = 'sea_water_temperature';
     var_list(9).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
@@ -6537,7 +6537,7 @@ elseif strcmp(platform_name,'CE01ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(5).name = 'heading';
     var_list(6).name = 'roll';
     var_list(7).name = 'pitch';
-    var_list(8).name = 'temperature';
+    var_list(8).name = 'sea_water_temperature';
     var_list(9).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
@@ -6566,7 +6566,7 @@ elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(5).name = 'heading';
     var_list(6).name = 'roll';
     var_list(7).name = 'pitch';
-    var_list(8).name = 'temperature';
+    var_list(8).name = 'sea_water_temperature';
     var_list(9).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
@@ -6595,7 +6595,7 @@ elseif strcmp(platform_name,'CE06ISSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(5).name = 'heading';
     var_list(6).name = 'roll';
     var_list(7).name = 'pitch';
-    var_list(8).name = 'temperature';
+    var_list(8).name = 'sea_water_temperature';
     var_list(9).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
@@ -6722,11 +6722,11 @@ elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE02SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temperature';
-    var_list(3).name = 'salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6742,11 +6742,11 @@ elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredCSPP')
     uframe_dataset_name = 'CE07SHSP/SP001/08-CTDPFJ000/recovered_cspp/ctdpf_j_cspp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temperature';
-    var_list(3).name = 'salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -6840,7 +6840,7 @@ elseif strcmp(platform_name,'CE02SHSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(5).name = 'heading';
     var_list(6).name = 'roll';
     var_list(7).name = 'pitch';
-    var_list(8).name = 'temperature';
+    var_list(8).name = 'sea_water_temperature';
     var_list(9).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
@@ -6869,7 +6869,7 @@ elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(5).name = 'heading';
     var_list(6).name = 'roll';
     var_list(7).name = 'pitch';
-    var_list(8).name = 'temperature';
+    var_list(8).name = 'sea_water_temperature';
     var_list(9).name = 'int_ctd_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
@@ -6908,11 +6908,11 @@ elseif strcmp(platform_name,'CE07SHSP') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL386/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -6934,11 +6934,11 @@ elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL386/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -6960,11 +6960,11 @@ elseif strcmp(platform_name,'CEGL386') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL384/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -6986,11 +6986,11 @@ elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL384/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7012,11 +7012,11 @@ elseif strcmp(platform_name,'CEGL384') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL383/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7038,11 +7038,11 @@ elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL383/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7064,11 +7064,11 @@ elseif strcmp(platform_name,'CEGL383') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL382/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7090,11 +7090,11 @@ elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL382/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7116,11 +7116,11 @@ elseif strcmp(platform_name,'CEGL382') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL381/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7142,11 +7142,11 @@ elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL381/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7168,11 +7168,11 @@ elseif strcmp(platform_name,'CEGL381') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL327/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7194,11 +7194,11 @@ elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL327/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7220,11 +7220,11 @@ elseif strcmp(platform_name,'CEGL327') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL326/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7246,11 +7246,11 @@ elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL326/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7272,11 +7272,11 @@ elseif strcmp(platform_name,'CEGL326') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL320/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7298,11 +7298,11 @@ elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL320/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7324,11 +7324,11 @@ elseif strcmp(platform_name,'CEGL320') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL319/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7350,11 +7350,11 @@ elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL319/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7376,11 +7376,11 @@ elseif strcmp(platform_name,'CEGL319') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL312/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7402,11 +7402,11 @@ elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL312/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7428,11 +7428,11 @@ elseif strcmp(platform_name,'CEGL312') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL311/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7454,11 +7454,11 @@ elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL311/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7480,11 +7480,11 @@ elseif strcmp(platform_name,'CEGL311') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CE05MOAS/GL247/05-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -7506,11 +7506,11 @@ elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CEGL247') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CE05MOAS/GL247/05-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -10912,11 +10912,11 @@ elseif strcmp(platform_name,'CE07SHSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'RS01SBPS/SF01A/2A-CTDPFA102/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';
-    var_list(2).name = 'seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'seawater_pressure';
-    var_list(6).name = 'seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -10933,7 +10933,7 @@ elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(ins
     uframe_dataset_name = 'RS01SBPS/SF01A/2A-CTDPFA102/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'corrected_dissolved_oxygen';
-    var_list(3).name = 'seawater_pressure';
+    var_list(3).name = 'sea_water_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -10943,11 +10943,11 @@ elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/SF01B/2A-CTDPFA107/streamed/ctdpf_sbe43_sample';
     var_list(1).name = 'time';
-    var_list(2).name = 'seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'seawater_pressure';
-    var_list(6).name = 'seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -10963,11 +10963,11 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CE04OSPD/DP01B/01-CTDPFL105/recovered_inst/dpc_ctd_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'dpc_ctd_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -10983,11 +10983,11 @@ elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CE04OSPD/DP01B/01-CTDPFL105/recovered_wfp/dpc_ctd_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'dpc_ctd_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -11006,7 +11006,7 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(1).name = 'time';
     var_list(2).name = 'corrected_dissolved_oxygen';
     %var_list(3).name = 'int_ctd_pressure'; %use this for the '2A-DOFSTA107/streamed/ctdpf_sbe43_sample' stream
-    var_list(3).name = 'seawater_pressure';
+    var_list(3).name = 'sea_water_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -11049,7 +11049,7 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(4).name = 'fluorometric_cdom';
     var_list(5).name = 'total_volume_scattering_coefficient';
     var_list(6).name = 'optical_backscatter';
-    var_list(7).name = 'pressure';
+    var_list(7).name = 'sea_water_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -11072,7 +11072,7 @@ elseif strcmp(platform_name,'RS01SBPS') && strcmp(node,'PROFILER') && strcmp(ins
     var_list(4).name = 'fluorometric_cdom';
     var_list(5).name = 'total_volume_scattering_coefficient';
     var_list(6).name = 'optical_backscatter';
-    var_list(7).name = 'pressure';
+    var_list(7).name = 'sea_water_pressure';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -11276,11 +11276,11 @@ elseif strcmp(platform_name,'CE04OSPD') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp(instrument_class,'CTD') && strcmp(method,'Streamed')
     uframe_dataset_name = 'CE04OSPS/PC01B/4A-CTDPFA109/streamed/ctdpf_optode_sample';
     var_list(1).name = 'time';
-    var_list(2).name = 'seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'seawater_pressure';
-    var_list(6).name = 'seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -11298,7 +11298,7 @@ elseif strcmp(platform_name,'CE04OSPS') && strcmp(node,'PLATFORM200M') && strcmp
     uframe_dataset_name = 'CE04OSPS/PC01B/4A-CTDPFA109/streamed/ctdpf_optode_sample';
     var_list(1).name = 'time';
     var_list(2).name = 'dissolved_oxygen';
-    var_list(3).name = 'seawater_pressure';  %also use this for the '4A-DOSTAD109/streamed/ctdpf_optode_sample' stream
+    var_list(3).name = 'sea_water_pressure';  %also use this for the '4A-DOSTAD109/streamed/ctdpf_optode_sample' stream
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12662,11 +12662,11 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'BUOY') && strcmp(instrum
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12682,11 +12682,11 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12702,11 +12702,11 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12722,11 +12722,11 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12742,11 +12742,11 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12762,11 +12762,11 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12782,11 +12782,11 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/RID27/03-CTDBPC000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12802,11 +12802,11 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/RID27/03-CTDBPC000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12822,11 +12822,11 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/RID27/03-CTDBPC000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12842,11 +12842,11 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSSM/MFD37/03-CTDBPE000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12862,11 +12862,11 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP04OSSM/MFD37/03-CTDBPE000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12882,11 +12882,11 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD37/03-CTDBPE000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12902,11 +12902,11 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISSM/MFD37/03-CTDBPD000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12922,11 +12922,11 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP03ISSM/MFD37/03-CTDBPD000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12942,11 +12942,11 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD37/03-CTDBPD000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12962,11 +12962,11 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNSM/MFD37/03-CTDBPD000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -12982,11 +12982,11 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP01CNSM/MFD37/03-CTDBPD000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13002,11 +13002,11 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD37/03-CTDBPD000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13614,7 +13614,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP01CNSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13625,7 +13625,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP01CNSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13636,7 +13636,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP01CNSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13647,7 +13647,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP03ISSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13658,7 +13658,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP03ISSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13669,7 +13669,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP03ISSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13680,7 +13680,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP04OSSM/RID26/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13691,7 +13691,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP04OSSM/RID26/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13702,7 +13702,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'NSIF') && strcmp(instrum
     uframe_dataset_name = 'CP04OSSM/RID26/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13713,7 +13713,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP01CNSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13724,7 +13724,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP03ISSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13735,7 +13735,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP04OSSM/MFD35/06-PHSEND000/telemetered/phsen_abcdef_dcl_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13746,7 +13746,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP01CNSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13757,7 +13757,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP03ISSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13768,7 +13768,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP04OSSM/MFD35/06-PHSEND000/recovered_host/phsen_abcdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13779,7 +13779,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP01CNSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13790,7 +13790,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP03ISSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13801,7 +13801,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP04OSSM/MFD35/06-PHSEND000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13911,7 +13911,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP01CNSM/MFD35/02-PRESFB000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13921,8 +13921,8 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP01CNSM/MFD35/02-PRESFB000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13933,7 +13933,7 @@ elseif strcmp(platform_name,'CP01CNSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP01CNSM/MFD35/02-PRESFB000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13944,7 +13944,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP03ISSM/MFD35/02-PRESFB000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13954,8 +13954,8 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP03ISSM/MFD35/02-PRESFB000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13966,7 +13966,7 @@ elseif strcmp(platform_name,'CP03ISSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP03ISSM/MFD35/02-PRESFB000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13977,7 +13977,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP04OSSM/MFD35/02-PRESFC000/recovered_host/presf_abc_dcl_tide_measurement_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13987,8 +13987,8 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
 elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrument_class,'PRESF') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'CP04OSSM/MFD35/02-PRESFC000/recovered_inst/presf_abc_tide_measurement_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'presf_tide_pressure';
-    var_list(3).name = 'presf_tide_temperature';
+    var_list(2).name = 'sea_water_pressure_at_sea_floor';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -13999,7 +13999,7 @@ elseif strcmp(platform_name,'CP04OSSM') && strcmp(node,'MFN') && strcmp(instrume
     uframe_dataset_name = 'CP04OSSM/MFD35/02-PRESFC000/telemetered/presf_abc_dcl_tide_measurement';
     var_list(1).name = 'time';
     var_list(2).name = 'abs_seafloor_pressure';
-    var_list(3).name = 'seawater_temperature';
+    var_list(3).name = 'sea_water_temperature';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -14700,11 +14700,11 @@ elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP04OSPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -14720,11 +14720,11 @@ elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP04OSPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP04OSPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -14888,11 +14888,11 @@ elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP01CNPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -14908,11 +14908,11 @@ elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP01CNPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP01CNPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15076,11 +15076,11 @@ elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCI/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15096,11 +15096,11 @@ elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMCI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCI/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15264,11 +15264,11 @@ elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMCO/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15284,11 +15284,11 @@ elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMCO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMCO/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15452,11 +15452,11 @@ elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUI/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15472,11 +15472,11 @@ elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMUI') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUI/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15640,11 +15640,11 @@ elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP02PMUO/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15660,11 +15660,11 @@ elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP02PMUO') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP02PMUO/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15828,11 +15828,11 @@ elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP03ISPM/WFP01/03-CTDPFK000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -15848,11 +15848,11 @@ elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(ins
 elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'PROFILER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'CP03ISPM/WFP01/03-CTDPFK000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -16436,11 +16436,11 @@ elseif strcmp(platform_name,'CP03ISPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL336/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -16462,11 +16462,11 @@ elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL336/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -16655,11 +16655,11 @@ elseif strcmp(platform_name,'CPGL336') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL388/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -16681,11 +16681,11 @@ elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL388/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -16874,11 +16874,11 @@ elseif strcmp(platform_name,'CPGL388') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL335/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -16900,11 +16900,11 @@ elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL335/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17093,11 +17093,11 @@ elseif strcmp(platform_name,'CPGL335') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL339/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17119,11 +17119,11 @@ elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL339/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17312,11 +17312,11 @@ elseif strcmp(platform_name,'CPGL339') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL340/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17338,11 +17338,11 @@ elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL340/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17531,11 +17531,11 @@ elseif strcmp(platform_name,'CPGL340') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL374/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17557,11 +17557,11 @@ elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL374/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17750,11 +17750,11 @@ elseif strcmp(platform_name,'CPGL374') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL375/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17776,11 +17776,11 @@ elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL375/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17969,11 +17969,11 @@ elseif strcmp(platform_name,'CPGL375') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL376/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -17995,11 +17995,11 @@ elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL376/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18188,11 +18188,11 @@ elseif strcmp(platform_name,'CPGL376') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL379/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18214,11 +18214,11 @@ elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL379/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18407,11 +18407,11 @@ elseif strcmp(platform_name,'CPGL379') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL380/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18433,11 +18433,11 @@ elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL380/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18626,11 +18626,11 @@ elseif strcmp(platform_name,'CPGL380') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL387/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18652,11 +18652,11 @@ elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL387/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18845,11 +18845,11 @@ elseif strcmp(platform_name,'CPGL387') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL389/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -18871,11 +18871,11 @@ elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL389/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -19064,11 +19064,11 @@ elseif strcmp(platform_name,'CPGL389') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'CP05MOAS/GL514/03-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -19090,11 +19090,11 @@ elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'CPGL514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'CP05MOAS/GL514/03-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -19492,11 +19492,11 @@ elseif strcmp(platform_name,'GS03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GS03FLMA/RIM01/02-CTDMOG0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{2} = 'GS03FLMA/RIM01/02-CTDMOH0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19513,11 +19513,11 @@ elseif strcmp(platform_name,'GS03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GS03FLMB/RIM01/02-CTDMOG0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{2} = 'GS03FLMB/RIM01/02-CTDMOH0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19534,11 +19534,11 @@ elseif strcmp(platform_name,'GA03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GA03FLMA/RIM01/02-CTDMOG0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{2} = 'GA03FLMA/RIM01/02-CTDMOH0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19555,11 +19555,11 @@ elseif strcmp(platform_name,'GA03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GA03FLMB/RIM01/02-CTDMOG0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{2} = 'GA03FLMB/RIM01/02-CTDMOH0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19576,11 +19576,11 @@ elseif strcmp(platform_name,'GP03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GP03FLMA/RIM01/02-CTDMOG0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{2} = 'GP03FLMA/RIM01/02-CTDMOH0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19597,11 +19597,11 @@ elseif strcmp(platform_name,'GP03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{1} = 'GP03FLMB/RIM01/02-CTDMOG0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{2} = 'GP03FLMB/RIM01/02-CTDMOH0xx/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19622,11 +19622,11 @@ elseif strcmp(platform_name,'GI03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{5} = 'GI03FLMA/RI000/00-CTDMOH400/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{6} = 'GI03FLMA/RI000/00-CTDMOH100/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -19647,11 +19647,11 @@ elseif strcmp(platform_name,'GI03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{5} = 'GI03FLMB/RI000/00-CTDMOH400/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{6} = 'GI03FLMB/RI000/00-CTDMOH100/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20260,7 +20260,7 @@ elseif strcmp(platform_name,'GA03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GA03FLMA/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20271,7 +20271,7 @@ elseif strcmp(platform_name,'GA03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GA03FLMA/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20282,7 +20282,7 @@ elseif strcmp(platform_name,'GA03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GA03FLMA/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20293,7 +20293,7 @@ elseif strcmp(platform_name,'GA03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GA03FLMB/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20304,7 +20304,7 @@ elseif strcmp(platform_name,'GA03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GA03FLMB/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20315,7 +20315,7 @@ elseif strcmp(platform_name,'GA03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GA03FLMB/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20326,7 +20326,7 @@ elseif strcmp(platform_name,'GS03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GS03FLMA/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20337,7 +20337,7 @@ elseif strcmp(platform_name,'GS03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GS03FLMA/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20348,7 +20348,7 @@ elseif strcmp(platform_name,'GS03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GS03FLMA/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20359,7 +20359,7 @@ elseif strcmp(platform_name,'GS03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GS03FLMB/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20370,7 +20370,7 @@ elseif strcmp(platform_name,'GS03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GS03FLMB/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20381,7 +20381,7 @@ elseif strcmp(platform_name,'GS03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GS03FLMB/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20392,7 +20392,7 @@ elseif strcmp(platform_name,'GP03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GP03FLMA/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20403,7 +20403,7 @@ elseif strcmp(platform_name,'GP03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GP03FLMA/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20414,7 +20414,7 @@ elseif strcmp(platform_name,'GP03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GP03FLMA/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20425,7 +20425,7 @@ elseif strcmp(platform_name,'GP03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GP03FLMB/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20436,7 +20436,7 @@ elseif strcmp(platform_name,'GP03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GP03FLMB/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20447,7 +20447,7 @@ elseif strcmp(platform_name,'GP03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GP03FLMB/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20458,7 +20458,7 @@ elseif strcmp(platform_name,'GI03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GI03FLMA/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20469,7 +20469,7 @@ elseif strcmp(platform_name,'GI03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GI03FLMA/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20480,7 +20480,7 @@ elseif strcmp(platform_name,'GI03FLMA') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GI03FLMA/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20491,7 +20491,7 @@ elseif strcmp(platform_name,'GI03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GI03FLMB/RIS01/04-PHSENF000/telemetered/phsen_abcdef_sio_mule_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20502,7 +20502,7 @@ elseif strcmp(platform_name,'GI03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GI03FLMB/RIS01/04-PHSENF000/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -20513,7 +20513,7 @@ elseif strcmp(platform_name,'GI03FLMB') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name = 'GI03FLMB/RIS01/04-PHSENF000/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21223,14 +21223,14 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GI01SUMO/RII11/02-CTDMOR019/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{13} = 'GI01SUMO/RII11/02-CTDMOR020/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'ctdbp_seawater_temperature';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'ctdbp_seawater_pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21264,14 +21264,14 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GI01SUMO/RII11/02-CTDMOR019/telemetered/ctdmo_ghqr_imodem_instrument';
     uframe_dataset_name{13} = 'GI01SUMO/RII11/02-CTDMOR020/telemetered/ctdmo_ghqr_imodem_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'temp';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21305,14 +21305,14 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GI01SUMO/RII11/02-CTDMOR019/recovered_host/ctdmo_ghqr_imodem_instrument_recovered';
     uframe_dataset_name{13} = 'GI01SUMO/RII11/02-CTDMOR020/recovered_host/ctdmo_ghqr_imodem_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'temp';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21466,7 +21466,7 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GI01SUMO/RII11/02-PHSENE042/telemetered/phsen_abcdef_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21478,7 +21478,7 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GI01SUMO/RII11/02-PHSENE042/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21490,7 +21490,7 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GI01SUMO/RII11/02-PHSENE042/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21551,14 +21551,14 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GA01SUMO/RII11/02-CTDMOR019/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{13} = 'GA01SUMO/RII11/02-CTDMOR020/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'ctdbp_seawater_temperature';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'ctdbp_seawater_pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21592,14 +21592,14 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GA01SUMO/RII11/02-CTDMOR019/telemetered/ctdmo_ghqr_imodem_instrument';
     uframe_dataset_name{13} = 'GA01SUMO/RII11/02-CTDMOR020/telemetered/ctdmo_ghqr_imodem_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'temp';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21633,14 +21633,14 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GA01SUMO/RII11/02-CTDMOR019/recovered_host/ctdmo_ghqr_imodem_instrument_recovered';
     uframe_dataset_name{13} = 'GA01SUMO/RII11/02-CTDMOR020/recovered_host/ctdmo_ghqr_imodem_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'temp';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21794,7 +21794,7 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GA01SUMO/RII11/02-PHSENE042/telemetered/phsen_abcdef_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21806,7 +21806,7 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GA01SUMO/RII11/02-PHSENE042/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21818,7 +21818,7 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GA01SUMO/RII11/02-PHSENE042/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21879,14 +21879,14 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GS01SUMO/RII11/02-CTDMOR019/recovered_inst/ctdmo_ghqr_instrument_recovered';
     uframe_dataset_name{13} = 'GS01SUMO/RII11/02-CTDMOR020/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'ctdbp_seawater_temperature';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'ctdbp_seawater_pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21920,14 +21920,14 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GS01SUMO/RII11/02-CTDMOR019/telemetered/ctdmo_ghqr_imodem_instrument';
     uframe_dataset_name{13} = 'GS01SUMO/RII11/02-CTDMOR020/telemetered/ctdmo_ghqr_imodem_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'temp';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -21961,14 +21961,14 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{12} = 'GS01SUMO/RII11/02-CTDMOR019/recovered_host/ctdmo_ghqr_imodem_instrument_recovered';
     uframe_dataset_name{13} = 'GS01SUMO/RII11/02-CTDMOR020/recovered_host/ctdmo_ghqr_imodem_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'temp';
-    var_list(4).name = 'practical_salinity';
-    var_list(5).name = 'density';
-    var_list(6).name = 'ctdmo_seawater_pressure';
-    var_list(7).name = 'pressure';
-    var_list(8).name = 'ctdmo_seawater_conductivity';
-    var_list(9).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_temperature';
+    var_list(4).name = 'sea_water_practical_salinity';
+    var_list(5).name = 'sea_water_density';
+    var_list(6).name = 'sea_water_pressure';
+    var_list(7).name = 'sea_water_pressure';
+    var_list(8).name = 'sea_water_electrical_conductivity';
+    var_list(9).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -22122,7 +22122,7 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GS01SUMO/RII11/02-PHSENE042/telemetered/phsen_abcdef_imodem_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -22134,7 +22134,7 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GS01SUMO/RII11/02-PHSENE042/recovered_host/phsen_abcdef_imodem_instrument_recovered';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -22146,7 +22146,7 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'RISER') && strcmp(instru
     uframe_dataset_name{2} = 'GS01SUMO/RII11/02-PHSENE042/recovered_inst/phsen_abcdef_instrument';
     var_list(1).name = 'time';
     var_list(2).name = 'phsen_thermistor_temperature';
-    var_list(3).name = 'phsen_abcdef_ph_seawater';
+    var_list(3).name = 'ph_seawater';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25825,11 +25825,11 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI01SUMO/RID16/03-CTDBPF000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25845,11 +25845,11 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI01SUMO/RID16/03-CTDBPF000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25865,11 +25865,11 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GI01SUMO/RID16/03-CTDBPF000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25885,11 +25885,11 @@ elseif strcmp(platform_name,'GI01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS01SUMO/RID16/03-CTDBPF000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25905,11 +25905,11 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS01SUMO/RID16/03-CTDBPF000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25925,11 +25925,11 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GS01SUMO/RID16/03-CTDBPF000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25945,11 +25945,11 @@ elseif strcmp(platform_name,'GS01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA01SUMO/RID16/03-CTDBPF000/telemetered/ctdbp_cdef_dcl_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25965,11 +25965,11 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA01SUMO/RID16/03-CTDBPF000/recovered_host/ctdbp_cdef_dcl_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'pressure';
-    var_list(6).name = 'conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -25985,11 +25985,11 @@ elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'NSIF') && strcmp(instrum
 elseif strcmp(platform_name,'GA01SUMO') && strcmp(node,'NSIF') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GA01SUMO/RID16/03-CTDBPF000/recovered_inst/ctdbp_cdef_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdbp_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdbp_seawater_pressure';
-    var_list(6).name = 'ctdbp_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26119,11 +26119,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS02HYPM/WFP02/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26139,11 +26139,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GS02HYPM/WFP02/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26273,11 +26273,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS02HYPM/WFP03/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26293,11 +26293,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GS02HYPM/WFP03/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26427,11 +26427,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA02HYPM/WFP02/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26447,11 +26447,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GA02HYPM/WFP02/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26581,11 +26581,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA02HYPM/WFP03/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26601,11 +26601,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GA02HYPM/WFP03/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26735,11 +26735,11 @@ elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI02HYPM/WFP02/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26755,11 +26755,11 @@ elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GI02HYPM/WFP02/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26889,11 +26889,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP02HYPM/WFP02/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -26909,11 +26909,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-U') && strcmp(i
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-U') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GP02HYPM/WFP02/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27043,11 +27043,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP02HYPM/WFP03/04-CTDPFL000/telemetered/ctdpf_ckl_wfp_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27063,11 +27063,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredWFP')
     uframe_dataset_name = 'GP02HYPM/WFP03/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdpf_ckl_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdpf_ckl_seawater_pressure';
-    var_list(6).name = 'ctdpf_ckl_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27083,11 +27083,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'PROFILER-L') && strcmp(i
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP02HYPM/RIM01/02-CTDMOG039/telemetered/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27103,11 +27103,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP02HYPM/RIM01/02-CTDMOG039/recovered_host/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27123,11 +27123,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GP02HYPM/RIM01/02-CTDMOG039/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27143,11 +27143,11 @@ elseif strcmp(platform_name,'GP02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI02HYPM/RIM01/02-CTDMOG039/telemetered/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27163,11 +27163,11 @@ elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI02HYPM/RIM01/02-CTDMOG039/recovered_host/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27183,11 +27183,11 @@ elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GI02HYPM/RIM01/02-CTDMOG039/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27203,11 +27203,11 @@ elseif strcmp(platform_name,'GI02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA02HYPM/RIM01/02-CTDMOG039/telemetered/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27223,11 +27223,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA02HYPM/RIM01/02-CTDMOG039/recovered_host/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27243,11 +27243,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GA02HYPM/RIM01/02-CTDMOG039/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27263,11 +27263,11 @@ elseif strcmp(platform_name,'GA02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS02HYPM/RIM01/02-CTDMOG039/telemetered/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27283,11 +27283,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS02HYPM/RIM01/02-CTDMOG039/recovered_host/ctdmo_ghqr_sio_mule_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27303,11 +27303,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'RISER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredInst')
     uframe_dataset_name = 'GS02HYPM/RIM01/02-CTDMOG039/recovered_inst/ctdmo_ghqr_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'ctdmo_seawater_temperature';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'density';
-    var_list(5).name = 'ctdmo_seawater_pressure';
-    var_list(6).name = 'ctdmo_seawater_conductivity';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_electrical_conductivity';
     var_list(1).data = [];
     var_list(2).data = [];
     var_list(3).data = [];
@@ -27323,11 +27323,11 @@ elseif strcmp(platform_name,'GS02HYPM') && strcmp(node,'RISER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL486') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/GL486/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27349,11 +27349,11 @@ elseif strcmp(platform_name,'GSGL486') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL486') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/GL486/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27375,11 +27375,11 @@ elseif strcmp(platform_name,'GSGL486') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL560') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/GL560/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27401,11 +27401,11 @@ elseif strcmp(platform_name,'GSGL560') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL560') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/GL560/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27427,11 +27427,11 @@ elseif strcmp(platform_name,'GSGL560') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL484') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/GL484/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27453,11 +27453,11 @@ elseif strcmp(platform_name,'GSGL484') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL484') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/GL484/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27479,11 +27479,11 @@ elseif strcmp(platform_name,'GSGL484') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL485') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/GL485/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27505,11 +27505,11 @@ elseif strcmp(platform_name,'GSGL485') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL485') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/GL485/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27531,11 +27531,11 @@ elseif strcmp(platform_name,'GSGL485') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL524') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/GL524/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27557,11 +27557,11 @@ elseif strcmp(platform_name,'GSGL524') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL524') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/GL524/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27583,11 +27583,11 @@ elseif strcmp(platform_name,'GSGL524') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL561') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/GL561/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -27609,11 +27609,11 @@ elseif strcmp(platform_name,'GSGL561') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSGL561') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/GL561/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28187,11 +28187,11 @@ elseif strcmp(platform_name,'GSGL561') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL364') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL364/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28213,11 +28213,11 @@ elseif strcmp(platform_name,'GAGL364') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL364') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL364/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28331,11 +28331,11 @@ elseif strcmp(platform_name,'GAGL364') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL470') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL470/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28357,11 +28357,11 @@ elseif strcmp(platform_name,'GAGL470') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL470') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL470/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28475,11 +28475,11 @@ elseif strcmp(platform_name,'GAGL470') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL493') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL493/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28501,11 +28501,11 @@ elseif strcmp(platform_name,'GAGL493') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL493') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL493/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28619,11 +28619,11 @@ elseif strcmp(platform_name,'GAGL493') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL494') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL494/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28645,11 +28645,11 @@ elseif strcmp(platform_name,'GAGL494') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL494') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL494/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28763,11 +28763,11 @@ elseif strcmp(platform_name,'GAGL494') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL495') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL495/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28789,11 +28789,11 @@ elseif strcmp(platform_name,'GAGL495') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL495') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL495/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28907,11 +28907,11 @@ elseif strcmp(platform_name,'GAGL495') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL496') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL496/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -28933,11 +28933,11 @@ elseif strcmp(platform_name,'GAGL496') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL496') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL496/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29051,11 +29051,11 @@ elseif strcmp(platform_name,'GAGL496') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL538') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/GL538/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29077,11 +29077,11 @@ elseif strcmp(platform_name,'GAGL538') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAGL538') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/GL538/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29195,11 +29195,11 @@ elseif strcmp(platform_name,'GAGL538') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL276') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL276/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29221,11 +29221,11 @@ elseif strcmp(platform_name,'GPGL276') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL276') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL276/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29339,11 +29339,11 @@ elseif strcmp(platform_name,'GPGL276') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL361') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL361/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29365,11 +29365,11 @@ elseif strcmp(platform_name,'GPGL361') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL361') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL361/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29483,11 +29483,11 @@ elseif strcmp(platform_name,'GPGL361') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL362') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL362/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29509,11 +29509,11 @@ elseif strcmp(platform_name,'GPGL362') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL362') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL362/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29627,11 +29627,11 @@ elseif strcmp(platform_name,'GPGL362') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL363') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL363/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29653,11 +29653,11 @@ elseif strcmp(platform_name,'GPGL363') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL363') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL363/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29771,11 +29771,11 @@ elseif strcmp(platform_name,'GPGL363') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL364') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL364/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29797,11 +29797,11 @@ elseif strcmp(platform_name,'GPGL364') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL364') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL364/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29915,11 +29915,11 @@ elseif strcmp(platform_name,'GPGL364') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL365') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL365/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -29941,11 +29941,11 @@ elseif strcmp(platform_name,'GPGL365') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL365') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL365/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30059,11 +30059,11 @@ elseif strcmp(platform_name,'GPGL365') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL453') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL453/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30085,11 +30085,11 @@ elseif strcmp(platform_name,'GPGL453') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL453') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL453/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30203,11 +30203,11 @@ elseif strcmp(platform_name,'GPGL453') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL469') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL469/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30229,11 +30229,11 @@ elseif strcmp(platform_name,'GPGL469') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL469') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL469/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30347,11 +30347,11 @@ elseif strcmp(platform_name,'GPGL469') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL523') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL523/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30373,11 +30373,11 @@ elseif strcmp(platform_name,'GPGL523') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL523') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL523/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30491,11 +30491,11 @@ elseif strcmp(platform_name,'GPGL523') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL525') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL525/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30517,11 +30517,11 @@ elseif strcmp(platform_name,'GPGL525') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL525') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL525/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30635,11 +30635,11 @@ elseif strcmp(platform_name,'GPGL525') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL537') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/GL537/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30661,11 +30661,11 @@ elseif strcmp(platform_name,'GPGL537') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPGL537') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/GL537/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30779,11 +30779,11 @@ elseif strcmp(platform_name,'GPGL537') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL463') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL463/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30805,11 +30805,11 @@ elseif strcmp(platform_name,'GIGL463') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL463') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL463/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30923,11 +30923,11 @@ elseif strcmp(platform_name,'GIGL463') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL469') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL469/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -30949,11 +30949,11 @@ elseif strcmp(platform_name,'GIGL469') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL469') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL469/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31067,11 +31067,11 @@ elseif strcmp(platform_name,'GIGL469') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL477') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL477/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31093,11 +31093,11 @@ elseif strcmp(platform_name,'GIGL477') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL477') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL477/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31211,11 +31211,11 @@ elseif strcmp(platform_name,'GIGL477') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL478') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL478/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31237,11 +31237,11 @@ elseif strcmp(platform_name,'GIGL478') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL478') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL478/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31355,11 +31355,11 @@ elseif strcmp(platform_name,'GIGL478') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL484') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL484/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31381,11 +31381,11 @@ elseif strcmp(platform_name,'GIGL484') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL484') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL484/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31499,11 +31499,11 @@ elseif strcmp(platform_name,'GIGL484') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL486') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL486/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31525,11 +31525,11 @@ elseif strcmp(platform_name,'GIGL486') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL486') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL486/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31643,11 +31643,11 @@ elseif strcmp(platform_name,'GIGL486') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL485') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL485/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31669,11 +31669,11 @@ elseif strcmp(platform_name,'GIGL485') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL485') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL485/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31787,11 +31787,11 @@ elseif strcmp(platform_name,'GIGL485') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL493') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL493/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31813,11 +31813,11 @@ elseif strcmp(platform_name,'GIGL493') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL493') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL493/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31931,11 +31931,11 @@ elseif strcmp(platform_name,'GIGL493') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL495') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL495/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -31957,11 +31957,11 @@ elseif strcmp(platform_name,'GIGL495') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL495') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL495/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32075,11 +32075,11 @@ elseif strcmp(platform_name,'GIGL495') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL453') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL453/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32101,11 +32101,11 @@ elseif strcmp(platform_name,'GIGL453') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL453') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL453/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32219,11 +32219,11 @@ elseif strcmp(platform_name,'GIGL453') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL525') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL525/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32245,11 +32245,11 @@ elseif strcmp(platform_name,'GIGL525') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL525') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL525/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32363,11 +32363,11 @@ elseif strcmp(platform_name,'GIGL525') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL559') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL559/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32389,11 +32389,11 @@ elseif strcmp(platform_name,'GIGL559') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL559') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL559/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32507,11 +32507,11 @@ elseif strcmp(platform_name,'GIGL559') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL560') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/GL560/04-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32533,11 +32533,11 @@ elseif strcmp(platform_name,'GIGL560') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIGL560') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/GL560/04-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32651,11 +32651,11 @@ elseif strcmp(platform_name,'GIGL560') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/PG566/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32677,11 +32677,11 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/PG566/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32907,11 +32907,11 @@ elseif strcmp(platform_name,'GSPG566') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GS05MOAS/PG565/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -32933,11 +32933,11 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GS05MOAS/PG565/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33163,11 +33163,11 @@ elseif strcmp(platform_name,'GSPG565') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG562/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33189,11 +33189,11 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG562/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33419,11 +33419,11 @@ elseif strcmp(platform_name,'GAPG562') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG563/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33445,11 +33445,11 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG563/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33675,11 +33675,11 @@ elseif strcmp(platform_name,'GAPG563') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG578/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33701,11 +33701,11 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG578/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33931,11 +33931,11 @@ elseif strcmp(platform_name,'GAPG578') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GA05MOAS/PG580/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -33957,11 +33957,11 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GA05MOAS/PG580/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34187,11 +34187,11 @@ elseif strcmp(platform_name,'GAPG580') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG514/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34213,11 +34213,11 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG514/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34443,11 +34443,11 @@ elseif strcmp(platform_name,'GPPG514') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG515/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34469,11 +34469,11 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG515/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34699,11 +34699,11 @@ elseif strcmp(platform_name,'GPPG515') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG575/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34725,11 +34725,11 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG575/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34955,11 +34955,11 @@ elseif strcmp(platform_name,'GPPG575') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GP05MOAS/PG576/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -34981,11 +34981,11 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GP05MOAS/PG576/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35211,11 +35211,11 @@ elseif strcmp(platform_name,'GPPG576') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG528/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35237,11 +35237,11 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG528/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35467,11 +35467,11 @@ elseif strcmp(platform_name,'GIPG528') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG564/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35493,11 +35493,11 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG564/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35723,11 +35723,11 @@ elseif strcmp(platform_name,'GIPG564') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG577/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35749,11 +35749,11 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG577/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -35979,11 +35979,11 @@ elseif strcmp(platform_name,'GIPG577') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'Telemetered')
     uframe_dataset_name = 'GI05MOAS/PG581/01-CTDGVM000/telemetered/ctdgv_m_glider_instrument';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];
@@ -36005,11 +36005,11 @@ elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instru
 elseif strcmp(platform_name,'GIPG581') && strcmp(node,'GLIDER') && strcmp(instrument_class,'CTD') && strcmp(method,'RecoveredHost')
     uframe_dataset_name = 'GI05MOAS/PG581/01-CTDGVM000/recovered_host/ctdgv_m_glider_instrument_recovered';
     var_list(1).name = 'time';
-    var_list(2).name = 'sci_water_temp';
-    var_list(3).name = 'practical_salinity';
-    var_list(4).name = 'sci_seawater_density';
-    var_list(5).name = 'sci_water_pressure_dbar';
-    var_list(6).name = 'sci_water_cond';
+    var_list(2).name = 'sea_water_temperature';
+    var_list(3).name = 'sea_water_practical_salinity';
+    var_list(4).name = 'sea_water_density';
+    var_list(5).name = 'sea_water_pressure';
+    var_list(6).name = 'sea_water_conductivity';
     var_list(7).name = 'lat';
     var_list(8).name = 'lon';
     var_list(1).data = [];

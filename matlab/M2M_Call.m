@@ -30,13 +30,13 @@ function [nclist] = M2M_Call(uframe_dataset_name,start_date,end_date,options)
 % options = weboptions('HeaderFields', {'Authorization', ...
 %    ['Basic ' matlab.net.base64encode([api_key ':' api_token])]}, 'Timeout', 120);
 %
-
 m2m_url = "https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/";
 data_url = strcat(m2m_url, uframe_dataset_name);
+data_options = "?beginDT=" + start_date + "&endDT=" + end_date + "&format=application/netcdf&email=None";
 
 %.. Make M2M Call(s)
-nclist(1:length(data_url)) = {""};
-response_status(1:length(data_url)) = "No Uframe data found.";
+nclist = cell((1:length(data_url)), 1);
+response_status(1:length(data_url)) = {"No Uframe data found."};
 for jj = 1:length(data_url)
     %.. request the data and start monitoring for a completed request.
     %.. .. cannot distinguish between the following two errors, because they
@@ -44,8 +44,8 @@ for jj = 1:length(data_url)
     %.. .. (1) no data in requested time range
     %.. .. (2) incorrect spelling of dataset name.
     try
-        m2m_response = webread(data_url(jj), "beginDT", start_date, "endDT", end_date, options);
-        response_status(jj) = 'M2M REQUEST MADE, not yet completed:';
+        m2m_response = webread(data_url{jj} + data_options, options);
+        response_status{jj} = 'M2M REQUEST MADE, not yet completed:';
         disp(response_status{jj});
         %.. the following two URLs are not always presented in the same order, so:
         catalogURL = string(m2m_response.allURLs(contains(m2m_response.allURLs, 'catalog')));
@@ -63,7 +63,7 @@ for jj = 1:length(data_url)
         %.. while the data collected are identical, the data formats are not,
         %.. requiring different streams that were applicable at different
         %.. times).
-        response_status(jj) = ['WARNING: ' ...
+        response_status{jj} = ['WARNING: ' ...
             'No UFrame data found for datastream ' uframe_dataset_name{jj}];
         disp(['uframe_m2m_status: ' response_status{jj}]);
         disp(' ');
@@ -74,17 +74,17 @@ for jj = 1:length(data_url)
         try
             check_complete = webread(join([asyncURL, "status.txt"], "/"));
             if strip(check_complete) == "complete"
-                response_status(jj) = 'request complete';
+                response_status{jj} = 'request complete';
                 fprintf("done\n");
                 break
             else
                 pause(1);
-                response_status(jj) = 'request incomplete';
+                response_status{jj} = 'request incomplete';
                 if mod(ii,10)==0, fprintf('%u ', ii); end
             end
         catch
             pause(1);
-            response_status(jj) = 'request incomplete';
+            response_status{jj} = 'request incomplete';
             if mod(ii,10)==0, fprintf('%u ', ii); end
         end
     end
@@ -95,17 +95,18 @@ for jj = 1:length(data_url)
     end
     
     % now put together the list of available NetCDF files from the THREDDS server
-    catalog = webread(catalogURL);
-    nc_all = regexp(catalog, '<a href=''([^>]+.nc)''>', 'tokens'); % cell elements are themselves cells
-    
+    catalog = webread(catalogURL, 'ContentType', 'text');
+    %nc_all = regexp(catalog, '<a href=''([^>]+.nc)''>', 'tokens'); % cell elements are themselves cells
+    nc_all = regexp(catalog, '<a href="(.*?\.nc)">', 'tokens', 'dotexceptnewline');
+
     %.. 2019 fdchp case: m2m request is successfully completed, but
     %..                  there are no netcdf files in the catalog.
     if isempty(nc_all)
-        response_status(jj) = 'WARNING: m2m request completed: no uframe netcdf files';
+        response_status{jj} = 'WARNING: m2m request completed: no uframe netcdf files';
         disp(['uframe_m2m_status: ' response_status{jj}]);
         continue
     else
-        response_status(jj) = 'successful';
+        response_status{jj} = 'successful';
         disp(['uframe_m2m_status: ' response_status{jj}]);
     end
     
@@ -118,13 +119,13 @@ for jj = 1:length(data_url)
     
     %.. prune the list of mapped files to our instrument of interest by eliminating
     %.. files associated with other instruments used to calculate data products
-    strings_to_match = sprintf('.*/deployment.*%s.*\\.nc$', strrep(uframe_dataset_name(jj), '/', '-'));
+    strings_to_match = sprintf('.*/deployment.*%s.*\\.nc$', strrep(uframe_dataset_name{jj}, '/', '-'));
     nc_all = cellfun(@(x) regexp(x, strings_to_match, 'match'), nc_all, 'UniformOutput', 0);
     nc_all(cellfun('isempty', nc_all)) = [];  % cell elements are themselves cells
     nclist{jj} = string(nc_all(:));  % string array
 end
 %.. stop execution if no uframe data found
-if ~any(contains(lower(response_status), 'successful'))
+if ~any(contains(lower(response_status{:}), 'successful'))
     error('***NO UFRAME DATA FOUND IN ANY DATASTREAM(S)***');
 end
 %.. consolidate nclist into one string array

@@ -29,5 +29,6 @@ try
     load('ooinet.credentials.mat')  % returns a variable called options
 catch
     error(['Unable to load access credentials. Users need to create a ' ...
-           'weboptions object with their personal OOINet API keys.'])
+           'weboptions object with their personal OOINet API keys. See ' ...
+           'README for more information on how to create this.'])
 end %try

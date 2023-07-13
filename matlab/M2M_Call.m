@@ -35,7 +35,7 @@ data_url = strcat(m2m_url, uframe_dataset_name);
 data_options = "?beginDT=" + start_date + "&endDT=" + end_date + "&format=application/netcdf&email=None";
 
 %.. Make M2M Call(s)
-nclist(1:length(data_url)) = {""};
+nclist = cell((1:length(data_url)), 1);
 response_status(1:length(data_url)) = {"No Uframe data found."};
 for jj = 1:length(data_url)
     %.. request the data and start monitoring for a completed request.
@@ -122,7 +122,7 @@ for jj = 1:length(data_url)
     strings_to_match = sprintf('.*/deployment.*%s.*\\.nc$', strrep(uframe_dataset_name{jj}, '/', '-'));
     nc_all = cellfun(@(x) regexp(x, strings_to_match, 'match'), nc_all, 'UniformOutput', 0);
     nc_all(cellfun('isempty', nc_all)) = [];  % cell elements are themselves cells
-    nclist{jj} = string(nc_all{:});  % string array
+    nclist{jj} = string(nc_all(:));  % string array
 end
 %.. stop execution if no uframe data found
 if ~any(contains(lower(response_status{:}), 'successful'))

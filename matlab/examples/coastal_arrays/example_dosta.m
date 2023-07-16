@@ -15,15 +15,14 @@
 %Method:
     % Telemetered, RecoveredHost, RecoveredInst, RecoveredCSPP, RecoveredWFP, Streamed
 %%
-close all
-clearvars
-
-%.. set login and URL details
-username = 'OOIAPI-853A3LA6QI3L62';  %api_key
-password = 'WYAN89W5X4Z0QZ';	%api_token
-% Set Authorization header field in weboptions
-options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',...
-    ['Basic ' matlab.net.base64encode([username ':' password])]}, 'Timeout', 120);
+% load the access credentials
+try
+    load('ooinet.credentials.mat')  % returns a variable called options
+catch
+    error(['Unable to load access credentials. Users need to create a ' ...
+           'weboptions object with their personal OOINet API keys. See ' ...
+           'README for more information on how to create this.'])
+end %try
 
 %.. set time period of interest
 start_date='2018-06-01T00:00:00.000Z';
@@ -44,7 +43,7 @@ method = 'Telemetered';
 
 %Get Data
 %[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[nsif_variables, nsif_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+[nsif_variables, nsif_mtime, ~] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 %Example plot
 figure(1)
@@ -69,7 +68,7 @@ method = 'RecoveredHost';
 
 %Get Data
 %[mfn_variables, mfn_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files
-[mfn_variables, mfn_mtime, netcdfFilenames] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
+[mfn_variables, mfn_mtime, ~] = M2M_Data(variables, nclist);  %This will use the opendap to read in the data from remote files
 
 %Example plot
 figure(1)

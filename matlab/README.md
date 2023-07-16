@@ -17,6 +17,7 @@ Rename this folder to something unique to prevent possible confusion with other 
 7. Select "Save".
 8. Select "Close".
 
+### Testing
 To test that the toolbox was successfully added to path, you can open one of the functions using the MATLAB console. Example: 
 
  ```
@@ -29,10 +30,30 @@ The return should be the code that issues requests to OOINet. If an error appear
 ### Examples
 Example scripts can be found in the [examples folder](https://github.com/oceanobservatories/ooi-data-explorations/tree/master/matlab/examples).
 
-
 ### Usage
-If you have not done so already, you will need to create an [OOINet](https://ooinet.oceanobservatories.org/) account to make requests for data. 
-If you are not familiar with OOI nomenclature, we recommend starting with the list of [OOI sites](https://oceanobservatories.org/site-list/).
+If you have not done so already, you will need to create an [OOINet](https://ooinet.oceanobservatories.org/) account to make requests for data
+(see section on Access Credentails below). If you are not familiar with OOI nomenclature, we recommend starting with the list of 
+[OOI sites](https://oceanobservatories.org/site-list/).
+
+#### Access Credentials for the OOI M2M API
+In order to access the OOI M2M API, you need to setup your OOINet credentials as
+a `weboptions` object that Matlab can then use as part of a `webread` request
+to the API.  To set this up, in Matlab (replacing `<API Username>` and 
+`<API Token>` with your OOINet credentials):
+
+``` matlab
+>> username = '<API Username>';
+>> password = '<API Token>';
+>> options = weboptions('CertificateFilename', '', 'HeaderFields', {'Authorization', ...
+    ['Basic ' matlab.net.base64encode([username ':' password])]}, ...
+    'Timeout', 180);
+>> save('ooinet.credentials.mat', 'options');
+```
+
+Put the `ooinet.credentials.mat` file in your Matlab path (best option is your
+Matlab home directory as it is on the Matlab path by default) so it is available
+for this application. The code uses these credentials to make requests to the M2M
+API for data and metadata.
 
 #### M2M_URLs
 After obtaining your OOI API username and token, you will then need to identify the site, node, instrument (sensor), and method of data delivery that you are interested in. 
@@ -55,7 +76,11 @@ An OOI API Username and Token, as well as the request options, are required to i
 Start and stop times must follow the ISO 8601 format ('YYYY-mm-ddTHH:MM:SS.sssZ')
 
 ```
-% Example: Issues the request for the seafloor oxygen optode data at CE01ISSM between May 01, 2019 and August 31, 2019.
+% Example: Issues the request for the seafloor oxygen optode data at CE01ISSM 
+% between May 01, 2019 and August 31, 2019.
+% Either create a weboptions object for your credentials, or load one already
+% created and saved (as above).
+% load('ooinet.credentials.mat', 'options')
 user = 'OOI-API-USER-HERE'
 token = 'OOI-API-TOKEN-HERE'
 options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',...
@@ -66,7 +91,6 @@ end = '2019-08-31T23:59:59.999Z';
 
 ce01issm_nc = M2M_Call(ce01issm_mfn,start,end,options);  
 ```
-
 
 #### M2M_Data
 This function takes the return from M2M_Call and will bring the data into the MATLAB Workspace. If you positionally specify a third parameter as true (default) data is brought into the Workspace. 

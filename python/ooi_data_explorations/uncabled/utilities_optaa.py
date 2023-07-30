@@ -576,3 +576,206 @@ def calculate_ratios(optaa):
     optaa['ratio_qband'] = apg[:, m676] / apg[:, m440]
 
     return optaa
+
+PUREWATER_ATTRS = {
+    'elapsed_run_time': {
+        'long_name': 'Elapsed Run Time',
+        'units': 'ms',
+        'comment': 'Time in milliseconds since the instrument was powered on.'
+    },
+    'wavelength_number': {
+        'long_name': 'Wavelength Number',
+        'units': 'count',
+        'comment': ('An index counter between 0 and 99 used to set a common length dimension for the absorbance and '
+                    'attenuation measurements. The actual number of wavelengths is variable between sensors '
+                    'and may even change for a particular sensor over time if servicing requires a replacement '
+                    'of the filter set. The actual number of wavelengths for this sensor is represented here '
+                    'by the attribute actual_wavelengths.')
+        # 'actual_wavelengths': ''  # deliberately left blank, created during the processing
+    },
+    'wavelength_a': {
+        'long_name': 'Absorption Channel Wavelengths',
+        'standard_name': 'radiation_wavelength',
+        'units': 'nm',
+        'comment': ('Absorbance channel measurement wavelengths, specific to the filter wheel set installed in '
+                    'the AC-S.'),
+    },
+    'a_reference_dark': {
+        'long_name': 'Absorption Channel Dark Reference',
+        'units': 'count',
+        'comment': ('Absorption channel reference detector dark counts (before the lamp is turned on). Used in '
+                    'conversion of the raw absorption channel measurements to absorbance estimates.')
+    },
+    'a_signal_dark': {
+        'long_name': 'Absorption Channel Dark Signal',
+        'units': 'count',
+        'comment': ('Absorption channel signal detector dark counts (before the lamp is turned on). Used in conversion '
+                    'of the raw absorption channel measurements to absorbance estimates.')
+    },
+    'a_signal': {
+        'long_name': 'Absorption Channel Signal Measurements',
+        'units': 'count',
+        'comment': ('Absorption channel signal detector raw counts (while the lamp is turned on). Used in conversion '
+                    'of the raw absorption channel measurements to absorbance estimates.'),
+    },
+    'wavelength_c': {
+        'long_name': 'Attenuation Channel Wavelengths',
+        'standard_name': 'radiation_wavelength',
+        'units': 'nm',
+        'comment': ('Attenuation channel measurement wavelengths, specific to the filter wheel set installed in '
+                    'the AC-S.'),
+    },
+    'c_reference_dark': {
+        'long_name': 'Attenuation Channel Dark Reference',
+        'units': 'count',
+        'comment': ('Attenuation channel reference detector dark counts (before the lamp is turned on). Used in '
+                    'conversion of the raw attenuation channel measurements to attenuation estimates.')
+    },
+    'c_signal_dark': {
+        'long_name': 'Attenuation Channel Dark Signal',
+        'units': 'count',
+        'comment': ('Attenuation channel signal detector dark counts (before the lamp is turned on). Used in '
+                    'conversion of the raw attenuation channel measurements to attenuation estimates.')
+    },
+    'c_signal': {
+        'long_name': 'Attenuation Channel Signal Measurements',
+        'units': 'count',
+        'comment': ('Attenuation channel signal detector raw counts (while the lamp is turned on). Used in conversion '
+                    'of the raw attenuation channel measurements to attenuation estimates.'),
+    },
+    'external_temp': {
+        'long_name': 'External Instrument Temperature',
+        'standard_name': 'sea_water_temperature',
+        'units': 'degrees_Celsius',
+        'comment': ('In-situ sea water temperature measurements from the sensor mounted at the top of the '
+                    'AC-S pressure housing.'),
+    },
+    'internal_temp': {
+        'long_name': 'Internal Instrument Temperature',
+        'units': 'degrees_Celsius',
+        'comment': 'Internal instrument temperature, used to convert raw absorbance and attenuation measurements.',
+    },
+}
+
+def parse_dat_header(header):
+    """Parse the header in a dat pure water cal file"""
+    # Clean the header
+    header = [x.strip() for x in header]
+    
+    # Timestamp
+    timestamp = header[0].split()[-2:]
+    timestamp = ' '.join(timestamp)
+    
+    # Serial Number
+    serial_number = [x.split()[0] for x in header if "serial number" in x.lower()][0]
+    
+    # Output wavelengths
+    nwvl = [int(x.split()[0]) for x in header if "output wavelengths" in x.lower()][0]
+    
+    # Number temperature bins
+    ntbins = [int(x.split()[0]) for x in header if "number of temperature bins" in x.lower()][0]
+    
+    # Temperature bins
+    tbins = [float(x) for x in header[-1].split(";")[0].split()]
+
+    return timestamp, serial_number, nwvl, ntbins, tbins
+
+
+def parse_dat_file(filename):
+
+    ##### OPEN THE FILE #####
+    with open(filename) as file:
+        # Read in the header and parse the header data
+        header = np.genfromtxt(file, dtype='str', delimiter='\n', max_rows=11)
+        timestamp, serial_number, nwvl, ntbins, tbins = parse_dat_header(header)
+        # Get the wavelengths and associated data
+        # Need info from the header file to find the correct rows
+        wavelengths = np.genfromtxt(file, dtype='str', delimiter="\n", skip_header=nwvl+2, max_rows=1)
+        data = np.genfromtxt(file, dtype="str", delimiter="\n", skip_header=0)
+
+
+    ##### PARSE THE WAVELENGTHS #####
+    wavelengths = [x.strip() for x in str(wavelengths).split()]
+    columns = np.concatenate([["elapsed_run_time"], wavelengths, ["Tint", "fw_speed_diagnostic", "pressure", "Text", "abs_ref", "abs_sig", "ccc_ref", "ccc_sig"]])
+
+    ##### PARSE THE DATA INTO A-CHANNEL, C-CHANNEL, AND AUX DATA #####
+    data = [x.strip().split() for x in data]
+
+    # Put the data into a dataframe and format values
+    df = pd.DataFrame(data, columns=columns)
+    df = df.applymap(float)
+    # Put the elapsed time into seconds and set as index
+    df["elapsed_run_time"] = df["elapsed_run_time"] 
+    df.set_index(keys=["elapsed_run_time"], inplace=True)
+    # Identify which columns are A-Channel and C-channel
+    abs_cols = [v for v in df.columns if "A" in v]
+    ccc_cols = [v for v in df.columns if "C" in v]
+    aux_cols = [v for v in df.columns if "A" not in v and "C" not in v]
+    # Get the A-channel (abs) values
+    abs_data = df[abs_cols].values
+    # Get the C-channel values
+    ccc_data = df[ccc_cols].values
+    # Get the auxilary data
+    aux_data = df[aux_cols].values
+
+    # Get the wavelength data
+    # Generate an interval wavelength number
+    int_wavelength = np.arange(0, nwvl, 1)
+    # A-channel wavelengths
+    abs_wavelength = [float(w.replace("A","0")) for w in abs_cols]
+    # C-channel wavelengths
+    ccc_wavelength = [float(w.replace("C","0")) for w in ccc_cols]
+
+    # Get the time data
+    elapsed_run_time = df.index.values
+
+    # Parse out the aux_data
+    Tint = df["Tint"].values
+    fw_speed_diagnostic = df["fw_speed_diagnostic"].values
+    pressure = df["pressure"].values
+    Text = df["Text"].values
+    abs_ref = df["abs_ref"].values
+    abs_sig = df["abs_sig"].values
+    ccc_ref = df["ccc_ref"].values
+    ccc_sig = df["ccc_sig"].values
+
+    ##### BUILD A DATASET #####
+    ds = xr.Dataset(
+        data_vars=dict(
+            a_signal=(["elapsed_run_time","wavelength_number"], abs_data),
+            c_signal=(["elapsed_run_time","wavelength_number"], ccc_data),
+            wavelength_a=(["wavelength_number"], abs_wavelength),
+            wavelength_c=(["wavelength_number"], ccc_wavelength),
+            internal_temp=(["elapsed_run_time"], Tint),
+            external_temp=(["elapsed_run_time"], Text),
+            filterwheel_speed_diagnostic=(["elapsed_run_time"], fw_speed_diagnostic),
+            pressure=(["elapsed_run_time"], pressure),
+            a_reference_dark=(["elapsed_run_time"], abs_ref),
+            a_signal_dark=(["elapsed_run_time"], abs_sig),
+            c_reference_dark=(["elapsed_run_time"], ccc_ref),
+            c_signal_dark=(["elapsed_run_time"], ccc_sig)
+        ),
+        coords=dict(
+            elapsed_run_time=elapsed_run_time,
+            wavelength_number=int_wavelength
+        ),
+        attrs=dict(
+            comment=("This dataset is for the pure water calibration of either the "
+                     "A-channel or C-channel. Please check the filename for which "
+                     "side the calibration is applicable for."),
+            start_time=timestamp,
+            serial_number=serial_number,
+            number_temperature_bins=ntbins,
+            number_wavelengths=nwvl,
+            temperature_bins=tbins
+        )
+    )
+
+    # Add in variable attributes based on the attributes for the process
+    # OPTAA attributes. This is because we need to do a 1:1 mapping of
+    # the wavelengths in order to subtract values
+    for v in ds.variables:
+        if v in PUREWATER_ATTRS:
+            ds[v].attrs = PUREWATER_ATTRS[v]
+
+    return ds

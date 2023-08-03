@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import numpy as np
-import pandas as pd
-import xarray as xr
-from scipy.signal import buttord, butter, filtfilt, detrend, welch
-from scipy.fft import fft
-from scipy.signal.windows import hann
-from scipy.integrate import cumulative_trapezoid
-from scipy.interpolate import interp1d
-
 # +
 ATTRS = ATTRS = {
+    'number_zero_crossings': {
+        'long_name': 'Number of Wave Zero-Crossings',
+        'type': 'zero-crossing',
+        'comment': ('Zero-crossing is defined as when the buoy vertical displacement crosses a mean sea surface '
+                    'level. The total number of zero-crossings is twice the total number of waves observed during '
+                    'a measurement period.'),
+    },
     'significant_wave_height': {
         'long_name': 'Significant Wave Height',
         'standard_name': 'sea_surface_wave_significant_height',
@@ -18,17 +16,36 @@ ATTRS = ATTRS = {
         'type':'zero-crossing',
         'comment': ('Wave height is defined as the vertical distance from a wave trough to the following wave crest. '
                     'The significant wave height is the mean trough to crest distance measured during the observation '
-                    'period of the highest one-third of waves. Calculated from the zero down-crossing significant wave '
-                    'height.'),
+                    'period of the highest one-third of waves. Calculated from the zero down-crossing method.'),
     },
-    'peak_wave_period': {
-        'long_name': 'Peak Wave Period',
-        'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum',
+    'significant_wave_period': {
+        'long_name': 'Significant Wave Period',
+        'standard_name': 'sea_surface_wave_significant_period',
         'units': 's',
         'type': 'zero-crossing',
-        'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
-                    'troughs or upward passes through the mean level. The peak wave period, is the period of the most '
-                    'energetic waves in the total wave spectrum at a specific location.'),
+        'comment': ('Significant wave period coressponds to the mean wave period of the highest one-third of measured '
+                    'waves during the observation period. Wave period is defined as the interval of time between '
+                    'repeated features on the waveform such as crests, troughs, or upward/downward passes through '
+                    'the mean sea surface level.')
+    },
+    'wave_height_10': {
+        'long_name': 'Height of Highest Tenth of Waves',
+        'standard_name': 'sea_surface_wave_mean_height_of_highest_tenth',
+        'units': 'm',
+        'type': 'zero-crossing',
+        'comment': ('Wave height is defined as the vertical distance from a wave trough to the following wave crest. '
+                    'The height of the highest tenth is defined as the mean of the highest 10 per cent of trough to '
+                    'crest distances measured during the observation period. Calculated from the zero down-crossing '
+                    'method.')
+    },
+    'wave_period_10': {
+        'long_name': 'Period of Highest Tenth of Waves',
+        'standard_name': 'sea_surface_wave_mean_period_of_highest_tenth',
+        'units': 's',
+        'type': 'zero-crossing',
+        'comment': ('Wave mean period is the mean period measured over the observation duration. The period of the '
+                    'highest tenth of waves is the mean period of the highest 10 per cent of waves measured during '
+                    'the observation period. Calculated from the zero down-crossing method.')
     },
     'mean_wave_height': {
         'long_name': 'Mean wave height',
@@ -47,6 +64,15 @@ ATTRS = ATTRS = {
         'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
                     'troughs or upward passes through the mean level. Wave mean period is the mean period measured '
                     'over the observation duration. Calculated as the average zero down-crossing wave period. '),
+    },
+    'peak_wave_period': {
+        'long_name': 'Peak Wave Period',
+        'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum',
+        'units': 's',
+        'type': 'directional',
+        'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
+                    'troughs or upward passes through the mean level. The peak wave period, is the period of the most '
+                    'energetic waves in the total wave spectrum at a specific location.'),
     },
     'peak_wave_direction': {
         'long_name': 'Peak Wave Direction',
@@ -182,10 +208,149 @@ def identify_samples(ds, threshold):
     return sample
 
 
+def zero_crossing(heave, fs):
+    """
+    Calculate the wave statistics using a zero-crossing algorithm.
+    
+    This method utilizes a zero down-crossing wave algorithm to
+    compute the bulk wave statistics. The code, as written, actually
+    looks for the up-crossing waves; inverting the heave values
+    identifies the down-crossing waves. Additionally, waves with 
+    either a crest or trough that falls below a detection limit
+    are joined to either the following or preceding wave.
+    
+    Parameters
+    ----------
+    heave: array_like
+        An array of vertical displacement (heave)
+    fs: float
+        Sampling frequency
+        
+    Returns
+    -------
+    n: int
+        The number of zero-crossings detected
+    H_sig: float
+        The significant wave height, defined as the average
+        wave height of the 1/3 highest waves
+    T_sig: float
+        The signficant wave period
+    H_10: float
+        The wave height of the 10% highest waves
+    T_10: float
+        The mean period of the 10% highest waves
+    H_avg: float
+        The mean wave height
+    T_avg: float
+        The mean wave period
+     """
+
+    # Code is written looking at upcrossing - to use downcrossing
+    # invert the heave
+    z = -heave
+    z = detrend(z)
+
+    # Find and remove values near zero
+    z0 = z[z != 0]
+
+    # Create an index
+    back0 = np.arange(0, len(z), 1)
+    back0 = back0[z != 0]
+
+    # Find the zero crossings
+    f = np.where(z0[0:-1]*z0[1:] < 0)[0]
+    crossing = back0[f]
+
+    # Reject the first crossing if it is upward-crossing
+    if z[0]>0:
+        crossing = crossing[1:]
+
+    # Take every other crossing to get the zero-downward crossings
+    crossing = crossing[np.arange(0, len(crossing), 2)]
+
+    ##### CALCULATE WAVE PARAMETERS #####
+    # Initialize arrays to save the results in
+    wave = np.zeros((len(crossing)-1, 4))
+
+    # Get the max (crest) and min (trough) values between each crossing
+    for n in np.arange(0, len(crossing)-1, 1):
+        wave[n, 1] = np.max(z[crossing[n]:crossing[n+1]])
+        wave[n, 2] = -np.min(z[crossing[n]:crossing[n+1]])
+
+    # Check the size of the wave and if no wave found do nothing
+    if len(wave[:,1]) >= 1:
+
+        # Calculate elasped time between each measurement
+        wave[:, 3] = np.diff(crossing)/fs
+
+        # Calculate the threshold wave size
+        threshold = 0.01*np.max(wave[:,1]+wave[:,2])
+        if threshold < 0:
+            raise ValueError(f"Wave threshold must not be negative")
+        
+        # Now remove wave which are too small by joining them to
+        # adjacent waves
+        for idx, (crest, trough) in enumerate(wave[:,1:3]):
+            if crest < threshold:
+                if idx != 0:
+                    # Join the values to the preceding wave
+                    wave[idx-1, 1] = np.max(wave[idx-1:idx+1, 1])
+                    wave[idx-1, 2] = np.max(wave[idx-1:idx+1, 2])
+                    wave[idx-1, 3] = np.sum(wave[idx-1:idx+1, 3])
+                # Replace the values with NaNs
+                wave[idx, :] = np.nan
+            elif trough < threshold:
+                if idx != len(wave):
+                    # Join the values to the next wave
+                    wave[idx, 1] = np.max(wave[idx:idx+2, 1])
+                    wave[idx, 2] = np.max(wave[idx:idx+2, 2])
+                    wave[idx, 3] = np.sum(wave[idx:idx+2, 3])
+                    # Replace the values with NaNs
+                    wave[idx+1, :] = np.nan
+                else:
+                    wave[idx, :] = np.nan
+    
+    # Drop the NaNs
+    wave = wave[np.all(~np.isnan(wave), axis=1)]
+
+    # Now calculate the wave height from the crest -> trough distance
+    wave[:, 0] = np.sum(wave[:, 1:3], axis=1)
+
+    # Sort based on wave height
+    wave_sorted = np.sort(wave, axis=0)
+    wave_sorted = np.flipud(wave_sorted)
+
+    ##### CALCULATE WAVE STATISTICS #####
+    # Get number of waves measured
+    n = len(wave_sorted)
+
+    # Calculate significant wave height and period
+    n_sig = int(np.round(n/3))
+    h_sig = np.mean(wave_sorted[0:n_sig, 0])
+    T_sig = np.mean(wave_sorted[0:n_sig, 3])
+
+    # Calculate the 10-highest waves
+    n_10 = int(np.round(n/10))
+    h_10 = np.mean(wave_sorted[0:n_10, 0])
+    T_10 = np.mean(wave_sorted[0:n_10, 3])
+
+    # Calculate the mean height and period
+    h_avg = np.mean(wave[:, 0])
+    T_avg = np.mean(wave[:, 3])
+
+    return n, h_sig, T_sig, h_10, h_avg, T_avg
+
+
 def wave_statistics(heave, fs, npt):
     """
-    Calculate the wave statistics from the wave time series
-    
+    Calculate the wave statistics from the wave time series.
+
+    This method utilizes a mixed approach to calculating wave
+    statistics. The significant wave height is calculated as the
+    4*std(heave), the significant wave period is from the 
+    frequency at the spectral max, and the average wave period
+    uses a zero-crossing approach.
+
     Parameters
     ----------
     heave: array_like
@@ -200,22 +365,22 @@ def wave_statistics(heave, fs, npt):
     Hsig: float
         Signficant wave height
     Havg: float
-        Average wave height
+        Mean sea level height. This value should be near-zero.
     Tsig: float
-        Significant wave period
+        Significant wave period calculated from the peak spectrum.
     Tavg: float
         Average wave period
     
     """
     # Detrend the heave and calculate the significant and average wave height
     heave = detrend(heave)
-    Hsig = 4*np.std(heave)
-    Havg = np.mean(heave)
+    Hsig = 4*np.std(heave) 
+    Havg = np.mean(heave)  # Not actually average wave height
     
     bw = np.ones(5)/5
     aw = 1
     
-    # Calculate the significant and average wave period
+    # Calculate the significant wave period from the spectral density
     if Hsig > 0.2:
         [fr, wxx] = welch(heave, fs, window=hann(npt), nfft=npt, noverlap=0, detrend=False)
         wxx[0] = wxx[1]
@@ -225,7 +390,7 @@ def wave_statistics(heave, fs, npt):
         i = np.where(wxxf == np.max(wxxf))[0]
         fr1 = np.mean(fr[i])
         Tsig = 1/fr1
-        Tavg = zero_crossings(heave, fs)
+        Tavg = wave_period(heave, fs)
     else:
         Tsig = np.nan
         Tavg = np.nan
@@ -233,7 +398,7 @@ def wave_statistics(heave, fs, npt):
     return Hsig, Havg, Tsig, Tavg
 
 
-def zero_crossings(heave, fs, detrend=False):
+def wave_period(heave, fs, detrend=False):
     """
     Compute average wave period using the zero-crossing method
     
@@ -252,10 +417,9 @@ def zero_crossings(heave, fs, detrend=False):
     tm: float
         The calculated average wave period
     """
-    
+    heave = detrend(heave)
     n=len(heave)
     T=(n-1)/fs
-    heave = heave-np.mean(heave)
     sheave = np.sign(heave)
     sw1 = sheave[0:len(heave)-1]
     sw2 = sheave[1:len(heave)]
@@ -502,7 +666,7 @@ def heave(omegam, euler, accm, fs, bhi, ahi, R, gravity):
 
 def uvw_xyz(gyro, platform, angular_rates, fs, f_cutoff=1/30, com_offset=[0, 0, 0.5], G=9.8):
     """
-    Calculate the displacements and velocities from accelerometer data
+    Calculate the displacements (xyz) and velocities (uvw) from accelerometer data
     
     Parameters
     ----------
@@ -1000,23 +1164,37 @@ def angular_rates(data):
     return angular_rate
 
 
-def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_height, mean_wave_period,
-                  peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, wave_height_hm0,
+def build_dataset(ds, number_zero_crossings, significant_wave_height, significant_wave_period, wave_height_10,
+                  wave_period_10, peak_wave_period, average_wave_height, average_wave_period,
+                  peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, significant_wave_height_puv,
                   sample_start_time, deployment):
     """
     Takes in the calculated wave statistics are builds an xarray dataset
     
     Parameters
     ----------
+    number_zero_crossings: array_like
+        The number of zero-crossings (downwards) identified during the
+        observation period
     significant_wave_height: array_like
-        The significant wave height (Hsig) calculated using the zero-crossing
-        method (units: m)
+        The wave height of the highest 1/3 of waves measured during the
+        observation period (units: m)
+    significant_wave_period: array_like
+        The mean period of the highest 1/3 of waves measured during the
+        observation period (units: s)
+    wave_height_10: array_like
+        The wave height of the highest tenth of waves measured during the
+        observation period (units: m)
+    wave_period_10: array_like
+        The wave period of the highest tenth of waves measured during the
+        observation period (units: s)
     peak_wave_period: array_like
-        The peak wave period calculated using the zero-crossing data (units: s)
+        The period of the wave calculated from the frequency associated with
+        the peak in the wave spectra (units: s)
     mean_wave_height: array_like
-        The mean wave height calculated from the zero-crossing data (units: m)
+        The mean wave height (units: m)
     mean_wave_period: array_like
-        The mean wave period calculated from the zero-crossing data (units: s)
+        The mean wave period (units: s)
     peak_wave_direction_puv: array_like
         The peak wave direction calculated using the Nortek PUV-method (units: degrees)
     peak_wave_spread_puv: array_like
@@ -1041,7 +1219,11 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
         sample_start_time, with associated metadata    
     """
     # Check that the data is all 1-d arrays
+    number_zero_crossings = np.atleast_1d(number_zero_crossings)
     significant_wave_height = np.atleast_1d(significant_wave_height)
+    significant_wave_period = np.atleast_1d(significant_wave_period)
+    wave_height_10 = np.atleast_1d(wave_height_10)
+    wave_period_10 = np.atleast_1d(wave_period_10)
     peak_wave_period = np.atleast_1d(peak_wave_period)
     mean_wave_height = np.atleast_1d(mean_wave_height)
     mean_wave_period = np.atleast_1d(mean_wave_period)
@@ -1060,7 +1242,11 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
     
     # Create a dictionary object of the data variables
     data_vars = dict(
+        number_zero_crossings = (["time"], number_zero_crossings)
         significant_wave_height=(["time"], significant_wave_height),
+        significant_wave_period=(["time"], significant_wave_period),
+        wave_height_10=(["time"], wave_height_10),
+        wave_period_10=(["time"], wave_period_10),
         peak_wave_period=(["time"], peak_wave_period),
         mean_wave_height=(["time"], mean_wave_height),
         mean_wave_period=(["time"], mean_wave_period),
@@ -1128,7 +1314,11 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
     # --------------------------------------------------------------------
     # Calculate the wave statistics by iterating through each wave sample
     # (Note: can probably speed this portion up using Dask)
+    number_zero_crossings = []
     significant_wave_height = []
+    significant_wave_period = []
+    wave_height_10 = []
+    wave_period_10 = []
     peak_wave_period = []
     average_wave_height = []
     average_wave_period = []
@@ -1177,7 +1367,10 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
         # Calculate wave statistics from the zero-crossings
         z = xyz[2, :][incr]
         npt = np.min([2**13, len(incr)])
+        # Method A
         Hsig, Havg, Tsig, Tavg = wave_statistics(z, fs, npt)
+        # Method B
+        n, h_sig, t_sig, h_10, t_10, h_avg, t_avg = zero_crossing(z, fs)
 
         # Calucate the wave spectra and the associated statistics
         vu = uvw[1, :][incr]
@@ -1188,10 +1381,14 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
         Hm0, Fs, Tdir, Ts = wave_spectra_statistics(u_spectra, p_spectra, wave_direction, wave_spread, F, dF)
 
         # Save the results
-        significant_wave_height.append(Hsig)    # Calculated from zero-crossings
-        peak_wave_period.append(Tsig)           # Calculated from zero-crossings
-        average_wave_height.append(Havg)        # Calculated from zero-crossings
-        average_wave_period.append(Tavg)        # Calculated from zero-crossings
+        number_zero_crossings.append(n)         # Calculated from zero-crossings: Method B
+        significant_wave_height.append(Hsig)    # Calculated from zero-crossings: Method A
+        significant_wave_period.append(t_sig)   # Calculated from zero-crossings: Method B
+        wave_height_10.append(h_10)             # Calculated from zero-crossings: Method B
+        wave_period_10.append(t_10)             # Calculated from zero-crossings: Method B
+        peak_wave_period.append(Tsig)           # Calculated from zero-crossings: Method A
+        average_wave_height.append(h_avg)       # Calculated from zero-crossings: Method B
+        average_wave_period.append(t_avg)       # Calculated from zero-crossings: Method B
         peak_wave_direction_puv.append(Tdir)    # Calculated from the PUV method
         peak_wave_spread_puv.append(Ts)         # Calculated from the PUV method
         peak_wave_period_puv.append(1/Fs)       # Calculated from the PUV method
@@ -1204,8 +1401,21 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
 
     # --------------------------------------------------------------------
     # Build the wave statistics dataset
-    wave_stats = build_dataset(ds, significant_wave_height, peak_wave_period, average_wave_height, average_wave_period,
+    wave_stats = build_dataset(ds, number_zero_crossings, significant_wave_height, significant_wave_period, wave_height_10,
+                               wave_period_10, peak_wave_period, average_wave_height, average_wave_period,
                                peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, significant_wave_height_puv,
                                sample_start_time, deployment)
     
     return wave_stats
+
+
+# -
+
+import numpy as np
+import pandas as pd
+import xarray as xr
+from scipy.signal import buttord, butter, filtfilt, detrend, welch
+from scipy.fft import fft
+from scipy.signal.windows import hann
+from scipy.integrate import cumulative_trapezoid
+from scipy.interpolate import interp1d

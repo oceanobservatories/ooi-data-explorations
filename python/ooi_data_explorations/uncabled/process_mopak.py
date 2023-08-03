@@ -626,7 +626,7 @@ def rotate(IN, ANGLES, IFLAG=0):
 
 def heave(omegam, euler, accm, fs, bhi, ahi, R, gravity):
     """
-    Correct sonic anemometer components for platform motion and orientation
+    Correct components for platform motion and orientation
     
     Parameters
     ----------
@@ -747,6 +747,11 @@ def despike(data, n_std=4, iters=3):
         
     Returns
     -------
+    data: array_like
+        A two-dimensional array of the data despiked. Identified bad
+        data points have been filled via linearly interpolation.
+    bad: array_like
+        The bad data points
     """
     # Coerce entries to be at least 2d
     data = np.atleast_2d(data)
@@ -818,6 +823,10 @@ def log_avg(f, s, n):
         The start indices of each frequency band
     Ne: array_like
         The end indices of each frequency band
+
+    References
+    ----------
+    Gordon, Lee. 2001. Matlab code. NortekUSA LLC.
     """
     
     lf = np.log(f)
@@ -848,7 +857,13 @@ def log_avg(f, s, n):
 
 def wave_spectra(u, v, p, dt, nF, hp, hv, params=[0.03, 200, 0.1, 0]):
     """
-    Calculate the wave direction and spreading using the Nortek PUV-method
+    Calculate the wave direction and spreading using the Nortek PUV-method.
+    
+    This method derives the power spectra for the surface elevation based on
+    both the pressure (heave) and velocity components, the directional wave
+    statistics, and the associated frequency bands and degrees of freedom. 
+    This is done by computing both the power spectra and cross-spectra, then
+    band averaging in log-frequency space.
     
     Parameters
     ----------
@@ -897,6 +912,10 @@ def wave_spectra(u, v, p, dt, nF, hp, hv, params=[0.03, 200, 0.1, 0]):
         Bandwidth of each band
     dof:
         Degrees of freedom for each band
+
+    References
+    ----------
+    Gordon, Lee. 2001. MatLab code. NortekUSA LLC
         """
     
     # Parse out the wave parameters

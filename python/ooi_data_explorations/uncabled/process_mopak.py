@@ -1,6 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# +
+import numpy as np
+import pandas as pd
+import xarray as xr
+from scipy.signal import buttord, butter, filtfilt, detrend, welch
+from scipy.fft import fft
+from scipy.signal.windows import hann
+from scipy.integrate import cumulative_trapezoid
+from scipy.interpolate import interp1d
+
+
 ATTRS = ATTRS = {
     'number_zero_crossings': {
         'long_name': 'Number of Wave Zero-Crossings',

@@ -307,7 +307,7 @@ def zero_crossing(heave, fs):
                 # Replace the values with NaNs
                 wave[idx, :] = np.nan
             elif trough < threshold:
-                if idx != len(wave):
+                if idx+1 != len(wave):
                     # Join the values to the next wave
                     wave[idx, 1] = np.max(wave[idx:idx+2, 1])
                     wave[idx, 2] = np.max(wave[idx:idx+2, 2])
@@ -345,7 +345,7 @@ def zero_crossing(heave, fs):
     h_avg = np.mean(wave[:, 0])
     T_avg = np.mean(wave[:, 3])
 
-    return n, h_sig, T_sig, h_10, h_avg, T_avg
+    return n, h_sig, T_sig, h_10, T_10, h_avg, T_avg
 
 
 def wave_statistics(heave, fs, npt):
@@ -405,7 +405,7 @@ def wave_statistics(heave, fs, npt):
     return Hsig, Havg, Tsig, Tavg
 
 
-def wave_period(heave, fs, detrend=False):
+def wave_period(heave, fs):
     """
     Compute average wave period using the zero-crossing method
     
@@ -1191,7 +1191,7 @@ def angular_rates(data):
 
 
 def build_dataset(ds, number_zero_crossings, significant_wave_height, significant_wave_period, wave_height_10,
-                  wave_period_10, peak_wave_period, average_wave_height, average_wave_period,
+                  wave_period_10, peak_wave_period, mean_wave_height, mean_wave_period,
                   peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, significant_wave_height_puv,
                   sample_start_time, deployment):
     """
@@ -1229,8 +1229,8 @@ def build_dataset(ds, number_zero_crossings, significant_wave_height, significan
     peak_wave_period_puv: array_like
         The peak wave period calculated using the Nortek PUV-method and a 
         parabolic fit across the peak frequency band (units: s)
-    wave_height_hm0: array_like
-        The significant wave height calculated using the Nortek PUV-method
+    significant_wave_height_puv: array_like
+        The significant wave height calculated using the Nortek PUV-method (hm0)
         (units: m)
     sample_start_time: array_like
         Either an array of datetime strings or datetime objects that correspond
@@ -1256,7 +1256,7 @@ def build_dataset(ds, number_zero_crossings, significant_wave_height, significan
     peak_wave_direction_puv = np.atleast_1d(peak_wave_direction_puv)
     peak_wave_spread_puv = np.atleast_1d(peak_wave_spread_puv)
     peak_wave_period_puv = np.atleast_1d(peak_wave_period_puv)
-    wave_height_hm0 = np.atleast_1d(wave_height_hm0)
+    significant_wave_height_puv = np.atleast_1d(significant_wave_height_puv)
     sample_start_time = np.atleast_1d(sample_start_time)
     
     # Check that the sample_start_times are datetime objects
@@ -1268,7 +1268,7 @@ def build_dataset(ds, number_zero_crossings, significant_wave_height, significan
     
     # Create a dictionary object of the data variables
     data_vars = dict(
-        number_zero_crossings = (["time"], number_zero_crossings)
+        number_zero_crossings = (["time"], number_zero_crossings),
         significant_wave_height=(["time"], significant_wave_height),
         significant_wave_period=(["time"], significant_wave_period),
         wave_height_10=(["time"], wave_height_10),
@@ -1279,7 +1279,7 @@ def build_dataset(ds, number_zero_crossings, significant_wave_height, significan
         peak_wave_direction=(["time"], peak_wave_direction_puv),
         peak_wave_spread=(["time"], peak_wave_spread_puv),
         peak_wave_period_puv=(["time"], peak_wave_period_puv),
-        wave_height_hm0 = (["time"], wave_height_hm0),
+        wave_height_hm0 = (["time"], significant_wave_height_puv),
         deployment = (["time"], deployment), )
         #time=(["time"], sample_start_time)
         
@@ -1297,9 +1297,9 @@ def build_dataset(ds, number_zero_crossings, significant_wave_height, significan
                         'derived from the zero-crossing data. The directional wave '
                         'data are calculated using the PUV-technique (Pressue, '
                         'U-velocity, V-velocity) as outlined by Nortek.'),
-            "id": "-".join(data.attrs["id"].split("-")[0:4]),
-            "lat": data.attrs["lat"],
-            "lon": data.attrs["lon"]
+            "id": "-".join(ds.attrs["id"].split("-")[0:4]),
+            "lat": ds.attrs["lat"],
+            "lon": ds.attrs["lon"]
         }
     )
             
@@ -1346,8 +1346,8 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
     wave_height_10 = []
     wave_period_10 = []
     peak_wave_period = []
-    average_wave_height = []
-    average_wave_period = []
+    mean_wave_height = []
+    mean_wave_period = []
     peak_wave_direction_puv = []
     peak_wave_spread_puv = []
     peak_wave_period_puv = []
@@ -1413,8 +1413,8 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
         wave_height_10.append(h_10)             # Calculated from zero-crossings: Method B
         wave_period_10.append(t_10)             # Calculated from zero-crossings: Method B
         peak_wave_period.append(Tsig)           # Calculated from zero-crossings: Method A
-        average_wave_height.append(h_avg)       # Calculated from zero-crossings: Method B
-        average_wave_period.append(t_avg)       # Calculated from zero-crossings: Method B
+        mean_wave_height.append(h_avg)          # Calculated from zero-crossings: Method B
+        mean_wave_period.append(t_avg)          # Calculated from zero-crossings: Method B
         peak_wave_direction_puv.append(Tdir)    # Calculated from the PUV method
         peak_wave_spread_puv.append(Ts)         # Calculated from the PUV method
         peak_wave_period_puv.append(1/Fs)       # Calculated from the PUV method
@@ -1428,20 +1428,8 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
     # --------------------------------------------------------------------
     # Build the wave statistics dataset
     wave_stats = build_dataset(ds, number_zero_crossings, significant_wave_height, significant_wave_period, wave_height_10,
-                               wave_period_10, peak_wave_period, average_wave_height, average_wave_period,
+                               wave_period_10, peak_wave_period, mean_wave_height, mean_wave_period,
                                peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, significant_wave_height_puv,
                                sample_start_time, deployment)
     
     return wave_stats
-
-
-# -
-
-import numpy as np
-import pandas as pd
-import xarray as xr
-from scipy.signal import buttord, butter, filtfilt, detrend, welch
-from scipy.fft import fft
-from scipy.signal.windows import hann
-from scipy.integrate import cumulative_trapezoid
-from scipy.interpolate import interp1d

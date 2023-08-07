@@ -158,6 +158,8 @@ def filter_coefficients(fs, fc, ludo=True):
         
     Returns
     -------
+    b_high, a_high: array_like, array_like
+        The numerator (b) and denominator (a) polynomilas of the IIR filter
     """
     n_freq = fs/2
     wp = fc/n_freq
@@ -250,6 +252,10 @@ def zero_crossing(heave, fs):
         The mean wave height
     T_avg: float
         The mean wave period
+
+    References
+    ----------
+    Neumeier, Urs. 2003. Waves [Software: MatLab]
      """
 
     # Code is written looking at upcrossing - to use downcrossing
@@ -378,6 +384,9 @@ def wave_statistics(heave, fs, npt):
     Tavg: float
         Average wave period
     
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Detrend the heave and calculate the significant and average wave height
     heave = detrend(heave)
@@ -423,6 +432,10 @@ def wave_period(heave, fs):
     -------
     tm: float
         The calculated average wave period
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     heave = detrend(heave)
     n=len(heave)
@@ -454,6 +467,11 @@ def updater(IN, ANGLES):
     -------
     OUT: array_like
         A (3 x n) matrix of the updated angular rates
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     
     p = ANGLES[0,:]
@@ -503,6 +521,11 @@ def euler_angles(ahi, bhi, fs, accm, ratem, gyro, gravity, iters=5):
         A (3 x n) array of the euler angles (phi, theta, psi) in radians
     dr: array_like
         A (3 x n) array of detrended angular rates in (x, y, z)
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Unwrap the compass data
     gyro = np.unwrap(gyro)
@@ -595,6 +618,11 @@ def rotate(IN, ANGLES, IFLAG=0):
     -------
     OUT: array_like
         A (3 x n) matrix of the rotated input vector components
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+
     """
     
     # Grab the Euler angles
@@ -645,6 +673,11 @@ def heave(omegam, euler, accm, fs, bhi, ahi, R, gravity):
         The platform velocity at sensor location
     xyz_plat: array_like
         The platform displacement at sensor location
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA MatLab Toolbox. Ver. 2.0. [Software: MatLab]
+
     """
     n, m = omegam.shape
     Rvec = np.vstack([R[0]*np.ones(m), R[1]*np.ones(m), R[2]*np.ones(m)])
@@ -703,6 +736,11 @@ def uvw_xyz(gyro, platform, angular_rates, fs, f_cutoff=1/30, com_offset=[0, 0, 
     xyz: array_like
         A (3 x n) array of platform displacements in the (x, y, z) directions
         at sensor location
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA MatLab Toolbox. Ver. 2.0. [Software: MatLab]
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # 30 second cutoff period for waves
     bhiwaves, ahiwaves = filter_coefficients(fs, f_cutoff)
@@ -752,6 +790,11 @@ def despike(data, n_std=4, iters=3):
         data points have been filled via linearly interpolation.
     bad: array_like
         The bad data points
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
+
     """
     # Coerce entries to be at least 2d
     data = np.atleast_2d(data)
@@ -785,8 +828,24 @@ def despike(data, n_std=4, iters=3):
 
 def arctan3(y, x):
     """
-    Four quadrant inverse tanges of the real elements of (y, x).
-    0 <= np.atan2(y, x) <= 2*pi
+    Four quadrant inverse tangents of the real elements of (y, x).
+    0 <= np.atan2(y, x) <= 2*pi. The number of elements in (y, x)
+    must be equal.
+
+    Parameters
+    ----------
+    y: float, array_like
+    x: float, array_like
+
+    Returns
+    -------
+    theta: float, array_like
+        The four quandrant inverse tangents
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+
     """
     theta = np.arctan2(y, x)
     theta = np.atleast_1d(theta)
@@ -826,7 +885,7 @@ def log_avg(f, s, n):
 
     References
     ----------
-    Gordon, Lee. 2001. Matlab code. NortekUSA LLC.
+    Gordon, Lee. 2001. NortekUSA LLC. [Software: MatLab]
     """
     
     lf = np.log(f)
@@ -915,8 +974,8 @@ def wave_spectra(u, v, p, dt, nF, hp, hv, params=[0.03, 200, 0.1, 0]):
 
     References
     ----------
-    Gordon, Lee. 2001. MatLab code. NortekUSA LLC
-        """
+    Gordon, Lee. 2001. NortekUSA LLC. [Software: MatLab]
+    """
     
     # Parse out the wave parameters
     lf_cutoff = params[0]
@@ -1034,6 +1093,10 @@ def wave_spectra_statistics(u_spectra, p_spectra, Tdir, Ts, F, dF):
         Wave direction at the peak frequency
     Ts:
         Wave spreading at the peak frequency
+
+    References
+    ----------
+    Gordon, Lee. 2001. NortekUSA LLC. [Software: MatLab]
     """
     # Calculate the significant wave height
     Hm0 = np.max(np.cumsum(p_spectra * dF))**0.5 * 4
@@ -1074,6 +1137,10 @@ def magnetometer(data):
     -------
     compass: array_like 
         An array of the calculated compass directions (radians)
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # ----------------------------------------------------
     # First, grab the xyz magnetometer data
@@ -1129,6 +1196,10 @@ def accelerations(data):
         in the x, y, z directions in units of m/s^2
     gravity: np.float
         The local free-fall estimate
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Gravity
     G = 9.8
@@ -1173,6 +1244,10 @@ def angular_rates(data):
     -------
     angular_rates: array_like
         A (3 x n) array of the mopak angular rates
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Get the xyz angular rates
     dx = data.mopak_ang_ratex.values
@@ -1310,12 +1385,100 @@ def build_dataset(ds, number_zero_crossings, significant_wave_height, significan
     return ds
 
 
-def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, max_fac, min_spec, n_dir):
+def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/30, lf_cutoff=0.03, max_fac=200, min_spec=0.03, n_dir=0):
     """
     Calculate the directional and non-directional wave statistics and return a new dataset.
     
     This function takes in a dataset from the 3-axis motion pack (MOPAK) and processes it
-    to derive the directional and non-directional wave statistics. The results are 
+    to derive the directional and non-directional wave statistics, which are returned as a 
+    new dataset. First, the accelerometer, angular rate, and magnetic declination data from
+    the MOPAK are reprocessed to derive the displacements (x,y,z) and velocities (u,v,w). Next,
+    the bulk wave statistics are calculated using a zero downcrossing algorithm. The directional
+    statistics are derived from the wave power and cross-spectra. 
+    
+    Parameters
+    ----------
+    ds: xarray.DataSet
+        A dataset containing the MOPAK data
+    n_std: int
+        The number of standard deviations outside of which to filter out data
+    fs: float
+        The sampling frequency
+    f_cutoff: float, Default=1/30
+        The cutoff period for waves
+    com_offset: list[x, y, z], Default=[0, 0, 0.5]
+        A list of the offsets from the center of mass of the MOPAK (m)
+    lf_cutoff: float, Default=0.03
+        Low frequency cutoff where F < lf are not outputted
+    max_fac: float, Default=200
+        Largest factor scaping pressure to surface elevation
+        Spectra and directions at F > max_fac are NaNs
+    min_spec: float, Default= 0.03
+        Minimum spectral level for which direction is computed
+        Directions for spectra < minspec are returned NaNs
+    n_dir: float, Default=0
+        Direction of the "north" component (degrees)
+
+    Returns
+    -------
+    wave_stats: xarray.DataSet
+        A dataset containing the computed bulk and directional wave statistics from the
+        associated 3-axis motion sensor data. The returned dataset variables are:
+            * number_zero_crossings
+                The number of zero-crossings (downwards) identified during the
+                observation period
+            * significant_wave_height
+                The wave height of the highest 1/3 of waves measured during the
+                observation period (units: m)
+            * significant_wave_period
+                The mean period of the highest 1/3 of waves measured during the
+                observation period (units: s)
+            * wave_height_10
+                The wave height of the highest tenth of waves measured during the
+                observation period (units: m)
+            * wave_period_10
+                The wave period of the highest tenth of waves measured during the
+                observation period (units: s)
+            * peak_wave_period
+                The period of the wave calculated from the frequency associated with
+                the peak in the wave spectra (units: s)
+            * mean_wave_height
+                The mean wave height (units: m)
+            * mean_wave_period
+                The mean wave period (units: s)
+            * peak_wave_direction_puv
+                The peak wave direction calculated using the Nortek PUV-method (units: degrees)
+            * peak_wave_spread_puv
+                The wave spread of the peak wave calculated using the Nortek PUV-method
+                (units: degrees)
+            * peak_wave_period_puv
+                The peak wave period calculated using the Nortek PUV-method and a 
+                parabolic fit across the peak frequency band (units: s)
+            * significant_wave_height_puv
+                The significant wave height calculated using the Nortek PUV-method (hm0)
+                (units: m)
+            * sample_start_time
+                The timestamp hat correspond to the start of each sampling period
+            * deployment: int, float, str
+                The deployment number of the dataset being processed
+
+    References
+    ----------
+    1998. Edson, J.B., A.A. Hinton, K.E. Prada, J.E. Hare, & C.W. Fairall, “Direct covariance flux estimates 
+        from mobile platforms at sea,”  J. Atmos. Oceanic Tech., 15, 547-562
+    2001. McGillis, W.R., J.B. Edson, J.E. Hare, & C.W. Fairall, “Direct covariance air-sea CO2 fluxes,” 
+        J. Geophys. Res., 106, 16729-16745.
+    2003. Fairall, C.W., E.F. Bradley, J.E. Hare, A.A. Grachev, & J.B. Edson, “Bulk parameterization of 
+        air–sea fluxes: Updates and verification for the COARE algorithm,” J. Climate, 16, 571–591.
+    2004. Edson, J.B., C.J. Zappa, J.A. Ware, W.R. McGillis, & J.E. Hare, “Scalar flux profile relationships
+        over the open ocean,” J. Geophys. Res., 109, C08S09, doi:10.1029/2003JC001960.
+    2008. Miller, S., C. Friehe, T. Hristov, & J. Edson, “Platform motion effects on measurements of 
+        turbulence and air-sea exchange over the open ocean,” J. Atmos. Oceanic Tech., 25, 1683-1694.
+    2012. Flügge, M., J.B. Edson, & J. Reuder, “Sensor Movement Correction for Direct Turbulence Measurements 
+        in the Marine Atmospheric Boundary Layer,” Energy Procedia, 24, 159-165.
+    2013. Edson, J.B., V. Jampana, R.A. Weller, S. Bigorre, A.J. Plueddemann, C.W. Fairall, S.D. Miller, 
+        L. Mahrt, D. Vickers, and H. Hersbach, “On the exchange of momentum over the open ocean,” 
+        J. Phys. Oceanogr., 43, 1589–1610.
     """
       
     # --------------------------------------------------------------------

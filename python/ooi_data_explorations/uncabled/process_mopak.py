@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -9,8 +7,15 @@ from scipy.signal.windows import hann
 from scipy.integrate import cumulative_trapezoid
 from scipy.interpolate import interp1d
 
-# +
+
 ATTRS = ATTRS = {
+    'number_zero_crossings': {
+        'long_name': 'Number of Wave Zero-Crossings',
+        'type': 'zero-crossing',
+        'comment': ('Zero-crossing is defined as when the buoy vertical displacement crosses a mean sea surface '
+                    'level. The total number of zero-crossings is twice the total number of waves observed during '
+                    'a measurement period.'),
+    },
     'significant_wave_height': {
         'long_name': 'Significant Wave Height',
         'standard_name': 'sea_surface_wave_significant_height',
@@ -18,17 +23,36 @@ ATTRS = ATTRS = {
         'type':'zero-crossing',
         'comment': ('Wave height is defined as the vertical distance from a wave trough to the following wave crest. '
                     'The significant wave height is the mean trough to crest distance measured during the observation '
-                    'period of the highest one-third of waves. Calculated from the zero down-crossing significant wave '
-                    'height.'),
+                    'period of the highest one-third of waves. Calculated from the zero down-crossing method.'),
     },
-    'peak_wave_period': {
-        'long_name': 'Peak Wave Period',
-        'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum',
+    'significant_wave_period': {
+        'long_name': 'Significant Wave Period',
+        'standard_name': 'sea_surface_wave_significant_period',
         'units': 's',
         'type': 'zero-crossing',
-        'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
-                    'troughs or upward passes through the mean level. The peak wave period, is the period of the most '
-                    'energetic waves in the total wave spectrum at a specific location.'),
+        'comment': ('Significant wave period coressponds to the mean wave period of the highest one-third of measured '
+                    'waves during the observation period. Wave period is defined as the interval of time between '
+                    'repeated features on the waveform such as crests, troughs, or upward/downward passes through '
+                    'the mean sea surface level.')
+    },
+    'wave_height_10': {
+        'long_name': 'Height of Highest Tenth of Waves',
+        'standard_name': 'sea_surface_wave_mean_height_of_highest_tenth',
+        'units': 'm',
+        'type': 'zero-crossing',
+        'comment': ('Wave height is defined as the vertical distance from a wave trough to the following wave crest. '
+                    'The height of the highest tenth is defined as the mean of the highest 10 per cent of trough to '
+                    'crest distances measured during the observation period. Calculated from the zero down-crossing '
+                    'method.')
+    },
+    'wave_period_10': {
+        'long_name': 'Period of Highest Tenth of Waves',
+        'standard_name': 'sea_surface_wave_mean_period_of_highest_tenth',
+        'units': 's',
+        'type': 'zero-crossing',
+        'comment': ('Wave mean period is the mean period measured over the observation duration. The period of the '
+                    'highest tenth of waves is the mean period of the highest 10 per cent of waves measured during '
+                    'the observation period. Calculated from the zero down-crossing method.')
     },
     'mean_wave_height': {
         'long_name': 'Mean wave height',
@@ -47,6 +71,15 @@ ATTRS = ATTRS = {
         'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
                     'troughs or upward passes through the mean level. Wave mean period is the mean period measured '
                     'over the observation duration. Calculated as the average zero down-crossing wave period. '),
+    },
+    'peak_wave_period': {
+        'long_name': 'Peak Wave Period',
+        'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum',
+        'units': 's',
+        'type': 'directional',
+        'comment': ('Wave period is the interval of time between repeated features on the waveform such as crests, '
+                    'troughs or upward passes through the mean level. The peak wave period, is the period of the most '
+                    'energetic waves in the total wave spectrum at a specific location.'),
     },
     'peak_wave_direction': {
         'long_name': 'Peak Wave Direction',
@@ -125,6 +158,8 @@ def filter_coefficients(fs, fc, ludo=True):
         
     Returns
     -------
+    b_high, a_high: array_like, array_like
+        The numerator (b) and denominator (a) polynomilas of the IIR filter
     """
     n_freq = fs/2
     wp = fc/n_freq
@@ -182,10 +217,153 @@ def identify_samples(ds, threshold):
     return sample
 
 
+def zero_crossing(heave, fs):
+    """
+    Calculate the wave statistics using a zero-crossing algorithm.
+    
+    This method utilizes a zero down-crossing wave algorithm to
+    compute the bulk wave statistics. The code, as written, actually
+    looks for the up-crossing waves; inverting the heave values
+    identifies the down-crossing waves. Additionally, waves with 
+    either a crest or trough that falls below a detection limit
+    are joined to either the following or preceding wave.
+    
+    Parameters
+    ----------
+    heave: array_like
+        An array of vertical displacement (heave)
+    fs: float
+        Sampling frequency
+        
+    Returns
+    -------
+    n: int
+        The number of zero-crossings detected
+    H_sig: float
+        The significant wave height, defined as the average
+        wave height of the 1/3 highest waves
+    T_sig: float
+        The signficant wave period
+    H_10: float
+        The wave height of the 10% highest waves
+    T_10: float
+        The mean period of the 10% highest waves
+    H_avg: float
+        The mean wave height
+    T_avg: float
+        The mean wave period
+
+    References
+    ----------
+    Neumeier, Urs. 2003. Waves [Software: MatLab]
+     """
+
+    # Code is written looking at upcrossing - to use downcrossing
+    # invert the heave
+    z = -heave
+    z = detrend(z)
+
+    # Find and remove values near zero
+    z0 = z[z != 0]
+
+    # Create an index
+    back0 = np.arange(0, len(z), 1)
+    back0 = back0[z != 0]
+
+    # Find the zero crossings
+    f = np.where(z0[0:-1]*z0[1:] < 0)[0]
+    crossing = back0[f]
+
+    # Reject the first crossing if it is upward-crossing
+    if z[0]>0:
+        crossing = crossing[1:]
+
+    # Take every other crossing to get the zero-downward crossings
+    crossing = crossing[np.arange(0, len(crossing), 2)]
+
+    ##### CALCULATE WAVE PARAMETERS #####
+    # Initialize arrays to save the results in
+    wave = np.zeros((len(crossing)-1, 4))
+
+    # Get the max (crest) and min (trough) values between each crossing
+    for n in np.arange(0, len(crossing)-1, 1):
+        wave[n, 1] = np.max(z[crossing[n]:crossing[n+1]])
+        wave[n, 2] = -np.min(z[crossing[n]:crossing[n+1]])
+
+    # Check the size of the wave and if no wave found do nothing
+    if len(wave[:,1]) >= 1:
+
+        # Calculate elasped time between each measurement
+        wave[:, 3] = np.diff(crossing)/fs
+
+        # Calculate the threshold wave size
+        threshold = 0.01*np.max(wave[:,1]+wave[:,2])
+        if threshold < 0:
+            raise ValueError(f"Wave threshold must not be negative")
+        
+        # Now remove wave which are too small by joining them to
+        # adjacent waves
+        for idx, (crest, trough) in enumerate(wave[:,1:3]):
+            if crest < threshold:
+                if idx != 0:
+                    # Join the values to the preceding wave
+                    wave[idx-1, 1] = np.max(wave[idx-1:idx+1, 1])
+                    wave[idx-1, 2] = np.max(wave[idx-1:idx+1, 2])
+                    wave[idx-1, 3] = np.sum(wave[idx-1:idx+1, 3])
+                # Replace the values with NaNs
+                wave[idx, :] = np.nan
+            elif trough < threshold:
+                if idx+1 != len(wave):
+                    # Join the values to the next wave
+                    wave[idx, 1] = np.max(wave[idx:idx+2, 1])
+                    wave[idx, 2] = np.max(wave[idx:idx+2, 2])
+                    wave[idx, 3] = np.sum(wave[idx:idx+2, 3])
+                    # Replace the values with NaNs
+                    wave[idx+1, :] = np.nan
+                else:
+                    wave[idx, :] = np.nan
+    
+    # Drop the NaNs
+    wave = wave[np.all(~np.isnan(wave), axis=1)]
+
+    # Now calculate the wave height from the crest -> trough distance
+    wave[:, 0] = np.sum(wave[:, 1:3], axis=1)
+
+    # Sort based on wave height
+    wave_sorted = np.sort(wave, axis=0)
+    wave_sorted = np.flipud(wave_sorted)
+
+    ##### CALCULATE WAVE STATISTICS #####
+    # Get number of waves measured
+    n = len(wave_sorted)
+
+    # Calculate significant wave height and period
+    n_sig = int(np.round(n/3))
+    h_sig = np.mean(wave_sorted[0:n_sig, 0])
+    T_sig = np.mean(wave_sorted[0:n_sig, 3])
+
+    # Calculate the 10-highest waves
+    n_10 = int(np.round(n/10))
+    h_10 = np.mean(wave_sorted[0:n_10, 0])
+    T_10 = np.mean(wave_sorted[0:n_10, 3])
+
+    # Calculate the mean height and period
+    h_avg = np.mean(wave[:, 0])
+    T_avg = np.mean(wave[:, 3])
+
+    return n, h_sig, T_sig, h_10, T_10, h_avg, T_avg
+
+
 def wave_statistics(heave, fs, npt):
     """
-    Calculate the wave statistics from the wave time series
-    
+    Calculate the wave statistics from the wave time series.
+
+    This method utilizes a mixed approach to calculating wave
+    statistics. The significant wave height is calculated as the
+    4*std(heave), the significant wave period is from the 
+    frequency at the spectral max, and the average wave period
+    uses a zero-crossing approach.
+
     Parameters
     ----------
     heave: array_like
@@ -200,22 +378,25 @@ def wave_statistics(heave, fs, npt):
     Hsig: float
         Signficant wave height
     Havg: float
-        Average wave height
+        Mean sea level height. This value should be near-zero.
     Tsig: float
-        Significant wave period
+        Significant wave period calculated from the peak spectrum.
     Tavg: float
         Average wave period
     
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Detrend the heave and calculate the significant and average wave height
     heave = detrend(heave)
-    Hsig = 4*np.std(heave)
-    Havg = np.mean(heave)
+    Hsig = 4*np.std(heave) 
+    Havg = np.mean(heave)  # Not actually average wave height
     
     bw = np.ones(5)/5
     aw = 1
     
-    # Calculate the significant and average wave period
+    # Calculate the significant wave period from the spectral density
     if Hsig > 0.2:
         [fr, wxx] = welch(heave, fs, window=hann(npt), nfft=npt, noverlap=0, detrend=False)
         wxx[0] = wxx[1]
@@ -225,7 +406,7 @@ def wave_statistics(heave, fs, npt):
         i = np.where(wxxf == np.max(wxxf))[0]
         fr1 = np.mean(fr[i])
         Tsig = 1/fr1
-        Tavg = zero_crossings(heave, fs)
+        Tavg = wave_period(heave, fs)
     else:
         Tsig = np.nan
         Tavg = np.nan
@@ -233,7 +414,7 @@ def wave_statistics(heave, fs, npt):
     return Hsig, Havg, Tsig, Tavg
 
 
-def zero_crossings(heave, fs, detrend=False):
+def wave_period(heave, fs):
     """
     Compute average wave period using the zero-crossing method
     
@@ -251,11 +432,14 @@ def zero_crossings(heave, fs, detrend=False):
     -------
     tm: float
         The calculated average wave period
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
-    
+    heave = detrend(heave)
     n=len(heave)
     T=(n-1)/fs
-    heave = heave-np.mean(heave)
     sheave = np.sign(heave)
     sw1 = sheave[0:len(heave)-1]
     sw2 = sheave[1:len(heave)]
@@ -283,6 +467,11 @@ def updater(IN, ANGLES):
     -------
     OUT: array_like
         A (3 x n) matrix of the updated angular rates
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     
     p = ANGLES[0,:]
@@ -332,6 +521,11 @@ def euler_angles(ahi, bhi, fs, accm, ratem, gyro, gravity, iters=5):
         A (3 x n) array of the euler angles (phi, theta, psi) in radians
     dr: array_like
         A (3 x n) array of detrended angular rates in (x, y, z)
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Unwrap the compass data
     gyro = np.unwrap(gyro)
@@ -424,6 +618,11 @@ def rotate(IN, ANGLES, IFLAG=0):
     -------
     OUT: array_like
         A (3 x n) matrix of the rotated input vector components
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+
     """
     
     # Grab the Euler angles
@@ -455,7 +654,7 @@ def rotate(IN, ANGLES, IFLAG=0):
 
 def heave(omegam, euler, accm, fs, bhi, ahi, R, gravity):
     """
-    Correct sonic anemometer components for platform motion and orientation
+    Correct components for platform motion and orientation
     
     Parameters
     ----------
@@ -474,6 +673,11 @@ def heave(omegam, euler, accm, fs, bhi, ahi, R, gravity):
         The platform velocity at sensor location
     xyz_plat: array_like
         The platform displacement at sensor location
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA MatLab Toolbox. Ver. 2.0. [Software: MatLab]
+
     """
     n, m = omegam.shape
     Rvec = np.vstack([R[0]*np.ones(m), R[1]*np.ones(m), R[2]*np.ones(m)])
@@ -502,7 +706,7 @@ def heave(omegam, euler, accm, fs, bhi, ahi, R, gravity):
 
 def uvw_xyz(gyro, platform, angular_rates, fs, f_cutoff=1/30, com_offset=[0, 0, 0.5], G=9.8):
     """
-    Calculate the displacements and velocities from accelerometer data
+    Calculate the displacements (xyz) and velocities (uvw) from accelerometer data
     
     Parameters
     ----------
@@ -532,6 +736,11 @@ def uvw_xyz(gyro, platform, angular_rates, fs, f_cutoff=1/30, com_offset=[0, 0, 
     xyz: array_like
         A (3 x n) array of platform displacements in the (x, y, z) directions
         at sensor location
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA MatLab Toolbox. Ver. 2.0. [Software: MatLab]
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # 30 second cutoff period for waves
     bhiwaves, ahiwaves = filter_coefficients(fs, f_cutoff)
@@ -576,6 +785,16 @@ def despike(data, n_std=4, iters=3):
         
     Returns
     -------
+    data: array_like
+        A two-dimensional array of the data despiked. Identified bad
+        data points have been filled via linearly interpolation.
+    bad: array_like
+        The bad data points
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
+
     """
     # Coerce entries to be at least 2d
     data = np.atleast_2d(data)
@@ -609,8 +828,24 @@ def despike(data, n_std=4, iters=3):
 
 def arctan3(y, x):
     """
-    Four quadrant inverse tanges of the real elements of (y, x).
-    0 <= np.atan2(y, x) <= 2*pi
+    Four quadrant inverse tangents of the real elements of (y, x).
+    0 <= np.atan2(y, x) <= 2*pi. The number of elements in (y, x)
+    must be equal.
+
+    Parameters
+    ----------
+    y: float, array_like
+    x: float, array_like
+
+    Returns
+    -------
+    theta: float, array_like
+        The four quandrant inverse tangents
+
+    References
+    ----------
+    Beardsley, Bob. 1999. AIR SEA Toolbox. Ver. 2.0. [Software: MatLab]
+
     """
     theta = np.arctan2(y, x)
     theta = np.atleast_1d(theta)
@@ -647,6 +882,10 @@ def log_avg(f, s, n):
         The start indices of each frequency band
     Ne: array_like
         The end indices of each frequency band
+
+    References
+    ----------
+    Gordon, Lee. 2001. NortekUSA LLC. [Software: MatLab]
     """
     
     lf = np.log(f)
@@ -677,7 +916,13 @@ def log_avg(f, s, n):
 
 def wave_spectra(u, v, p, dt, nF, hp, hv, params=[0.03, 200, 0.1, 0]):
     """
-    Calculate the wave direction and spreading using the Nortek PUV-method
+    Calculate the wave direction and spreading using the Nortek PUV-method.
+    
+    This method derives the power spectra for the surface elevation based on
+    both the pressure (heave) and velocity components, the directional wave
+    statistics, and the associated frequency bands and degrees of freedom. 
+    This is done by computing both the power spectra and cross-spectra, then
+    band averaging in log-frequency space.
     
     Parameters
     ----------
@@ -726,7 +971,11 @@ def wave_spectra(u, v, p, dt, nF, hp, hv, params=[0.03, 200, 0.1, 0]):
         Bandwidth of each band
     dof:
         Degrees of freedom for each band
-        """
+
+    References
+    ----------
+    Gordon, Lee. 2001. NortekUSA LLC. [Software: MatLab]
+    """
     
     # Parse out the wave parameters
     lf_cutoff = params[0]
@@ -844,6 +1093,10 @@ def wave_spectra_statistics(u_spectra, p_spectra, Tdir, Ts, F, dF):
         Wave direction at the peak frequency
     Ts:
         Wave spreading at the peak frequency
+
+    References
+    ----------
+    Gordon, Lee. 2001. NortekUSA LLC. [Software: MatLab]
     """
     # Calculate the significant wave height
     Hm0 = np.max(np.cumsum(p_spectra * dF))**0.5 * 4
@@ -884,6 +1137,10 @@ def magnetometer(data):
     -------
     compass: array_like 
         An array of the calculated compass directions (radians)
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # ----------------------------------------------------
     # First, grab the xyz magnetometer data
@@ -939,6 +1196,10 @@ def accelerations(data):
         in the x, y, z directions in units of m/s^2
     gravity: np.float
         The local free-fall estimate
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Gravity
     G = 9.8
@@ -983,6 +1244,10 @@ def angular_rates(data):
     -------
     angular_rates: array_like
         A (3 x n) array of the mopak angular rates
+
+    References
+    ----------
+    Edson, Jim. 2023. Motion Calculations Toolbox. [Software: MatLab]
     """
     # Get the xyz angular rates
     dx = data.mopak_ang_ratex.values
@@ -1000,23 +1265,37 @@ def angular_rates(data):
     return angular_rate
 
 
-def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_height, mean_wave_period,
-                  peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, wave_height_hm0,
+def build_dataset(ds, number_zero_crossings, significant_wave_height, significant_wave_period, wave_height_10,
+                  wave_period_10, peak_wave_period, mean_wave_height, mean_wave_period,
+                  peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, significant_wave_height_puv,
                   sample_start_time, deployment):
     """
     Takes in the calculated wave statistics are builds an xarray dataset
     
     Parameters
     ----------
+    number_zero_crossings: array_like
+        The number of zero-crossings (downwards) identified during the
+        observation period
     significant_wave_height: array_like
-        The significant wave height (Hsig) calculated using the zero-crossing
-        method (units: m)
+        The wave height of the highest 1/3 of waves measured during the
+        observation period (units: m)
+    significant_wave_period: array_like
+        The mean period of the highest 1/3 of waves measured during the
+        observation period (units: s)
+    wave_height_10: array_like
+        The wave height of the highest tenth of waves measured during the
+        observation period (units: m)
+    wave_period_10: array_like
+        The wave period of the highest tenth of waves measured during the
+        observation period (units: s)
     peak_wave_period: array_like
-        The peak wave period calculated using the zero-crossing data (units: s)
+        The period of the wave calculated from the frequency associated with
+        the peak in the wave spectra (units: s)
     mean_wave_height: array_like
-        The mean wave height calculated from the zero-crossing data (units: m)
+        The mean wave height (units: m)
     mean_wave_period: array_like
-        The mean wave period calculated from the zero-crossing data (units: s)
+        The mean wave period (units: s)
     peak_wave_direction_puv: array_like
         The peak wave direction calculated using the Nortek PUV-method (units: degrees)
     peak_wave_spread_puv: array_like
@@ -1025,8 +1304,8 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
     peak_wave_period_puv: array_like
         The peak wave period calculated using the Nortek PUV-method and a 
         parabolic fit across the peak frequency band (units: s)
-    wave_height_hm0: array_like
-        The significant wave height calculated using the Nortek PUV-method
+    significant_wave_height_puv: array_like
+        The significant wave height calculated using the Nortek PUV-method (hm0)
         (units: m)
     sample_start_time: array_like
         Either an array of datetime strings or datetime objects that correspond
@@ -1041,14 +1320,18 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
         sample_start_time, with associated metadata    
     """
     # Check that the data is all 1-d arrays
+    number_zero_crossings = np.atleast_1d(number_zero_crossings)
     significant_wave_height = np.atleast_1d(significant_wave_height)
+    significant_wave_period = np.atleast_1d(significant_wave_period)
+    wave_height_10 = np.atleast_1d(wave_height_10)
+    wave_period_10 = np.atleast_1d(wave_period_10)
     peak_wave_period = np.atleast_1d(peak_wave_period)
     mean_wave_height = np.atleast_1d(mean_wave_height)
     mean_wave_period = np.atleast_1d(mean_wave_period)
     peak_wave_direction_puv = np.atleast_1d(peak_wave_direction_puv)
     peak_wave_spread_puv = np.atleast_1d(peak_wave_spread_puv)
     peak_wave_period_puv = np.atleast_1d(peak_wave_period_puv)
-    wave_height_hm0 = np.atleast_1d(wave_height_hm0)
+    significant_wave_height_puv = np.atleast_1d(significant_wave_height_puv)
     sample_start_time = np.atleast_1d(sample_start_time)
     
     # Check that the sample_start_times are datetime objects
@@ -1060,14 +1343,18 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
     
     # Create a dictionary object of the data variables
     data_vars = dict(
+        number_zero_crossings = (["time"], number_zero_crossings),
         significant_wave_height=(["time"], significant_wave_height),
+        significant_wave_period=(["time"], significant_wave_period),
+        wave_height_10=(["time"], wave_height_10),
+        wave_period_10=(["time"], wave_period_10),
         peak_wave_period=(["time"], peak_wave_period),
         mean_wave_height=(["time"], mean_wave_height),
         mean_wave_period=(["time"], mean_wave_period),
         peak_wave_direction=(["time"], peak_wave_direction_puv),
         peak_wave_spread=(["time"], peak_wave_spread_puv),
         peak_wave_period_puv=(["time"], peak_wave_period_puv),
-        wave_height_hm0 = (["time"], wave_height_hm0),
+        wave_height_hm0 = (["time"], significant_wave_height_puv),
         deployment = (["time"], deployment), )
         #time=(["time"], sample_start_time)
         
@@ -1085,9 +1372,9 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
                         'derived from the zero-crossing data. The directional wave '
                         'data are calculated using the PUV-technique (Pressue, '
                         'U-velocity, V-velocity) as outlined by Nortek.'),
-            "id": "-".join(data.attrs["id"].split("-")[0:4]),
-            "lat": data.attrs["lat"],
-            "lon": data.attrs["lon"]
+            "id": "-".join(ds.attrs["id"].split("-")[0:4]),
+            "lat": ds.attrs["lat"],
+            "lon": ds.attrs["lon"]
         }
     )
             
@@ -1098,12 +1385,100 @@ def build_dataset(data, significant_wave_height, peak_wave_period, mean_wave_hei
     return ds
 
 
-def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, max_fac, min_spec, n_dir):
+def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/30, lf_cutoff=0.03, max_fac=200, min_spec=0.03, n_dir=0):
     """
     Calculate the directional and non-directional wave statistics and return a new dataset.
     
     This function takes in a dataset from the 3-axis motion pack (MOPAK) and processes it
-    to derive the directional and non-directional wave statistics. The results are 
+    to derive the directional and non-directional wave statistics, which are returned as a 
+    new dataset. First, the accelerometer, angular rate, and magnetic declination data from
+    the MOPAK are reprocessed to derive the displacements (x,y,z) and velocities (u,v,w). Next,
+    the bulk wave statistics are calculated using a zero downcrossing algorithm. The directional
+    statistics are derived from the wave power and cross-spectra. 
+    
+    Parameters
+    ----------
+    ds: xarray.DataSet
+        A dataset containing the MOPAK data
+    n_std: int
+        The number of standard deviations outside of which to filter out data
+    fs: float
+        The sampling frequency
+    f_cutoff: float, Default=1/30
+        The cutoff period for waves
+    com_offset: list[x, y, z], Default=[0, 0, 0.5]
+        A list of the offsets from the center of mass of the MOPAK (m)
+    lf_cutoff: float, Default=0.03
+        Low frequency cutoff where F < lf are not outputted
+    max_fac: float, Default=200
+        Largest factor scaping pressure to surface elevation
+        Spectra and directions at F > max_fac are NaNs
+    min_spec: float, Default= 0.03
+        Minimum spectral level for which direction is computed
+        Directions for spectra < minspec are returned NaNs
+    n_dir: float, Default=0
+        Direction of the "north" component (degrees)
+
+    Returns
+    -------
+    wave_stats: xarray.DataSet
+        A dataset containing the computed bulk and directional wave statistics from the
+        associated 3-axis motion sensor data. The returned dataset variables are:
+            * number_zero_crossings
+                The number of zero-crossings (downwards) identified during the
+                observation period
+            * significant_wave_height
+                The wave height of the highest 1/3 of waves measured during the
+                observation period (units: m)
+            * significant_wave_period
+                The mean period of the highest 1/3 of waves measured during the
+                observation period (units: s)
+            * wave_height_10
+                The wave height of the highest tenth of waves measured during the
+                observation period (units: m)
+            * wave_period_10
+                The wave period of the highest tenth of waves measured during the
+                observation period (units: s)
+            * peak_wave_period
+                The period of the wave calculated from the frequency associated with
+                the peak in the wave spectra (units: s)
+            * mean_wave_height
+                The mean wave height (units: m)
+            * mean_wave_period
+                The mean wave period (units: s)
+            * peak_wave_direction_puv
+                The peak wave direction calculated using the Nortek PUV-method (units: degrees)
+            * peak_wave_spread_puv
+                The wave spread of the peak wave calculated using the Nortek PUV-method
+                (units: degrees)
+            * peak_wave_period_puv
+                The peak wave period calculated using the Nortek PUV-method and a 
+                parabolic fit across the peak frequency band (units: s)
+            * significant_wave_height_puv
+                The significant wave height calculated using the Nortek PUV-method (hm0)
+                (units: m)
+            * sample_start_time
+                The timestamp hat correspond to the start of each sampling period
+            * deployment: int, float, str
+                The deployment number of the dataset being processed
+
+    References
+    ----------
+    1998. Edson, J.B., A.A. Hinton, K.E. Prada, J.E. Hare, & C.W. Fairall, “Direct covariance flux estimates 
+        from mobile platforms at sea,”  J. Atmos. Oceanic Tech., 15, 547-562
+    2001. McGillis, W.R., J.B. Edson, J.E. Hare, & C.W. Fairall, “Direct covariance air-sea CO2 fluxes,” 
+        J. Geophys. Res., 106, 16729-16745.
+    2003. Fairall, C.W., E.F. Bradley, J.E. Hare, A.A. Grachev, & J.B. Edson, “Bulk parameterization of 
+        air–sea fluxes: Updates and verification for the COARE algorithm,” J. Climate, 16, 571–591.
+    2004. Edson, J.B., C.J. Zappa, J.A. Ware, W.R. McGillis, & J.E. Hare, “Scalar flux profile relationships
+        over the open ocean,” J. Geophys. Res., 109, C08S09, doi:10.1029/2003JC001960.
+    2008. Miller, S., C. Friehe, T. Hristov, & J. Edson, “Platform motion effects on measurements of 
+        turbulence and air-sea exchange over the open ocean,” J. Atmos. Oceanic Tech., 25, 1683-1694.
+    2012. Flügge, M., J.B. Edson, & J. Reuder, “Sensor Movement Correction for Direct Turbulence Measurements 
+        in the Marine Atmospheric Boundary Layer,” Energy Procedia, 24, 159-165.
+    2013. Edson, J.B., V. Jampana, R.A. Weller, S. Bigorre, A.J. Plueddemann, C.W. Fairall, S.D. Miller, 
+        L. Mahrt, D. Vickers, and H. Hersbach, “On the exchange of momentum over the open ocean,” 
+        J. Phys. Oceanogr., 43, 1589–1610.
     """
       
     # --------------------------------------------------------------------
@@ -1128,10 +1503,14 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
     # --------------------------------------------------------------------
     # Calculate the wave statistics by iterating through each wave sample
     # (Note: can probably speed this portion up using Dask)
+    number_zero_crossings = []
     significant_wave_height = []
+    significant_wave_period = []
+    wave_height_10 = []
+    wave_period_10 = []
     peak_wave_period = []
-    average_wave_height = []
-    average_wave_period = []
+    mean_wave_height = []
+    mean_wave_period = []
     peak_wave_direction_puv = []
     peak_wave_spread_puv = []
     peak_wave_period_puv = []
@@ -1177,7 +1556,10 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
         # Calculate wave statistics from the zero-crossings
         z = xyz[2, :][incr]
         npt = np.min([2**13, len(incr)])
+        # Method A
         Hsig, Havg, Tsig, Tavg = wave_statistics(z, fs, npt)
+        # Method B
+        n, h_sig, t_sig, h_10, t_10, h_avg, t_avg = zero_crossing(z, fs)
 
         # Calucate the wave spectra and the associated statistics
         vu = uvw[1, :][incr]
@@ -1188,10 +1570,14 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
         Hm0, Fs, Tdir, Ts = wave_spectra_statistics(u_spectra, p_spectra, wave_direction, wave_spread, F, dF)
 
         # Save the results
-        significant_wave_height.append(Hsig)    # Calculated from zero-crossings
-        peak_wave_period.append(Tsig)           # Calculated from zero-crossings
-        average_wave_height.append(Havg)        # Calculated from zero-crossings
-        average_wave_period.append(Tavg)        # Calculated from zero-crossings
+        number_zero_crossings.append(n)         # Calculated from zero-crossings: Method B
+        significant_wave_height.append(Hsig)    # Calculated from zero-crossings: Method A
+        significant_wave_period.append(t_sig)   # Calculated from zero-crossings: Method B
+        wave_height_10.append(h_10)             # Calculated from zero-crossings: Method B
+        wave_period_10.append(t_10)             # Calculated from zero-crossings: Method B
+        peak_wave_period.append(Tsig)           # Calculated from zero-crossings: Method A
+        mean_wave_height.append(h_avg)          # Calculated from zero-crossings: Method B
+        mean_wave_period.append(t_avg)          # Calculated from zero-crossings: Method B
         peak_wave_direction_puv.append(Tdir)    # Calculated from the PUV method
         peak_wave_spread_puv.append(Ts)         # Calculated from the PUV method
         peak_wave_period_puv.append(1/Fs)       # Calculated from the PUV method
@@ -1204,7 +1590,8 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset, f_cutoff, lf_cutoff, ma
 
     # --------------------------------------------------------------------
     # Build the wave statistics dataset
-    wave_stats = build_dataset(ds, significant_wave_height, peak_wave_period, average_wave_height, average_wave_period,
+    wave_stats = build_dataset(ds, number_zero_crossings, significant_wave_height, significant_wave_period, wave_height_10,
+                               wave_period_10, peak_wave_period, mean_wave_height, mean_wave_period,
                                peak_wave_direction_puv, peak_wave_spread_puv, peak_wave_period_puv, significant_wave_height_puv,
                                sample_start_time, deployment)
     

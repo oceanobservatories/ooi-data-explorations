@@ -106,6 +106,7 @@ for k = 1:numel(varNames)
         t = addvars(t, repmat(data, rowlength, 1), 'NewVariableNames', varNames{k});
     else
         % this is something weird, ignore it for now.
+        continue
     end %if
     t.Properties.VariableUnits{varNames{k}} = char(units{:});
     t.Properties.VariableDescriptions{varNames{k}} = char(descr{:});

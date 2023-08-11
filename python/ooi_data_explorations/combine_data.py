@@ -126,6 +126,14 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
         avg.time.attrs['long_name'] = 'Time'
         avg.time.attrs['standard_name'] = 'time'
         avg.time.attrs['axis'] = 'T'
+        avg.time.attrs['units'] = 'seconds since 1900-01-01T00:00:00.000Z'
+        avg.time.attrs['calendar'] = 'gregorian'
+        avg.time.attrs['ioos_category'] = 'Time'
+        avg.time.encoding = {
+            '_FillValue': None,
+            'units': 'seconds since 1900-01-01T00:00:00.000Z',
+            'calendar': 'gregorian'
+        }
     else:
         avg = ds
 

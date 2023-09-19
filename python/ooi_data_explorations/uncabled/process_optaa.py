@@ -15,7 +15,7 @@ from ooi_data_explorations.common import inputs, get_vocabulary, m2m_request, li
     load_gc_thredds, update_dataset, N_CORES, ENCODINGS, FILL_INT, FILL_FLOAT
 from ooi_data_explorations.profilers import create_profile_id, bin_profiles
 from ooi_data_explorations.uncabled.utilities_optaa import load_cal_coefficients, apply_dev, apply_tscorr, \
-    apply_scatcorr, estimate_chl_poc, calculate_ratios
+    apply_scatcorr, estimate_chl_poc, calculate_ratios, PureWater, tscor
 from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
 
 # reset the variable level attributes and set some global defaults
@@ -351,7 +351,7 @@ ATTRS = dict({
 })
 
 
-def optaa_datalogger(ds, cal_file):
+def optaa_datalogger(ds, cal_file, a_purewater_file = None, c_purewater_file=None):
     """
     Takes OPTAA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
@@ -368,6 +368,10 @@ def optaa_datalogger(ds, cal_file):
     :param ds: initial optaa data set downloaded from OOI via the M2M system
     :param cal_file: file name (can include path) to store the calibration
         coefficients
+    :param a_purewater_file: file name with path of the purewater calibration
+        file for the a-channel. If left None will not apply purewater correction
+    :param c_purewater_file: file name with path of the purewater calibration
+        file for the c-channel. If left None will not apply purewater correction
     :return ds: cleaned up data set
     """
     # check to see if there is more than one deployment in the data set
@@ -443,6 +447,14 @@ def optaa_datalogger(ds, cal_file):
     # to the absorption data. All intermediate processing outputs are added to the data set.
     burst = apply_dev(burst, cal.coeffs)
     burst = apply_tscorr(burst, cal.coeffs, burst.sea_water_temperature, burst.sea_water_practical_salinity)
+    if a_purewater_file is not None:
+        # Apply the purewater correction to the a-channel
+        purewater_a = PureWater(a_purewater_file, 'a', cal, tscor, ATTRS)
+        burst["apg_ts"] = burst["apg_ts"] - purewater_a.dat["a_signal_ts"].median(dim="time")
+    if c_purewater_file is not None:
+        # Apply the purewater correction to the c-channel
+        purewater_c = PureWater(c_purewater_file, 'c', cal, tscor, ATTRS)
+        burst["cpg_ts"] = burst["cpg_ts"] - purewater_c.dat["c_signal_ts"].median(dim="time")
     burst = apply_scatcorr(burst, cal.coeffs)
 
     # add the jump offsets as NaN's if the grating index correction was not used

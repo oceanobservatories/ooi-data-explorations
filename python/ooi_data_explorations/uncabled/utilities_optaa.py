@@ -14,87 +14,6 @@ from ooi_data_explorations.common import get_calibrations_by_uid
 from pyseas.data.opt_functions_tscor import tscor
 
 
-PUREWATER_ATTRS = {
-    'elapsed_run_time': {
-        'long_name': 'Elapsed Run Time',
-        'units': 'ms',
-        'comment': 'Time in milliseconds since the instrument was powered on.'
-    },
-    'wavelength_number': {
-        'long_name': 'Wavelength Number',
-        'units': 'count',
-        'comment': ('An index counter between 0 and 99 used to set a common length dimension for the absorbance and '
-                    'attenuation measurements. The actual number of wavelengths is variable between sensors '
-                    'and may even change for a particular sensor over time if servicing requires a replacement '
-                    'of the filter set. The actual number of wavelengths for this sensor is represented here '
-                    'by the attribute actual_wavelengths.')
-        # 'actual_wavelengths': ''  # deliberately left blank, created during the processing
-    },
-    'wavelength_a': {
-        'long_name': 'Absorption Channel Wavelengths',
-        'standard_name': 'radiation_wavelength',
-        'units': 'nm',
-        'comment': ('Absorbance channel measurement wavelengths, specific to the filter wheel set installed in '
-                    'the AC-S.'),
-    },
-    'a_reference_dark': {
-        'long_name': 'Absorption Channel Dark Reference',
-        'units': 'count',
-        'comment': ('Absorption channel reference detector dark counts (before the lamp is turned on). Used in '
-                    'conversion of the raw absorption channel measurements to absorbance estimates.')
-    },
-    'a_signal_dark': {
-        'long_name': 'Absorption Channel Dark Signal',
-        'units': 'count',
-        'comment': ('Absorption channel signal detector dark counts (before the lamp is turned on). Used in conversion '
-                    'of the raw absorption channel measurements to absorbance estimates.')
-    },
-    'a_signal': {
-        'long_name': 'Absorption Channel Signal Measurements',
-        'units': 'count',
-        'comment': ('Absorption channel signal detector raw counts (while the lamp is turned on). Used in conversion '
-                    'of the raw absorption channel measurements to absorbance estimates.'),
-    },
-    'wavelength_c': {
-        'long_name': 'Attenuation Channel Wavelengths',
-        'standard_name': 'radiation_wavelength',
-        'units': 'nm',
-        'comment': ('Attenuation channel measurement wavelengths, specific to the filter wheel set installed in '
-                    'the AC-S.'),
-    },
-    'c_reference_dark': {
-        'long_name': 'Attenuation Channel Dark Reference',
-        'units': 'count',
-        'comment': ('Attenuation channel reference detector dark counts (before the lamp is turned on). Used in '
-                    'conversion of the raw attenuation channel measurements to attenuation estimates.')
-    },
-    'c_signal_dark': {
-        'long_name': 'Attenuation Channel Dark Signal',
-        'units': 'count',
-        'comment': ('Attenuation channel signal detector dark counts (before the lamp is turned on). Used in '
-                    'conversion of the raw attenuation channel measurements to attenuation estimates.')
-    },
-    'c_signal': {
-        'long_name': 'Attenuation Channel Signal Measurements',
-        'units': 'count',
-        'comment': ('Attenuation channel signal detector raw counts (while the lamp is turned on). Used in conversion '
-                    'of the raw attenuation channel measurements to attenuation estimates.'),
-    },
-    'external_temp': {
-        'long_name': 'External Instrument Temperature',
-        'standard_name': 'sea_water_temperature',
-        'units': 'degrees_Celsius',
-        'comment': ('In-situ sea water temperature measurements from the sensor mounted at the top of the '
-                    'AC-S pressure housing.'),
-    },
-    'internal_temp': {
-        'long_name': 'Internal Instrument Temperature',
-        'units': 'degrees_Celsius',
-        'comment': 'Internal instrument temperature, used to convert raw absorbance and attenuation measurements.',
-    },
-}
-
-
 def _compare_names(cal_name, data_source):
     """
     Internal function to compare the calibration data file name to the data
@@ -657,30 +576,6 @@ def calculate_ratios(optaa):
     optaa['ratio_qband'] = apg[:, m676] / apg[:, m440]
 
     return optaa
-
-
-def parse_dat_header(header):
-    """Parse the header in a dat pure water cal file"""
-    # Clean the header
-    header = [x.strip() for x in header]
-    
-    # Timestamp
-    timestamp = header[0].split()[-2:]
-    timestamp = ' '.join(timestamp)
-    
-    # Serial Number
-    serial_number = [x.split()[0] for x in header if "serial number" in x.lower()][0]
-    
-    # Output wavelengths
-    nwvl = [int(x.split()[0]) for x in header if "output wavelengths" in x.lower()][0]
-    
-    # Number temperature bins
-    ntbins = [int(x.split()[0]) for x in header if "number of temperature bins" in x.lower()][0]
-    
-    # Temperature bins
-    tbins = [float(x) for x in header[-1].split(";")[0].split()]
-
-    return timestamp, serial_number, nwvl, ntbins, tbins
 
 
 class PureWater():

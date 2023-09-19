@@ -683,112 +683,223 @@ def parse_dat_header(header):
     return timestamp, serial_number, nwvl, ntbins, tbins
 
 
-def parse_dat_file(filename):
-    """Parse the dat files that are recorded during the pure-water
-    calibrations into a dataset formatted and named as similarly to
-    OPTAA data files to facilitate the application of purewater
-    correction when needed.
+class PureWater():
+    def __init__(self, purewater_calfile, channel, cal, tscor, ATTRS):
+        """
+        This object loads, parses, and temperature corrects a pure water
+        calibration. A pure water calibration is specific to either the
+        a- or c-channels, and should be using the same calibration file
+        as the deployed instrument data that you are applying the pure
+        water correction to.
+        
+        :param purewater_calfile: The purewater calibration filepath
+        :param channel: Either the a- or c-channel
+        :param cal: The calibration coefficients for the deployment
+        :param tscor: The temperature-salinity correction matrix
+        :param ATTRS: The OPTAA dataset 
+
+        :return self.dat: A dataset object of the loaded and temp-corrected
+            purewater calibration
+        """
+        
+        # SAve the channel, temp calibration, and purewater filename
+        self.channel = channel
+        self.tcal = cal.coeffs["temp_calibration"]
+        self.purewater_calfile = purewater_calfile
+
+        # Now load the purewater calibration file  
+        self.dat = self.parse_dat_file(self.purewater_calfile, ATTRS)
+
+        # Load & correct the tscor data
+        self.tscor = self.load_tscor(tscor)
+
+        # Apply the tscor
+        if self.channel == 'a':
+            self.dat['a_signal_ts'] = self.apply_tscorr()
+        elif self.channel == 'c':
+            self.dat['c_signal_ts'] = self.apply_tscorr()
+
     
-    :param filename: the filepath with filename of the purewater cal
-        .dat file
+    def parse_dat_header(self, header):
+        """Parse the header in a dat pure water cal file"""
+        # Clean the header
+        header = [x.strip() for x in header]
+        
+        # Timestamp
+        timestamp = header[0].split()[-2:]
+        timestamp = ' '.join(timestamp)
+        
+        # Serial Number
+        serial_number = [x.split()[0] for x in header if "serial number" in x.lower()][0]
+        
+        # Output wavelengths
+        nwvl = [int(x.split()[0]) for x in header if "output wavelengths" in x.lower()][0]
+        
+        # Number temperature bins
+        ntbins = [int(x.split()[0]) for x in header if "number of temperature bins" in x.lower()][0]
+        
+        # Temperature bins
+        tbins = [float(x) for x in header[-1].split(";")[0].split()]
 
-    :return ds: an xarray.DataSet object with the purewater cal parsed
-        into a format similar to an OPTAA netCDF file
-    """
-
-    ##### OPEN THE FILE #####
-    with open(filename) as file:
-        # Read in the header and parse the header data
-        header = np.genfromtxt(file, dtype='str', delimiter='\n', max_rows=11)
-        timestamp, serial_number, nwvl, ntbins, tbins = parse_dat_header(header)
-        # Get the wavelengths and associated data
-        # Need info from the header file to find the correct rows
-        wavelengths = np.genfromtxt(file, dtype='str', delimiter="\n", skip_header=nwvl+2, max_rows=1)
-        data = np.genfromtxt(file, dtype="str", delimiter="\n", skip_header=0)
+        return timestamp, serial_number, nwvl, ntbins, tbins
 
 
-    ##### PARSE THE WAVELENGTHS #####
-    wavelengths = [x.strip() for x in str(wavelengths).split()]
-    columns = np.concatenate([["elapsed_run_time"], wavelengths, ["Tint", "fw_speed_diagnostic", "pressure", "Text", "abs_ref", "abs_sig", "ccc_ref", "ccc_sig"]])
+    def parse_dat_file(self, purewater_calfile, ATTRS):
 
-    ##### PARSE THE DATA INTO A-CHANNEL, C-CHANNEL, AND AUX DATA #####
-    data = [x.strip().split() for x in data]
+        ##### OPEN THE FILE #####
+        with open(purewater_calfile) as file:
+            # Read in the header and parse the header data
+            header = np.genfromtxt(file, dtype='str', delimiter='\n', max_rows=11)
+            timestamp, serial_number, nwvl, ntbins, tbins = self.parse_dat_header(header)
+            # Get the wavelengths and associated data
+            # Need info from the header file to find the correct rows
+            wavelengths = np.genfromtxt(file, dtype='str', delimiter="\n", skip_header=nwvl+2, max_rows=1)
+            data = np.genfromtxt(file, dtype="str", delimiter="\n", skip_header=0)
 
-    # Put the data into a dataframe and format values
-    df = pd.DataFrame(data, columns=columns)
-    df = df.applymap(float)
-    # Put the elapsed time into seconds and set as index
-    df["elapsed_run_time"] = df["elapsed_run_time"] 
-    df.set_index(keys=["elapsed_run_time"], inplace=True)
-    # Identify which columns are A-Channel and C-channel
-    abs_cols = [v for v in df.columns if "A" in v]
-    ccc_cols = [v for v in df.columns if "C" in v]
-    aux_cols = [v for v in df.columns if "A" not in v and "C" not in v]
-    # Get the A-channel (abs) values
-    abs_data = df[abs_cols].values
-    # Get the C-channel values
-    ccc_data = df[ccc_cols].values
-    # Get the auxilary data
-    aux_data = df[aux_cols].values
 
-    # Get the wavelength data
-    # Generate an interval wavelength number
-    int_wavelength = np.arange(0, nwvl, 1)
-    # A-channel wavelengths
-    abs_wavelength = [float(w.replace("A","0")) for w in abs_cols]
-    # C-channel wavelengths
-    ccc_wavelength = [float(w.replace("C","0")) for w in ccc_cols]
+        ##### PARSE THE WAVELENGTHS #####
+        wavelengths = [x.strip() for x in str(wavelengths).split()]
+        columns = np.concatenate([["elapsed_run_time"], wavelengths, ["Tint", "fw_speed_diagnostic", "pressure", "Text", "abs_ref", "abs_sig", "ccc_ref", "ccc_sig"]])
 
-    # Get the time data
-    elapsed_run_time = df.index.values
+        ##### PARSE THE DATA INTO A-CHANNEL, C-CHANNEL, AND AUX DATA #####
+        data = [x.strip().split() for x in data]
 
-    # Parse out the aux_data
-    Tint = df["Tint"].values
-    fw_speed_diagnostic = df["fw_speed_diagnostic"].values
-    pressure = df["pressure"].values
-    Text = df["Text"].values
-    abs_ref = df["abs_ref"].values
-    abs_sig = df["abs_sig"].values
-    ccc_ref = df["ccc_ref"].values
-    ccc_sig = df["ccc_sig"].values
+        # Put the data into a dataframe and format values
+        df = pd.DataFrame(data, columns=columns)
+        df = df.applymap(float)
+        # Put the elapsed time into seconds and set as index
+        df["elapsed_run_time"] = df["elapsed_run_time"] 
+        df.set_index(keys=["elapsed_run_time"], inplace=True)
+        # Identify which columns are A-Channel and C-channel
+        abs_cols = [v for v in df.columns if "A" in v]
+        ccc_cols = [v for v in df.columns if "C" in v]
+        aux_cols = [v for v in df.columns if "A" not in v and "C" not in v]
+        # Get the A-channel (abs) values
+        abs_data = df[abs_cols].values
+        # Get the C-channel values
+        ccc_data = df[ccc_cols].values
+        # Get the auxilary data
+        aux_data = df[aux_cols].values
 
-    ##### BUILD A DATASET #####
-    ds = xr.Dataset(
-        data_vars=dict(
-            a_signal=(["elapsed_run_time","wavelength_number"], abs_data),
-            c_signal=(["elapsed_run_time","wavelength_number"], ccc_data),
-            wavelength_a=(["wavelength_number"], abs_wavelength),
-            wavelength_c=(["wavelength_number"], ccc_wavelength),
-            internal_temp=(["elapsed_run_time"], Tint),
-            external_temp=(["elapsed_run_time"], Text),
-            filterwheel_speed_diagnostic=(["elapsed_run_time"], fw_speed_diagnostic),
-            pressure=(["elapsed_run_time"], pressure),
-            a_reference_dark=(["elapsed_run_time"], abs_ref),
-            a_signal_dark=(["elapsed_run_time"], abs_sig),
-            c_reference_dark=(["elapsed_run_time"], ccc_ref),
-            c_signal_dark=(["elapsed_run_time"], ccc_sig)
-        ),
-        coords=dict(
-            elapsed_run_time=elapsed_run_time,
-            wavelength_number=int_wavelength
-        ),
-        attrs=dict(
-            comment=("This dataset is for the pure water calibration of either the "
-                     "A-channel or C-channel. Please check the filename for which "
-                     "side the calibration is applicable for."),
-            start_time=timestamp,
-            serial_number=serial_number,
-            number_temperature_bins=ntbins,
-            number_wavelengths=nwvl,
-            temperature_bins=tbins
+        # Get the wavelength data
+        # Generate an interval wavelength number
+        int_wavelength = np.arange(0, nwvl, 1)
+        # A-channel wavelengths
+        abs_wavelength = [float(w.replace("A","0")) for w in abs_cols]
+        # C-channel wavelengths
+        ccc_wavelength = [float(w.replace("C","0")) for w in ccc_cols]
+
+        # Get the time data
+        elapsed_run_time = df.index.values
+        dt = pd.to_datetime(timestamp) + pd.to_timedelta(elapsed_run_time, unit='ms')
+
+        # Parse out the aux_data
+        Tint = df["Tint"].values
+        fw_speed_diagnostic = df["fw_speed_diagnostic"].values
+        pressure = df["pressure"].values
+        Text = df["Text"].values
+        abs_ref = df["abs_ref"].values
+        abs_sig = df["abs_sig"].values
+        ccc_ref = df["ccc_ref"].values
+        ccc_sig = df["ccc_sig"].values
+
+        ##### BUILD A DATASET #####
+        ds = xr.Dataset(
+            data_vars=dict(
+                a_signal=(["time","wavelength_number"], abs_data),
+                c_signal=(["time","wavelength_number"], ccc_data),
+                wavelength_a=(["wavelength_number"], abs_wavelength),
+                wavelength_c=(["wavelength_number"], ccc_wavelength),
+                internal_temp=(["time"], Tint),
+                external_temp=(["time"], Text),
+                filterwheel_speed_diagnostic=(["time"], fw_speed_diagnostic),
+                pressure=(["time"], pressure),
+                a_reference_dark=(["time"], abs_ref),
+                a_signal_dark=(["time"], abs_sig),
+                c_reference_dark=(["time"], ccc_ref),
+                c_signal_dark=(["time"], ccc_sig),
+                elapsed_run_time=(["time"], elapsed_run_time)
+            ),
+            coords=dict(
+                time=dt,
+                wavelength_number=int_wavelength
+            ),
+            attrs=dict(
+                comment=("This dataset is for the pure water calibration of either the "
+                        "A-channel or C-channel. Please check the filename for which "
+                        "side the calibration is applicable for."),
+                start_time=timestamp,
+                serial_number=serial_number,
+                number_temperature_bins=ntbins,
+                number_wavelengths=nwvl,
+                temperature_bins=tbins
+            )
         )
-    )
 
-    # Add in variable attributes based on the attributes for the process
-    # OPTAA attributes. This is because we need to do a 1:1 mapping of
-    # the wavelengths in order to subtract values
-    for v in ds.variables:
-        if v in PUREWATER_ATTRS:
-            ds[v].attrs = PUREWATER_ATTRS[v]
+        # Add in variable attributes based on the attributes for the process
+        # OPTAA attributes. This is because we need to do a 1:1 mapping of
+        # the wavelengths in order to subtract values
+        for v in ds.variables:
+            if v in ATTRS:
+                ds[v].attrs = ATTRS[v]
 
-    return ds
+        return ds
+    
+    
+    def apply_tscorr(self):
+        """Function that applies the temperature correction to purewater cals"""
+
+        # Get the external temperature
+        nrows = len(self.dat["external_temp"])
+
+        # Get the appropriate temperature correction and associated wavelengths
+        Twvl = np.reshape(self.tscor['wvl_cor'], -1)
+        if self.channel == 'a':
+            wavelengths = self.dat['wavelength_a']
+            signal = self.dat['a_signal']
+            Tcor = np.reshape(self.tscor["Tcor"], -1)
+        elif self.channel == 'c':
+            wavelengths = self.dat['wavelength_c']
+            signal = self.dat['c_signal']
+            Tcor = np.reshape(self.tscor["Tcor"], -1)
+        else:
+            raise ValueError(f'Channel is {self.channel}. It must be either "a" or "c"')
+        
+        # Interpolate/extrapolate the correction to the measured wavelengths
+        f_Tcor = interp1d(Twvl, Tcor, kind='linear', fill_value='extrapolate')
+        temp_cor = f_Tcor(wavelengths)
+
+        # Reshape values to match the shape of the dat channels
+        temp_cor = np.tile(temp_cor, [nrows, 1])
+
+        # Calculate the temperature difference
+        delta_temp =  np.atleast_2d(self.dat["external_temp"] - self.tcal).T
+
+        # Calculate the temperature correction
+        signal_tcor = signal - (delta_temp * temp_cor)
+
+        return signal_tcor
+    
+    
+    def load_tscor(self, tscor):
+        """Load the temperature and salinity correction data"""
+
+        TScor = {
+            "wvl_cor": [],
+            "Tcor": [],
+            "a_Scor": [],
+            "c_Scor": []
+        }
+
+        for key in tscor:
+            # Get the values
+            Tcor, c_Scor, a_Scor = tscor.get(key)
+            if np.isnan(Tcor):
+                continue
+            else:
+                TScor["wvl_cor"].append(key)
+                TScor["Tcor"].append(Tcor)
+                TScor["c_Scor"].append(c_Scor)
+                TScor["a_Scor"].append(a_Scor)
+
+        return TScor

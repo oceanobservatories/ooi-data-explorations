@@ -10,7 +10,6 @@
 """
 import argparse
 import glob
-
 import dask
 import io
 import netrc
@@ -91,7 +90,6 @@ CONFIG = {
 
 # Default NetCDF encodings for CF compliance
 ENCODINGS = {
-    'time': {'_FillValue': None},
     'lon': {'_FillValue': None},
     'lat': {'_FillValue': None},
     'z': {'_FillValue': None}
@@ -1214,11 +1212,13 @@ def update_dataset(ds, depth):
     ds['time'].attrs = dict({
         'long_name': 'Time',
         'standard_name': 'time',
-        'units': 'seconds since 1900-01-01T00:00:00.000Z',
         'axis': 'T',
-        'calendar': 'gregorian'
     })
-    ds['time'].encoding = dict({'_FillValue': None, 'units': 'seconds since 1900-01-01T00:00:00.000Z'})
+    ds['time'].encoding = dict({
+        '_FillValue': None,
+        'units': 'seconds since 1900-01-01T00:00:00.000Z',
+        'calendar': 'standard'
+    })
 
     # convert all float64 values to float32 (except for the timestamps), helps minimize file size
     for v in ds.variables:

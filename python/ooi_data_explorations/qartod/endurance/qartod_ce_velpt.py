@@ -127,6 +127,7 @@ def generate_qartod(site, node, sensor, cut_off):
     if 'rollup_annotations_qc_results' in data.variables:
         data = data.where(data.rollup_annotations_qc_results != 4)
 
+    # use the original OOI QC flags to remove any data that has been flagged as bad
     if 'northward_seawater_velocity_qc_summary' in data.variables:
         data = data.where(data.northward_seawater_velocity_qc_summary != 4)
 
@@ -136,6 +137,7 @@ def generate_qartod(site, node, sensor, cut_off):
     if 'upward_seawater_velocity_qc_summary' in data.variables:
         data = data.where(data.upward_seawater_velocity_qc_summary != 4)
 
+    # Use the vendor defined metrics (e.g. pitch/roll out or range) to remove any data that has been flagged as bad
     if 'aquadopp_sensor_quality_flag' in data.variables:
         data = data.where(data.aquadopp_sensor_quality_flag != 4)
 

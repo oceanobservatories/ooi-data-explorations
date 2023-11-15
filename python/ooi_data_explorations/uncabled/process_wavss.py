@@ -8,6 +8,7 @@ from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_
 from ooi_data_explorations.qartod.qc_processing import parse_qc
 
 ATTRS = {
+    # WAVSS-A Bulk Wave Statistics
     'average_wave_height': {
         'long_name': 'Mean wave height',
         'standard_name': 'sea_surface_wave_mean_height',
@@ -27,14 +28,31 @@ ATTRS = {
         'data_product_identifier': 'WAVSTAT-HMAX_L2',
     },
     'mean_direction': {
-        'long_name': 'Mean Direction of Wave Field',
+        'long_name': 'Mean Direction of the Wave Field',
+        'units': 'degrees',
+        'comment': ('Mean direction of wave field against magnetic north. The phrase "to_direction" is used in the '
+                    'construction X_to_direction and indicates the direction towards which the velocity vector of '
+                    'X is headed. The direction is a bearing in the usual geographical sense, measured positive '
+                    'clockwise from magnetic north.'),
+        'data_product_identifier': 'WAVSTAT-D_L0',
+    },
+    'corrected_mean_direction': {
+        'long_name': 'True Mean Direction of the Wave Field',
         'standard_name': 'sea_surface_wave_to_direction',
         'units': 'degrees',
-        'comment': ('Mean direction of wave field against true north. The phrase "to_direction" is used in the '
-                    'construction X_to_direction and indicates the direction towards which the velocity vector of '
-                    ' X is headed. The direction is a bearing in the usual geographical sense, measured positive '
-                    ' clockwise from due north.'),
-        'data_product_identifier': 'WAVSTAT-D_L2',
+        'comment': ('Mean direction of wave field against true north (corrected for magnetic declination). The phrase '
+                    '"to_direction" is used in the construction X_to_direction and indicates the direction towards '
+                    'which the velocity vector of X is headed. The direction is a bearing in the usual geographical '
+                    'sense, measured positive clockwise from true north.'),
+        'data_product_identifier': 'WAVSTAT-D_L1',
+    },
+    'mean_spread': {
+        'long_name': 'Mean Directional Spread of the Wave Field',
+        'standard_name': 'sea_surface_wave_directional_spread',
+        'units': 'degrees',
+        'comment': ('Overall directional spreading width in degrees obtained by averaging the spreading '
+                    'width sigma theta, σθ, over all frequencies with weighting function S(f). σθ is calculated '
+                    'by the KVH method.'),
     },
     'mean_spectral_period': {
         'long_name': 'Mean Wave Period Computed from Second Frequency Moment',
@@ -46,14 +64,6 @@ ATTRS = {
                     'S1 = integral(S dtheta). Frequency moments, M(n) of S1 can then be calculated as follows: '
                     'M(n) = integral(S1 f^n df), where f^n is f to the power of n. '
                     'The second wave period, T(m2) is calculated as the square root of the ratio M(0)/M(2).'),
-    },
-    'mean_spread': {
-        'long_name': 'Mean Directional Spread of the Wave Field',
-        'standard_name': 'sea_surface_wave_directional_spread',
-        'units': 'degrees',
-        'comment': ('Overall directional spreading width in degrees obtained by averaging the spreading '
-                    'width sigma theta, σθ, over all frequencies with weighting function S(f). σθ is calculated '
-                    'by the KVH method.'),
     },
     'mean_wave_period': {
         'long_name': 'Mean Wave Period',
@@ -101,7 +111,7 @@ ATTRS = {
                     'ten per cent of trough to crest distances measured during the observation period.'),
         'data_product_identifier': 'WAVSTAT-H10_L2',
     },
-    'wave_height_hmo': {
+    'wave_height_hm0': {
         'long_name': 'Significant Wave Height from Spectral Moment 0',
         'standard_name': 'sea_surface_wave_significant_height_from_variance_spectral_density',
         'units': 'm',
@@ -122,7 +132,7 @@ ATTRS = {
     },
     'wave_period_tp5': {
         'long_name': 'Peak Wave Period - Read Method',
-        # 'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum_read_method',
+        'standard_name': 'sea_surface_wave_period_at_variance_spectral_density_maximum_read_method',
         'units': 's',
         'comment': ('Peak wave period in seconds as computed by the READ method. Tp5 has less statistical '
                     'variability than Tp because it is based on spectral moments. The Tp5 is determined '
@@ -130,6 +140,62 @@ ATTRS = {
                     'function S(f)**5 over the defined upper and lower frequency range.'),
         'data_product_identifier': 'WAVSTAT-TP5_L2',
     },
+
+    # WAVSS-A Mean Directional Frequency
+    'band_number': {
+        'long_name': 'Band Number',
+        'units': 'counts',
+        'comment': 'Dimensional array of band numbers used to index the different frequency, wave and PSD arrays.',
+    },
+    'number_bands': {
+        'long_name': 'Number of Frequency Bands',
+        'units': 'counts',
+        'comment': 'Number of frequency bands calculated during the observation period.',
+    },
+    'initial_frequency': {
+        'long_name': 'Initial Frequency',
+        'units': 'Hz',
+        'comment': 'Initial frequency value for wave spectral bins.',
+    },
+    'frequency_spacing': {
+        'long_name': 'Frequency Spacing',
+        'units': 'Hz',
+        'comment': 'Frequency spacing between wave spectral bins.',
+    },
+    'directional_frequency': {
+        'long_name': 'Directional Wave Frequencies',
+        'units': 'Hz',
+        'comment': ('Calculated frequency values for the directional spectra using the number of frequency bands, the '
+                    'initial frequency and the frequency spacing.'),
+        'data_product_identtifier': 'WAVSTAT-FDS_L1',
+        'ancillary_variables': 'number_bands initial_frequency frequency_spacing',
+    },
+    'wave_directions': {
+        'long_name': 'Wave Directions',
+        'units': 'degrees',
+        'comment': 'Wave directions as a function of time and frequency relative to magnetic north in degrees.',
+        'data_product_identtifier': 'WAVSTAT-DDS_L0',
+    },
+    'corrected_wave_directions': {
+        'long_name': 'True Wave Directions',
+        'units': 'degrees',
+        'comment': ('True wave directions as function of time and frequency relative to true north (corrected for '
+                    'magnetic declination).'),
+        'data_product_identtifier': 'WAVSTAT-DDS_L1',
+        'ancillary_variables': 'time lat lon directional_array',
+    },
+    'wave_spreading': {
+        'long_name': 'Wave Spreading',
+        'units': 'degrees',
+        'comment': 'Array of wave spreading observations as a function of time and frequency.',
+        'data_product_identtifier': 'WAVSTAT-SDS_L1',
+    },
+    'directional_psd': {
+        'long_name': 'Directional Wave Power Spectral Density',
+        'units': 'm2 Hz-1',
+        'comment': 'Power spectral density as a function of time and frequency for the directional wave spectra.',
+        'data_product_identtifier': 'WAVSTAT-PDS_L1',
+    }
 }
 
 
@@ -225,12 +291,11 @@ def quality_checks(ds):
 
     # Test the directional parameters quality
     directional_parameters = ["mean_direction", "mean_spectral_period", "mean_spread",
-                              "peak_wave_period", "wave_height_hmo", "wave_period_tp5"]
+                              "peak_wave_period", "wave_height_hm0", "wave_period_tp5"]
     
     # Compute the directional parameter qc_flags
-    directional_qc = ratio_tp_to_hm0(ds.peak_wave_period, ds.wave_height_hmo)
+    directional_qc = ratio_tp_to_hm0(ds.peak_wave_period, ds.wave_height_hm0)
     
-    # Add the directional quality_flags
     # add the qc_flags to the dataset, rolling up the results into a single value
     for p in directional_parameters:
         qc_summary = p + '_qc_summary_flag'
@@ -305,6 +370,16 @@ def wavss_datalogger(ds):
         if var in drop_list:
             ds = ds.drop(var)
 
+    # rename some of the variables for better clarity
+    rename = {
+        'wave_height_hmo': 'wave_height_hm0',
+        'wave_height_hmo_qc_executed': 'wave_height_hm0_qc_executed',
+        'wave_height_hmo_qc_results': 'wave_height_hm0_qc_results'
+    }
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
+
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
@@ -322,8 +397,72 @@ def wavss_datalogger(ds):
     return ds
 
 
+def wavss_directional(ds):
+    """
+    Takes the WAVSS directional frequency data recorded by the data loggers
+    used in the CGSN/EA moorings and cleans up the data set to make it more
+    user-friendly. Primary task is renaming the alphabet soup parameter names
+    and dropping some parameters that are of no use/value. Secondary task is
+    resetting the directional frequency data to a more user-friendly format.
+
+    :param ds: initial WAVSS directional frequency data set downloaded from OOI
+        via the M2M system
+    :return ds: cleaned up data set
+    """
+    # drop some of the variables:
+    #   dcl_controller_timestamp == time, redundant so can remove
+    #   internal_timestamp == not used, only use the time variable
+    #   date_string == internal_timestamp, redundant and not used
+    #   time_string == internal_timestamp, redundant and not used
+    #   serial_number == recorded in the attributes, not needed here
+    #   wavss_a_dcl_non_directional-number_bands == not used, only use the number_bands variable
+    #   wavss_a_corrected_mean_wave_direction_qc_executed == incorrectly applied
+    #   wavss_a_corrected_mean_wave_direction_qc_results == incorrectly applied
+    #   mean_direction_qc_executed == incorrectly applied
+    #   mean_direction_qc_results == incorrectly applied
+    drop_list = ['dcl_controller_timestamp', 'internal_timestamp', 'date_string', 'time_string', 'serial_number',
+                 'wavss_a_dcl_non_directional-number_bands', 'wavss_a_corrected_mean_wave_direction_qc_executed',
+                 'wavss_a_corrected_mean_wave_direction_qc_results', 'mean_direction_qc_executed',
+                 'mean_direction_qc_results']
+    for var in ds.variables:
+        if var in drop_list:
+            ds = ds.drop(var)
+
+    # rename some of the variables for better clarity
+    rename = {
+        'wavss_array': 'band_number',
+        'wavss_a_directional_frequency': 'directional_frequency',
+        'mean_direction_array': 'wave_directions',
+        'wavss_a_corrected_directional_wave_direction': 'corrected_wave_directions',
+        'directional_spread_array': 'wave_spreading',
+        'psd_mean_directional': 'directional_psd',
+        'wavss_a_corrected_mean_wave_direction': 'corrected_mean_direction',
+        'spread_direction': 'mean_spread',
+    }
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
+
+    # reset some of the attributes
+    for key, value in ATTRS.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # reset the fill-value used for floating point numbers to a NaN instead of the default -999999999
+    for var in ds.variables:
+        if ds[var].dtype == np.dtype('float32') or ds[var].dtype == np.dtype('float64'):
+            ds[var] = ds[var].where(ds[var] > -999999.)
+
+    return ds
+
+
 def main(argv=None):
-    # set up the input arguments
+    """
+    Command line interface for processing OOI WAVSS NetCDF file(s) from the
+    Endurance, Pioneer or Global surface moorings. Creates a cleaned and
+    processed xarray dataset of the WAVSS data saved to a NetCDF file.
+    """
     args = inputs(argv)
     site = args.site
     node = args.node
@@ -340,8 +479,14 @@ def main(argv=None):
 
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
-        # download the data for the deployment
-        tag = ('.*deployment%04d.*WAVSS.*\\.nc$' % deploy)
+        # download the data for the deployment, using the stream name to set the regular expression for the file name
+        if stream in ['wavss_a_dcl_statistics', 'wavss_a_dcl_statistics_recovered']:
+            tag = ('.*deployment%04d.*WAVSS.*\\.nc$' % deploy)
+        elif stream in ['wavss_a_dcl_mean_directional', 'wavss_a_dcl_mean_directional_recovered']:
+            tag = ('.*deployment%04d.*WAVSS.*mean_directional.*\\.nc$' % deploy)
+        else:
+            return SyntaxError('The stream name specified is not supported.')
+
         wavss = load_gc_thredds(site, node, sensor, method, stream, tag)
 
         # check to see if we downloaded any data
@@ -357,8 +502,14 @@ def main(argv=None):
                                                                                   stream, start, stop))
             raise SystemExit(exit_text)
 
-        # Valid M2M request, start downloading the data
-        tag = '.*WAVSS.*\\.nc$'
+        # Valid M2M request, start downloading the data, using the stream name to set the regular expression for
+        # the file name
+        if stream in ['wavss_a_dcl_statistics', 'wavss_a_dcl_statistics_recovered']:
+            tag = ('.*WAVSS.*\\.nc$' % deploy)
+        elif stream in ['wavss_a_dcl_mean_directional', 'wavss_a_dcl_mean_directional_recovered']:
+            tag = ('.*WAVSS.*mean_directional.*\\.nc$' % deploy)
+        else:
+            return SyntaxError('The stream name specified is not supported.')
         wavss = m2m_collect(r, tag)
 
         # check to see if we downloaded any data
@@ -370,9 +521,10 @@ def main(argv=None):
     # clean-up and reorganize
     if stream in ['wavss_a_dcl_statistics', 'wavss_a_dcl_statistics_recovered']:
         wavss = wavss_datalogger(wavss)
+    elif stream in ['wavss_a_dcl_mean_directional', 'wavss_a_dcl_mean_directional_recovered']:
+        wavss = wavss_directional(wavss)
     else:
-        # ToDo: add processing for additional WAVSS streams and data products
-        pass
+        return SyntaxError('The stream name specified is not supported.')
 
     wavss = update_dataset(wavss, 0.0)
 

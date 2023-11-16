@@ -235,6 +235,10 @@ def quality_checks(ds):
     m = ds['seawater_pressure'] <= 20
     qc_flag[m] = 4
 
+    # test for periods when the measured amplitudes are too low compared to the noise amplitudes
+    m = ds['amplitude_beam1'] < ds['noise_amplitude_beam1'] * 0.5
+    qc_flag[m] = 4
+
     return qc_flag
 
 
@@ -243,7 +247,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     Takes VEL3D (Nortek Vector) data recorded by the data loggers used in the
     EA moorings and cleans up the data set to make it more user-friendly.
     Primary task is adding the header and system packet data to the velocity
-    data set in order to make a single data set with all of the information
+    data set in order to make a single data set with all the information
     needed to use and assess the data. Additionally, this function is used to
     rename parameters and drop some that are of limited use.
 
@@ -259,60 +263,99 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         averaged or not. Default is False.
     :return ds: cleaned up data set
     """
-    # drop some of the variables:
-    #   analog1 == not used, not data
-    #   internal_timestamp == time, redundant so can remove
-    #   date_time_string == time, redundant so can remove
-    #   velocity_beam1_qc_executed == QC tests are not applied to L0 data
-    #   velocity_beam1_qc_results == QC tests are not applied to L0 data
-    #   velocity_beam2_qc_executed == QC tests are not applied to L0 data
-    #   velocity_beam2_qc_results == QC tests are not applied to L0 data
-    #   velocity_beam3_qc_executed == QC tests are not applied to L0 data
-    #   velocity_beam3_qc_results == QC tests are not applied to L0 data
-    drop_vars = ['analog1', 'internal_timestamp', 'date_time_string',
-                 'velocity_beam1_qc_executed', 'velocity_beam1_qc_results',
-                 'velocity_beam2_qc_executed', 'velocity_beam2_qc_results',
-                 'velocity_beam3_qc_executed', 'velocity_beam3_qc_results'
+    # drop some of the variables: velocity
+    #   analog_input_1 == not used, no data
+    #   analog_input_2 == not used, no data
+    #   sea_water_pressure_mbar_qc_executed == drop in favor of instrument specific tests
+    #   sea_water_pressure_mbar_qc_results == drop in favor of instrument specific tests
+    #   turbulent_velocity_east_qc_executed == drop in favor of instrument specific tests
+    #   turbulent_velocity_east_qc_results == drop in favor of instrument specific tests
+    #   turbulent_velocity_north_qc_executed == drop in favor of instrument specific tests
+    #   turbulent_velocity_north_qc_results == drop in favor of instrument specific tests
+    #   turbulent_velocity_vertical_qc_executed == drop in favor of instrument specific tests
+    #   turbulent_velocity_vertical_qc_results == drop in favor of instrument specific tests
+    #   vel3d_c_eastward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
+    #   vel3d_c_eastward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
+    #   vel3d_c_northward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
+    #   vel3d_c_northward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
+    #   vel3d_c_turbulent_eastward_velocity == velocity_vertical == redundant, so can remove
+    #   vel3d_c_upward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
+    #   vel3d_c_upward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
+    drop_vars = ['analog_input_1', 'analog_input_2', 'sea_water_pressure_mbar_qc_executed',
+                 'sea_water_pressure_mbar_qc_results', 'turbulent_velocity_east_qc_executed',
+                 'turbulent_velocity_east_qc_results', 'turbulent_velocity_north_qc_executed',
+                 'turbulent_velocity_north_qc_results', 'turbulent_velocity_vertical_qc_executed',
+                 'turbulent_velocity_vertical_qc_results', 'vel3d_c_eastward_turbulent_velocity_qc_executed',
+                 'vel3d_c_eastward_turbulent_velocity_qc_results', 'vel3d_c_northward_turbulent_velocity_qc_executed',
+                 'vel3d_c_northward_turbulent_velocity_qc_results', 'vel3d_c_upward_turbulent_velocity',
+                 'vel3d_c_upward_turbulent_velocity_qc_executed', 'vel3d_c_upward_turbulent_velocity_qc_results'
                  ]
-    for var in ds.variables:
+    for var in velocity.variables:
         if var in drop_vars:
-            ds = ds.drop_vars(var)
+            velocity = velocity.drop_vars(var)
+
+    # drop some of the variables: system
+    #   analog_input == not used, no data
+    #   date_time_string == redundant, so can remove
+    #   speed_of_sound_qc_executed == drop in favor of instrument specific tests
+    #   speed_of_sound_qc_results == drop in favor of instrument specific tests
+    drop_vars = ['analog_input', 'date_time_string', 'speed_of_sound_qc_executed', 'speed_of_sound_qc_results']
+    for var in system.variables:
+        if var in drop_vars:
+            system = system.drop_vars(var)
+
+    # drop some of the variables: header
+    #   date_time_string == redundant, so can remove
+    #   number_velocity_records == this is always 1440, so not useful
+    drop_vars = ['date_time_string', 'number_velocity_records']
+    for var in header.variables:
+        if var in drop_vars:
+            header = header.drop_vars(var)
 
     # rename some parameters here to get a better defined data set with cleaner attributes
     rename = {
+        # header packets
+        'noise_amp_beam1': 'noise_amplitude_beam1',
+        'noise_amp_beam2': 'noise_amplitude_beam2',
+        'noise_amp_beam3': 'noise_amplitude_beam3',
+        # system packets
         'battery_voltage_dv': 'battery_voltage',
         'heading_decidegree': 'heading',
         'pitch_decidegree': 'pitch',
         'roll_decidegree': 'roll',
-        'status': 'status_code',
-        'sea_water_pressure_mbar': 'seawater_pressure',
-        'sea_water_pressure_mbar_qc_executed': 'seawater_pressure_qc_executed',
-        'sea_water_pressure_mbar_qc_results': 'seawater_pressure_qc_results',
-        'sound_speed_dms': 'speed_of_sound',
         'temperature_centidegree': 'seawater_temperature',
-        'velocity_beam1': 'velocity_east',
-        'velocity_beam2': 'velocity_north',
-        'velocity_beam3': 'velocity_upward',
-        'eastward_velocity': 'eastward_seawater_velocity',
-        'eastward_velocity_qc_executed': 'eastward_seawater_velocity_qc_executed',
-        'eastward_velocity_qc_results': 'eastward_seawater_velocity_qc_results',
-        'northward_velocity': 'northward_seawater_velocity',
-        'northward_velocity_qc_executed': 'northward_seawater_velocity_qc_executed',
-        'northward_velocity_qc_results': 'northward_seawater_velocity_qc_results',
-        'upward_velocity': 'upward_seawater_velocity',
-        'upward_velocity_qc_executed': 'upward_seawater_velocity_qc_executed',
-        'upward_velocity_qc_results': 'upward_seawater_velocity_qc_results'
+        # velocity packets
+        'sea_water_pressure_mbar': 'seawater_pressure',
+        'amplitude_beam_1': 'amplitude_beam1',
+        'amplitude_beam_2': 'amplitude_beam2',
+        'amplitude_beam_3': 'amplitude_beam3',
+        'correlation_beam_1': 'correlation_beam1',
+        'correlation_beam_2': 'correlation_beam2',
+        'correlation_beam_3': 'correlation_beam3',
+        'turbulent_velocity_east': 'velocity_east',
+        'turbulent_velocity_north': 'velocity_north',
+        'turbulent_velocity_vertical': 'velocity_vertical',
+        'vel3d_c_turbulent_eastward_velocity': 'corrected_velocity_east',
+        'vel3d_c_turbulent_eastward_north': 'corrected_velocity_north',
     }
-    ds = ds.rename(rename)
+    for key in rename.keys():
+        if key in velocity.variables:
+            velocity = velocity.rename({key: rename.get(key)})
+        if key in system.variables:
+            system = system.rename({key: rename.get(key)})
+        if key in header.variables:
+            header = header.rename({key: rename.get(key)})
 
     # convert some variables to more standard units
-    ds['heading'] = ds['heading'] / 10.0  # convert from ddeg to deg
-    ds['pitch'] = ds['pitch'] / 10.0  # convert from ddeg to deg
-    ds['roll'] = ds['roll'] / 10.0  # convert from ddeg to deg
-    ds['battery_voltage'] = ds['battery_voltage'] / 10.0  # convert from dV to V
-    ds['seawater_pressure'] = ds['seawater_pressure'] / 1000.0  # parser doesn't include this needed scaling term
-    ds['seawater_temperature'] = ds['seawater_temperature'] / 100.0  # convert from cdeg C to deg C
-    ds['speed_of_sound'] = ds['speed_of_sound'] / 10.0  # convert from dm/s to m/s
+    system['heading'] = system['heading'] / 10.0  # convert from ddeg to deg
+    system['pitch'] = system['pitch'] / 10.0  # convert from ddeg to deg
+    system['roll'] = system['roll'] / 10.0  # convert from ddeg to deg
+    system['battery_voltage'] = system['battery_voltage'] / 10.0  # convert from dV to V
+    system['seawater_temperature'] = system['seawater_temperature'] / 100.0  # convert from cdeg C to deg C
+
+    velocity['seawater_pressure'] = velocity['seawater_pressure'] / 1000.0  # parser doesn't include this needed scaling term
+
+    system['speed_of_sound'] = system['speed_of_sound'] / 10.0  # convert from dm/s to m/s
 
     # reset some attributes
     for key, value in ATTRS.items():

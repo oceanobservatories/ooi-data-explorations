@@ -154,7 +154,7 @@ def log9_to_fcoeff(log9_file):
         hour = burst[4]
         minute = burst[5]
         water_level = int(burst[17]) / 1000.0 - 1.0  # convert from mm to m and subtract 1 m for the ADCP offset
-        peak_mean_direction = int(burst[10])
+        #peak_mean_direction = int(burst[10])
 
         # create the file names for the DSpec and FCoeff files and then create the FCoeff file
         dspec_file = 'DSpec' + year + month + day + hour + minute + '.txt'

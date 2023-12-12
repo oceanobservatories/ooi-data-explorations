@@ -50,15 +50,15 @@ def create_fcoeff(dspec_file, fcoeff_file, site_depth):
     band_width = float(header[4])  # frequency bandwidth
     band_start = float(header[-1])  # starting frequency, mid-band
 
-    # The WavesMon software reports a cutoff frequency, which we always want to use unless it is greater than the
-    # upper cutoff frequency calculated above. If it is, then we want to use the upper cutoff frequency instead.
+    # The WavesMon software reports a cutoff frequency in the DSpec file, which we always want to use unless it is
+    # greater than the upper cutoff frequency calculated above. If it is, then use the upper cutoff frequency instead.
     if cutoff > upper_cutoff:
         cutoff = upper_cutoff
 
     # calculate the frequency array and a mask for the cutoff frequencies
     start = band_start + (band_width / (nfreq / 2))
     frequency = np.arange(start, start + (band_width * nfreq), band_width)
-    mask = (frequency < 0.01) | (frequency > cutoff)
+    mask = (frequency < 0.010000) | (frequency > cutoff)
 
     # check to see if the DSpec data has been screened by the ADCP software. If it has, then there is no data to
     # process, and we can return None for the non-directional spectra and mean wave direction.
@@ -88,8 +88,9 @@ def create_fcoeff(dspec_file, fcoeff_file, site_depth):
     b2 = np.zeros(a0.shape)
     b2[n] = 1 / a0[n] * np.sum(freq[n] * np.sin(2 * directions), axis=1)
 
-    # can check the results above by calculating the mean direction using the fourier coefficients. the mean direction
-    # calculated this way should be equal to the mean direction calculated above to at least the 6th decimal place.
+    # check the results above by calculating the mean direction using the fourier coefficients. the mean direction
+    # calculated using the fourier coefficients should be equal to the mean wave direction calculated above to at
+    # least the 6th decimal place.
     check = np.isclose(mean_dir, np.arctan2(b1, a1), rtol=1e-06, atol=1e-08)
 
     # now reset the mean directions to degrees and make sure they are between 0 and 360
@@ -105,21 +106,22 @@ def create_fcoeff(dspec_file, fcoeff_file, site_depth):
     b1[mask] = 0.0
     b2[mask] = 0.0
 
-    # create the FCoeffYYMMDDhhmm.txt file
+    # create the FCoeffYYMMDDhhmm.txt file using the same format as the original WavesMon v3 software
     with open(fcoeff_file, 'w+') as f:
         # write the header
-        f.write('\n')
-        f.write(' % Fourier Coefficients\n')
-        f.write('% 9 Fields and {:d} Frequencies\n'.format(nfreq))
+        f.write('\r\n')
+        f.write(' % Fourier Coefficients\r\n')
+        f.write('% 9 Fields and {:d} Frequencies\r\n'.format(nfreq))
         f.write('% Frequency(Hz), Band width(Hz), Energy density(m^2/Hz), Direction (deg), '
-                'A1, B1, A2, B2, Check Factor\n')
-        f.write('% Frequency Bands are {:.6f} Hz wide (first frequency band is centered '
-                'at {:.8f})\n'.format(band_width, band_start))
+                'A1, B1, A2, B2, Check Factor\r\n')
+        f.write('% Frequency Bands are {:.8f} Hz wide(first frequency band is centered '
+                'at {:.8f})\r\n'.format(band_width, band_start))
         # now write the data
         for i in range(nfreq):
-            f.write(' {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} -9999.9\n'.format(frequency[i],
+            f.write(' {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} {:.6f} -9999.9\r\n'.format(frequency[i].round(6),
                                                                                                 band_width,
-                                                                                                non_dir[i], mean_dir[i],
+                                                                                                non_dir[i].round(6),
+                                                                                                mean_dir[i].round(6),
                                                                                                 a1[i].round(6) + 0.0,
                                                                                                 b1[i].round(6) + 0.0,
                                                                                                 a2[i].round(6) + 0.0,
@@ -132,7 +134,7 @@ def create_fcoeff(dspec_file, fcoeff_file, site_depth):
 def log9_to_fcoeff(log9_file):
     """
     Use the data in the Log 9 formatted bulk wave statistics file to create the
-    non-directional spectra parameters needed to recreate the RDI WavesMon v3
+    non-directional spectral parameters needed to recreate the RDI WavesMon v3
     FCoeff file(s) from the ADCP wave directional spectra (DSpec) file(s).
 
     :param log9_file: Log 9 formatted bulk wave statistics file
@@ -144,34 +146,34 @@ def log9_to_fcoeff(log9_file):
         data = f.readlines()
 
     # for each burst measurement, use the date and time to create a file name for the FCoeff file, pull out the
-    # site depth from the water level and the peak mean direction and then create the FCoeff file.
+    # site depth from the water level and then create the FCoeff file.
     for line in data:
-        # split the data and extract the date and time information, water level and peak mean direction
+        # split the data and extract the date and time information to create the FCoeff and DSpec file names
         burst = line.split(',')
         year = burst[1]
         month = burst[2]
         day = burst[3]
         hour = burst[4]
         minute = burst[5]
-        water_level = int(burst[17]) / 1000.0 - 1.0  # convert from mm to m and subtract 1 m for the ADCP offset
-        #peak_mean_direction = int(burst[10])
 
-        # create the file names for the DSpec and FCoeff files and then create the FCoeff file
+        # create the file names for the DSpec and FCoeff files
         dspec_file = 'DSpec' + year + month + day + hour + minute + '.txt'
         dspec_file = os.path.join(base_dir, dspec_file)
         fcoeff_file = 'FCoeff' + year + month + day + hour + minute + '.txt'
         fcoeff_file = os.path.join(base_dir, fcoeff_file)
+
+        # extract the site depth from the water level and convert from mm to m
+        water_level = int(burst[17]) / 1000.0 - 1.0  # convert from mm to m and subtract 1 m for the ADCP offset
+        if water_level < 5.0:
+            # water level is less than 5 m; instrument was either being deployed or recovered, not a valid wave
+            # measurement. skip this line
+            continue
+
+        # create the FCoeff file from the DSpec file
         non_dir, mean_dir, check = create_fcoeff(dspec_file, fcoeff_file, water_level)
 
         # check to make sure the two different methods for calculating the mean direction are equivalent
         if non_dir is not None:
-            #m = non_dir.argmax()
-            #pd = np.abs(mean_dir[m] - peak_mean_direction) / peak_mean_direction
-            #if pd > 0.10:
-            #    print('Mean directions do not align for {:s}. The peak mean direction ({:d}) and the '
-            #          'non-directional estimate ({:.1f}) differ by more than 10%. Marking as failed.'
-            #          .format(fcoeff_file, peak_mean_direction, mean_dir[m]))
-            #    os.rename(fcoeff_file, fcoeff_file + '.fail')
             if not check.all():
                 print('Internal consistency check failure for {:s}'.format(fcoeff_file))
                 os.rename(fcoeff_file, fcoeff_file + '.fail')

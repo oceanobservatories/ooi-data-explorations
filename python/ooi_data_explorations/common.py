@@ -945,6 +945,7 @@ def process_file(catalog_file, gc=None, use_dask=False):
                 if time_pattern.match(ds[v].attrs['units']):
                     del(ds[v].attrs['_FillValue'])  # no fill values for time!
                     ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00.000Z'
+                    ds[v].encoding = {'_FillValue': None, 'units': 'seconds since 1900-01-01T00:00:00.000Z'}
                     np_time = ntp_date + (ds[v] * 1e9).astype('timedelta64[ns]')
                     ds[v] = np_time
 
@@ -1207,7 +1208,7 @@ def update_dataset(ds, depth):
                 ds[ancillary].attrs['ancillary_variables'] = v
 
     # convert the time values from a datetime64[ns] object to a floating point number with the time in seconds
-    ds['time'] = dt64_epoch(ds.time)
+    # ds['time'] = dt64_epoch(ds.time)
     ds['time'].attrs = dict({
         'long_name': 'Time',
         'standard_name': 'time',

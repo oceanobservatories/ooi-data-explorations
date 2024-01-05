@@ -472,9 +472,9 @@ def add_annotation_qc_flags(ds, annotations):
         'not_evaluated': 2,
         'suspect': 3,
         'fail': 4,
-        'not_operational': 9,
-        'not_available': 9,
-        'pending_ingest': 9
+        'not_operational': 0,
+        'not_available': 0,
+        'pending_ingest': 0
     }
     annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
 
@@ -495,12 +495,11 @@ def add_annotation_qc_flags(ds, annotations):
         else:
             pid = str(pid)
             param_info = get_parameter_information(pid)
-            param_name = param_info["name"]
+            param_name = param_info["netcdf_name"]
         stream_annos.update({param_name: pid})
 
     # Next, get the flags associated with each parameter or all parameters
     flags_dict = {}
-
     for key in stream_annos.keys():
         # Get the pid and associated name
         pid_name = key
@@ -515,15 +514,14 @@ def add_annotation_qc_flags(ds, annotations):
         pid_annos = pid_annos.sort_values(by="qcFlag")
 
         # Create an array of flags to begin setting the qc-values
-        pid_flags = pd.Series(np.zeros(ds.time.values.shape),
-                              index=ds.time.values)
+        pid_flags = pd.Series(np.zeros(ds.time.values.shape), index=ds.time.values)
 
         # For each index, set the qcFlag for each respective time period
         for ind in pid_annos.index:
             beginDT = pid_annos["beginDT"].loc[ind]
             endDT = pid_annos["endDT"].loc[ind]
             qcFlag = pid_annos["qcFlag"].loc[ind]
-            # Convert the time to actual datetimes
+            # Convert the time to actual date times
             beginDT = convert_time(beginDT)
             if endDT is None or np.isnan(endDT):
                 endDT = datetime.now()
@@ -536,12 +534,15 @@ def add_annotation_qc_flags(ds, annotations):
         flags_dict.update({pid_name: pid_flags})
 
     # Create a rollup flag
-    rollup_flags = flags_dict.get("rollup")
-    for key in flags_dict:
-        flags = np.max([rollup_flags, flags_dict.get(key)], axis=0)
-        rollup_flags = pd.Series(flags, index=rollup_flags.index)
-    # Replace the "All" with the rollup results
-    flags_dict["rollup"] = rollup_flags
+    # rollup_flags = flags_dict.get("rollup")
+    # for key in flags_dict:
+    #     flags = np.max([rollup_flags, flags_dict.get(key)], axis=0)
+    #     rollup_flags = pd.Series(flags, index=rollup_flags.index)
+    # # Replace the "All" with the rollup results
+    # flags_dict["rollup"] = rollup_flags
+    # --> We need to allow for one variable to be flagged without affecting all the others. With the above block,
+    # --> if one variable was flagged, all variables would be flagged via the rollup. By commenting out the above
+    # --> block, we allow for one variable to be flagged without affecting the others.
 
     # Add the flag results to the dataset for key in flags_dict
     for key in flags_dict.keys():

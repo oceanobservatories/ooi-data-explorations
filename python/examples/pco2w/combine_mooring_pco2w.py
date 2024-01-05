@@ -13,7 +13,7 @@ import xarray as xr
 from cgsn_processing.process.finding_calibrations import find_calibration
 from cgsn_processing.process.proc_pco2w import Calibrations
 
-from ooi_data_explorations.common import ENCODINGS, get_annotations, get_vocabulary, get_calibrations_by_refdes, \
+from ooi_data_explorations.common import ENCODINGS, get_annotations, get_vocabulary, get_deployment_dates, \
     load_gc_thredds, add_annotation_qc_flags, update_dataset
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_pco2w import pco2w_datalogger, pco2w_instrument
@@ -42,11 +42,13 @@ def combine_delivery_methods(site, node, sensor):
     for grp in grps:
         print('# -- Group and process telemetered deployment %d' % grp[0])
         data = pco2w_datalogger(grp[1])
-        data = apply_quality_flags(data, site, node, sensor)
+        start, end = get_deployment_dates(site, node, sensor, grp[0])
+        data = data.sel(time=slice(start[:-1], end[:-1]))  # trim the data to the deployment dates
         deployments.append(data)
 
     # create the final telemetered data set
     telem = xr.concat(deployments, 'time')
+    telem = apply_quality_flags(telem, site, node, sensor)
 
     # download the recovered host data and re-process it to create a more useful and coherent data set
     rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'pco2w_abc_dcl_instrument_recovered', tag)
@@ -56,11 +58,13 @@ def combine_delivery_methods(site, node, sensor):
     for grp in grps:
         print('# -- Group and process recovered_host deployment %d' % grp[0])
         data = pco2w_datalogger(grp[1])
-        data = apply_quality_flags(data, site, node, sensor)
+        start, end = get_deployment_dates(site, node, sensor, grp[0])
+        data = data.sel(time=slice(start[:-1], end[:-1]))  # trim the data to the deployment dates
         deployments.append(data)
 
     # create the final recovered_host data set
     rhost = xr.concat(deployments, 'time')
+    rhost = apply_quality_flags(rhost, site, node, sensor)
 
     # download the recovered instrument data and re-process it to create a more useful and coherent data set
     rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'pco2w_abc_instrument', tag)
@@ -70,11 +74,13 @@ def combine_delivery_methods(site, node, sensor):
     for grp in grps:
         print('# -- Group and process recovered_inst deployment %d' % grp[0])
         data = pco2w_instrument(grp[1])
-        data = apply_quality_flags(data, site, node, sensor)
+        start, end = get_deployment_dates(site, node, sensor, grp[0])
+        data = data.sel(time=slice(start[:-1], end[:-1]))  # trim the data to the deployment dates
         deployments.append(data)
 
     # create the final recovered_inst data set
     rinst = xr.concat(deployments, 'time')
+    rinst = apply_quality_flags(rinst, site, node, sensor)
 
     # combine the three datasets into a single, merged time series resampled to a 3-hour interval time series
     merged = combine_datasets(telem, rhost, rinst, 180)
@@ -115,7 +121,7 @@ def apply_quality_flags(data, site, node, sensor):
     # HITL annotations that can be combined with system annotations and pCO2 quality checks to create
     # a cleaned up data set prior to calculating the QARTOD test values
     fail = data.pco2_seawater_quality_flag.where(data.pco2_seawater_quality_flag == 4).notnull()
-    blocks = identify_blocks(fail, [24, 48])
+    blocks = identify_blocks(fail, [18, 36])
     hitl = create_annotations(site, node, sensor, blocks)
 
     # get the current system annotations for the sensor
@@ -133,7 +139,7 @@ def apply_quality_flags(data, site, node, sensor):
     data = add_annotation_qc_flags(data, annotations)
 
     # clean-up the data, NaN-ing values that fail the pCO2 quality checks or were marked as fail in the annotations
-    m = (data.pco2_seawater_quality_flag >= 3) | (data.rollup_annotations_qc_results >= 3)
+    m = (data.pco2_seawater_quality_flag >= 3) | (data.rollup_annotations_qc_results == 4)
     data.pco2_seawater[m] = np.nan
     return data
 

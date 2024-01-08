@@ -118,7 +118,7 @@ def apply_quality_flags(data, site, node, sensor):
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
     # append the fail annotations to the existing annotations
-    annotations = annotations.append(pd.DataFrame(hitl), ignore_index=True, sort=False)
+    annotations = pd.concat([annotations, pd.DataFrame(hitl)], ignore_index=True, sort=False)
 
     # create a roll-up annotation flag
     data = add_annotation_qc_flags(data, annotations)

@@ -112,3 +112,7 @@ venv.bak/
 
 # R
 .Rhistory
+
+# Custom
+*.jpg
+*.mp4

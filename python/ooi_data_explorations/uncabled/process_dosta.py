@@ -61,7 +61,7 @@ ATTRS = {
                     'the sensing foil.'),
     },
     # co-located CTD data
-    'seawater_temperature': {
+    'sea_water_temperature': {
         'long_name': 'Sea Water Temperature',
         'standard_name': 'sea_water_temperature',
         'units': 'degrees_Celsius',
@@ -69,7 +69,7 @@ ATTRS = {
                     'co-located CTD'),
         'data_product_identifier': 'TEMPWAT_L1'
     },
-    'seawater_pressure': {
+    'sea_water_pressure': {
         'long_name': 'Sea Water Pressure',
         'standard_name': 'sea_water_pressure_due_to_sea_water',
         'units': 'dbar',
@@ -80,7 +80,7 @@ ATTRS = {
                     'Measurements are from a co-located CTD.'),
         'data_product_identifier': 'PRESWAT_L1'
     },
-    'practical_salinity': {
+    'sea_water_practical_salinity': {
         'long_name': 'Sea Water Practical Salinity',
         'standard_name': 'sea_water_practical_salinity',
         'units': '1',
@@ -151,8 +151,7 @@ def dosta_datalogger(ds, burst=False):
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
-        'int_ctd_pressure': 'seawater_pressure',
-        'temp': 'seawater_temperature',
+        'int_ctd_pressure': 'sea_water_pressure',
     }
     
     # CGSN Update: made this iterative as above to reprocess limited parameter datasets
@@ -233,8 +232,7 @@ def dosta_ctdbp_datalogger(ds):
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
-        'int_ctd_pressure': 'seawater_pressure',
-        'temp': 'seawater_temperature',
+        'int_ctd_pressure': 'sea_water_pressure',
     }
     for key in rename.keys():
         if key in ds.variables:
@@ -284,8 +282,8 @@ def dosta_ctdbp_instrument(ds):
             ds = ds.drop(var)
 
     # check for data from a co-located CTD, if not present create the variables using NaN as the fill value
-    if 'temp' not in ds.variables:
-        ds['temp'] = ('time', ds['deployment'].data * np.nan)
+    if 'sea_water_temperature' not in ds.variables:
+        ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
         ds['int_ctd_pressure'] = ('time', ds['deployment'].data * np.nan)
 
     # rename some variables for better clarity
@@ -298,8 +296,7 @@ def dosta_ctdbp_instrument(ds):
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
-        'int_ctd_pressure': 'seawater_pressure',
-        'temp': 'seawater_temperature',
+        'int_ctd_pressure': 'sea_water_pressure',
     }
     for key in rename.keys():
         if key in ds.variables:
@@ -364,11 +361,11 @@ def dosta_cspp(ds):
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
-        'pressure': 'seawater_pressure',
-        'pressure_qc_executed': 'seawater_pressure_qc_executed',
-        'pressure_qc_results': 'seawater_pressure_qc_results',
-        'temperature': 'seawater_temperature',
-        'salinity': 'practical_salinity',
+        'pressure': 'sea_water_pressure',
+        'pressure_qc_executed': 'sea_water_pressure_qc_executed',
+        'pressure_qc_results': 'sea_water_pressure_qc_results',
+        'temperature': 'sea_water_temperature',
+        'salinity': 'sea_water_practical_salinity',
     }
     ds = ds.rename(rename)
 

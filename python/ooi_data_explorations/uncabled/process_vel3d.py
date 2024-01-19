@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import os
+import re
+import xarray as xr
 
 from ooi_data_explorations.common import inputs, load_gc_thredds, m2m_collect, m2m_request, \
-    update_dataset, ENCODINGS
-from ooi_data_explorations.qartod.qc_processing import parse_qc
+    get_deployment_dates, update_dataset, ENCODINGS
 
 # load configuration settings
 FILL_INT = -9999999
@@ -34,31 +35,19 @@ ATTRS = dict({
     'noise_correlation_beam1': {
         'long_name': 'Noise Correlation Beam 1',
         'comment': ('Ambient noise correlations measured by beam 1 prior to the collection of a 3 minute burst of '
-                    '8 Hz velocity data and recorded in the header data packet. The correlation is a measure of the '
-                    'similarity of consecutive measurements. Zero correlation means nothing at all is similar between '
-                    'the measurements (e.g. noise is all over the place), whereas a correlation of 100 means the '
-                    'measurements are identical. We want high correlations because it gives us confidence the system '
-                    'measured the ambient noise field correctly.'),
+                    '8 Hz velocity data and recorded in the header data packet.'),
         'units': 'percent'
     },
     'noise_correlation_beam2': {
         'long_name': 'Noise Correlation Beam 2',
         'comment': ('Ambient noise correlations measured by beam 2 prior to the collection of a 3 minute burst of '
-                    '8 Hz velocity data and recorded in the header data packet. The correlation is a measure of the '
-                    'similarity of consecutive measurements. Zero correlation means nothing at all is similar between '
-                    'the measurements (e.g. noise is all over the place), whereas a correlation of 100 means the '
-                    'measurements are identical. We want high correlations because it gives us confidence the system '
-                    'measured the ambient noise field correctly.'),
+                    '8 Hz velocity data and recorded in the header data packet.'),
         'units': 'percent'
     },
     'noise_correlation_beam3': {
         'long_name': 'Noise Correlation Beam 3',
         'comment': ('Ambient noise correlations measured by beam 3 prior to the collection of a 3 minute burst of '
-                    '8 Hz velocity data and recorded in the header data packet. The correlation is a measure of the '
-                    'similarity of consecutive measurements. Zero correlation means nothing at all is similar between '
-                    'the measurements (e.g. noise is all over the place), whereas a correlation of 100 means the '
-                    'measurements are identical. We want high correlations because it gives us confidence the system '
-                    'measured the ambient noise field correctly.'),
+                    '8 Hz velocity data and recorded in the header data packet.'),
         'units': 'percent'
     },
     'battery_voltage': {
@@ -87,7 +76,7 @@ ATTRS = dict({
         'comment': 'Measured roll of the VEL3D.',
         'units': 'degrees'
     },
-    'temperature': {
+    'sea_water_temperature': {
         'long_name': 'Sea Water Temperature',
         'standard_name': 'sea_water_temperature',
         'comment': 'In-situ sea water temperature measured at the base of the transducer stalk.',
@@ -95,60 +84,37 @@ ATTRS = dict({
     },
     'error_code': {
         'long_name': 'Instrument Error Codes',
-        'flag_masks': np.array([1, 2, 4, 8, 16, 32, 64], dtype=np.uint8),
-        'flag_meanings': ('compass_error measurement_error sensor_data_error tag_bit_error '
-                          'flash_error undefined ct_sensor_read_error'),
+        'flag_masks': np.array([0, 1, 2, 4, 8, 16, 32, 64, 128], dtype=np.uint8),
+        'flag_meanings': ('no_errors compass_error measurement_error sensor_data_error tag_bit_error '
+                          'flash_error beam_order_error tilt_sensor_error coordinate_transform_error'),
         'comment': 'Integer representation of the instrument error codes.'
         # 'units': '',    deliberately left blank, no units for this value
     },
     'status_code': {
         'long_name': 'Instrument Status Codes',
-        'flag_masks': np.array([1, 2, 4, 8, 48, 48, 48, 48, 192, 192, 192, 192], dtype=np.uint8),
-        'flag_values': np.array([1, 2, 4, 8, 0, 16, 32, 48, 0, 64, 128, 192], dtype=np.uint8),
-        'flag_meanings': ('orientation_down scaling_factor_0.1 pitch_out_of_range roll_out_of_range '
-                          'wake_bad_power wake_break_received wake_power_applied wake_rtc_alarm '
-                          'power_level_high power_level_1 power_level_2 power_level_low'),
+        'flag_masks': np.array([0, 1, 2, 4, 8, 48, 48, 48, 48, 192, 192, 192, 192], dtype=np.uint8),
+        'flag_values': np.array([0, 1, 2, 4, 8, 0, 16, 32, 48, 0, 64, 128, 192], dtype=np.uint8),
+        'flag_meanings': ('orientation_up orientation_down scaling_factor_0.1 pitch_out_of_range roll_out_of_range '
+                          'wake_bad_power wake_break_received wake_power_applied wake_rtc_alarm power_level_high '
+                          'power_level_1 power_level_2 power_level_low'),
         'comment': 'Integer representation of the instrument status codes.'
         # 'units': '',    deliberately left blank, no units for this value
     },
-    'pressure': {
-        'long_name': 'Pressure',
+    'scaling_factor': {
+        'long_name': 'Scaling Factor',
+        'comment': ('Scaling factor used to adjust the velocity data based on bit 1 in the status code, which '
+                    'indicates the scaling of the velocity output and depends on the velocity range setting. If the '
+                    'instrument is set to use the highest ranges the least significant bit is 1 mm/s. For the lowest '
+                    'range it is 0.1 mm/s. This scaling factor has already been applied to the corrected (magnetic '
+                    'declination applied) horizontal velocities, but not original the horizontal and vertical '
+                    'velocities. Adding it here, so that all velocity measurements are correctly scaled to m/s.'),
+        'units': 'mm s-1'
+    },
+    'sea_water_pressure': {
+        'long_name': 'Sea Water Pressure',
         'standard_name': 'sea_water_pressure_due_to_sea_water',
         'comment': 'Sea water pressure measured at the base of the transducer stalk.',
         'units': 'dbar'
-    },
-    'velocity_east': {
-        'long_name': 'Estimated Eastward Sea Water Velocity',
-        'comment': 'Estimated eastward sea water velocity uncorrected for magnetic declination.',
-        'data_product_identifier': 'VELPTTU-VLE_L0',
-        'units': 'mm s-1',
-    },
-    'velocity_east_corrected': {
-        'long_name': 'Eastward Sea Water Velocity',
-        'standard_name': 'eastward_sea_water_velocity',
-        'comment': 'Eastward sea water velocity corrected for magnetic declination and scaled to m/s.',
-        'data_product_identifier': 'VELPTTU-VLE_L1',
-        'units': 'm s-1',
-    },
-    'velocity_north': {
-        'long_name': 'Estimated Northward Sea Water Velocity',
-        'comment': 'Estimated northward sea water velocity uncorrected for magnetic declination.',
-        'data_product_identifier': 'VELPTTU-VLN_L0',
-        'units': 'mm s-1',
-    },
-    'velocity_north_corrected': {
-        'long_name': 'Northward Sea Water Velocity',
-        'standard_name': 'northward_sea_water_velocity',
-        'comment': 'Northward sea water velocity corrected for magnetic declination and scaled to m/s.',
-        'data_product_identifier': 'VELPTTU-VLN_L1',
-        'units': 'm s-1',
-    },
-    'velocity_vertical': {
-        'long_name': 'Upward Sea Water Velocity',
-        'standard_name': 'upward_sea_water_velocity',
-        'comment': 'Vertical sea water velocity component.',
-        'data_product_identifier': 'VELPTTU-VLU_L0',
-        'units': 'mm s-1',
     },
     'amplitude_beam1': {
         'long_name': 'Velocity Amplitude Beam 1',
@@ -194,6 +160,60 @@ ATTRS = dict({
                     'correlation because it gives us confidence the system measured the two pulses it originally '
                     'sent out and is determining a valid phase shift.'),
         'units': 'percent'
+    },
+    'snr_beam1': {
+        'long_name': 'Signal-to-Noise Ratio, Beam 1',
+        'comment': ('Signal-to-noise ratio, for beam 1, is a measure of the ratio of the signal power to the noise '
+                    'power. The higher the ratio, the better the signal. Vector SNR values should be greater than '
+                    '15 dB.'),
+        'units': 'dB'
+    },
+    'snr_beam2': {
+        'long_name': 'Signal-to-Noise Ratio, Beam 2',
+        'comment': ('Signal-to-noise ratio, for beam 2, is a measure of the ratio of the signal power to the noise '
+                    'power. The higher the ratio, the better the signal. Vector SNR values should be greater than '
+                    '15 dB.'),
+        'units': 'dB'
+    },
+    'snr_beam3': {
+        'long_name': 'Signal-to-Noise Ratio, Beam 3',
+        'comment': ('Signal-to-noise ratio, for beam 3, is a measure of the ratio of the signal power to the noise '
+                    'power. The higher the ratio, the better the signal. Vector SNR values should be greater than '
+                    '15 dB.'),
+        'units': 'dB'
+    },
+    'velocity_east': {
+        'long_name': 'Estimated Eastward Sea Water Velocity',
+        'comment': 'Estimated eastward sea water velocity uncorrected for magnetic declination.',
+        'data_product_identifier': 'VELPTTU-VLE_L0',
+        'units': 'm s-1',
+    },
+    'velocity_east_corrected': {
+        'long_name': 'Eastward Sea Water Velocity',
+        'standard_name': 'eastward_sea_water_velocity',
+        'comment': 'Eastward sea water velocity corrected for magnetic declination.',
+        'data_product_identifier': 'VELPTTU-VLE_L1',
+        'units': 'm s-1',
+    },
+    'velocity_north': {
+        'long_name': 'Estimated Northward Sea Water Velocity',
+        'comment': 'Estimated northward sea water velocity uncorrected for magnetic declination.',
+        'data_product_identifier': 'VELPTTU-VLN_L0',
+        'units': 'm s-1',
+    },
+    'velocity_north_corrected': {
+        'long_name': 'Northward Sea Water Velocity',
+        'standard_name': 'northward_sea_water_velocity',
+        'comment': 'Northward sea water velocity corrected for magnetic declination and scaled to m/s.',
+        'data_product_identifier': 'VELPTTU-VLN_L1',
+        'units': 'm s-1',
+    },
+    'velocity_vertical': {
+        'long_name': 'Upward Sea Water Velocity',
+        'standard_name': 'upward_sea_water_velocity',
+        'comment': 'Vertical sea water velocity component.',
+        'data_product_identifier': 'VELPTTU-VLU_L1',
+        'units': 'm s-1',
     }
 })
 
@@ -201,10 +221,11 @@ ATTRS = dict({
 def quality_checks(ds):
     """
     Quality assessment of the pitch, roll, and pressure values for the VEL3D
-    using a susbset of the QARTOD flags to indicate the quality. QARTOD
+    using a subset of the QARTOD flags to indicate the quality. QARTOD
     flags used are:
 
         1 = Pass
+        3 = Of High Interest or Suspect
         4 = Fail
 
     The final flag value represents the worst case assessment of the data quality.
@@ -228,15 +249,22 @@ def quality_checks(ds):
     # test for valid speed of sound values (between 1400 and 1700 m/s).  This is a very rough test, but should
     # catch the most egregious errors. The speed of sound is calculated from the temperature and nominal salinity
     # values, so this test is really just a sanity check.
-    m = ds['speed_of_sound'] <= 1400 or ds['speed_of_sound'] >= 1700
+    m = (ds['speed_of_sound'] < 1400) | (ds['speed_of_sound'] > 1700)
     qc_flag[m] = 4
 
-    # test for pressure out of range (catch those periods when the instrument is out of the water)
-    m = ds['seawater_pressure'] <= 20
+    # test for pressure out of range (catch those periods when the instrument is being deployed/recovered or
+    # out of the water)
+    m = ds['sea_water_pressure'] <= 15
     qc_flag[m] = 4
 
-    # test for periods when the measured amplitudes are too low compared to the noise amplitudes
-    m = ds['amplitude_beam1'] < ds['noise_amplitude_beam1'] * 0.5
+    # test for any error codes, which indicate a problem with the instrument
+    m = (ds['error_code'].astype(int) & 1) == 1
+    qc_flag[m] = 4
+
+    # test for low correlation values (less than 70% and 50%) from any of the three beams
+    m = (ds['correlation_beam1'] < 70) | (ds['correlation_beam2'] < 70) | (ds['correlation_beam3'] < 70)
+    qc_flag[m] = 3
+    m = (ds['correlation_beam1'] < 50) | (ds['correlation_beam2'] < 50) | (ds['correlation_beam3'] < 50)
     qc_flag[m] = 4
 
     return qc_flag
@@ -253,10 +281,11 @@ def vel3d_datalogger(header, system, velocity, burst=False):
 
     :param header: xarray dataset with the header data. This data set contains
         the ambient noise measurements made prior to the instrument collecting
-        a burst of data.
+        a burst of data. Used for QC testing.
     :param system: xarray dataset with the system data. This data set contains
         the 1 Hz instrument status data (e.g. battery voltage, temperature,
-        pressure, tilt, roll, etc.).
+        pressure, tilt, roll, etc.). Used for QC testing and for environmental
+        context.
     :param velocity: xarray dataset with the velocity data. This data set
         contains the 8 Hz velocity data collected by the instrument.
     :param burst: boolean, used to indicate if the data should be burst
@@ -264,6 +293,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     :return ds: cleaned up data set
     """
     # drop some of the variables: velocity
+    #   internal_timestamp == time == redundant, so can remove
     #   analog_input_1 == not used, no data
     #   analog_input_2 == not used, no data
     #   sea_water_pressure_mbar_qc_executed == drop in favor of instrument specific tests
@@ -278,10 +308,10 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     #   vel3d_c_eastward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
     #   vel3d_c_northward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
     #   vel3d_c_northward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
-    #   vel3d_c_turbulent_eastward_velocity == velocity_vertical == redundant, so can remove
+    #   vel3d_c_upward_turbulent_velocity == turbulent_velocity_vertical == redundant, so can remove
     #   vel3d_c_upward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
     #   vel3d_c_upward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
-    drop_vars = ['analog_input_1', 'analog_input_2', 'sea_water_pressure_mbar_qc_executed',
+    drop_vars = ['internal_timestamp', 'analog_input_1', 'analog_input_2', 'sea_water_pressure_mbar_qc_executed',
                  'sea_water_pressure_mbar_qc_results', 'turbulent_velocity_east_qc_executed',
                  'turbulent_velocity_east_qc_results', 'turbulent_velocity_north_qc_executed',
                  'turbulent_velocity_north_qc_results', 'turbulent_velocity_vertical_qc_executed',
@@ -295,19 +325,22 @@ def vel3d_datalogger(header, system, velocity, burst=False):
             velocity = velocity.drop_vars(var)
 
     # drop some of the variables: system
+    #   internal_timestamp == time == redundant, so can remove
     #   analog_input == not used, no data
-    #   date_time_string == redundant, so can remove
+    #   date_time_string == time == redundant, so can remove
     #   speed_of_sound_qc_executed == drop in favor of instrument specific tests
     #   speed_of_sound_qc_results == drop in favor of instrument specific tests
-    drop_vars = ['analog_input', 'date_time_string', 'speed_of_sound_qc_executed', 'speed_of_sound_qc_results']
+    drop_vars = ['internal_timestamp', 'analog_input', 'date_time_string',
+                 'speed_of_sound_qc_executed', 'speed_of_sound_qc_results']
     for var in system.variables:
         if var in drop_vars:
             system = system.drop_vars(var)
 
     # drop some of the variables: header
+    #   internal_timestamp == time == redundant, so can remove
     #   date_time_string == redundant, so can remove
     #   number_velocity_records == this is always 1440, so not useful
-    drop_vars = ['date_time_string', 'number_velocity_records']
+    drop_vars = ['internal_timestamp', 'date_time_string', 'number_velocity_records']
     for var in header.variables:
         if var in drop_vars:
             header = header.drop_vars(var)
@@ -323,9 +356,9 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         'heading_decidegree': 'heading',
         'pitch_decidegree': 'pitch',
         'roll_decidegree': 'roll',
-        'temperature_centidegree': 'seawater_temperature',
+        'temperature_centidegree': 'sea_water_temperature',
         # velocity packets
-        'sea_water_pressure_mbar': 'seawater_pressure',
+        'sea_water_pressure_mbar': 'sea_water_pressure',
         'amplitude_beam_1': 'amplitude_beam1',
         'amplitude_beam_2': 'amplitude_beam2',
         'amplitude_beam_3': 'amplitude_beam3',
@@ -335,8 +368,8 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         'turbulent_velocity_east': 'velocity_east',
         'turbulent_velocity_north': 'velocity_north',
         'turbulent_velocity_vertical': 'velocity_vertical',
-        'vel3d_c_turbulent_eastward_velocity': 'corrected_velocity_east',
-        'vel3d_c_turbulent_eastward_north': 'corrected_velocity_north',
+        'vel3d_c_eastward_turbulent_velocity': 'velocity_east_corrected',
+        'vel3d_c_northward_turbulent_velocity': 'velocity_north_corrected',
     }
     for key in rename.keys():
         if key in velocity.variables:
@@ -351,30 +384,60 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     system['pitch'] = system['pitch'] / 10.0  # convert from ddeg to deg
     system['roll'] = system['roll'] / 10.0  # convert from ddeg to deg
     system['battery_voltage'] = system['battery_voltage'] / 10.0  # convert from dV to V
-    system['seawater_temperature'] = system['seawater_temperature'] / 100.0  # convert from cdeg C to deg C
-
-    velocity['seawater_pressure'] = velocity['seawater_pressure'] / 1000.0  # parser doesn't include this needed scaling term
-
+    system['sea_water_temperature'] = system['sea_water_temperature'] / 100.0  # convert from cdegC to degC
     system['speed_of_sound'] = system['speed_of_sound'] / 10.0  # convert from dm/s to m/s
+    velocity['sea_water_pressure'] = velocity['sea_water_pressure'] / 1000.0  # convert from 0.001 dbar to dbar
+
+    # pull the scaling factor out of the status code
+    status_code = system.status_code.values
+    scaling = np.array([[n >> i & 1 for i in range(0, int(n).bit_length())] for n in status_code])[:, 1]
+    system['scaling_factor'] = ('time', np.where(scaling == 1, 0.1, 1))
+
+    # merge the three data sets together and then use a forward-fill to match header and system data
+    # with the velocity data
+    velocity['time'] = velocity['time'] - np.timedelta64(2, 's')  # adjust incorrect time offset of 2 seconds
+    system['time'] = system['time'] - np.timedelta64(1, 's')  # adjust incorrect time offset of 1 second
+    vel3d = xr.merge([header, system, velocity])
+    vel3d = vel3d.ffill(dim='time')
+
+    # adjust the uncorrected velocity data based on the scaling factor and convert to m/s
+    vel3d['velocity_east'] = vel3d.velocity_east * vel3d.scaling_factor / 1000.0
+    vel3d['velocity_north'] = vel3d.velocity_north * vel3d.scaling_factor / 1000.0
+    vel3d['velocity_vertical'] = vel3d.velocity_vertical * vel3d.scaling_factor / 1000.0
+
+    # add the SNR values to the data set (useful for QC)
+    vel3d['snr_beam1'] = 20 * np.log10(vel3d['amplitude_beam1'] / vel3d['noise_amplitude_beam1'])
+    vel3d['snr_beam2'] = 20 * np.log10(vel3d['amplitude_beam2'] / vel3d['noise_amplitude_beam2'])
+    vel3d['snr_beam3'] = 20 * np.log10(vel3d['amplitude_beam3'] / vel3d['noise_amplitude_beam3'])
+
+    # now add QC flags to the data set
+    vel3d['vector_sensor_quality_flag'] = quality_checks(vel3d)
 
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
-            if key in ds.variables:
-                ds[key].attrs[atk] = atv
+            if key in vel3d.variables:
+                vel3d[key].attrs[atk] = atv
 
     # add the original variable name as an attribute, if renamed
     for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
+        vel3d[value].attrs['ooinet_variable_name'] = key
 
-    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
-    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
-    # interest == 3, and fail == 4.
-    ds = parse_qc(ds)
+    # burst averaging the data, if requested
+    if burst:
+        # use the quality flag to remove bad data prior to burst averaging
+        m = vel3d['vector_sensor_quality_flag'] == 4
+        vel3d['velocity_vertical'] = vel3d['velocity_vertical'].where(~m)
+        vel3d['velocity_east'] = vel3d['velocity_east'].where(~m)
+        vel3d['velocity_east_corrected'] = vel3d['velocity_east_corrected'].where(~m)
+        vel3d['velocity_north'] = vel3d['velocity_north'].where(~m)
+        vel3d['velocity_north_corrected'] = vel3d['velocity_north_corrected'].where(~m)
 
-    # test the data quality using additional instrument variables
-    ds['vector_sensor_quality_flag'] = quality_checks(ds)
-    return ds
+        # resample the data to 30 minute intervals and compute the median
+        vel3d = vel3d.resample(time='1800s').median(dim='time', keep_attrs=True, skipna=True)
+        vel3d = vel3d.where(~np.isnan(vel3d.deployment), drop=True)  # drop the fill values
+
+    return vel3d
 
 
 def main(argv=None):
@@ -396,12 +459,16 @@ def main(argv=None):
     # if we are specifying a deployment number, then get the data from the Gold Copy THREDDS server
     if deploy:
         # download the data for the deployment
-        vel3d = load_gc_thredds(site, node, sensor, method, stream, ('.*deployment%04d.*VEL3D.*\\.nc$' % deploy))
+        tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
+        velocity = load_gc_thredds(site, node, sensor, method, stream, tag)
+
+        # get the deployment dates, which will be used to request the system and header data from the M2M system
+        start, stop = get_deployment_dates(site, node, sensor, deploy)
 
         # check to see if we downloaded any data
-        if not vel3d:
-            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
-                                                                                    stream, deploy))
+        if not velocity:
+            exit_text = ('Velocity data unavailable for %s-%s-%s, %s, %s, deployment %d.' % (site, node, sensor, method,
+                                                                                             stream, deploy))
             raise SystemExit(exit_text)
     else:
         # otherwise, request the data for download from OOINet via the M2M API using the specified dates
@@ -412,24 +479,44 @@ def main(argv=None):
             raise SystemExit(exit_text)
 
         # Valid M2M request, start downloading the data
-        vel3d = m2m_collect(r, '.*VEL3D.*\\.nc$')
+        tag = '.*VEL3D.*\\.nc$'
+        velocity = m2m_collect(r, tag)
 
         # check to see if we downloaded any data
-        if not vel3d:
-            exit_text = ('Data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
-                                                                                    stream, start, stop))
+        if not velocity:
+            exit_text = ('Velocity data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                             stream, start, stop))
             raise SystemExit(exit_text)
 
-    # clean-up and reorganize the data
-    if node == 'SP001':
-        # this VEL3D is part of a CSPP
-        vel3d = vel3d_cspp(vel3d)
-    else:
-        # this VEL3D is standalone on one of the Surface Moorings (one of those rare cases where all forms of the data
-        # are in the same format)
-        vel3d = vel3d_datalogger(vel3d)
+    # the additional system and header data are only available from the M2M system because they are not
+    # considered "science" data, but rather "engineering" data which is not included in the GC THREDDS catalog.
+    system_stream = re.sub('velocity', 'system', stream)
+    r = m2m_request(site, node, sensor, method, system_stream, start, stop)
+    if not r:
+        exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                              system_stream, start, stop))
+        raise SystemExit(exit_text)
+    system = m2m_collect(r, tag)  # provides heading, pitch, roll, and seawater temperature data
+    if not system:
+        exit_text = ('System data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                       system_stream, start, stop))
+        raise SystemExit(exit_text)
 
-    depth = vel3d.depth.mean(dim='time').values
+    header_stream = re.sub('velocity', 'header', stream)
+    r = m2m_request(site, node, sensor, method, header_stream, start, stop)
+    if not r:
+        exit_text = ('Request failed for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                              header_stream, start, stop))
+        raise SystemExit(exit_text)
+    header = m2m_collect(r, tag)  # provides noise floor measurements needed to QC the data
+    if not system:
+        exit_text = ('System data unavailable for %s-%s-%s, %s, %s, from %s to %s.' % (site, node, sensor, method,
+                                                                                       header_stream, start, stop))
+        raise SystemExit(exit_text)
+
+    # clean-up and reorganize the data
+    vel3d = vel3d_datalogger(header, system, velocity, burst=burst)
+    depth = vel3d.depth.mean().values
     vel3d = update_dataset(vel3d, depth)
 
     # save the data to disk

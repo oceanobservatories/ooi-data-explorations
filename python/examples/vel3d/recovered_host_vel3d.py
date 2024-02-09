@@ -20,7 +20,7 @@ level = 'mfn'               # local directory name, level below site
 instrmt = 'vel3d'           # local directory name, instrument below level
 
 # download some of the data for deployment 17 from the Gold Copy THREDDS catalog (only the velocity data is available
-# in the GC THREDDS catalog)
+# in the GC THREDDS catalog), the rest from the M2M system
 tag = 'deployment0017.*VEL3D.*\\.nc$'
 velocity = load_gc_thredds(site, node, sensor, method, 'vel3d_cd_dcl_velocity_data_recovered', tag)
 

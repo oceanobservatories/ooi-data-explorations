@@ -92,13 +92,17 @@ def bin_profiles(profile, site_depth, bin_size=0.25):
     :param bin_size: size of the bin, in meters
     :return: a data set containing the binned data
     """
-    # test the length of the profile, short ones (less than 15 seconds) will be skipped
-    if (profile.time[-1] - profile.time[0]) / 10 ** 9 < 15:
+    # test the length of the profile, short ones with less than 15 records will be skipped
+    if len(profile.time) < 15:
+        return None
+
+    # test the time range of the profile, short ones (less than 15 seconds) will be skipped
+    if (profile.time[-1] - profile.time[0]).astype(float) / 10 ** 9 < 15:
         return None
 
     # use a set of median boxcar filters to help despike the data
-    smth = profile.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
-    smth = smth.rolling(time=5, center=True).median().dropna("time", subset=['deployment'])
+    smth = profile.rolling(time=5, min_periods=3, center=True).median(keep_attrs=True).dropna("time", subset=['deployment'])
+    smth = smth.rolling(time=5, min_periods=3, center=True).median(keep_attrs=True).dropna("time", subset=['deployment'])
 
     # bin the data using the center of the bin as the depth value
     bins = smth.groupby_bins('depth', np.arange(bin_size / 2, site_depth + bin_size / 2, bin_size))
@@ -109,7 +113,7 @@ def bin_profiles(profile, site_depth, bin_size=0.25):
         avg['depth'] = avg['depth'] * 0 + grp[0].mid  # set depth to bin midpoint
         binning += avg,  # append to the list
 
-    binned = xr.concat(binning, 'time'),
+    binned = xr.concat(binning, 'time')
     return binned
 
 

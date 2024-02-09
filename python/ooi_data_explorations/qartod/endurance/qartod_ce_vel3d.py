@@ -37,45 +37,80 @@ def combine_delivery_methods(site, node, sensor):
     """
     # set the stream and tag constants
     tag = '.*VEL3D.*\\.nc$'
-    print('##### Downloading the telemetered VEL3D data for %s #####' % site)
-    telem = load_gc_thredds(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_velocity_data', tag)
-    deployments = []
-    print('# -- Group the data by deployment and process the data')
-    grps = list(telem.groupby('deployment'))
-    for grp in grps:
-        print('# -- Processing telemetered deployment %s' % grp[0])
-        deploy = grp[0]
-        tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
-        start, stop = get_deployment_dates(site, node, sensor, deploy)
-        m = m2m_request(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_system_data', start, stop)
-        system = m2m_collect(m, tag)
-        m = m2m_request(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_data_header', start, stop)
-        header = m2m_collect(m, tag)
-        deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
-    deployments = [i for i in deployments if i]
-    telem = xr.concat(deployments, 'time')
+    if node == 'WFP01':
+        print('##### Downloading the telemetered Aquadopp II data for %s #####' % site)
+        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'vel3d_k_wfp_stc_instrument', tag)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(telem.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing telemetered deployment %s' % grp[0])
+            deployments.append(mmp_aquadopp(grp[1], binning=True, bin_size=2.0))
+        deployments = [i for i in deployments if i]
+        telem = xr.concat(deployments, 'time')
 
-    print('##### Downloading the recovered_host VEL3D data for %s #####' % site)
-    tag = '.*VEL3D.*\\.nc$'
-    rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_velocity_data_recovered', tag)
-    deployments = []
-    print('# -- Group the data by deployment and process the data')
-    grps = list(rhost.groupby('deployment'))
-    for grp in grps:
-        print('# -- Processing recovered_host deployment %s' % grp[0])
-        deploy = grp[0]
-        tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
-        start, stop = get_deployment_dates(site, node, sensor, deploy)
-        m = m2m_request(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_system_data_recovered', start, stop)
-        system = m2m_collect(m, tag)
-        m = m2m_request(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_data_header_recovered', start, stop)
-        header = m2m_collect(m, tag)
-        deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
-    deployments = [i for i in deployments if i]
-    rhost = xr.concat(deployments, 'time')
+        print('##### Downloading the recovered_host VEL3D data for %s #####' % site)
+        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_velocity_data_recovered', tag)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(rhost.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing recovered_host deployment %s' % grp[0])
+            deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
+        deployments = [i for i in deployments if i]
+        rhost = xr.concat(deployments, 'time')
 
-    # combine the datasets, leaving them as burst averaged datasets
-    merged = combine_datasets(telem, rhost, None, None)
+        print('##### Downloading the recovered_host VEL3D data for %s #####' % site)
+        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_velocity_data_recovered', tag)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(rhost.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing recovered_host deployment %s' % grp[0])
+            deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
+        deployments = [i for i in deployments if i]
+        rhost = xr.concat(deployments, 'time')
+    else:
+        print('##### Downloading the telemetered VEL3D data for %s #####' % site)
+        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_velocity_data', tag)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(telem.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing telemetered deployment %s' % grp[0])
+            deploy = grp[0]
+            tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
+            m = m2m_request(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_system_data', start, stop)
+            system = m2m_collect(m, tag)
+            m = m2m_request(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_data_header', start, stop)
+            header = m2m_collect(m, tag)
+            deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
+        deployments = [i for i in deployments if i]
+        telem = xr.concat(deployments, 'time')
+
+        print('##### Downloading the recovered_host VEL3D data for %s #####' % site)
+        tag = '.*VEL3D.*\\.nc$'
+        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_velocity_data_recovered', tag)
+        deployments = []
+        print('# -- Group the data by deployment and process the data')
+        grps = list(rhost.groupby('deployment'))
+        for grp in grps:
+            print('# -- Processing recovered_host deployment %s' % grp[0])
+            deploy = grp[0]
+            tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
+            start, stop = get_deployment_dates(site, node, sensor, deploy)
+            m = m2m_request(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_system_data_recovered', start, stop)
+            system = m2m_collect(m, tag)
+            m = m2m_request(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_data_header_recovered', start, stop)
+            header = m2m_collect(m, tag)
+            deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
+        deployments = [i for i in deployments if i]
+        rhost = xr.concat(deployments, 'time')
+
+        # combine the datasets, leaving them as burst averaged datasets
+        merged = combine_datasets(telem, rhost, None, None)
+
     return merged
 
 
@@ -104,6 +139,12 @@ def generate_qartod(site, node, sensor, cut_off):
     """
     # load the combined data for the different sources of VEL3D data
     data = combine_delivery_methods(site, node, sensor)
+
+    ###### remove this once the data is relodaded with the correct scaling factor ######
+    # temporary correction for the velocity data to account for the incorrect scaling factor
+    data['velocity_east_corrected'] = data['velocity_east_corrected'] * data['scaling_factor']
+    data['velocity_north_corrected'] = data['velocity_north_corrected'] * data['scaling_factor']
+    ###### remove this once the data is relodaded with the correct scaling factor ######
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -134,14 +175,19 @@ def generate_qartod(site, node, sensor, cut_off):
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
     start_date = str(data.time[0].values.min())[:10]
 
-    # set the parameters and the gross range limits
-    parameters = ['sea_water_pressure', 'sea_water_temperature', 'velocity_east', 'velocity_north', 'velocity_vertical']
-    if 'A' in data.attrs['sensor']:
-        # Series A instruments are rated to 300 m depth
-        limits = [[0, 300], [-4, 40], [-5, 5], [-5, 5], [-5, 5]]
+    if node == 'WFP01':
+        # we are working with the Aquadopp II on the MMP. Parameters to QARTOD are different for
+        # the MMP Aquadopp II than for the Vector.
+        parameters = ['sea_water_pressure', 'sea_water_temperature', 'relative_velocity_east',
+                      'relative_velocity_north', 'relative_velocity_vertical']
+        limits = [[0, 4000], [-4, 40], [-2.1, 2.1], [-2.1, 2.1], [-0.6, 0.6]]
     else:
-        # Series B instruments are rated to 3000 m depth
-        limits = [[0, 3000], [-4, 40], [-5, 5], [-5, 5], [-5, 5]]
+        # set the parameters and the gross range limits
+        parameters = ['sea_water_pressure', 'sea_water_temperature', 'velocity_vertical', 'velocity_east',
+                      'velocity_north', 'velocity_east_corrected', 'velocity_north_corrected']
+        limits = [[0, 4000], [-4, 40], [-0.6, 0.6], [-2.1, 2.1], [-2.1, 2.1], [-2.1, 2.1], [-2.1, 2.1]]
+        # note, velocity range limits are set based on a software selected nominal range of +/- 1.0 m/s which yields
+        # the vertical and horizontal velocity limits of +/- 0.6 m/s and +/- 2.1 m/s shown above.
 
     # create the initial gross range entry
     gr_lookup = process_gross_range(data, parameters, limits, site=site,
@@ -153,7 +199,7 @@ def generate_qartod(site, node, sensor, cut_off):
 
     # based on the node, determine if we need a depth based climatology
     depth_bins = np.array([])
-    if node == 'SP001':
+    if node == 'WFP01':
         vocab = get_vocabulary(site, node, sensor)[0]
         max_depth = vocab['maxdepth']
         depth_bins = woa_standard_bins()
@@ -203,8 +249,8 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
-    parameters = ['seawater_pressure', 'seawater_temperature', 'northward_seawater_velocity',
-                  'eastward_seawater_velocity', 'upward_seawater_velocity']
+    parameters = ['sea_water_pressure', 'sea_water_temperature', 'velocity_vertical', 'velocity_east',
+                  'velocity_north', 'velocity_east_corrected', 'velocity_north_corrected']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

@@ -923,9 +923,9 @@ def process_file(catalog_file, gc=None, use_dask=False):
         raise InputError('gc must be either GC, M2M, or KDATA')
 
     if use_dask:
-        ds = xr.open_dataset(data, decode_cf=False, chunks='auto')
+        ds = xr.open_dataset(data, decode_cf=False, chunks='auto', mask_and_scale=False)
     else:
-        ds = xr.load_dataset(data, decode_cf=False)
+        ds = xr.load_dataset(data, decode_cf=False, mask_and_scale=False)
 
     # convert the dimensions from obs to time and get rid of obs and other variables we don't need
     ds = ds.swap_dims({'obs': 'time'})
@@ -1218,7 +1218,8 @@ def update_dataset(ds, depth):
     ds['time'].encoding = dict({
         '_FillValue': None,
         'units': 'seconds since 1900-01-01T00:00:00.000Z',
-        'calendar': 'standard'
+        'calendar': 'standard',
+        'dtype': 'float64'
     })
 
     # convert all float64 values to float32 (except for the timestamps), helps minimize file size

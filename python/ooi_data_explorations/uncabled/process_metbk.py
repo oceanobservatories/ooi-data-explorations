@@ -34,6 +34,8 @@ def quality_checks(ds):
                   'precipitation', 'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
                   'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
     for p in parameters:
+        if p not in ds.variables:
+            continue
         # The primary failure mode of the METBK is to repeat the last value it received from a sensor.
         # Use the IOOS QARTOD flat line test to identify these cases (consider it suspect if it repeats
         # for 20+ minutes and failed if it repeats for 35+ minutes).
@@ -121,6 +123,131 @@ def metbk_hourly(ds):
 
     return ds
 
+
+def metbk_datalogger(ds, burst=False):
+    """
+    Takes METBK data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some variables to permit better assessments of
+    the data.
+
+    :param ds: initial metbk data set downloaded from OOI via the M2M system
+    :param burst: resample the 1-minute data to a 15-minute time interval
+    :return ds: cleaned up data set
+    """
+    # drop some variables:
+    #   date_time_string == internal_timestamp, redundant so can remove
+    #   dcl_controller_timestamp == time, redundant so can remove
+    #   internal_timestamp == doesn't exist, always empty so can remove
+    #   ### Data products from downstream processing used to calculate hourly flux measurements. Remove from here to
+    #   ### keep this data set clean. Will obtain hourly flux data from a different stream.
+    #   met_barpres
+    #   met_windavg_mag_corr_east
+    #   met_windavg_mag_corr_north
+    #   met_netsirr
+    #   met_salsurf
+    #   met_spechum
+    #   ct_depth
+    #   met_current_direction
+    #   met_current_speed
+    #   met_relwind_direction
+    #   met_relwind_speed
+    #   met_heatflx_minute
+    #   met_latnflx_minute
+    #   met_netlirr_minute
+    #   met_sensflx_minute
+    ds = ds.drop(['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres', 'met_windavg_mag_corr_east',
+                  'met_windavg_mag_corr_north', 'met_netsirr', 'met_spechum', 'ct_depth', 'met_current_direction',
+                  'met_current_speed', 'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute',
+                  'met_latnflx_minute', 'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed',
+                  'met_barpres_qc_results', 'met_current_direction_qc_executed', 'met_current_direction_qc_results',
+                  'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
+                  'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
+                  'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
+                  'met_spechum_qc_results'])
+
+    # rename the met_salsurf parameters
+    rename = {
+        'met_salsurf': 'sea_surface_salinity',
+        'met_salsurf_qc_executed': 'sea_surface_salinity_qc_executed',
+        'met_salsurf_qc_results': 'sea_surface_salinity_qc_results',
+        'met_salsurf_qartod_executed': 'sea_surface_salinity_qartod_executed',
+        'met_salsurf_qartod_results': 'sea_surface_salinity_qartod_results'
+    }
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # run quality checks, adding the results to the QC summary flag
+    quality_checks(ds)
+
+    if burst:   # re-sample the data to a 15-minute interval using a median average
+        burst = ds
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # save the newly average data
+        ds = burst
+
+    return ds
+
+
+def metct_datalogger(ds, burst=False):
+    """
+    Takes METBK-CT data recorded by the data loggers used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some variables to permit better assessments of
+    the data.
+
+    :param ds: initial metbk data set downloaded from OOI via the M2M system
+    :param burst: resample the 1-minute data to a 15-minute time interval
+    :return ds: cleaned up data set
+    """
+    # drop some variables:
+    #   internal_timestamp == doesn't exist, always empty so can remove
+    ds = ds.drop(['internal_timestamp'])
+    
+    # Calculate the practical salnity from temperature and conductivity
+    practical_salinity = gsw.SP_from_C(ds.sea_surface_conductivity * 10, ds.sea_surface_temperature, 0)
+    ds['sea_surface_salinity'] = practical_salinity
+    ds['sea_surface_salinity'].attrs = {
+        'comment':  ('Salinity is generally defined as the concentration of dissolved salt in a parcel of seawater.'
+                     'Practical Salinity is a more specific unitless quantity calculated from the conductivity of '
+                     'seawater and adjusted for temperature and pressure. It is approximately equivalent to '
+                     'Absolute Salinity (the mass fraction of dissolved salt in seawater) but they are not '
+                     'interchangeable.'),
+        'long_name': 'Sea Surface Practical Salinity',
+        'coordinates': 'time lat lon',
+        'standard_name': 'sea_surface_salinity',
+        'units': 'psu',
+        'ancillary_variables': 'sea_surface_temperature sea_surface_conductivity'
+    }
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # run quality checks, adding the results to the QC summary flag
+    quality_checks(ds)
+
+    if burst:   # re-sample the data to a 15-minute interval using a median average
+        burst = ds
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # save the newly average data
+        ds = burst
+
+    return ds
 
 def metbk_datalogger(ds, burst=False):
     """

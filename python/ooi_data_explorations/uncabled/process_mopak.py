@@ -8,7 +8,7 @@ from scipy.integrate import cumulative_trapezoid
 from scipy.interpolate import interp1d
 
 
-ATTRS = ATTRS = {
+ATTRS = {
     'number_zero_crossings': {
         'long_name': 'Number of Wave Zero-Crossings',
         'type': 'zero-crossing',
@@ -1571,7 +1571,7 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/
 
         # Save the results
         number_zero_crossings.append(n)         # Calculated from zero-crossings: Method B
-        significant_wave_height.append(Hsig)    # Calculated from zero-crossings: Method A
+        significant_wave_height.append(Hsig)    # Calculated from zero-crossings: Method B
         significant_wave_period.append(t_sig)   # Calculated from zero-crossings: Method B
         wave_height_10.append(h_10)             # Calculated from zero-crossings: Method B
         wave_period_10.append(t_10)             # Calculated from zero-crossings: Method B

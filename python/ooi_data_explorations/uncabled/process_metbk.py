@@ -249,6 +249,65 @@ def metct_datalogger(ds, burst=False):
 
     return ds
 
+
+def metct_instrument(ds, burst=False):
+    """
+    Takes METBK-CT data recorded by the instrumednt used in the CGSN/EA moorings
+    and cleans up the data set to make it more user-friendly.  Primary task is
+    renaming parameters and dropping some that are of limited use.
+    Additionally, re-organize some variables to permit better assessments of
+    the data.
+
+    :param ds: initial metbk data set downloaded from OOI via the M2M system
+    :param burst: resample the 1-minute data to a 15-minute time interval
+    :return ds: cleaned up data set
+    """
+    # drop some variables:
+    #   internal_timestamp == same as time
+    #   raw_temperature == unprocessed SST; unneeded (unless want to recalc SST)
+    #   ctd_time == raw count of internal_timestamp
+    #   raw_conductivity == unprocessed SSS; unneeded (unless want to recalc SSS)
+    ds = ds.drop(['internal_timestamp', 'ctd_time', 'raw_temperature', 'raw_conductivity'])
+    
+    # Fix the serial numbers
+    sn_attrs = ds['serial_number'].attrs
+    ds['serial_number'] = ds['serial_number'].astype(str).str.join(dim='string7')
+    ds['serial_number'].attrs = sn_attrs
+    
+    # Calculate the practical salnity from temperature and conductivity
+    practical_salinity = gsw.SP_from_C(ds.sea_surface_conductivity * 10, ds.sea_surface_temperature, 0)
+    ds['sea_surface_salinity'] = practical_salinity
+    ds['sea_surface_salinity'].attrs = {
+        'comment':  ('Salinity is generally defined as the concentration of dissolved salt in a parcel of seawater.'
+                     'Practical Salinity is a more specific unitless quantity calculated from the conductivity of '
+                     'seawater and adjusted for temperature and pressure. It is approximately equivalent to '
+                     'Absolute Salinity (the mass fraction of dissolved salt in seawater) but they are not '
+                     'interchangeable.'),
+        'long_name': 'Sea Surface Practical Salinity',
+        'coordinates': 'time lat lon',
+        'standard_name': 'sea_surface_salinity',
+        'units': 'psu',
+        'ancillary_variables': 'sea_surface_temperature sea_surface_conductivity'
+    }
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, suspect or of high
+    # interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    # run quality checks, adding the results to the QC summary flag
+    quality_checks(ds)
+
+    if burst:   # re-sample the data to a 15-minute interval using a median average
+        burst = ds
+        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
+        burst = burst.where(~np.isnan(burst.deployment), drop=True)
+
+        # save the newly average data
+        ds = burst
+
+    return ds
+
 def metbk_datalogger(ds, burst=False):
     """
     Takes METBK data recorded by the data loggers used in the CGSN/EA moorings

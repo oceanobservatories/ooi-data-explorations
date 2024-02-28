@@ -119,7 +119,7 @@ class GrossRange():
 
     def filter_fail_range(self, da):
         """Filter out values which fall outside the fail range."""
-        mask = (da > self.fail_min) & (da < self.fail_max) & (~np.isnan(da))
+        mask = np.where((da > self.fail_min) & (da < self.fail_max) & (~np.isnan(da)))[0]
         da = da[mask]
         return da
 

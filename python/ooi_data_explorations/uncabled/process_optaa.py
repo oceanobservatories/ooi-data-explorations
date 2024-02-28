@@ -351,7 +351,7 @@ ATTRS = dict({
 })
 
 
-def optaa_datalogger(ds, cal_file):
+def optaa_datalogger(ds, cal_file, a_pure_water=None, c_pure_water=None):
     """
     Takes OPTAA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
@@ -443,6 +443,16 @@ def optaa_datalogger(ds, cal_file):
     # to the absorption data. All intermediate processing outputs are added to the data set.
     burst = apply_dev(burst, cal.coeffs)
     burst = apply_tscorr(burst, cal.coeffs, burst.sea_water_temperature, burst.sea_water_practical_salinity)
+    # Here is where to apply the pre-deployment purewater calibration (subtract the A and C)
+    if a_pure_water is not None:
+        # Apply the a_pure_water cal. Note, the pure water cal should be a dataset indexed based on the same
+        # number of wavelengths as your dataset. If not
+        burst["apg_ts"] = burst["apg_ts"] - a_pure_water
+    #    burst["apg_ts"].attrs["comment"] = burst["apg_ts"].attrs["comment"] + "This datasets has had the pure water calibration applied."
+    if c_pure_water is not None:
+        # Apply the c-channel pure water cal
+        burst["cpg_ts"] = burst["cpg_ts"] - c_pure_water
+    #    burst["cpg_ts"].attrs["comment"] = burst["cpg_ts"].attrs["comment"] + "This datasets has had the pure water calibration applied."
     burst = apply_scatcorr(burst, cal.coeffs)
 
     # add the jump offsets as NaN's if the grating index correction was not used
@@ -521,6 +531,8 @@ def optaa_datalogger(ds, cal_file):
     if cal.coeffs['grate_index']:
         optaa['a_jump_offsets'].attrs['grate_index'] = cal.coeffs['grate_index']
         optaa['c_jump_offsets'].attrs['grate_index'] = cal.coeffs['grate_index']
+        
+    # If the pure water calibrations have been applied, need to include in the dataset comments
 
     return optaa
 

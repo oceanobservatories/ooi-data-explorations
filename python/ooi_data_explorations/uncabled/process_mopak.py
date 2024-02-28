@@ -354,7 +354,7 @@ def zero_crossing(heave, fs):
     return n, h_sig, T_sig, h_10, T_10, h_avg, T_avg
 
 
-def wave_statistics(heave, fs, npt):
+def non_directional_statistics(heave, fs, npt):
     """
     Calculate the wave statistics from the wave time series.
 
@@ -1064,7 +1064,7 @@ def wave_spectra(u, v, p, dt, nF, hp, hv, params=[0.03, 200, 0.1, 0]):
     return u_spectra, p_spectra, Tdir, Ts, F, dF, dof
 
 
-def wave_spectra_statistics(u_spectra, p_spectra, Tdir, Ts, F, dF):
+def directional_statistics(u_spectra, p_spectra, Tdir, Ts, F, dF):
     """
     Calculate the wave statistics from the wave spectra using the Nortek PUV-method.
     
@@ -1557,7 +1557,7 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/
         z = xyz[2, :][incr]
         npt = np.min([2**13, len(incr)])
         # Method A
-        Hsig, Havg, Tsig, Tavg = wave_statistics(z, fs, npt)
+        Hsig, Havg, Tsig, Tavg = non_directional_statistics(z, fs, npt)
         # Method B
         n, h_sig, t_sig, h_10, t_10, h_avg, t_avg = zero_crossing(z, fs)
 
@@ -1567,7 +1567,7 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/
         vp = z
 
         u_spectra, p_spectra, wave_direction, wave_spread, F, dF, dof = wave_spectra(vu, vv, vp, 1/fs, 100, 0, 0, params)
-        Hm0, Fs, Tdir, Ts = wave_spectra_statistics(u_spectra, p_spectra, wave_direction, wave_spread, F, dF)
+        Hm0, Fs, Tdir, Ts = directional_statistics(u_spectra, p_spectra, wave_direction, wave_spread, F, dF)
 
         # Save the results
         number_zero_crossings.append(n)         # Calculated from zero-crossings: Method B
@@ -1596,3 +1596,7 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/
                                sample_start_time, deployment)
     
     return wave_stats
+
+
+def wave_statistics(platform, deg_rate, gyro, fs, f_cutoff, com_offset, G, params):
+    """Wrapper function to calculate the directional and non-directional wave statistics."""

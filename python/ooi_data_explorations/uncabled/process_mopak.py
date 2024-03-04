@@ -1534,33 +1534,37 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/
 
         # Get the deployment number
         dep_num = ds.deployment[index]
-
-        # ----------------------------------------------------------------
-        # Get the angular rates, accelerations, and compass data 
-        # associated with the given sample data
-        platform = Platform[:, index]
-        deg_rate = Deg_rate[:, index]
-        gyro = Compass[index]
         
-        # ----------------------------------------------------------------
-        # Calculate the wave statistics
-        # Determine if to use dask or go serial
-        n, Hsig, t_sig, h_10, t_10, Tsig, h_avg, t_avg, Tdir, Ts, 1/Fs, Hm0 = wave_statistics(platform, deg_rate, gyro, fs, f_cutoff, com_offset, G, params)
+        if len(index) < 10000:
+            pass
+        else:
+            # ----------------------------------------------------------------
+            # Get the angular rates, accelerations, and compass data 
+            # associated with the given sample data
+            platform = Platform[:, index]
+            deg_rate = Deg_rate[:, index]
+            gyro = Compass[index]
 
-        # Save the results
-        number_zero_crossings.append(n)         # Calculated from zero-crossings: Method B
-        significant_wave_height.append(Hsig)    # Calculated from zero-crossings: Method B
-        significant_wave_period.append(t_sig)   # Calculated from zero-crossings: Method B
-        wave_height_10.append(h_10)             # Calculated from zero-crossings: Method B
-        wave_period_10.append(t_10)             # Calculated from zero-crossings: Method B
-        peak_wave_period.append(Tsig)           # Calculated from zero-crossings: Method A
-        mean_wave_height.append(h_avg)          # Calculated from zero-crossings: Method B
-        mean_wave_period.append(t_avg)          # Calculated from zero-crossings: Method B
-        peak_wave_direction_puv.append(Tdir)    # Calculated from the PUV method
-        peak_wave_spread_puv.append(Ts)         # Calculated from the PUV method
-        peak_wave_period_puv.append(1/Fs)       # Calculated from the PUV method
-        significant_wave_height_puv.append(Hm0) # Calculated from the PUV method (Hm0)
-        sample_start_time.append(tstart)
+            # ----------------------------------------------------------------
+            # Calculate the wave statistics
+            # Determine if to use dask or go serial
+            stats = wave_statistics(platform, deg_rate, gyro, fs, f_cutoff, com_offset, G, params, edge)
+            n, Hsig, t_sig, h_10, t_10, Tsig, h_avg, t_avg, Tdir, Ts, Fs, Hm0 = results
+
+            # Save the results
+            number_zero_crossings.append(n)         # Calculated from zero-crossings: Method B
+            significant_wave_height.append(Hsig)    # Calculated from zero-crossings: Method B
+            significant_wave_period.append(t_sig)   # Calculated from zero-crossings: Method B
+            wave_height_10.append(h_10)             # Calculated from zero-crossings: Method B
+            wave_period_10.append(t_10)             # Calculated from zero-crossings: Method B
+            peak_wave_period.append(Tsig)           # Calculated from zero-crossings: Method A
+            mean_wave_height.append(h_avg)          # Calculated from zero-crossings: Method B
+            mean_wave_period.append(t_avg)          # Calculated from zero-crossings: Method B
+            peak_wave_direction_puv.append(Tdir)    # Calculated from the PUV method
+            peak_wave_spread_puv.append(Ts)         # Calculated from the PUV method
+            peak_wave_period_puv.append(1/Fs)       # Calculated from the PUV method
+            significant_wave_height_puv.append(Hm0) # Calculated from the PUV method (Hm0)
+            sample_start_time.append(tstart)
 
     # --------------------------------------------------------------------
     # Get the deployment number
@@ -1576,7 +1580,7 @@ def calculate_wave_statistics(ds, n_std, fs, com_offset=[0, 0, 0.5], f_cutoff=1/
     return wave_stats
 
 
-def wave_statistics(platform, deg_rate, gyro, fs, f_cutoff, com_offset, G, params):
+def wave_statistics(platform, deg_rate, gyro, fs, f_cutoff, com_offset, G, params, edge):
     """Wrapper function to calculate the directional and non-directional wave statistics."""
     
     # Calculate the local gravity
@@ -1614,4 +1618,4 @@ def wave_statistics(platform, deg_rate, gyro, fs, f_cutoff, com_offset, G, param
     Hm0, Fs, Tdir, Ts = directional_statistics(u_spectra, p_spectra, wave_direction, wave_spread, F, dF)
     
     # Return all the calculated wave statistics
-    return (n, Hsig, t_sig, h_10, t_10, Tsig, h_avg, t_avg, Tdir, Ts, 1/Fs, Hm0)
+    return (n, Hsig, t_sig, h_10, t_10, Tsig, h_avg, t_avg, Tdir, Ts, Fs, Hm0)

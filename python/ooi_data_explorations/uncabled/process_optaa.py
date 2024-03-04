@@ -352,7 +352,6 @@ ATTRS = dict({
 
 
 def optaa_datalogger(ds, cal_file, a_purewater_file = None, c_purewater_file=None):
-
     """
     Takes OPTAA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is

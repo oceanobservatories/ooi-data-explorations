@@ -616,7 +616,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     #   vel3d_c_eastward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
     #   vel3d_c_northward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
     #   vel3d_c_northward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
-    #   vel3d_c_upward_turbulent_velocity == turbulent_velocity_vertical == redundant, so can remove
+    #   turbulent_velocity_vertical == vel3d_c_upward_turbulent_velocity == redundant but properly scaled
     #   vel3d_c_upward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
     #   vel3d_c_upward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
     drop_vars = ['internal_timestamp', 'analog_input_1', 'analog_input_2', 'sea_water_pressure_mbar_qc_executed',
@@ -625,7 +625,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
                  'turbulent_velocity_north_qc_results', 'turbulent_velocity_vertical_qc_executed',
                  'turbulent_velocity_vertical_qc_results', 'vel3d_c_eastward_turbulent_velocity_qc_executed',
                  'vel3d_c_eastward_turbulent_velocity_qc_results', 'vel3d_c_northward_turbulent_velocity_qc_executed',
-                 'vel3d_c_northward_turbulent_velocity_qc_results', 'vel3d_c_upward_turbulent_velocity',
+                 'vel3d_c_northward_turbulent_velocity_qc_results', 'turbulent_velocity_vertical',
                  'vel3d_c_upward_turbulent_velocity_qc_executed', 'vel3d_c_upward_turbulent_velocity_qc_results'
                  ]
     for var in velocity.variables:
@@ -675,7 +675,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         'correlation_beam_3': 'correlation_beam3',
         'turbulent_velocity_east': 'velocity_east',
         'turbulent_velocity_north': 'velocity_north',
-        'turbulent_velocity_vertical': 'velocity_vertical',
+        'vel3d_c_eastward_turbulent_velocity': 'velocity_vertical',
         'vel3d_c_eastward_turbulent_velocity': 'velocity_east_corrected',
         'vel3d_c_northward_turbulent_velocity': 'velocity_north_corrected',
     }
@@ -711,7 +711,6 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     # adjust the uncorrected velocity data based on the scaling factor and convert to m/s
     vel3d['velocity_east'] = vel3d.velocity_east * vel3d.scaling_factor / 1000.0
     vel3d['velocity_north'] = vel3d.velocity_north * vel3d.scaling_factor / 1000.0
-    vel3d['velocity_vertical'] = vel3d.velocity_vertical * vel3d.scaling_factor / 1000.0
 
     # add the SNR values to the data set (useful for QC purposes, though correlation percentages are a better metric)
     vel3d['snr_beam1'] = (vel3d['amplitude_beam1'] - vel3d['noise_amplitude_beam1']) * 0.43
@@ -775,8 +774,11 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
     #   vel3d_k_configuration == always set to the same configuration, so not useful
     #   vel3d_k_beams_coordinate == always set to the same value, so not useful
     #   vel3d_k_serial == serial number is stored in the global attributes
-    drop_vars = ['internal_timestamp', 'vel3d_k_version', 'vel3d_k_id', 'vel3d_k_beams',
-                 'vel3d_k_configuration', 'vel3d_k_beams_coordinate', 'vel3d_k_serial']
+    #   vel3d_k_pressure_qc_executed == test limits did NOT account for the scaling of 0.001 dbar
+    #   vel3d_k_pressure_qc_results == test limits did NOT account for the scaling of 0.001 dbar
+    drop_vars = ['internal_timestamp', 'vel3d_k_version', 'vel3d_k_id', 'vel3d_k_beams', 'vel3d_k_configuration',
+                 'vel3d_k_beams_coordinate', 'vel3d_k_serial', 'vel3d_k_pressure_qc_executed',
+                 'vel3d_k_pressure_qc_results']
     for var in ds.variables:
         if var in drop_vars:
             ds = ds.drop_vars(var)
@@ -812,8 +814,6 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
         'vel3d_k_temp_c': 'sea_water_temperature',
         'int_ctd_pressure': 'ctd_pressure',
         'vel3d_k_pressure': 'sea_water_pressure',
-        'vel3d_k_pressure_qc_executed': 'sea_water_pressure_qc_executed',
-        'vel3d_k_pressure_qc_results': 'sea_water_pressure_qc_results',
         'vel3d_k_heading': 'heading',
         'vel3d_k_pitch': 'pitch',
         'vel3d_k_roll': 'roll',
@@ -831,8 +831,8 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
         'vel3d_k_acc_y': 'acceleration_y',
         'vel3d_k_acc_z': 'acceleration_z',
         'vel3d_k_ambiguity': 'ambiguity_velocity',
-        'vel3d_k_beam_mapping': 'beam_mapping',
-        'vel3d_k_beam_mapping_dim_0': 'beam',
+        'vel3d_k_data_set_description': 'beam_mapping',
+        'vel3d_k_data_set_description_dim_0': 'beam_map',
         'vel3d_k_transmit_energy': 'transmit_energy',
         'vel3d_k_v_scale': 'velocity_scaling',
         'vel3d_k_power_level': 'power_level',

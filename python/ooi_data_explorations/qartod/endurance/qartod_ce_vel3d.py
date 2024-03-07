@@ -16,7 +16,7 @@ import xarray as xr
 from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, get_deployment_dates, \
     m2m_request, m2m_collect, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
-from ooi_data_explorations.uncabled.process_vel3d import vel3d_datalogger
+from ooi_data_explorations.uncabled.process_vel3d import vel3d_datalogger, mmp_aquadopp
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, \
     woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
 
@@ -141,7 +141,7 @@ def generate_qartod(site, node, sensor, cut_off):
     if 'rollup_annotations_qc_results' in data.variables:
         data = data.where(data.rollup_annotations_qc_results != 4)
 
-    # if this is a MMP Aquadopp II, rename the QC variable to match the other renamed variables and apply variable
+    # if this is an MMP Aquadopp II, rename the QC variable to match the other renamed variables and apply variable
     # specific QC test results to the data, otherwise just apply the variable specific QC test results to the data
     # for the Vector.
     if node == 'WFP01':
@@ -167,12 +167,12 @@ def generate_qartod(site, node, sensor, cut_off):
     if cut_off:
         cut = parser.parse(cut_off)
         cut = cut.astimezone(pytz.utc)
-        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
+        end_date = cut.strftime('%Y-%m-%dT23:59:59.999999')
         src_date = cut.strftime('%Y-%m-%d')
     else:
         cut = parser.parse(data.time_coverage_end)
         cut = cut.astimezone(pytz.utc)
-        end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
+        end_date = cut.strftime('%Y-%m-%dT23:59:59.999999')
         src_date = cut.strftime('%Y-%m-%d')
 
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
@@ -181,9 +181,9 @@ def generate_qartod(site, node, sensor, cut_off):
     if node == 'WFP01':
         # we are working with the Aquadopp II on the MMP. Parameters for QARTOD are different for
         # the MMP Aquadopp II than for the Vector.
-        parameters = ['sea_water_pressure', 'ctd_pressure', 'sea_water_temperature', 'relative_velocity_east',
+        parameters = ['sea_water_temperature', 'relative_velocity_east',
                       'relative_velocity_north', 'relative_velocity_vertical']
-        limits = [[0, 1000000], [0, 1000], [-400, 4000], [-3.0, 3.0], [-3.0, 3.0], [-1.0, 1.0]]
+        limits = [[-400, 4000], [-3.0, 3.0], [-3.0, 3.0], [-1.0, 1.0]]
 
         # make sure we are using the same scaling as found in the source data
         data['sea_water_pressure'] = data['sea_water_pressure'] / 0.001  # reported in 0.001 dbar
@@ -217,10 +217,9 @@ def generate_qartod(site, node, sensor, cut_off):
         m = depth_bins[:, 1] <= max_depth
         depth_bins = depth_bins[m, :]
 
-        # reset parameters, no climatology test for the pressure data
-        parameters = ['sea_water_temperature', 'relative_velocity_east', 'relative_velocity_north',
-                      'relative_velocity_vertical']
-        limits = [[-400, 4000], [-3.0, 3.0], [-3.0, 3.0], [-1.0, 1.0]]
+        # reset parameters, no climatology test for the relative velocity data
+        parameters = ['sea_water_temperature']
+        limits = [[-400, 4000]]
     else:
         # reset parameters, no climatology test for the pressure data
         parameters = ['sea_water_temperature', 'velocity_east_corrected', 'velocity_north_corrected',
@@ -272,11 +271,11 @@ def main(argv=None):
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
     if node == 'WFP01':
-        parameters = ['sea_water_pressure', 'ctd_pressure', 'sea_water_temperature', 'relative_velocity_east',
-                      'relative_velocity_north', 'relative_velocity_vertical']
+        parameters = ['sea_water_temperature']
     else:
-        parameters = ['sea_water_pressure', 'sea_water_temperature', 'velocity_vertical', 'velocity_east',
-                      'velocity_north', 'velocity_east_corrected', 'velocity_north_corrected']
+        # reset parameters, no climatology test for the pressure data
+        parameters = ['sea_water_temperature', 'velocity_east_corrected', 'velocity_north_corrected',
+                      'velocity_vertical']
 
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'

@@ -66,7 +66,8 @@ VECTOR = dict({
         'long_name': 'Speed of Sound',
         'comment': ('Estimated speed of sound derived internally by the VEL3D from the temperature sensor '
                     'measurements and an assumed constant salinity of 33 psu.'),
-        'units': 'm s-1'
+        'units': 'm s-1',
+        '_FillValue': np.nan
     },
     'heading': {
         'long_name': 'Heading',
@@ -240,7 +241,8 @@ AQUADOPP = dict({
         'long_name': 'Speed of Sound',
         'comment': ('Estimated speed of sound derived internally by the VEL3D from the temperature sensor '
                     'measurements and an assumed constant salinity of 33 psu.'),
-        'units': 'm s-1'
+        'units': 'm s-1',
+        '_FillValue': np.nan
     },
     'sea_water_temperature': {
         'long_name': 'Sea Water Temperature',
@@ -251,7 +253,7 @@ AQUADOPP = dict({
     'ctd_pressure': {
         'long_name': 'C0-Located CTD Pressure',
         'standard_name': 'sea_water_pressure_due_to_sea_water',
-        'comment': ('Sea water pressure from the co-located CTD, interploated into the data record as a more accurate '
+        'comment': ('Sea water pressure from the co-located CTD, interpolated into the data record as a more accurate '
                     'pressure sensor.'),
         'units': 'dbar'
     },
@@ -260,7 +262,8 @@ AQUADOPP = dict({
         'standard_name': 'sea_water_pressure_due_to_sea_water',
         'comment': ('Sea water pressure measured in the center of the transducer face alongside the temperature '
                     'sensor.'),
-        'units': 'dbar'
+        'units': 'dbar',
+        '_FillValue': np.nan
     },
     'heading': {
         'long_name': 'Heading',
@@ -317,7 +320,8 @@ AQUADOPP = dict({
     'battery_voltage': {
         'long_name': 'Battery Voltage',
         'comment': 'Voltage of either the internal battery pack or externally supplied power, whichever is greater.',
-        'units': 'V'
+        'units': 'V',
+        '_FillValue': np.nan
     },
     'magnetometer_x': {
         'long_name': 'Magnetometer X',
@@ -344,26 +348,30 @@ AQUADOPP = dict({
         'long_name': 'Acceleration X',
         'comment': 'Acceleration in the x direction converted from counts to gravity by dividing by 16384. Can be '
                    'further converted to m/s^2 by multiplying by the gravitational constant of 9.80665 m/s^2.',
-        'units': 'gravity'
+        'units': 'gravity',
+        '_FillValue': np.nan
     },
     'acceleration_y': {
         'long_name': 'Acceleration Y',
         'comment': 'Acceleration in the y direction converted from counts to gravity by dividing by 16384. Can be '
                    'further converted to m/s^2 by multiplying by the gravitational constant of 9.80665 m/s^2.',
-        'units': 'gravity'
+        'units': 'gravity',
+        '_FillValue': np.nan
     },
     'acceleration_z': {
         'long_name': 'Acceleration Z',
         'comment': 'Acceleration in the z direction converted from counts to gravity by dividing by 16384. Can be '
                    'further converted to m/s^2 by multiplying by the gravitational constant of 9.80665 m/s^2.',
-        'units': 'gravity'
+        'units': 'gravity',
+        '_FillValue': np.nan
     },
     'ambiguity_velocity': {
         'long_name': 'Ambiguity Velocity',
         'comment': ('Ambiguity Velocity is the maximum beam velocity that can be measured by the instrument in its '
                     'deployed configuration. This is set by defining the velocity range during instrument '
                     'configuration.'),
-        'units': 'm s-1'
+        'units': 'm s-1',
+        '_FillValue': np.nan
     },
     'beam_mapping': {
         'long_name': 'Beam Mapping',
@@ -675,7 +683,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         'correlation_beam_3': 'correlation_beam3',
         'turbulent_velocity_east': 'velocity_east',
         'turbulent_velocity_north': 'velocity_north',
-        'vel3d_c_eastward_turbulent_velocity': 'velocity_vertical',
+        'vel3d_c_upward_turbulent_velocity': 'velocity_vertical',
         'vel3d_c_eastward_turbulent_velocity': 'velocity_east_corrected',
         'vel3d_c_northward_turbulent_velocity': 'velocity_north_corrected',
     }
@@ -693,8 +701,11 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     system['roll'] = system['roll'] / 10.0  # convert from ddeg to deg
     system['battery_voltage'] = system['battery_voltage'] / 10.0  # convert from dV to V
     system['sea_water_temperature'] = system['sea_water_temperature'] / 100.0  # convert from cdegC to degC
-    system['speed_of_sound'] = system['speed_of_sound'] / 10.0  # convert from dm/s to m/s
     velocity['sea_water_pressure'] = velocity['sea_water_pressure'] / 1000.0  # convert from 0.001 dbar to dbar
+
+    # check the speed of sound values and replace with NaN if using an integer fill value (e.g. -999999999)
+    m = system['speed_of_sound'] < -9999  # standard OOI fill value is -999999999
+    system['speed_of_sound'][m] = np.nan  # note, something is wrong here, this really shouldn't have to happen
 
     # pull the scaling factor out of the status code
     status_code = system.status_code.values
@@ -733,7 +744,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     # burst averaging the data, if requested
     if burst:
         # use the quality flag to remove bad data prior to burst averaging
-        m = vel3d['vector_sensor_quality_flag'] == 3
+        m = vel3d['vector_sensor_quality_flag'] == 4
         vel3d['velocity_vertical'] = vel3d['velocity_vertical'].where(~m)
         vel3d['velocity_east'] = vel3d['velocity_east'].where(~m)
         vel3d['velocity_east_corrected'] = vel3d['velocity_east_corrected'].where(~m)
@@ -741,14 +752,14 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         vel3d['velocity_north_corrected'] = vel3d['velocity_north_corrected'].where(~m)
 
         # convert the heading to radians before burst averaging
-        vel3d['heading'] = np.unwrap(np.deg2rad(vel3d['heading']))
+        vel3d['heading'] = ('time', np.unwrap(np.radians(vel3d['heading'])))
 
-        # resample the data to 30 minute intervals using a median
+        # resample the data to 30 minute intervals using a median average
         vel3d = vel3d.resample(time='1800s').median(dim='time', keep_attrs=True, skipna=True)
         vel3d = vel3d.where(~np.isnan(vel3d.deployment), drop=True)  # drop the fill values
 
         # convert the heading back to degrees after burst averaging
-        vel3d['heading'] = np.mod(np.rad2deg(vel3d['heading']), 360)
+        vel3d['heading'] = np.mod(np.degrees(vel3d['heading']), 360)
 
     return vel3d
 
@@ -757,12 +768,16 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
     """
     Takes Nortek Aquadopp II data, recorded by the McLane Moored Profiler (MMP)
     and cleans up the data set to make it more user-friendly. Primary task is
-    re-working the beam amplitude, velocity and correlation data so it is more
+    re-working the beam amplitude, velocity and correlation data to be more
     understandable and user-friendly, and adding missing variables to the data
     depending on whether this is a decimated data set (telemetered) or not
     (recovered) so full deployments can be cross-compared.
 
     :param ds: xarray dataset with the MMP Aquadopp data
+    :param binning: boolean, used to indicate if the data should be binned or
+        not. Default is False.
+    :param bin_size: float, size of the bin to use for binning the data.
+        Default is 2.0 m.
     :return ds: cleaned up data set, fully populated with all the necessary
         variables for further analysis of the Aquadopp II data.
     """
@@ -817,7 +832,6 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
         'vel3d_k_heading': 'heading',
         'vel3d_k_pitch': 'pitch',
         'vel3d_k_roll': 'roll',
-        'vel3d_k_transmit_energy': 'transmit_energy',
         'vel3d_k_error': 'error_code',
         'vel3d_k_status': 'status_code',
         'vel3d_k_cell_size': 'cell_size',
@@ -826,7 +840,7 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
         'vel3d_k_battery_voltage': 'battery_voltage',
         'vel3d_k_mag_x': 'magnetometer_x',
         'vel3d_k_mag_y': 'magnetometer_y',
-        'vel3d_k_mag_z': 'mahnetometer_z',
+        'vel3d_k_mag_z': 'magnetometer_z',
         'vel3d_k_acc_x': 'acceleration_x',
         'vel3d_k_acc_y': 'acceleration_y',
         'vel3d_k_acc_z': 'acceleration_z',
@@ -868,19 +882,30 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
     ds['velocity_2'] = ds['velocity_2'] * 10. ** ds['velocity_scaling']  # convert to m/s
     ds['velocity_3'] = ds['velocity_3'] * 10. ** ds['velocity_scaling']  # convert to m/s
 
-    if 'vel3d_k_wfp_instrument' in ds.attrs['source']:  # recovered data has the following additional variables
+    if 'vel3d_k_wfp_instrument' in ds.attrs['source']:  # recovered_wfp data
+        # recovered data has the following additional variables
         ds['sea_water_pressure'] = ds['sea_water_pressure'] * 0.001  # convert from 0.001 dbar to dbar
         ds['battery_voltage'] = ds['battery_voltage'] * 0.1  # convert from dV to V
         ds['speed_of_sound'] = ds['speed_of_sound'] * 0.1  # convert from dm/s to m/s
-        ds['ambiguity_velocity'] = ds['ambiguity_velocity'] * 0.1 / 1000 # convert from 0.1 mm/s to m/s
+        ds['ambiguity_velocity'] = ds['ambiguity_velocity'] * 0.1 / 1000  # convert from 0.1 mm/s to m/s
         ds['acceleration_x'] = ds['acceleration_x'] / 16384.  # convert from raw counts to gravity
         ds['acceleration_y'] = ds['acceleration_y'] / 16384.  # convert from raw counts to gravity
         ds['acceleration_z'] = ds['acceleration_z'] / 16384.  # convert from raw counts to gravity
+    else:  # telemetered, decimated data
+        # add the missing variables to the data set to make it complete using NaNs as fill values
+        fill_values = ds['time'].astype('int32') * 0 + np.nan
+        ds['sea_water_pressure'] = fill_values  # add missing variable with NaNs as fill values
+        ds['battery_voltage'] = fill_values  # add missing variable with NaNs as fill values
+        ds['speed_of_sound'] = fill_values  # add missing variable with NaNs as fill values
+        ds['ambiguity_velocity'] = fill_values  # add missing variable with NaNs as fill values
+        ds['acceleration_x'] = fill_values  # add missing variable with NaNs as fill values
+        ds['acceleration_y'] = fill_values  # add missing variable with NaNs as fill values
+        ds['acceleration_z'] = fill_values  # add missing variable with NaNs as fill values
 
     # add a profile id to the data set to enable easy separation of the profiles
     ds = create_profile_id(ds)
 
-    # now add QC flags to the data set
+    # now add sensor defined QC flags to the data set
     ds['aquadopp_sensor_quality_flag'] = quality_checks(ds)
 
     # reset some attributes
@@ -905,8 +930,8 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
         ds['relative_velocity_north'] = ds['relative_velocity_north'].where(~m)
         ds['relative_velocity_vertical'] = ds['relative_velocity_vertical'].where(~m)
 
-        # convert the heading to radians before binning
-        ds['heading'] = np.deg2rad(ds['heading'])
+        # convert the heading to radians before binning (using unwrap to handle the 0/360 degree transition)
+        ds['heading'] = np.unwrap(np.radians(ds['heading']))
 
         # group the data by the profile number and then bin the data into 2 m depth bins
         # (nominal ascent rate of the MMP is 15-25 cm/s)
@@ -924,12 +949,12 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
         binned = xr.concat(binned, 'time')
         binned = binned.sortby(['deployment', 'profile', 'time'])
 
-        # convert the heading back to degrees after binning
-        binned['heading'] = np.mod(np.rad2deg(binned['heading']), 360)
-
         # make sure our time record is monotonically increasing
         _, index = np.unique(binned['time'], return_index=True)
         binned = binned.isel(time=index)
+
+        # convert the heading back to degrees after binning
+        binned['heading'] = np.mod(np.degrees(binned['heading']), 360)
 
         # reset the original integer variables to integers after the binning
         for v in binned.variables:
@@ -943,6 +968,12 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
 
 
 def main(argv=None):
+    """
+    Main entry point for the script.
+
+    :param argv:
+    :return: None
+    """
     args = inputs(argv)
     site = args.site
     node = args.node

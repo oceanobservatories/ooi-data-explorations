@@ -36,8 +36,8 @@ def combine_delivery_methods(site, node, sensor):
     :return merged: the merged and resampled (if appropriate) VEL3D dataset
     """
     # set the stream and tag constants
-    tag = '.*VEL3D.*\\.nc$'
     if node == 'WFP01':
+        tag = '.*VEL3D.*\\.nc$'
         # only download the recovered data for the MMP Aquadopp II, the telemetered data is not that useful
         print('##### Downloading the recovered Aquadopp II data for %s #####' % site)
         rinst = load_gc_thredds(site, node, sensor, 'recovered_wfp', 'vel3d_k_wfp_instrument', tag)
@@ -56,19 +56,22 @@ def combine_delivery_methods(site, node, sensor):
         merged = merged.isel(time=index)
     else:
         print('##### Downloading the telemetered VEL3D data for %s #####' % site)
+        tag = '.*VEL3D.*velocity.*\\.nc$'
         telem = load_gc_thredds(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_velocity_data', tag)
         deployments = []
         print('# -- Group the data by deployment and process the data')
         grps = list(telem.groupby('deployment'))
         for grp in grps:
-            print('# -- Processing telemetered deployment %s' % grp[0])
+            print('# -- Collecting the telemetered header and system packet data for deployment %s' % grp[0])
             deploy = grp[0]
-            tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
+            tag = '.*deployment%04d.*VEL3D.*system.*\\.nc$' % deploy
             start, stop = get_deployment_dates(site, node, sensor, deploy)
             m = m2m_request(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_system_data', start, stop)
             system = m2m_collect(m, tag)
+            tag = '.*deployment%04d.*VEL3D.*header.*\\.nc$' % deploy
             m = m2m_request(site, node, sensor, 'telemetered', 'vel3d_cd_dcl_data_header', start, stop)
             header = m2m_collect(m, tag)
+            print('# -- Merging the header, system, and velocity data packets for deployment %s' % deploy)
             deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
 
         # concatenate the deployments into a single dataset
@@ -76,20 +79,22 @@ def combine_delivery_methods(site, node, sensor):
         telem = xr.concat(deployments, 'time')
 
         print('##### Downloading the recovered_host VEL3D data for %s #####' % site)
-        tag = '.*VEL3D.*\\.nc$'
+        tag = '.*VEL3D.*velocity.*\\.nc$'
         rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_velocity_data_recovered', tag)
         deployments = []
         print('# -- Group the data by deployment and process the data')
         grps = list(rhost.groupby('deployment'))
         for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
+            print('# -- Collecting the recovered_host header and system packet data for deployment %s' % grp[0])
             deploy = grp[0]
-            tag = '.*deployment%04d.*VEL3D.*\\.nc$' % deploy
+            tag = '.*deployment%04d.*VEL3D.*system.*\\.nc$' % deploy
             start, stop = get_deployment_dates(site, node, sensor, deploy)
             m = m2m_request(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_system_data_recovered', start, stop)
             system = m2m_collect(m, tag)
+            tag = '.*deployment%04d.*VEL3D.*header.*\\.nc$' % deploy
             m = m2m_request(site, node, sensor, 'recovered_host', 'vel3d_cd_dcl_data_header_recovered', start, stop)
             header = m2m_collect(m, tag)
+            print('# -- Merging the header, system, and velocity data packets for deployment %s' % deploy)
             deployments.append(vel3d_datalogger(header, system, grp[1], burst=True))
 
         # concatenate the deployments into a single dataset

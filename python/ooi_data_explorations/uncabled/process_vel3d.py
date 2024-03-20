@@ -612,6 +612,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     #   internal_timestamp == time == redundant, so can remove
     #   analog_input_1 == not used, no data
     #   analog_input_2 == not used, no data
+    #   status_code == drop in favor of one from the system packet (the one we actually use)
     #   sea_water_pressure_mbar_qc_executed == drop in favor of instrument specific tests
     #   sea_water_pressure_mbar_qc_results == drop in favor of instrument specific tests
     #   turbulent_velocity_east_qc_executed == drop in favor of instrument specific tests
@@ -627,14 +628,15 @@ def vel3d_datalogger(header, system, velocity, burst=False):
     #   turbulent_velocity_vertical == vel3d_c_upward_turbulent_velocity == redundant but properly scaled
     #   vel3d_c_upward_turbulent_velocity_qc_executed == drop in favor of instrument specific tests
     #   vel3d_c_upward_turbulent_velocity_qc_results == drop in favor of instrument specific tests
-    drop_vars = ['internal_timestamp', 'analog_input_1', 'analog_input_2', 'sea_water_pressure_mbar_qc_executed',
-                 'sea_water_pressure_mbar_qc_results', 'turbulent_velocity_east_qc_executed',
-                 'turbulent_velocity_east_qc_results', 'turbulent_velocity_north_qc_executed',
-                 'turbulent_velocity_north_qc_results', 'turbulent_velocity_vertical_qc_executed',
-                 'turbulent_velocity_vertical_qc_results', 'vel3d_c_eastward_turbulent_velocity_qc_executed',
-                 'vel3d_c_eastward_turbulent_velocity_qc_results', 'vel3d_c_northward_turbulent_velocity_qc_executed',
-                 'vel3d_c_northward_turbulent_velocity_qc_results', 'turbulent_velocity_vertical',
-                 'vel3d_c_upward_turbulent_velocity_qc_executed', 'vel3d_c_upward_turbulent_velocity_qc_results'
+    drop_vars = ['internal_timestamp', 'analog_input_1', 'analog_input_2', 'status_code',
+                 'sea_water_pressure_mbar_qc_executed', 'sea_water_pressure_mbar_qc_results',
+                 'turbulent_velocity_east_qc_executed', 'turbulent_velocity_east_qc_results',
+                 'turbulent_velocity_north_qc_executed', 'turbulent_velocity_north_qc_results',
+                 'turbulent_velocity_vertical_qc_executed', 'turbulent_velocity_vertical_qc_results',
+                 'vel3d_c_eastward_turbulent_velocity_qc_executed', 'vel3d_c_eastward_turbulent_velocity_qc_results',
+                 'vel3d_c_northward_turbulent_velocity_qc_executed', 'vel3d_c_northward_turbulent_velocity_qc_results',
+                 'turbulent_velocity_vertical', 'vel3d_c_upward_turbulent_velocity_qc_executed',
+                 'vel3d_c_upward_turbulent_velocity_qc_results'
                  ]
     for var in velocity.variables:
         if var in drop_vars:

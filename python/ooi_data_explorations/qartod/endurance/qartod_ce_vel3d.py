@@ -14,7 +14,7 @@ import pytz
 import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, get_deployment_dates, \
-    m2m_request, m2m_collect, add_annotation_qc_flags
+    m2m_request, m2m_collect, add_annotation_qc_flags, update_dataset, ENCODINGS
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_vel3d import vel3d_datalogger, mmp_aquadopp
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, \
@@ -258,11 +258,17 @@ def main(argv=None):
     # create the QARTOD gross range and climatology lookup values and tables
     data, annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
-    # save the downloaded annotations and qartod lookups and tables
+    # save the downloaded data, annotations and qartod lookups and tables
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/vel3d')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
+
+    # save the data to a netCDF file for any additional reviews and processing
+    outfile = os.path.join(out_path, '-'.join([site, node, sensor]) + '.nc')
+    depth = get_vocabulary(site, node, sensor)[0]['maxdepth']
+    data = update_dataset(data, depth)
+    data.to_netcdf(outfile, mode='w', format='NETCDF4', engine='h5netcdf', encoding=ENCODINGS)
 
     # save the annotations to a csv file for further processing
     anno_csv = '-'.join([site, node, sensor]) + '.quality_annotations.csv'

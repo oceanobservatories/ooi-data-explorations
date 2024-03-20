@@ -1053,12 +1053,14 @@ def main(argv=None):
 
         # clean-up and reorganize the data
         vel3d = vel3d_datalogger(header, system, velocity, burst=burst)
-        depth = vel3d.depth.mean().values
+        depth = get_vocabulary(site, node, sensor)[0]['maxdepth']
         vel3d = update_dataset(vel3d, depth)
     else:
         # we are working with the Nortek Aquadopp II on the McLane Moored Profiler (MMP), so we just need to clean up
         # and reorganize the data to make it more user-friendly
         vel3d = mmp_aquadopp(velocity, binning=burst, bin_size=2.0)
+        depth = get_vocabulary(site, node, sensor)[0]['maxdepth']
+        vel3d = update_dataset(vel3d, depth)
 
     # save the data to disk
     out_file = os.path.abspath(args.outfile)

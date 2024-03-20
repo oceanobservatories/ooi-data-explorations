@@ -486,8 +486,8 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
                          'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
             else:
                 # most likely this data is normally distributed, or close enough, and we can use the Empirical Rule
-                mu = da.mean().values[0]
-                sd = da.std().value[0]
+                mu = da.mean().values
+                sd = da.std().values
                 lower = mu - sd * 3
                 upper = mu + sd * 3
                 notes = 'User range based on the mean +- 3 standard deviations of all observations.'

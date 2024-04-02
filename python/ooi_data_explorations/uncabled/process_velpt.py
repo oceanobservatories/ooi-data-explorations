@@ -180,6 +180,12 @@ def quality_checks(ds):
     m = np.abs(ds['roll']) >= 30
     qc_flag[m] = 4
 
+    # test for valid speed of sound values (between 1400 and 1700 m/s).  This is a very rough test, but should
+    # catch the most egregious errors. The speed of sound is calculated from the temperature and nominal salinity
+    # values, so this test is really just a sanity check.
+    m = ds['speed_of_sound'] <= 1400 or ds['speed_of_sound'] >= 1700
+    qc_flag[m] = 4
+
     # test for pressure out of range (catch those periods when the instrument is out of the water)
     if ds.attrs['node'] in ['SBD11', 'SBD12', 'SBD17']:
         # surface buoy, pressure is nominally 1.25 dbar

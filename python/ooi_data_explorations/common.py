@@ -43,7 +43,7 @@ SESSION.mount('https://', adapter)
 
 # set up constants used in parallel and multithreading processing
 N_CORES = min(16, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
-N_THREADS = min(16, int(os.cpu_count() / 2) + 4)  # number of threads to use for multithreading operations
+N_THREADS = os.cpu_count()  # number of threads to use for multithreading operations (1 per core)
 
 # set the base URL for the M2M interface
 BASE_URL = 'https://ooinet.oceanobservatories.org/api/m2m/'  # base M2M URL
@@ -698,7 +698,7 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='M2M', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
+        with ThreadPoolExecutor(max_workers=N_THREADS) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
@@ -772,7 +772,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='GC', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=N_CORES) as executor:
+        with ThreadPoolExecutor(max_workers=N_THREADS) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Downloading and Processing Data Files', file=sys.stdout))
 
@@ -923,9 +923,9 @@ def process_file(catalog_file, gc=None, use_dask=False):
         raise InputError('gc must be either GC, M2M, or KDATA')
 
     if use_dask:
-        ds = xr.open_dataset(data, decode_cf=False, chunks='auto')
+        ds = xr.open_dataset(data, decode_cf=False, chunks='auto', mask_and_scale=False)
     else:
-        ds = xr.load_dataset(data, decode_cf=False)
+        ds = xr.load_dataset(data, decode_cf=False, mask_and_scale=False)
 
     # convert the dimensions from obs to time and get rid of obs and other variables we don't need
     ds = ds.swap_dims({'obs': 'time'})
@@ -1218,7 +1218,8 @@ def update_dataset(ds, depth):
     ds['time'].encoding = dict({
         '_FillValue': None,
         'units': 'seconds since 1900-01-01T00:00:00.000Z',
-        'calendar': 'standard'
+        'calendar': 'standard',
+        'dtype': 'float64'
     })
 
     # convert all float64 values to float32 (except for the timestamps), helps minimize file size

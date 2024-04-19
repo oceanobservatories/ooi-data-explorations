@@ -1143,7 +1143,7 @@ def mmp_fsi(ds, binning=False, bin_size=2.0):
         'vel3d_l_hz': 'direction_cosine_z',
         'vel3d_l_hx': 'direction_cosine_x',
         'vel3d_l_hy': 'direction_cosine_y',
-        'lon': 'longtidu',
+        'lon': 'longitude',
         'lat': 'latitude',
         'vel3d_l_tx': 'tilt_x',
         'vel3d_l_ty': 'tilt_y',

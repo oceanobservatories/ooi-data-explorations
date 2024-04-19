@@ -519,12 +519,147 @@ AQUADOPP = dict({
     }
 })
 
+FALMOUTH = dict({
+    'direction_cosine_x': {
+        'long_name': 'Direction Cosine X',
+        'comment': ('The cosine of the angle between the instrument\'s axis of rotation and the x-axis relative to '
+                    'magnetic north'),
+        'units': 'radians',
+    },
+    'direction_cosine_y': {
+        'long_name': 'Direction Cosine Y',
+        'comment': ('The cosine of the angle between the instrument\'s axis of rotation and the y-axis relative to '
+                    'magnetic north'),
+        'units': 'radians',
+    },
+    'direction_cosine_z': {
+        'long_name': 'Direction Cosine Z',
+        'comment': ('The cosine of the angle between the instrument\'s axis of rotation and the z-axis relative to '
+                    'magnetic north.'),
+        'units': 'radians',
+    },
+    'tilt_x': {
+        'long_name': 'X component of the instrument tilt',
+        'comment': ('This variable refers to the angle between the instrument and the earth coordinate x-axis'),
+        'units': 'degrees',
+    },
+    'tilt_y': {
+        'long_name': 'Y component of the instrument tilt',
+        'comment': ('This variable refers to the angle between the instrument and the earth coordinate y-axis'),
+        'units': 'degrees',
+    },
+    'heading': {
+        'long_name': 'Heading',
+        'comment': 'Measured heading of the instrument.',
+        'units': 'degrees',
+    },
+    'velocity_1': {
+        'long_name': 'Path Velocity 1',
+        'comment': ('The raw velocity measured by the first beam. Velocities are reported in cm/s and converted to m/s.'
+                    'The spatial orientation of the beams in the instrument coordinate system is left, down, right, up, '
+                    'for beams 1, 2, 3, 4. The instrument is composed of 4 stringer "fingers" oriented at 45 degrees from '
+                    'a central post such that their tips form a square. The instrument coordinate system is defined as: '
+                    'x-axis positive along the central post moving away from the profiler; y-axis to port of the x-axis; '
+                    'z-axis up. Beam 1 and 3 velocities are positive for flow along the acoustic path from the central post '
+                    'towards the finger while beam 2 and 4 velocities are positive for flow from the finger towards the '
+                    'central post.'),
+        'units': 'm s-1',
+    },
+    'velocity_2': {
+        'long_name': 'Path Velocity 2',
+        'comment': ('The raw velocity measured by the second beam. Velocities are reported in cm/s and converted to m/s.'
+                    'The spatial orientation of the beams in the instrument coordinate system is left, down, right, up, '
+                    'for beams 1, 2, 3, 4. The instrument is composed of 4 stringer "fingers" oriented at 45 degrees from '
+                    'a central post such that their tips form a square. The instrument coordinate system is defined as: '
+                    'x-axis positive along the central post moving away from the profiler; y-axis to port of the x-axis; '
+                    'z-axis up. Beam 1 and 3 velocities are positive for flow along the acoustic path from the central post '
+                    'towards the finger while beam 2 and 4 velocities are positive for flow from the finger towards the '
+                    'central post.'),
+        'units': 'm s-1',
+    },
+    'velocity_3': {
+        'long_name': 'Path Velocity 3',
+        'comment': ('The raw velocity measured by the third beam. Velocities are reported in cm/s and converted to m/s.'
+                    'The spatial orientation of the beams in the instrument coordinate system is left, down, right, up, '
+                    'for beams 1, 2, 3, 4. The instrument is composed of 4 stringer "fingers" oriented at 45 degrees from '
+                    'a central post such that their tips form a square. The instrument coordinate system is defined as: '
+                    'x-axis positive along the central post moving away from the profiler; y-axis to port of the x-axis; '
+                    'z-axis up. Beam 1 and 3 velocities are positive for flow along the acoustic path from the central post '
+                    'towards the finger while beam 2 and 4 velocities are positive for flow from the finger towards the '
+                    'central post.'),
+        'units': 'm s-1',
+    },
+    'velocity_4': {
+        'long_name': 'Path Velocity 4',
+        'comment': ('The raw velocity measured by the fourth beam. Velocities are reported in cm/s and converted to m/s.'
+                    'The spatial orientation of the beams in the instrument coordinate system is left, down, right, up, '
+                    'for beams 1, 2, 3, 4. The instrument is composed of 4 stringer "fingers" oriented at 45 degrees from '
+                    'a central post such that their tips form a square. The instrument coordinate system is defined as: '
+                    'x-axis positive along the central post moving away from the profiler; y-axis to port of the x-axis; '
+                    'z-axis up. Beam 1 and 3 velocities are positive for flow along the acoustic path from the central post '
+                    'towards the finger while beam 2 and 4 velocities are positive for flow from the finger towards the '
+                    'central post.'),
+        'units': 'm s-1',
+    },
+    'relative_velocity_east': {
+        'long_name': 'Eastward Sea Water Velocity',
+        'standard_name': 'eastward_sea_water_velocity',
+        'comment': ('Eastward sea water velocity in earth coordinates, corrected for magnetic declination.  '
+                    'Note, this is a relative velocity, not an absolute velocity, as the movement of the profiler '
+                    'during ascent/descent has not been removed.'),
+        'data_product_identifier': 'VELPTMN-VLE_L1',
+        'units': 'm s-1',
+        'ancillary_variables': 'velocity_1 velocity_3 time heading',
+        'coordinates': 'lat depth lon time'
+    },
+    'relative_velocity_north': {
+        'long_name': 'Northward Sea Water Velocity',
+        'standard_name': 'northward_sea_water_velocity',
+        'comment': ('Northward sea water velocity in earth coordinates, corrected for magnetic declination. Note, '
+                    'this is a relative velocity, not an absolute velocity, as the movement of the profiler '
+                    'during ascent/descent has not been removed.'),
+        'data_product_identifier': 'VELPTMN-VLN_L1',
+        'units': 'm s-1',
+        'ancillary_variables': 'velocity_1 velocity_3 time heading',
+        'coordinates': 'lat depth lon time',
+    },
+    'relative_velocity_vertical_ascending': {
+        'long_name': 'Upward Sea Water Velocity - Ascending',
+        'standard_name': 'upward_sea_water_velocity',
+        'comment': ('Vertical sea water velocity component during profiler ascent. Note, this is a relative velocity, not an '
+                    'absolute velocity, as the movement of the profiler during ascent/descent has not been removed. The calculation '
+                    'of vertical velocity during profiler ascent is calculated without using beam 2, which is contaminated by flow '
+                    'disruptions from the central post.'),
+        'data_product_identifier': 'VELPTMN-VLU-ASC_L1',
+        'units': 'm s-1',
+        'ancillary_variables': 'velocity_4 velocity_1 velocity_3',
+    },
+    'relative_velocity_vertical_descending': {
+        'long_name': 'Upward Sea Water Velocity - Descending',
+        'standard_name': 'upward_sea_water_velocity',
+        'comment': ('Vertical sea water velocity component during profiler descent. Note, this is a relative velocity, not an '
+                    'absolute velocity, as the movement of the profiler during ascent/descent has not been removed. The calculation '
+                    'of vertical velocity during profiler descent is calculated without using beam 4, which is contaminated by flow '
+                    'disruptions from the central post.'),
+        'data_product_identifier': 'VELPTMN-VLU-DSC_L1',
+        'units': 'm s-1',
+        'ancillary_variables': 'velocity_1 velocity_3 velocity_2',
+    },
+    'sea_water_pressure': {
+        'long_name': 'Sea Water Pressure from co-located CTD',
+        'standard_name': 'sea_water_pressure_due_to_sea_water',
+        'comment': ('Sea water pressure from the co-located CTD, interpolated into the data record as a more accurate '
+                    'pressure sensor.'),
+        'units': 'dbar'
+    }
+})
+
 
 def quality_checks(ds):
     """
-    Quality assessment of the pitch, roll, and pressure values for the VEL3D
-    using a subset of the QARTOD flags to indicate the quality. QARTOD
-    flags used are:
+    Quality assessment of the pitch and roll (AQUADOPP) or x and y-tilt (FSI ACM-PLUS) 
+    and pressure values for the VEL3D using a subset of the QARTOD flags to indicate the 
+    quality. QARTOD flags used are:
 
         1 = Pass
         3 = Of High Interest or Suspect
@@ -538,15 +673,26 @@ def quality_checks(ds):
     qc_flag = ds['time'].astype('int32') * 0 + 1   # default flag values, no errors
 
     # test for pitch and roll out of range (greater than 30 degrees)
-    m = np.abs(ds['pitch']) > 20
-    qc_flag[m] = 3
-    m = np.abs(ds['pitch']) >= 30
-    qc_flag[m] = 4
+    if 'pitch' in ds.variables:
+        m = np.abs(ds['pitch']) > 20
+        qc_flag[m] = 3
+        m = np.abs(ds['pitch']) >= 30
+        qc_flag[m] = 4
 
-    m = np.abs(ds['roll']) > 20
-    qc_flag[m] = 3
-    m = np.abs(ds['roll']) >= 30
-    qc_flag[m] = 4
+    if 'roll' in ds.variables:
+        m = np.abs(ds['roll']) > 20
+        qc_flag[m] = 3
+        m = np.abs(ds['roll']) >= 30
+        qc_flag[m] = 4
+
+    # For the Falmouth Scientific ACM-Plus, it has tilt_x and tilt_y < 30 degrees
+    if 'tilt_x' in ds.variables:
+        m = np.abs(ds['tilt_x']>= 30)
+        qc_flag[m] = 4
+
+    if 'tilt_y' in ds.variables:
+        m = np.abs(ds['tilt_y'] >= 30)
+        qc_flag[m] = 4
 
     # test for valid speed of sound values (between 1400 and 1700 m/s).  This is a very rough test, but should
     # catch the most egregious errors. The speed of sound is calculated from the temperature and nominal salinity
@@ -968,6 +1114,133 @@ def mmp_aquadopp(ds, binning=False, bin_size=2.0):
 
     return ds
 
+def mmp_fsi(ds, binning=False, bin_size=2.0):
+    """
+    Takes Falmouth Scientific ACM-Plus data, recorded by the McLane Moored Profiler (MMP)
+    and cleans up the data set to make it more user-friendly.
+
+    :param ds: xarray dataset with the MMP FSI ACM-Plus data
+    :param binning: boolean, used to indicate if the data should be binned or
+        not. Default is False.
+    :param bin_size: float, size of the bin to use for binning the data.
+        Default is 2.0 m.
+    :return ds: cleaned up data set.
+    """
+    # drop some of the variables
+    #   internal_timestamp == time == redundant, so can remove
+    #   vel3d_l_date_time_array == same as internal timestamp but split up
+    drop_vars = ['internal_timestamp', 'vel3d_l_date_time_array']
+    for var in ds.variables:
+        if var in drop_vars:
+            ds = ds.drop_vars(var)
+
+    # make sure our time record is monotonically increasing
+    _, index = np.unique(ds['time'], return_index=True)
+    ds = ds.isel(time=index)
+
+    # rename some parameters here to get a better defined data set with cleaner attributes
+    rename = {
+        'vel3d_l_hz': 'direction_cosine_z',
+        'vel3d_l_hx': 'direction_cosine_x',
+        'vel3d_l_hy': 'direction_cosine_y',
+        'lon': 'longitude',
+        'lat': 'latitude',
+        'vel3d_l_tx': 'tilt_x',
+        'vel3d_l_ty': 'tilt_y',
+        'vel3d_l_heading': 'heading',
+        'vel3d_l_vp1': 'velocity_1',
+        'vel3d_l_vp2': 'velocity_2',
+        'vel3d_l_vp3': 'velocity_3',
+        'vel3d_l_vp4': 'velocity_4',
+        'vel3d_l_eastward_velocity': 'relative_velocity_east',
+        'vel3d_l_eastward_velocity_qc_executed': 'relative_velocity_east_qc_executed',
+        'vel3d_l_eastward_velocity_qc_results': 'relative_velocity_east_qc_results',
+        'vel3d_l_northward_velocity': 'relative_velocity_north',
+        'vel3d_l_northward_velocity_qc_executed': 'relative_velocity_north_qc_executed',
+        'vel3d_l_northward_velocity_qc_results': 'relative_velocity_north_qc_results',
+        'vel3d_l_upward_velocity_ascending': 'relative_velocity_vertical_ascending',
+        'vel3d_l_upward_velocity_ascending_qc_executed': 'relative_velocity_vertical_ascending_qc_executed',
+        'vel3d_l_upward_velocity_ascending_qc_results': 'relative_velocity_vertical_ascending_qc_results',
+        'vel3d_l_upward_velocity_descending': 'relative_velocity_vertical_descending',
+        'vel3d_l_upward_velocity_descending_qc_executed': 'relative_velocity_vertical_descending_qc_executed',
+        'vel3d_l_upward_velocity_descending_qc_results': 'relative_velocity_vertical_descending_qc_results',
+        'int_ctd_pressure': 'sea_water_pressure',
+    }
+    for key in rename.keys():
+        if key in ds.variables:
+            ds = ds.rename({key: rename.get(key)})
+
+    # convert some variables to more standard units
+    ds['velocity_1'] = ds['velocity_1'] * 0.01  # convert from cm/s to m/s
+    ds['velocity_2'] = ds['velocity_2'] * 0.01  # convert from cm/s to m/s
+    ds['velocity_3'] = ds['velocity_3'] * 0.01  # convert from cm/s to m/s
+    ds['velocity_4'] = ds['velocity_4'] * 0.01  # convert from cm/s to m/s
+    
+
+    # add a profile id to the data set to enable easy separation of the profiles
+    ds = create_profile_id(ds)
+
+    # now add sensor defined QC flags to the data set
+    ds['fsi_sensor_quality_flag'] = quality_checks(ds)
+
+    # reset some attributes
+    for key, value in FALMOUTH.items():
+        for atk, atv in value.items():
+            if key in ds.variables:
+                ds[key].attrs[atk] = atv
+
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
+        if value in ds.variables:
+            ds[value].attrs['ooinet_variable_name'] = key
+
+    # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
+    # bitmap represented flags into an integer value representing pass == 1, of interest == 3, and fail == 4.
+    ds = parse_qc(ds)
+
+    if binning:
+        # use the quality flag to remove bad data prior to depth binning
+        m = ds['fsi_sensor_quality_flag'] == 4
+        ds['relative_velocity_east'] = ds['relative_velocity_east'].where(~m)
+        ds['relative_velocity_north'] = ds['relative_velocity_north'].where(~m)
+        ds['relative_velocity_vertical_ascending'] = ds['relative_velocity_vertical_ascending'].where(~m)
+        ds['relative_velocity_vertical_descending'] = ds['relative_velocity_vertical_descending'].where(~m)
+
+        # convert the heading to radians before binning (using unwrap to handle the 0/360 degree transition)
+        ds['heading'] = np.unwrap(np.radians(ds['heading']))
+
+        # group the data by the profile number and then bin the data into 2 m depth bins
+        # (nominal ascent rate of the MMP is 15-25 cm/s)
+        vocab = get_vocabulary(ds.attrs['subsite'], ds.attrs['node'], ds.attrs['sensor'])[0]
+        site_depth = vocab['maxdepth'] - 20  # ~20 meters from the bottom
+        profiles = ds.groupby('profile')
+        profiles = [profile[1] for profile in profiles]
+        partial_binning = partial(bin_profiles, site_depth=site_depth, bin_size=bin_size)
+        with ProcessPoolExecutor(max_workers=N_CORES) as executor:
+            binned = list(tqdm(executor.map(partial_binning, profiles), total=len(profiles),
+                               desc='Smoothing and binning each profile into 2 m depth bins', file=sys.stdout))
+
+        # reset the dataset now using binned profiles
+        binned = [i for i in binned if i is not None]
+        binned = xr.concat(binned, 'time')
+        binned = binned.sortby(['deployment', 'profile', 'time'])
+
+        # make sure our time record is monotonically increasing
+        _, index = np.unique(binned['time'], return_index=True)
+        binned = binned.isel(time=index)
+
+        # convert the heading back to degrees after binning
+        binned['heading'] = np.mod(np.degrees(binned['heading']), 360)
+
+        # reset the original integer variables to integers after the binning
+        for v in binned.variables:
+            if np.issubdtype(ds[v].dtype, np.integer):
+                binned[v] = binned[v].astype(ds[v].dtype)
+
+        # reset the dataset with the new binned profiles
+        ds = binned.copy()
+
+    return ds
 
 def main(argv=None):
     """

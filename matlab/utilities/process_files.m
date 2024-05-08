@@ -51,12 +51,6 @@ file_info = ncinfo(filename);
 % load the data into a timetable
 data = nc_reader(filename);
 
-% remove some of the variables that are not used or are better served elsewhere
-m = ismember(data.Properties.VariableNames, {'id', 'provenance', ...
-    'dcl_controller_timestamp', 'driver_timestamp', 'ingestion_timestamp', ...
-    'port_timestamp', 'preferred_timestamp', 'station', 'z'});
-data = removevars(data, m);
-
 % add global attributes to the timetable
 m = reshape(strcmp({file_info.Attributes.Name}, 'publisher_name'), size(file_info.Attributes));
 if sum(m) == 1
@@ -139,7 +133,7 @@ if nframes > 1
 end %if
 clear nframes nvars1 nvars2 m t
 
-% finally, sort the data first by deployment and time
+% finally, sort the data first by deployment and then time
 data = unique(data, 'rows');  % remove any duplicate entries
 data = sortrows(data, {'deployment', 'Time'});
 end %function

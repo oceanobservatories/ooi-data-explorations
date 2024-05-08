@@ -37,6 +37,7 @@ ph = process_files;
 base_url = "https://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/";
 dap_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/dodsC/ooigoldcopy/public/';
 dataset_id = join([upper(string(site)), upper(string(node)), upper(string(sensor)), lower(string(method)), lower(string(stream))], "-");
+options = weboptions('Timeout', 300);
 
 % determine the number of available files to download based on the dataset ID
 % and the regex tag
@@ -51,7 +52,7 @@ data = cell(nfiles, 1);     % pre-allocate a cell array for downloaded results
 % us)
 fprintf('Downloading %d files from the Gold Copy THREDDS Catalog ...\n', nfiles)
 tic
-if exist("parpool", "file") == 2 && numel(files) > 3
+if exist("parpool", "file") == 2 && numel(files) > 5
     % start up a local parallel pool to handle downloading the multiple files.
     % ideally this would be a multithreaded pool, but only subset of functions
     % are available in the multithreaded environment and the NetCDF utilities
@@ -63,8 +64,10 @@ if exist("parpool", "file") == 2 && numel(files) > 3
     % pre-allocated array
     parfor i = 1:nfiles
         [~, file, ext] = fileparts(files(i));
-        nc_url = join([dap_url, dataset_id, "/", file, ext, "#fillmismatch"], '');
-        data{i} = ph.process_file(nc_url); %#ok<PFBNS>
+        nc_url = join([dap_url, dataset_id, '/', file, ext, '#fillmismatch'], '');
+        source = websave([tempname, '.nc'], strrep(nc_url, 'dodsC', 'fileServer'), options);
+        data{i} = ph.process_file(source); %#ok<PFBNS>
+        delete(source);
     end %parfor
     tocBytes(mypool, startS)
     delete(mypool)
@@ -72,16 +75,30 @@ if exist("parpool", "file") == 2 && numel(files) > 3
 else
     % use a traditional for loop to download the files, adding them to the 
     % pre-allocated cell array
-    fprintf('\t... Downloading files sequentially')
+    percentage = 0;
+    backspaces = '';
+    percent_step = 100 / nfiles;
     for i = 1:nfiles
         [~, file, ext] = fileparts(files(i));
-        nc_url = join([dap_url, dataset_id, "/", file, ext, "#fillmismatch"], '');
-        data{i} = ph.process_file(nc_url);
+        nc_url = join([dap_url, dataset_id, '/', file, ext, '#fillmismatch'], '');
+        source = websave([tempname, '.nc'], strrep(nc_url, 'dodsC', 'fileServer'), options);
+        data{i} = ph.process_file(source);
+        delete(source);
+
+        % Print percentage progress
+        percentage = percentage + percent_step;
+        perc_str = sprintf('... percent loaded: %3.1f', percentage);
+        fprintf([backspaces, perc_str]);
+        backspaces = repmat(sprintf('\b'), 1, length(perc_str));
     end %for
+    fprintf("\n")
+    clear percentage backspaces percent_step perc_str
 end %if
 toc
-clear url files nfiles dap_url i file ext nc_url
+clear base_url dap_url dataset_id url files nfiles options i file ext nc_url source
 
 % finally, concatenate the timetables together returning the results
+fprintf("Merge and finalize the data set, returning final product as a timetable.\n")
 data = ph.merge_frames(data);
+clear ph
 end %function

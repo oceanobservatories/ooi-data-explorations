@@ -60,10 +60,14 @@ clear test nc_time
 % Create an empty timetable using the datetime axis
 t = timetable('RowTimes', dt);
 
+% remove some of the variables that are not used or are better served elsewhere
+var_skip = {'obs', 'time', 'id', 'provenance', 'dcl_controller_timestamp', 'driver_timestamp', ...
+    'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp', 'station', 'station_name', 'z'};
+
 % Populate the timetable with the variable data
 for k = 1:numel(varNames)
-    % skip adding time (already added as the RowTime) and obs
-    if strcmp(varNames{k}, 'time') || strcmp(varNames{k}, 'obs')
+    % skip adding variables defined above
+    if any(strcmp(varNames{k}, var_skip))
         continue
     end %if
     % read the variable from the NetCDF file
@@ -88,7 +92,8 @@ for k = 1:numel(varNames)
         % if the number of rows == the number of RowTimes, add the variable
         % without modification.
         if strcmp(fileInfo.Variables(k).Datatype, 'char')
-            t = addvars(t, deblank(data), 'NewVariableNames', varNames{k});
+            carray = {deblank(data)};
+            t = addvars(t, compose("%s", carray{1}), 'NewVariableNames', varNames{k});
         else
             t = addvars(t, data, 'NewVariableNames', varNames{k});
         end %if
@@ -96,7 +101,8 @@ for k = 1:numel(varNames)
         % if the number of columns equals the RowTimes, rotate the variable
         % before adding it so the row length matches the RowTimes
         if strcmp(fileInfo.Variables(k).Datatype, 'char')
-            t = addvars(t, deblank(data'), 'NewVariableNames', varNames{k});
+            carray = {deblank(data')};
+            t = addvars(t, compose("%s", carray{1}), 'NewVariableNames', varNames{k});
         else
             t = addvars(t, data', 'NewVariableNames', varNames{k});
         end %if
@@ -106,7 +112,7 @@ for k = 1:numel(varNames)
         t = addvars(t, repmat(data, rowlength, 1), 'NewVariableNames', varNames{k});
     else
         % this is something weird, ignore it for now.
-        continue
+        %continue
     end %if
     t.Properties.VariableUnits{varNames{k}} = char(units{:});
     t.Properties.VariableDescriptions{varNames{k}} = char(descr{:});

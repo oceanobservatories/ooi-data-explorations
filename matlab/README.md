@@ -8,7 +8,7 @@ Rename this folder to something unique to prevent possible confusion with other 
 
 ### Windows
 1. Navigate to C:\Program Files\MATLAB\RYYYYY\toolbox. 
-	- YYYYY is your MATLAB version. These functions and example scripts have been tested using Matlab 2018a, 2018b, 2019a, 2019b, and 2020a.  
+	- YYYYY is your MATLAB version. These functions and example scripts have been tested using Matlab 2019b and above.  
 2. Move the ooi_m2m folder to the above location.
 3. Open MATLAB.
 4. Via MATLAB, select "Set Path".

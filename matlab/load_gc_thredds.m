@@ -1,11 +1,11 @@
-function data = load_gc_thredds(site, node, sensor, method, stream, tag)
+function data = load_gc_thredds(site, node, sensor, method, stream, tag, parallel)
 % LOAD_GC_THREDDS Download data from the OOI Gold Copy THREDDS catalog
 %
 % Download data from the OOI Gold Copy THREDDS catalog, using reference
 % designator parameters to select the catalog of interest and a regex tag to
 % select the NetCDF file(s) of interest.
 % 
-% INPUTS:
+% INPUTS (required):
 %
 %   site -- Site designator, extracted from the first part of the
 %       reference designator
@@ -16,11 +16,20 @@ function data = load_gc_thredds(site, node, sensor, method, stream, tag)
 %   method -- Delivery method for the data (either telemetered,
 %       recovered_host, recovered_inst, recovered_cspp or recovered_wfp)
 %   stream -- Stream name that contains the data of interest
-%   tag --  Regex pattern to select the NetCDF files to download. This should
-%       NOT be too broad (e.g., ".*\.nc$") or you will be downloading all of the
-%       data files in a catalog! Instead, refine the regex (e.g., add deployment
-%       numbers and the instrument class name: "deployment0003.*OPTAA.*\.nc$")
-%       to limit the data downloaded.
+%   tag --  Regex pattern to select the NetCDF files to download. This really
+%       should NOT be too broad (e.g., ".*\.nc$") or you will be downloading
+%       all of the data files in a catalog! Instead, refine the regex (e.g.,
+%       add the deployment number and the instrument class name to limit the
+%       the data download: "deployment0003.*OPTAA.*\.nc$") 
+%
+% INPUTS (optional)
+%
+%   parallel -- true/false boolean to enable use of the parallel processing
+%       toolbox (if the user has it installed) to download the data files.
+%       Can be helpful if downloading large numbers of large files (e.g.
+%       all the ADCP data for a site). For smaller datasets, or a small
+%       number of files, there isn't much benefit to using this option. The
+%       default is false.
 %
 % OUTPUTS:
 %
@@ -28,6 +37,18 @@ function data = load_gc_thredds(site, node, sensor, method, stream, tag)
 %       a single timetable
 %
 % C. Wingard, 2023-07-10
+
+% define the argument data types and set the default value for the optional
+% parallel input (false if not set)
+arguments
+    site char
+    node char
+    sensor char
+    method char
+    stream char
+    tag char
+    parallel logical = false;
+end
 
 % load the common file processing utilities
 ph = process_files;
@@ -52,7 +73,7 @@ data = cell(nfiles, 1);     % pre-allocate a cell array for downloaded results
 % us)
 fprintf('Downloading %d files from the Gold Copy THREDDS Catalog ...\n', nfiles)
 tic
-if exist("parpool", "file") == 2 && numel(files) > 5
+if parallel == true && exist("parpool", "file") == 2 && numel(files) > 5
     % start up a local parallel pool to handle downloading the multiple files.
     % ideally this would be a multithreaded pool, but only subset of functions
     % are available in the multithreaded environment and the NetCDF utilities
@@ -98,7 +119,12 @@ toc
 clear base_url dap_url dataset_id url files nfiles options i file ext nc_url source
 
 % finally, concatenate the timetables together returning the results
-fprintf("Merge and finalize the data set, returning final product as a timetable.\n")
-data = ph.merge_frames(data);
+if length(data) > 1
+    fprintf("Merge and finalize the data set, returning final product as a timetable.\n")
+    data = ph.merge_frames(data);
+else
+    fprintf("Returning final product as a timetable.\n")
+    data = data{1};
+end %if
 clear ph
 end %function

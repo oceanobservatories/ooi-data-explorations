@@ -42,12 +42,12 @@ if units == ""
 end %if
 
 % create a file ID used to read data from the file
-ncid = netcdf.open(filename, 'NOWRITE');
+%ncid = netcdf.open(filename, 'NOWRITE');
 
 % Create the datetime axis from the time variable (ERDDAP uses
 % 1970, while the OOI-created NetCDF files use 1900 as their pivot years).
-%nc_time = h5read(filename, '/time');   % obtain the time record
-nc_time = netcdf.getVar(ncid, netcdf.inqVarID(ncid, 'time'));
+nc_time = h5read(filename, '/time');   % obtain the time record
+%nc_time = netcdf.getVar(ncid, netcdf.inqVarID(ncid, 'time'));
 test = seconds(nc_time(1)) + datetime(1970, 1, 1, 0, 0, 0);
 if test > datetime("now")
     dt = datetime(nc_time, 'ConvertFrom', 'epochtime', 'Epoch', '1900-01-01', 'TimeZone', 'UTC');
@@ -71,8 +71,8 @@ for k = 1:numel(varNames)
         continue
     end %if
     % read the variable from the NetCDF file
-    %data = squeeze(h5read(filename, "/" + varNames{k}));
-    data = squeeze(netcdf.getVar(ncid, netcdf.inqVarID(ncid, varNames{k})));
+    data = squeeze(h5read(filename, "/" + varNames{k}));
+    %data = squeeze(netcdf.getVar(ncid, netcdf.inqVarID(ncid, varNames{k})));
     % pull out the variable units and comment attributes
     units = {''}; descr = {''};
     if ~isempty(vAttributes{k})
@@ -117,7 +117,7 @@ for k = 1:numel(varNames)
     t.Properties.VariableUnits{varNames{k}} = char(units{:});
     t.Properties.VariableDescriptions{varNames{k}} = char(descr{:});
 end %for
-netcdf.close(ncid);
+%netcdf.close(ncid);
 clear ncid dt rowlength k data r c
 
 % clean-up the timetable making sure the times are unique and sorted

@@ -56,9 +56,9 @@ ph = process_files;
 % set up the Gold Copy THREDDS catalog URL, the OpenDAP server URL, and the
 % dataset ID
 base_url = "https://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/";
-dap_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/dodsC/ooigoldcopy/public/';
+dap_url = "http://thredds.dataexplorer.oceanobservatories.org/thredds/dodsC/ooigoldcopy/public/";
 dataset_id = join([upper(string(site)), upper(string(node)), upper(string(sensor)), lower(string(method)), lower(string(stream))], "-");
-options = weboptions('Timeout', 300);
+options = weboptions("Timeout", 300);
 
 % determine the number of available files to download based on the dataset ID
 % and the regex tag

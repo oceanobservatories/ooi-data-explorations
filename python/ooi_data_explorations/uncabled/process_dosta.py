@@ -144,13 +144,19 @@ def dosta_datalogger(ds, burst=False):
         'estimated_oxygen_concentration': 'oxygen_concentration',
         'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
         'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
+        'estimated_oxygen_concentration_qartod_executed': 'oxygen_concentration_qartod_executed',
+        'estimated_oxygen_concentration_qartod_results': 'oxygen_concentration_qartod_results',
         'estimated_oxygen_saturation': 'oxygen_saturation',
         'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
         'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
         'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',
+        'dosta_abcdjm_cspp_tc_oxygen_qartod_executed': 'svu_oxygen_concentration_qartod_executed',
+        'dosta_abcdjm_cspp_tc_oxygen_qartod_results': 'svu_oxygen_concentration_qartod_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'dissolved_oxygen_qartod_executed': 'oxygen_concentration_corrected_qartod_executed',
+        'dissolved_oxygen_qartod_results': 'oxygen_concentration_corrected_qartod_results',
         'int_ctd_pressure': 'sea_water_pressure',
     }
     
@@ -225,13 +231,17 @@ def dosta_ctdbp_datalogger(ds):
 
     # rename some of the variables for better clarity
     rename = {
+        'dosta_analog_tc_oxygen': 'oxygen_concentration',
         'dosta_ln_optode_oxygen': 'oxygen_concentration',
         'dosta_ln_optode_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
         'dosta_ln_optode_oxygen_qc_results': 'oxygen_concentration_qc_results',
-        'dosta_analog_tc_oxygen': 'oxygen_concentration',
+        'dosta_ln_optode_oxygen_qartod_executed': 'oxygen_concentration_qartod_executed',
+        'dosta_ln_optode_oxygen_qartod_results': 'oxygen_concentration_qartod_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'dissolved_oxygen_qartod_executed': 'oxygen_concentration_corrected_qartod_executed',
+        'dissolved_oxygen_qartod_results': 'oxygen_concentration_corrected_qartod_results',
         'int_ctd_pressure': 'sea_water_pressure',
     }
     for key in rename.keys():
@@ -284,7 +294,7 @@ def dosta_ctdbp_instrument(ds):
     # check for data from a co-located CTD, if not present create the variables using NaN as the fill value
     if 'sea_water_temperature' not in ds.variables:
         ds['sea_water_temperature'] = ('time', ds['deployment'].data * np.nan)
-        ds['int_ctd_pressure'] = ('time', ds['deployment'].data * np.nan)
+        ds['sea_water_pressure'] = ('time', ds['deployment'].data * np.nan)
 
     # rename some variables for better clarity
     rename = {
@@ -292,10 +302,18 @@ def dosta_ctdbp_instrument(ds):
         'ctd_tc_oxygen': 'oxygen_concentration',
         'ctd_tc_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
         'ctd_tc_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'ctd_tc_oxygen_qartod_executed': 'oxygen_concentration_qartod_executed',
+        'ctd_tc_oxygen_qartod_results': 'oxygen_concentration_qartod_results',
         'dosta_tc_oxygen': 'oxygen_concentration',
+        'dosta_tc_oxygen_qc_executed': 'oxygen_concentration_qc_executed',
+        'dosta_tc_oxygen_qc_results': 'oxygen_concentration_qc_results',
+        'dosta_tc_oxygen_qartod_executed': 'oxygen_concentration_qartod_executed',
+        'dosta_tc_oxygen_qartod_results': 'oxygen_concentration_qartod_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'dissolved_oxygen_qartod_executed': 'oxygen_concentration_corrected_qartod_executed',
+        'dissolved_oxygen_qartod_results': 'oxygen_concentration_corrected_qartod_results',
         'int_ctd_pressure': 'sea_water_pressure',
     }
     for key in rename.keys():
@@ -354,16 +372,24 @@ def dosta_cspp(ds):
         'estimated_oxygen_concentration': 'oxygen_concentration',
         'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
         'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
+        'estimated_oxygen_concentration_qartod_executed': 'oxygen_concentration_qartod_executed',
+        'estimated_oxygen_concentration_qartod_results': 'oxygen_concentration_qartod_results',
         'estimated_oxygen_saturation': 'oxygen_saturation',
         'dosta_abcdjm_cspp_tc_oxygen': 'svu_oxygen_concentration',
         'dosta_abcdjm_cspp_tc_oxygen_qc_executed': 'svu_oxygen_concentration_qc_executed',
         'dosta_abcdjm_cspp_tc_oxygen_qc_results': 'svu_oxygen_concentration_qc_results',
+        'dosta_abcdjm_cspp_tc_oxygen_qartod_executed': 'svu_oxygen_concentration_qartod_executed',
+        'dosta_abcdjm_cspp_tc_oxygen_qartod_results': 'svu_oxygen_concentration_qartod_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'dissolved_oxygen_qartod_executed': 'oxygen_concentration_corrected_qartod_executed',
+        'dissolved_oxygen_qartod_results': 'oxygen_concentration_corrected_qartod_results',
         'pressure': 'sea_water_pressure',
         'pressure_qc_executed': 'sea_water_pressure_qc_executed',
         'pressure_qc_results': 'sea_water_pressure_qc_results',
+        'pressure_qartod_executed': 'sea_water_pressure_qartod_executed',
+        'pressure_qartod_results': 'sea_water_pressure_qartod_results',
         'temperature': 'sea_water_temperature',
         'salinity': 'sea_water_practical_salinity',
     }
@@ -414,9 +440,13 @@ def dosta_wfp(ds):
         'estimated_oxygen_concentration': 'oxygen_concentration',
         'estimated_oxygen_concentration_qc_executed': 'oxygen_concentration_qc_executed',
         'estimated_oxygen_concentration_qc_results': 'oxygen_concentration_qc_results',
+        'estimated_oxygen_concentration_qartod_executed': 'oxygen_concentration_qartod_executed',
+        'estimated_oxygen_concentration_qartod_results': 'oxygen_concentration_qartod_results',
         'dissolved_oxygen': 'oxygen_concentration_corrected',
         'dissolved_oxygen_qc_executed': 'oxygen_concentration_corrected_qc_executed',
         'dissolved_oxygen_qc_results': 'oxygen_concentration_corrected_qc_results',
+        'dissolved_oxygen_qartod_executed': 'oxygen_concentration_corrected_qartod_executed',
+        'dissolved_oxygen_qartod_results': 'oxygen_concentration_corrected_qartod_results',
         'int_ctd_pressure': 'seawater_pressure',
         'sea_water_temperature': 'seawater_temperature',
         'sea_water_practical_salinity': 'practical_salinity',

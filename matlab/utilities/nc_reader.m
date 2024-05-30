@@ -58,7 +58,8 @@ t = timetable('RowTimes', dt);
 
 % remove some of the variables that are not used or are better served elsewhere
 var_skip = {'obs', 'time', 'id', 'provenance', 'dcl_controller_timestamp', 'driver_timestamp', ...
-    'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp', 'station', 'station_name', 'z'};
+    'ingestion_timestamp', 'port_timestamp', 'preferred_timestamp', 'suspect_timestamp', ...
+    'station', 'station_name', 'z'};
 
 % Populate the timetable with the variable data
 for k = 1:numel(varNames)
@@ -103,8 +104,16 @@ for k = 1:numel(varNames)
         % this is a scalar variable, and it needs to replicated out to the
         % RowTimes dimension before it can be added.
         t = addvars(t, repmat(data, rowlength, 1), 'NewVariableNames', varNames{k});
+    elseif r == 1 && c > 1
+        % this is a dimensional variable and it needs to be replicated out
+        % to the RowTimes dimension before it can be added
+        t = addvars(t, repmat(data, rowlength, 1), 'NewVariableNames', varNames{k});
+    elseif r > 1 && c == 1
+        % this is a dimensional variable and it needs to be rotated and
+        % replicated out to the RowTimes dimension before it can be added
+        t = addvars(t, repmat(data', rowlength, 1), 'NewVariableNames', varNames{k});
     else
-        % this is something weird (most likely a dimension variable), ignore it for now.
+        % this is something weird, ignore it for now.
         continue
     end %if
     t.Properties.VariableUnits{varNames{k}} = char(units{:});

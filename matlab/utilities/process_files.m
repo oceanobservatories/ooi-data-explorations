@@ -25,11 +25,12 @@ nc_all = regexp(catalog, '<a href=''([^>]+.nc)''>', 'tokens');
 nc_all = [nc_all{:}]';
 
 % drop 'catalog.html?dataset=' from URL
-nc_all = cellfun(@(x) x(22:end), nc_all, 'UniformOutput', 0); %
+nc_all = cellfun(@(x) x(22:end), nc_all, 'UniformOutput', 0);
+[~, files, ~] = fileparts(nc_all);
 
 % use the regex tag to select only files of interest
-nc_all = cellfun(@(x) regexp(x, tag, 'match'), nc_all, 'UniformOutput', 0);
-nc_all(cellfun('isempty', nc_all)) = [];  % remove empty matches
+files = cellfun(@(x) regexp([x, '.nc'], tag, 'match'), files, 'UniformOutput', 0);
+nc_all(cellfun('isempty', files)) = [];  % remove empty matches
 
 % convert the list to a string array
 nc_files = string(nc_all(:));

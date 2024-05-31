@@ -1,7 +1,6 @@
 name: ooi
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python=3.10
   - argcomplete
@@ -18,6 +17,7 @@ dependencies:
   - gsw
   - hdf4
   - h5netcdf
+  - ipympl
   - ioos_qc
   - jupyterlab
   - libnetcdf

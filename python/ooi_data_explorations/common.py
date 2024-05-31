@@ -846,7 +846,7 @@ def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='KDATA', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=N_THREADS) as executor:
+        with ThreadPoolExecutor(max_workers=min(8, int(os.cpu_count() / 4))) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Loading and Processing Data Files', file=sys.stdout))
 

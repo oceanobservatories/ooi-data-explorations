@@ -10,6 +10,8 @@ import glob
 import numpy as np
 import os
 import sys
+
+import pandas as pd
 import xarray as xr
 
 
@@ -108,11 +110,10 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
     if resample_time:
         itime = '{:d}Min'.format(resample_time)
         btime = int(resample_time / 2)
-        loff = '{:d}Min'.format(btime)
-        delta = '-{:d}Min'.format(btime)
         gtime = '{:d}Min'.format(resample_time * 3)
         ds = ds.sortby('time')
-        avg = ds.resample(time=itime, offset=delta, loffset=loff, skipna=True).median(keep_attrs=True)
+        ds['time'] = ds['time'] + pd.Timedelta(btime, 'minutes')
+        avg = ds.resample(time=itime, skipna=True).median(dim='time', keep_attrs=True)
         avg = avg.interpolate_na(dim='time', max_gap=gtime)
         avg = avg.where(~np.isnan(avg.deployment), drop=True)
 

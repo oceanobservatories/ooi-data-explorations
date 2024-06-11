@@ -42,8 +42,8 @@ adapter = HTTPAdapter(max_retries=retry)
 SESSION.mount('https://', adapter)
 
 # set up constants used in parallel and multithreading processing
-N_CORES = min(16, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
-N_THREADS = os.cpu_count()  # number of threads to use for multithreading operations (1 per core)
+N_CORES = min(8, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
+N_THREADS = min(8, int(os.cpu_count() / 2))  # number of threads to use for multithreading operations (1 per core)
 
 # set the base URL for the M2M interface
 BASE_URL = 'https://ooinet.oceanobservatories.org/api/m2m/'  # base M2M URL

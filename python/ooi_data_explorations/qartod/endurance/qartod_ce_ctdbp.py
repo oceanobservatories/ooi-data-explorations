@@ -120,8 +120,8 @@ def generate_qartod(site, node, sensor, cut_off):
 
     limits = [[0, 9], [-5, 35], plimit, [0, 42]]
 
-    # create the initial gross range entry
-    gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor)
+    # create the initial gross range entry (lookup) table for the data using expanded gross range limits
+    gr_lookup = process_gross_range(data, parameters, limits, expanded=True, site=site, node=node, sensor=sensor)
 
     # replicate it three times for the different streams
     gr_lookup = pd.concat([gr_lookup] * 3, ignore_index=True)
@@ -145,7 +145,7 @@ def generate_qartod(site, node, sensor, cut_off):
                                                                                                     src_date))
 
     # create the initial climatology lookup and tables for the data
-    clm_lookup, clm_table = process_climatology(data, parameters[1:4:2], limits[1:4:2],
+    clm_lookup, clm_table = process_climatology(data, parameters[1:4:2], limits[1:4:2], expanded=True,
                                                 site=site, node=node, sensor=sensor)
 
     # replicate the climatology lookup table three times for the different streams

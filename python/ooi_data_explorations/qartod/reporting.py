@@ -31,13 +31,24 @@ def apply_qc_results(ds, annotations):
         for v in variables:
             ds[v] = ds[v].where(ds[v + '_qartod_results'] != 4)
 
-    # create a list of any variables that have had instrument specific tests applied (or the older OOI QC tests)
+    # create a list of any variables that have had the older OOI QC tests applied
     variables = [x.split('_qc_summary_flag')[0] for x in ds.variables if '_qc_summary_flag' in x]
 
     # if we have any tests results, NaN out the ones that failed
     if variables:
         for v in variables:
             ds[v] = ds[v].where(ds[v + '_qc_summary_flag'] != 4)
+
+    # create a list of any variables that have had instrument specific tests applied
+    variables = [x.split('_quality_flag')[0] for x in ds.variables if '_quality_flag' in x]
+
+    # if we have any tests results, NaN out the ones that failed
+    if variables:
+        if len(variables) > 1:
+            for v in variables:
+                ds[v] = ds[v].where(ds[v + '_quality_flag'] != 4)
+        else:
+            ds = ds.where(ds[variables[0] + '_quality_flag'] != 4)
 
     # now add the annotations to the data set
     if not annotations.empty:

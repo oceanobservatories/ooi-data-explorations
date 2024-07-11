@@ -9,6 +9,7 @@
 import dateutil.parser as parser
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import numpy as np
 import os
 import pandas as pd
 import warnings
@@ -16,7 +17,7 @@ import warnings
 from matplotlib.backends.backend_pdf import PdfPages
 from ooi_data_explorations.common import get_annotations, get_deployment_dates, load_gc_thredds
 from ooi_data_explorations.combine_data import combine_datasets
-from ooi_data_explorations.uncabled.process_ctdbp import ctdbp_datalogger, ctdbp_instrument
+from ooi_data_explorations.uncabled.process_nutnr import suna_datalogger, suna_instrument
 from ooi_data_explorations.qartod.discrete_samples import get_discrete_samples, distance_to_cast
 from ooi_data_explorations.qartod.qc_processing import ANNO_HEADER, inputs
 from ooi_data_explorations.qartod.reporting import apply_qc_results
@@ -25,7 +26,7 @@ from ooi_data_explorations.qartod.reporting import apply_qc_results
 def combine_delivery_methods(site, node, sensor, deployment):
     """
     Downloads the  data from each of the three data delivery methods for
-    the uncabled CTD (CTDBP) instrument for a specific deployment and
+    the uncabled SUNA (NUTNR) instrument for a specific deployment and
     returns a list object containing the data from each delivery method.
 
     :param site: Site designator, extracted from the first part of the
@@ -38,28 +39,28 @@ def combine_delivery_methods(site, node, sensor, deployment):
     :return merged: the three CTDBP data streams as a list object
     """
     # set the regex tag for the data files to download
-    tag = 'deployment{:04d}.*CTDBP.*\\.nc$'.format(deployment)
+    tag = 'deployment{:04d}.*NUTNR.*\\.nc$'.format(deployment)
     print('### Downloading data for {}-{}-{}, deployment {:02d} ###'.format(site, node, sensor, deployment))
     warnings.filterwarnings("error")  # set warnings to raise exceptions so we can catch them
     # download the data from the telemetered data stream
     try:
-        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'ctdbp_cdef_dcl_instrument', tag)
+        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'suna_dcl_recovered', tag)
     except UserWarning as e:
         telem = None
     # download the data from the recovered_host data stream
     try:
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'ctdbp_cdef_dcl_instrument_recovered', tag)
+        rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'suna_dcl_recovered', tag)
     except UserWarning as e:
         rhost = None
     # download the data from the recovered_inst data stream
     try:
-        rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'ctdbp_cdef_instrument_recovered', tag)
+        rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'suna_instrument_recovered', tag)
     except UserWarning as e:
         rinst = None
     # reset the warnings to default behavior
     warnings.resetwarnings()
 
-    # combine the data from the three delivery methods
+    # combine the data from the three delivery methods into a list object
     return [telem, rhost, rinst]
 
 
@@ -103,77 +104,82 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax1.set_yticklabels(labels)
 
     ax2 = fig.add_subplot(gs[1:3, :])
-    ax2.plot(merged.time, merged.sea_water_practical_salinity, label='Active', color='RoyalBlue')
+    ax2.plot(merged.time, merged.corrected_nitrate_concentration, label='Active', color='RoyalBlue')
     ax2.set_xlim(dates)
-    ax2.set_ylim([20, 35])
-    ax2.set_yticks([20, 25, 30, 35])
-    ax2.set_ylabel('Practical Salinity (psu)')
+    ax2.set_ylim([-5, 45])
+    ax2.set_yticks([-5, 0, 15, 30, 45])
+    ax2.set_ylabel('Nitrate (umol/L)')
 
     ax3 = fig.add_subplot(gs[3:5, 0])
-    ax3.plot(merged.time, merged.sea_water_practical_salinity, label='Active', color='RoyalBlue')
+    ax3.plot(merged.time, merged.corrected_nitrate_concentration, label='Active', color='RoyalBlue')
     if pre_merged is not None:
-        ax3.plot(pre_merged.time, pre_merged.sea_water_practical_salinity, label='Pre', color='grey')
-    ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='*', label='PSU1')
-    ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 2 [psu]'], marker='*', label='PSU2')
-    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete')
+        ax3.plot(pre_merged.time, pre_merged.corrected_nitrate_concentration, label='Pre', color='grey')
+    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete')
     zoom = [dates[0] - pd.Timedelta('7D'), dates[0] + pd.Timedelta('7D')]
     ax3.set_xlim(zoom)
     x_fmt = mdates.DateFormatter('%b-%d')
     ax3.xaxis.set_major_formatter(x_fmt)
     ax3.set_xlabel('')
-    ax3.set_ylim([20, 35])
-    ax3.set_yticks([20, 25, 30, 35])
-    ax3.set_ylabel('Practical Salinity (psu)')
+    ax3.set_ylim([-5, 45])
+    ax3.set_yticks([-5, 0, 15, 30, 45])
+    ax3.set_ylabel('Nitrate (umol/L)')
 
     ax4 = fig.add_subplot(gs[3:5, 1])
-    ax4.plot(merged.time, merged.sea_water_practical_salinity, label='Active', color='RoyalBlue')
+    ax4.plot(merged.time, merged.corrected_nitrate_concentration, label='Active', color='RoyalBlue')
     if post_merged is not None:
-        ax4.plot(post_merged.time, post_merged.sea_water_practical_salinity, label='Post', color='grey')
-    ax4.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='*', label='PSU1')
-    ax4.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 2 [psu]'], marker='*', label='PSU2')
-    ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete')
+        ax4.plot(post_merged.time, post_merged.corrected_nitrate_concentration, label='Post', color='grey')
+    ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete')
     zoom = [dates[1] - pd.Timedelta('7D'), dates[1] + pd.Timedelta('7D')]
     ax4.set_xlim(zoom)
     ax4.xaxis.set_major_formatter(x_fmt)
     ax4.set_xlabel('')
-    ax4.set_ylim([20, 35])
-    ax4.set_yticks([20, 25, 30, 35])
+    ax4.set_ylim([-5, 45])
+    ax4.set_yticks([-5, 0, 15, 30, 45])
 
     ax5 = fig.add_subplot(gs[5, :])
-    ax5.plot(merged.time, merged.sea_water_electrical_conductivity, label='Active', color='RoyalBlue')
+    ax5.plot(merged.time, merged.spectrum_average, label='measured', color='RoyalBlue')
+    ax5.plot(merged.time, merged.spectrum_average * 0 + 10000, label='fail', color='grey')
     ax5.set_xlim(dates)
-    ax5.set_ylim([2, 5])
-    ax5.set_ylabel('Conductivity (S/m)')
+    ax5.set_ylim([0, 50000])
+    ax5.set_ylabel('Average (counts)')
 
     ax6 = fig.add_subplot(gs[6, :])
-    ax6.plot(merged.time, merged.sea_water_temperature, label='Active', color='RoyalBlue')
+    ax6.plot(merged.time, merged.absorbance_at_254_nm, label='254 nm', color='RoyalBlue')
+    ax6.plot(merged.time, merged.absorbance_at_350_nm, label='350 nm', color='DarkOrange')
+    ax6.plot(merged.time, merged.absorbance_at_254_nm * 0 + 1.3, label='', color='grey')
     ax6.set_xlim(dates)
-    ax6.set_ylim([5, 20])
-    ax6.set_ylabel('Temperature (C)')
+    ax6.set_ylim([0, 5])
+    ax6.set_ylabel('Absorbtion (AU)')
+    ax6.legend(loc='upper left')
 
     ax7 = fig.add_subplot(gs[7, :])
-    ax7.plot(merged.time, merged.sea_water_pressure, label='Active', color='RoyalBlue')
+    ax7.plot(merged.time, merged.fit_rmse, label='measured', color='RoyalBlue')
+    ax7.plot(merged.time, merged.fit_rmse * 0 + 0.001, label='suspect', color='grey')
+    ax7.plot(merged.time, merged.fit_rmse * 0 + 0.1, label='fail', color='grey')
     ax7.set_xlim(dates)
-    ax7.set_ylim([26, 32])
-    ax7.set_ylabel('Pressure (dbar)')
+    ax7.set_ylim([1e-6, 1.0])
+    ax7.set_yticks([1e-6, 1e-4, 1e-2, 1.0])
+    ax7.set_yscale('log')
+    ax7.set_ylabel('RMSE')
 
     ax8 = fig.add_subplot(gs[8, :])
-    auto = qartod[0]
-    self = qartod[1]
+    new = qartod[0]
+    old = qartod[1]
     anno = qartod[2]
-    if len(auto) > 0:
-        ax8.plot(auto[0].time, auto[0].values, '.', label='S/m')
-        ax8.plot(auto[1].time, auto[1].values, '.', label='^oC')
-        ax8.plot(auto[2].time, auto[2].values, '.', label='dbar')
-        ax8.plot(auto[3].time, auto[3].values, '.', label='psu')
+    self = qartod[3]
+    if len(qartod) > 0:
+        ax8.plot(new[0].time, new[0].values, '*', label='QARTOD', color='RoyalBlue')
+    if len(old) > 0:
+        ax8.plot(old[0].time, old[0].values, '.', label='1.5', color='DarkOrange')
     if len(self) > 0:
-        pass  # TODO: add the self-test/older QC-test results to the plot
+        ax8.plot(self[0].time, self[0].values, '+', label='Self', color='ForestGreen')
     if len(anno) > 0:
-        pass  # TODO: add the annotation results to the plot
+        ax8.plot(anno[0].time, anno[0].values, 'o', label='HITL', color='DarkRed')
 
     ax8.set_xlim(dates)
     ax8.set_ylim([0, 5])
-    ax8.set_yticks([1, 2, 3, 4])
+    ax8.set_yticks([0, 1, 2, 3, 4])
+    ax8.legend(loc='upper left')
 
     # return the figure object
     return fig
@@ -255,38 +261,40 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     for i in range(len(data)):
         if i < 2:
             if data[i]:
-                data[i] = ctdbp_datalogger(data[i])
+                data[i] = suna_datalogger(data[i])
                 data[i] = apply_qc_results(data[i], annotations)
             if pre_data[i]:
-                pre_data[i] = ctdbp_datalogger(pre_data[i])
+                pre_data[i] = suna_datalogger(pre_data[i])
                 pre_data[i] = apply_qc_results(pre_data[i], annotations)
             if post_data[i]:
-                post_data[i] = ctdbp_datalogger(post_data[i])
+                post_data[i] = suna_datalogger(post_data[i])
                 post_data[i] = apply_qc_results(post_data[i], annotations)
         else:
             if data[i]:
-                data[i] = ctdbp_instrument(data[i])
+                data[i] = suna_instrument(data[i])
                 data[i] = apply_qc_results(data[i], annotations)
             if pre_data[i]:
-                pre_data[i] = ctdbp_instrument(pre_data[i])
+                pre_data[i] = suna_instrument(pre_data[i])
                 pre_data[i] = apply_qc_results(pre_data[i], annotations)
             if post_data[i]:
-                post_data[i] = ctdbp_instrument(post_data[i])
+                post_data[i] = suna_instrument(post_data[i])
                 post_data[i] = apply_qc_results(post_data[i], annotations)
 
     # combine the data from the three delivery methods into a single dataset
     merged = combine_datasets(data[0], data[1], data[2], None)
 
-    # pull out the QC results for the 4 parameters of interest
+    # pull out the QC results for the parameters of interest
     qartod = [
         [merged[x] for x in merged.variables if 'qartod_results' in x],
         [merged[x] for x in merged.variables if 'qc_summary_results' in x],
-        [merged[x] for x in merged.variables if 'annotations_qc_results' in x]
+        [merged[x] for x in merged.variables if 'annotations_qc_results' in x],
+        [merged[x] for x in merged.variables if 'quality_flag' in x],
     ]
 
     # now resample the data to hourly intervals (adding a 30-minute offset to the time to center the data)
     merged['time'] = merged['time'] + pd.Timedelta('30Min')
     merged = merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
+    merged = merged.where(~np.isnan(merged.deployment), drop=True)
 
     # combine the pre- and post- data from the three delivery methods into a single dataset (pre- and post- data are
     # really used just for plotting purposes)
@@ -303,27 +311,21 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     distance = distance_to_cast(samples, merged.attrs['lat'], merged.attrs['lon'])
 
     # use the distance to the cast to determine the closest samples to the mooring location within a defined distance
-    if site in ['CE01ISSM', 'CE06ISSM']:
-        dmin = 0.5  # 0.5 km for the shallow sites
+    dmin = 1.0  # 1.0 km for the shallow, inshore sites. This is the default value.
     if site in ['CE02SHSM', 'CE07SHSM']:
-        dmin = 1.0  # 1.0 km for the shelf sites
+        dmin = 1.5  # 1.5 km for the shelf sites
     if site in ['CE040SSM', 'CE09OSSM']:
         dmin = 2.0  # 2.0 km for the offshore sites
     idx = distance[distance < dmin].index
     samples = samples.iloc[idx, :]
 
-    # now find the samples collected within 3 meters of the instrument depth
-    if node == 'MFD37':
-        drange = 7.5
-    else:
-        drange = 3.0
-    idx = list(samples[(samples['CTD Depth [m]'] - merged['depth'].mean().values).abs() <= drange].index)
+    idx = list(samples[(samples['CTD Depth [m]'] - 7.0).abs() <= 5.0].index)
     samples = samples.loc[idx]
 
     # generate the report plot
     fig = plotting(site, node, sensor, deployment, dates, availability, merged, qartod, pre_merged, post_merged, samples)
 
-    # return the merged data, figure object and the annotations
+    # return the data, the figure object and the annotations
     return merged, fig, annotations
 
 
@@ -340,8 +342,8 @@ def main(argv=None):
     deployment = args.deployment
     cruise_name = args.cruise
 
-    # save the downloaded annotations and plots to a local directory
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports/ctdbp')
+    # create a local directory to store the data and plots
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports/nutnr')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)

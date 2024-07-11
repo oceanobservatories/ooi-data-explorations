@@ -63,7 +63,8 @@ def get_cruises(url, sites, site_name, cruise=None):
         soup = BeautifulSoup(r.text, 'html.parser')
         if cruise:
             if isinstance(cruise, list):
-                cruises = [soup.find_all('a', {'href': re.compile('/Cruise%20Data/.*?' + c + '.+?')})[0] for c in cruise]
+                cruises = [soup.find_all('a', {'href': re.compile('/Cruise%20Data/.*?' + c + '.+?')})[0]
+                           for c in cruise]
             else:
                 cruises = soup.find_all('a', {'href': re.compile('/Cruise%20Data/.*?' + cruise + '.+?')})
         else:

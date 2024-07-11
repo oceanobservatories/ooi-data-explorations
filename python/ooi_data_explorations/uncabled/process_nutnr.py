@@ -3,6 +3,7 @@
 import datetime
 import numpy as np
 import os
+import pandas as pd
 
 from ooi_data_explorations.common import inputs, m2m_collect, m2m_request, load_gc_thredds, \
     get_vocabulary, update_dataset, ENCODINGS
@@ -124,7 +125,7 @@ def suna_datalogger(ds, burst=True):
     else:
         ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
-    ds = ds.drop(['checksum', 'frame_type', 'humidity'])
+    ds = ds.drop_vars(['checksum', 'frame_type', 'humidity'])
 
     # convert the instrument date and time values to a floating point number with the time in seconds, and then
     # update the internal_timestamp with the values as it was not set correctly during parsing and defaults to 1900.
@@ -142,7 +143,7 @@ def suna_datalogger(ds, burst=True):
                     'calculations of the instrument clock offset and drift. Useful when working with the '
                     'recovered instrument data where no external GPS referenced clock is available.')
     })
-    ds = ds.drop(['date_of_sample', 'time_of_sample'])
+    ds = ds.drop_vars(['date_of_sample', 'time_of_sample'])
 
     # check for data from a co-located CTD, if not present add with appropriate attributes
     if 'sea_water_temperature' not in ds.variables:
@@ -189,6 +190,8 @@ def suna_datalogger(ds, burst=True):
         'salinity_corrected_nitrate': 'corrected_nitrate_concentration',
         'salinity_corrected_nitrate_qc_results': 'corrected_nitrate_concentration_qc_results',
         'salinity_corrected_nitrate_qc_executed': 'corrected_nitrate_concentration_qc_executed',
+        'salinity_corrected_nitrate_qartod_results': 'corrected_nitrate_concentration_qartod_results',
+        'salinity_corrected_nitrate_qartod_executed': 'corrected_nitrate_concentration_qartod_executed',
         'wavelength': 'wavelength_index'
     }
     for key, value in rename.items():
@@ -226,13 +229,18 @@ def suna_datalogger(ds, burst=True):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds
-        burst.load()
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        burst = ds.copy()
+        burst['time'] = burst['time'] + pd.Timedelta('450s')  # shift the time to the middle of the averaging period
+        burst = burst.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
+        # reset the attributes...which keep_attrs should do...
+        burst.attrs = ds.attrs
+        for v in burst.variables:
+            burst[v].attrs = ds[v].attrs
+
         # save the newly averaged data
-        ds = burst
+        ds = burst.copy()
 
         # and reset some data types
         data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
@@ -266,7 +274,7 @@ def suna_instrument(ds, burst=True):
     # CGSN update: switched to simple type conversion - handles byte type arrays
     ds['frame_type'] = ('time', [''.join(x.astype(str)) for x in ds.frame_type.data])
     ds = ds.where(ds.frame_type == 'SLF', drop=True)  # remove the dark frames
-    ds = ds.drop(['checksum', 'frame_type', 'humidity', 'date_of_sample', 'time_of_sample'])
+    ds = ds.drop_vars(['checksum', 'frame_type', 'humidity', 'date_of_sample', 'time_of_sample'])
 
     # check for data from a co-located CTD, if not present add with appropriate attributes
     if 'sea_water_temperature' not in ds.variables:
@@ -313,6 +321,8 @@ def suna_instrument(ds, burst=True):
         'salinity_corrected_nitrate': 'corrected_nitrate_concentration',
         'salinity_corrected_nitrate_qc_results': 'corrected_nitrate_concentration_qc_results',
         'salinity_corrected_nitrate_qc_executed': 'corrected_nitrate_concentration_qc_executed',
+        'salinity_corrected_nitrate_qartod_results': 'corrected_nitrate_concentration_qartod_results',
+        'salinity_corrected_nitrate_qartod_executed': 'corrected_nitrate_concentration_qartod_executed',
         'wavelength': 'wavelength_index'
     }
     for key, value in rename.items():
@@ -349,20 +359,26 @@ def suna_instrument(ds, burst=True):
     ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
-        # create the burst averaging
-        burst = ds
-        burst.load()
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        burst = ds.copy()
+        burst['time'] = burst['time'] + pd.Timedelta('450s')  # shift the time to the middle of the averaging period
+        burst = burst.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
-        # save the newly averaged data
-        ds = burst
+        # reset the attributes...which keep_attrs should do...
+        burst.attrs = ds.attrs
+        for v in burst.variables:
+            burst[v].attrs = ds[v].attrs
 
-        # and reset some data types
+        # save the newly averaged data
+        ds = burst.copy()
+
+        # and reset some data types to integers
         data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
-                      'raw_spectral_measurements']
+                      'raw_spectral_measurements', 'corrected_nitrate_concentration_qc_executed',
+                      'corrected_nitrate_concentration_qc_results', 'corrected_nitrate_concentration_qartod_executed',
+                      'corrected_nitrate_concentration_qartod_results', 'nitrate_sensor_quality_flag']
         for v in data_types:
-            ds[v] = ds[v].astype('int32')
+            ds[v] = ds[v].round().astype('int32')
 
     return ds
 

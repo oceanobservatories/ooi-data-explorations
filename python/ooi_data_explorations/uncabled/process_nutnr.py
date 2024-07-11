@@ -242,11 +242,13 @@ def suna_datalogger(ds, burst=True):
         # save the newly averaged data
         ds = burst.copy()
 
-        # and reset some data types
+        # and reset some data types to integers
         data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
-                      'raw_spectral_measurements']
+                      'raw_spectral_measurements', 'corrected_nitrate_concentration_qc_executed',
+                      'corrected_nitrate_concentration_qc_results', 'corrected_nitrate_concentration_qartod_results',
+                      'nitrate_sensor_quality_flag']
         for v in data_types:
-            ds[v] = ds[v].astype('int32')
+            ds[v] = ds[v].round().astype('int32')
 
     return ds
 
@@ -375,8 +377,8 @@ def suna_instrument(ds, burst=True):
         # and reset some data types to integers
         data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',
                       'raw_spectral_measurements', 'corrected_nitrate_concentration_qc_executed',
-                      'corrected_nitrate_concentration_qc_results', 'corrected_nitrate_concentration_qartod_executed',
-                      'corrected_nitrate_concentration_qartod_results', 'nitrate_sensor_quality_flag']
+                      'corrected_nitrate_concentration_qc_results', 'corrected_nitrate_concentration_qartod_results',
+                      'nitrate_sensor_quality_flag']
         for v in data_types:
             ds[v] = ds[v].round().astype('int32')
 

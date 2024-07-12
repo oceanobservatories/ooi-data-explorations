@@ -96,7 +96,7 @@ def quality_checks(ds):
     qc_flag[m] = 4
 
     # test for out of range corrected dissolved nitrate readings
-    m = (ds.corrected_nitrate_concentration.values < -2.0) | (ds.corrected_nitrate_concentration.values > 3000)
+    m = (ds.corrected_nitrate_concentration.values < -2.0) | (ds.corrected_nitrate_concentration.values > 300)
     qc_flag[m] = 4
 
     return qc_flag

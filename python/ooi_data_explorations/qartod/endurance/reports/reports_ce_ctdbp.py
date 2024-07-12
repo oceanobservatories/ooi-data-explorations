@@ -222,34 +222,32 @@ def generate_report(site, node, sensor, deployment, cruise_name):
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-    # Convert the flags to QARTOD flags
-    codes = {
-        None: 0,
-        'pass': 1,
-        'not_evaluated': 2,
-        'suspect': 3,
-        'fail': 4,
-        'not_operational': 9,
-        'not_available': 9,
-        'pending_ingest': 0
-    }
-    annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
+        # Convert the text based QC flags to numeric QARTOD-style flags
+        codes = {
+            None: 0,
+            'pass': 1,
+            'suspect': 3,
+            'fail': 4,
+            'not_operational': 9,
+            'not_available': 9
+        }
+        annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
 
-    # limit the annotations to the deployment dates making sure to catch any that might span the deployment, be
-    # entirely within the deployment, or have start and/or end dates that fall within the deployment dates
-    annotations = annotations[((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
-                              ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
-                              ((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
-                              ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.beginDate <= end.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S')))]
+        # limit the annotations to the deployment dates making sure to catch any that might span the deployment, be
+        # entirely within the deployment, or have start and/or end dates that fall within the deployment dates
+        annotations = annotations[((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
+                                  ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
+                                  ((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
+                                  ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.beginDate <= end.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S')))]
 
-    # sort the annotations by the beginDate
-    annotations = annotations.sort_values(by='beginDate')
+        # sort the annotations by the beginDate
+        annotations = annotations.sort_values(by='beginDate')
 
     # working through the 3 data streams, reformat the data, add the annotations and apply the QC tests
     for i in range(len(data)):
@@ -341,8 +339,14 @@ def main(argv=None):
     cruise_name = args.cruise
 
     # save the downloaded annotations and plots to a local directory
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports/ctdbp')
-    out_path = os.path.abspath(out_path)
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports')
+    platform = 'midwater'
+    if node == 'MFD37':
+        platform = 'seafloor'
+    elif node == 'SBD17':
+        platform = 'surface'
+
+    out_path = os.path.join(out_path, site, platform, 'ctdbp')
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 

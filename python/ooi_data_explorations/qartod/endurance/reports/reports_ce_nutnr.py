@@ -104,14 +104,19 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax1.set_yticklabels(labels)
 
     ax2 = fig.add_subplot(gs[1:3, :])
-    ax2.plot(merged.time, merged.corrected_nitrate_concentration, label='Active', color='RoyalBlue')
+    ax2.plot(merged.time, merged.nitrate_concentration, label='reported', color='DarkOrange')
+    ax2.plot(merged.time, merged.corrected_nitrate_concentration, label='calculated', color='RoyalBlue')
+    ax2.plot(merged.time, merged.nitrate_concentration * 0, label='', color='grey')
     ax2.set_xlim(dates)
     ax2.set_ylim([-5, 45])
     ax2.set_yticks([-5, 0, 15, 30, 45])
     ax2.set_ylabel('Nitrate (umol/L)')
+    ax2.legend(loc='upper left')
 
     ax3 = fig.add_subplot(gs[3:5, 0])
-    ax3.plot(merged.time, merged.corrected_nitrate_concentration, label='Active', color='RoyalBlue')
+    ax3.plot(merged.time, merged.nitrate_concentration, label='reported', color='DarkOrange')
+    ax3.plot(merged.time, merged.corrected_nitrate_concentration, label='calculated', color='RoyalBlue')
+    ax3.plot(merged.time, merged.nitrate_concentration * 0, label='', color='grey')
     if pre_merged is not None:
         ax3.plot(pre_merged.time, pre_merged.corrected_nitrate_concentration, label='Pre', color='grey')
     ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete')
@@ -123,9 +128,12 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax3.set_ylim([-5, 45])
     ax3.set_yticks([-5, 0, 15, 30, 45])
     ax3.set_ylabel('Nitrate (umol/L)')
+    ax3.legend(loc='upper left')
 
     ax4 = fig.add_subplot(gs[3:5, 1])
-    ax4.plot(merged.time, merged.corrected_nitrate_concentration, label='Active', color='RoyalBlue')
+    ax4.plot(merged.time, merged.nitrate_concentration, label='reported', color='DarkOrange')
+    ax4.plot(merged.time, merged.corrected_nitrate_concentration, label='calculated', color='RoyalBlue')
+    ax4.plot(merged.time, merged.nitrate_concentration, label='', color='grey')
     if post_merged is not None:
         ax4.plot(post_merged.time, post_merged.corrected_nitrate_concentration, label='Post', color='grey')
     ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete')
@@ -135,13 +143,16 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax4.set_xlabel('')
     ax4.set_ylim([-5, 45])
     ax4.set_yticks([-5, 0, 15, 30, 45])
+    ax4.legend(loc='upper left')
 
     ax5 = fig.add_subplot(gs[5, :])
-    ax5.plot(merged.time, merged.spectrum_average, label='measured', color='RoyalBlue')
-    ax5.plot(merged.time, merged.spectrum_average * 0 + 10000, label='fail', color='grey')
+    ax5.plot(merged.time, merged.spectrum_average, label='Spectrum', color='RoyalBlue')
+    ax5.plot(merged.time, merged.dark_value_used_for_fit, label='Dark', color='DarkOrange')
+    ax5.plot(merged.time, merged.spectrum_average * 0 + 10000, label='', color='grey')
     ax5.set_xlim(dates)
     ax5.set_ylim([0, 50000])
     ax5.set_ylabel('Average (counts)')
+    ax5.legend(loc='upper left')
 
     ax6 = fig.add_subplot(gs[6, :])
     ax6.plot(merged.time, merged.absorbance_at_254_nm, label='254 nm', color='RoyalBlue')
@@ -149,13 +160,12 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax6.plot(merged.time, merged.absorbance_at_254_nm * 0 + 1.3, label='', color='grey')
     ax6.set_xlim(dates)
     ax6.set_ylim([0, 5])
-    ax6.set_ylabel('Absorbtion (AU)')
+    ax6.set_ylabel('Absorption (AU)')
     ax6.legend(loc='upper left')
 
     ax7 = fig.add_subplot(gs[7, :])
     ax7.plot(merged.time, merged.fit_rmse, label='measured', color='RoyalBlue')
     ax7.plot(merged.time, merged.fit_rmse * 0 + 0.001, label='suspect', color='grey')
-    ax7.plot(merged.time, merged.fit_rmse * 0 + 0.1, label='fail', color='grey')
     ax7.set_xlim(dates)
     ax7.set_ylim([1e-6, 1.0])
     ax7.set_yticks([1e-6, 1e-4, 1e-2, 1.0])
@@ -228,34 +238,32 @@ def generate_report(site, node, sensor, deployment, cruise_name):
         annotations['beginDate'] = pd.to_datetime(annotations.beginDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
         annotations['endDate'] = pd.to_datetime(annotations.endDT, unit='ms').dt.strftime('%Y-%m-%dT%H:%M:%S')
 
-    # Convert the flags to QARTOD flags
-    codes = {
-        None: 0,
-        'pass': 1,
-        'not_evaluated': 2,
-        'suspect': 3,
-        'fail': 4,
-        'not_operational': 9,
-        'not_available': 9,
-        'pending_ingest': 0
-    }
-    annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
+        # Convert the text based QC flags to numeric QARTOD-style flags
+        codes = {
+            None: 0,
+            'pass': 1,
+            'suspect': 3,
+            'fail': 4,
+            'not_operational': 9,
+            'not_available': 9
+        }
+        annotations['qcFlag'] = annotations['qcFlag'].map(codes).astype('category')
 
-    # limit the annotations to the deployment dates making sure to catch any that might span the deployment, be
-    # entirely within the deployment, or have start and/or end dates that fall within the deployment dates
-    annotations = annotations[((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
-                              ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
-                              ((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
-                              ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.beginDate <= end.strftime('%Y-%m-%dT%H:%M:%S')) &
-                               (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S')))]
+        # limit the annotations to the deployment dates making sure to catch any that might span the deployment, be
+        # entirely within the deployment, or have start and/or end dates that fall within the deployment dates
+        annotations = annotations[((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
+                                  ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
+                                  ((annotations.beginDate <= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate <= end.strftime('%Y-%m-%dT%H:%M:%S'))) |
+                                  ((annotations.beginDate >= start.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.beginDate <= end.strftime('%Y-%m-%dT%H:%M:%S')) &
+                                   (annotations.endDate >= end.strftime('%Y-%m-%dT%H:%M:%S')))]
 
-    # sort the annotations by the beginDate
-    annotations = annotations.sort_values(by='beginDate')
+        # sort the annotations by the beginDate
+        annotations = annotations.sort_values(by='beginDate')
 
     # working through the 3 data streams, reformat the data, add the annotations and apply the QC tests
     for i in range(len(data)):
@@ -343,8 +351,8 @@ def main(argv=None):
     cruise_name = args.cruise
 
     # create a local directory to store the data and plots
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports/nutnr')
-    out_path = os.path.abspath(out_path)
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports')
+    out_path = os.path.join(out_path, site, 'midwater', 'nutnr')
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 

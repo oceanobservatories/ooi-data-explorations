@@ -30,8 +30,9 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
     % Early versions of the sonic anemometers had a bug in its firmware and 
     % problems with it tranducers that were the fault of the manufacturer.
     % There was a fix for this bug that is implemented when bugfix = 1.
-    % We may need to add this variable to the function call.  This bug is fixed
-    % in the new and refurbished sonics so I suggest we ignore it for now. 
+    % This bug is fixed in the new and refurbished sonics so I suggest we 
+    % ignore it for now. However, we may need to add it above as a 
+    % variable in the function call.
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bugfix=0;
     
@@ -41,9 +42,12 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
     sigH=[];     % Significant wave height
     
     for k=1:length(filelist)
-        %****************************************
+        %**********************************************************************
         % Read in raw data
-        %****************************************
+        % the fdchread_raw function reads in the raw data and provides the 
+        % time (td) and the raw data (dd) required to compute the motion 
+        % corrected velocities
+        %**********************************************************************
         if filelist(k).isdir
             continue
         end
@@ -53,9 +57,10 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
         rawdata=ones(21,L)*NaN;           %Preallocate
         rawdata=dd(1:21,1:L);
         
-        %*****************************************
-        % Compute flux data
-        %*****************************************    
+        %********************************************
+        % Compute means and fluxes from the raw data
+        % using scripts in ProcessFDCHP_new
+        %********************************************    
         [fluxes,Uearth,waveheight] = ProcessFDCHP_new(rawdata,L,bugfix,lat,Rwaves);
         uw=[uw -fluxes(1)];        %Fluxes: uw vw wT
         U=[U Uearth];              %Wind speed relative to earth  

@@ -35,10 +35,10 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bugfix=0;
     
-    L=12000; %Expected file length at 10 Hz
-    U=[];
-    uw=[];
-    sigH=[];
+    L=12000;     % Expected file length at 10 Hz
+    U=[];        % Wind speed
+    uw=[];       % Virtical flux of horizontal momentum
+    sigH=[];     % Significant wave height
     
     for k=1:length(filelist)
         %****************************************

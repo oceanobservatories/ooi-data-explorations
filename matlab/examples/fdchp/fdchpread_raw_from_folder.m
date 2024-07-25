@@ -6,9 +6,12 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
     parts = strsplit(foldername, 'uncabled/');
     parts = strsplit(parts{end}, '/');
     folder_end_name = parts{1};
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Read in the flux data file
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % The code below takes into account two main differences between the buoy, 
+    % i.e., their location (lat) and the vector distance between the sonic 
+    % anemometer and the center of mass (Rwaves).
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     if strfind(folder_end_name,  'CP')
         lat=40.1334;           %Pioneer NES
@@ -23,8 +26,16 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
         disp("Error: no settings available for folder ")
         return
     end
-    L=12000; %Expected file length at 10 Hz
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Early versions of the sonic anemometers had a bug in its firmware and 
+    % problems with it tranducers that were the fault of the manufacturer.
+    % There was a fix for this bug that is implemented when bugfix = 1.
+    % We may need to add this variable to the function call.  This bug is fixed
+    % in the new and refurbished sonics so I suggest we ignore it for now. 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bugfix=0;
+    
+    L=12000; %Expected file length at 10 Hz
     U=[];
     uw=[];
     sigH=[];

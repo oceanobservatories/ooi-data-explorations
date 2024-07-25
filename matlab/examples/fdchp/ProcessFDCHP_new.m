@@ -3,19 +3,19 @@ function [fluxes,Uearth,waveheight] = ProcessFDCHP_new(rawdata,L,bugfix,lat,Rwav
 % HACK-10Hz Ts1 = 20/100;    % Sampling period for FDCHP
 Ts1 = 10/100;                % Sampling period for FDCHP
 fs = 1/Ts1;                  % Sampling frequency for Windmaster
-dt=1/fs;
+dt=1/fs;                     % Time step for 10 Hz data
 
 %JBE Change tc1=tc2=15;
 tc1=20;                      % Define constants for filters
 tc2=tc1;                     % tc1 is the cutoff period that determines where the pitch and roll Euler angles are 
 fc1=1/tc1;                   %    determined by the tilt of the accelerometers at low frequencies versus the 
-fc2=1/tc2;                   %    integrated angular rates at high frequencies
-tcwave=30;
-fcwaves=1/tcwave;
-rad2deg=180.0/pi;
-Rvec=zeros(1,3);               %Distance vector
+fc2=1/tc2;                   %    integrated angular rates at high frequencies.  This is known as complementary
+tcwave=30;                   %    filtering
+fcwaves=1/tcwave;            % Same as above but for the wave measurements, which requires a large cutoff period
+rad2deg=180.0/pi;            %    for swell
+Rvec=zeros(1,3);             % Distance vector between the sonic anemometer and motion sensors
 Rvec(3)=0.85;
-roffset=0;
+roffset=0;                   %These are not used
 poffset=0;
 
 %******************************************************
@@ -122,31 +122,32 @@ else
     dcfsdata(5,1:L)=sos.^2./403 - 273.15;
 end
 
-% Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic
+% Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
+% Note that we can leave the x-axis variable as measured.
 
-dcfsdata(6,1:L) = -1.0*dcfsdata(6,1:L);   %z heading(yaw) down to up 
-dcfsdata(8,1:L) = -1.0*dcfsdata(8,1:L);   %y pitch east to west
-dcfsdata(10,1:L) = -1.0*dcfsdata(10,1:L); %rate y
-dcfsdata(11,1:L) = -1.0*dcfsdata(11,1:L); %rate z
-dcfsdata(14,1:L) = -1.0*dcfsdata(14,1:L); %accel y
-dcfsdata(15,1:L) = -1.0*dcfsdata(15,1:L); %accel z
+dcfsdata(6,1:L) = -1.0*dcfsdata(6,1:L);   % z heading(yaw) counter clockwise
+dcfsdata(8,1:L) = -1.0*dcfsdata(8,1:L);   % y pitch east to west
+dcfsdata(10,1:L) = -1.0*dcfsdata(10,1:L); % angular rate around y-axis
+dcfsdata(11,1:L) = -1.0*dcfsdata(11,1:L); % angular rate around z-axis 
+dcfsdata(14,1:L) = -1.0*dcfsdata(14,1:L); % linear acceleration along y-axis
+dcfsdata(15,1:L) = -1.0*dcfsdata(15,1:L); % linear acceleration along z-axis (positve up)
 
 %pre-define arrays
-sonics=zeros(3,L);
-Tv=zeros(1,L);
-compass=zeros(1,L);
-roll=zeros(1,L);
+sonics=zeros(3,L);        % These are the 3-axis sonic velocities
+Tv=zeros(1,L);            % This is the sonic temperature computed from speed of sound
+compass=zeros(1,L);        
+roll=zeros(1,L);           
 pitch=zeros(1,L);
-platform=zeros(3,L);
-deg_rate=zeros(3,L);
+platform=zeros(3,L);      % This will hold the accelerations
+deg_rate=zeros(3,L);      % This will hold the angular rates
 
 % sonic velocities
 sonics(1:3,1:L)=dcfsdata(2:4,1:L);
-if despike
+if despike                                % Remove obvious spikes in the data
     [sonics] = despikesimple(sonics,L);
 end
 
-% fixes problem due to Gill transducers
+% fixes problem due to Gill transducers if bugfix = 1
 if bugfix
     Ww=sonics(3,:);
     iup=find(Ww>=0);

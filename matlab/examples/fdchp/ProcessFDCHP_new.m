@@ -6,10 +6,10 @@ fs = 1/Ts1;                  % Sampling frequency for Windmaster
 dt=1/fs;
 
 %JBE Change tc1=tc2=15;
-tc1=20;                      %Define constants for filters
-tc2=tc1;
-fc1=1/tc1;
-fc2=1/tc2;
+tc1=20;                      % Define constants for filters
+tc2=tc1;                     % tc1 is the cutoff period that determines where the pitch and roll Euler angles are 
+fc1=1/tc1;                   %    determined by the tilt of the accelerometers at low frequencies versus the 
+fc2=1/tc2;                   %    integrated angular rates at high frequencies
 tcwave=30;
 fcwaves=1/tcwave;
 rad2deg=180.0/pi;

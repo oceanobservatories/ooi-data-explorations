@@ -8,13 +8,13 @@
 """
 import dateutil.parser as parser
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import os
 import pandas as pd
 import warnings
 
-from matplotlib.backends.backend_pdf import PdfPages
-from ooi_data_explorations.common import get_annotations, get_deployment_dates, load_gc_thredds
+from matplotlib.dates import DateFormatter
+
+from ooi_data_explorations.common import get_annotations, get_vocabulary, get_deployment_dates, load_gc_thredds
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_ctdbp import ctdbp_datalogger, ctdbp_instrument
 from ooi_data_explorations.qartod.discrete_samples import get_discrete_samples, distance_to_cast
@@ -40,21 +40,21 @@ def combine_delivery_methods(site, node, sensor, deployment):
     # set the regex tag for the data files to download
     tag = 'deployment{:04d}.*CTDBP.*\\.nc$'.format(deployment)
     print('### Downloading data for {}-{}-{}, deployment {:02d} ###'.format(site, node, sensor, deployment))
-    warnings.filterwarnings("error")  # set warnings to raise exceptions so we can catch them
+    warnings.filterwarnings("error")  # set warnings to raise exceptions, so we can catch them
     # download the data from the telemetered data stream
     try:
         telem = load_gc_thredds(site, node, sensor, 'telemetered', 'ctdbp_cdef_dcl_instrument', tag)
-    except UserWarning as e:
+    except UserWarning:
         telem = None
     # download the data from the recovered_host data stream
     try:
         rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'ctdbp_cdef_dcl_instrument_recovered', tag)
-    except UserWarning as e:
+    except UserWarning:
         rhost = None
     # download the data from the recovered_inst data stream
     try:
         rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'ctdbp_cdef_instrument_recovered', tag)
-    except UserWarning as e:
+    except UserWarning:
         rinst = None
     # reset the warnings to default behavior
     warnings.resetwarnings()
@@ -86,8 +86,13 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
 
     # initialize the report figure and set the title
     fig = plt.figure(layout='tight')
-    fig.suptitle('{}-{}-{}, Deployment {:02d}'.format(site.upper(), node.upper(), sensor.upper(), deployment))
     gs = fig.add_gridspec(9, 2)
+    fig.subplots_adjust(top=0.90)
+    fig.suptitle('{}-{}-{}, Deployment {:02d}'.format(site.upper(), node.upper(), sensor.upper(), deployment), y=0.99)
+
+    # get the maximum depth for the sensor
+    vocab = get_vocabulary(site, node, sensor)[0]
+    depth = vocab['maxdepth']
 
     # create the plots for each parameter
     ax1 = fig.add_subplot(gs[0, :])
@@ -95,8 +100,9 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     colors = ['RoyalBlue', 'DarkOrange', 'ForestGreen']
     yvalues = [1.3, 1, 0.7]
     for i in range(len(availability)):
-        if len(availability[i]) > 0:
-            ax1.plot(availability[i], availability[i].astype(int) * 0 + yvalues[i], 'o', label=labels[i], color=colors[i])
+        if availability[i] is not None:
+            ax1.plot(availability[i], availability[i].astype(int) * 0 + yvalues[i], 'o', label=labels[i],
+                     color=colors[i])
     ax1.set_xlim(dates)
     ax1.set_ylim([0.5, 1.50])
     ax1.set_yticks(yvalues)
@@ -118,7 +124,7 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete')
     zoom = [dates[0] - pd.Timedelta('7D'), dates[0] + pd.Timedelta('7D')]
     ax3.set_xlim(zoom)
-    x_fmt = mdates.DateFormatter('%b-%d')
+    x_fmt = DateFormatter('%b-%d')
     ax3.xaxis.set_major_formatter(x_fmt)
     ax3.set_xlabel('')
     ax3.set_ylim([20, 35])
@@ -154,7 +160,7 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax7 = fig.add_subplot(gs[7, :])
     ax7.plot(merged.time, merged.sea_water_pressure, label='Active', color='RoyalBlue')
     ax7.set_xlim(dates)
-    ax7.set_ylim([26, 32])
+    ax7.set_ylim([depth - 3, depth + 3])
     ax7.set_ylabel('Pressure (dbar)')
 
     ax8 = fig.add_subplot(gs[8, :])
@@ -203,16 +209,16 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     post_data = combine_delivery_methods(site, node, sensor, deployment + 1)
 
     # create an availability data array for each data stream
-    availability = [d.time for d in data if d is not None]
+    availability = [None, None, None]
+    for i in range(len(data)):
+        if data[i] is not None:
+            availability[i] = data[i].time
 
     # get the start and end dates for the deployment
     start, end = get_deployment_dates(site, node, sensor, deployment)
     start = parser.parse(start, ignoretz=True)
     end = parser.parse(end, ignoretz=True)
     dates = [start, end]
-
-    # load the discrete sample data for the deployment cruise
-    samples = get_discrete_samples('Endurance', cruise=cruise_name)
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -287,39 +293,43 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     merged = merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
 
     # combine the pre- and post- data from the three delivery methods into a single dataset (pre- and post- data are
-    # really used just for plotting purposes)
-    pre_merged = combine_datasets(pre_data[0], pre_data[1], pre_data[2], 60)
-    post_merged = combine_datasets(post_data[0], post_data[1], post_data[2], 60)
-
-    # trim the pre- and post- data to the deployment dates plus a buffer
+    # really used just for plotting purposes) trimmed to a +- 7-day window around the deployment dates
+    pre_merged = combine_datasets(pre_data[0], pre_data[1], pre_data[2], None)
     if pre_merged is not None:
+        pre_merged['time'] = pre_merged['time'] + pd.Timedelta('30Min')
+        pre_merged = pre_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
         pre_merged = pre_merged.sel(time=slice(start - pd.Timedelta('7D'), start + pd.Timedelta('7D')))
+
+    post_merged = combine_datasets(post_data[0], post_data[1], post_data[2], None)
     if post_merged is not None:
+        post_merged['time'] = post_merged['time'] + pd.Timedelta('30Min')
+        post_merged = post_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
         post_merged = post_merged.sel(time=slice(end - pd.Timedelta('7D'), end + pd.Timedelta('7D')))
+
+    # load the discrete sample data for the deployment cruise
+    samples = get_discrete_samples('Endurance', cruise=cruise_name)
 
     # determine the distance to the sampling location for each discrete sample relative to the mooring location
     distance = distance_to_cast(samples, merged.attrs['lat'], merged.attrs['lon'])
 
     # use the distance to the cast to determine the closest samples to the mooring location within a defined distance
-    if site in ['CE01ISSM', 'CE06ISSM']:
-        dmin = 0.5  # 0.5 km for the shallow sites
-    if site in ['CE02SHSM', 'CE07SHSM']:
-        dmin = 1.0  # 1.0 km for the shelf sites
-    if site in ['CE040SSM', 'CE09OSSM']:
-        dmin = 2.0  # 2.0 km for the offshore sites
+    dmin = 5.0  # default to 5.0 km
     idx = distance[distance < dmin].index
     samples = samples.iloc[idx, :]
 
-    # now find the samples collected within 3 meters of the instrument depth
+    # find the samples collected within a set number of meters of the instrument depth
+    vocab = get_vocabulary(site, node, sensor)[0]
+    depth = vocab['maxdepth']
     if node == 'MFD37':
-        drange = 7.5
+        drange = 8.0
     else:
         drange = 3.0
-    idx = list(samples[(samples['CTD Depth [m]'] - merged['depth'].mean().values).abs() <= drange].index)
+    idx = list(samples[(samples['CTD Depth [m]'] - depth).abs() <= drange].index)
     samples = samples.loc[idx]
 
     # generate the report plot
-    fig = plotting(site, node, sensor, deployment, dates, availability, merged, qartod, pre_merged, post_merged, samples)
+    fig = plotting(site, node, sensor, deployment, dates, availability, merged, qartod,
+                   pre_merged, post_merged, samples)
 
     # return the merged data, figure object and the annotations
     return merged, fig, annotations
@@ -361,11 +371,9 @@ def main(argv=None):
     anno_csv = '{}-{}-{}.Deploy{:02d}.quality_annotations.csv'.format(site, node, sensor, deployment)
     annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=ANNO_HEADER)
 
-    # save the plot to a pdf file for review
-    pdf = '{}-{}-{}.Deploy{:02d}.review_plots.pdf'.format(site, node, sensor, deployment)
-    with PdfPages(os.path.join(out_path, pdf)) as pdf_pages:
-        pdf_pages.savefig(fig, bbox_inches='tight')
-
+    # save the plot to a png file for later review
+    png = '{}-{}-{}.Deploy{:02d}.review_plots.png'.format(site, node, sensor, deployment)
+    fig.savefig(os.path.join(out_path, png), format='png', dpi=300)
     plt.close(fig)
 
 

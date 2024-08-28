@@ -47,16 +47,16 @@ def particles_to_pandas(particles, convert_to_nwu=True):
     if df is not None:
         df['time'] = df.apply(lambda row: datetime.datetime( int(row.year), int(row.month), int(row.day), int(row.hour), int(row.minute), int(row.second), int(row.millisecond)*1000), axis=1)
         
-    if convert_to_nwu:
-        # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
-        # Note that we can leave the x-axis variable as measured.
+        if convert_to_nwu:
+            # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
+            # Note that we can leave the x-axis variable as measured.
 
-        df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
-        df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
-        df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
-        df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
-        df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
-        df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+            df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
+            df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
+            df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
+            df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
+            df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
+            df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
         
     return df
     
@@ -90,7 +90,7 @@ def despikesimple(Y, exclusion_stdevs = 4, iterations = 3):
         if k == len(rows):
             return data# don't bother iterating when there aren't any points to exclude
         if k > 0:
-            interp = interpolate.interp1d(rows[good_data], acceptable_points)
+            interp = interpolate.interp1d(rows[good_data], acceptable_points, fill_value='extrapolate')
             data[:] = interp(rows)
 
         return data

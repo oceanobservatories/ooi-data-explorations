@@ -57,6 +57,17 @@ def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwa
     num_datapoints=len(raw_data)
     mean_time = raw_data['time'].mean()
 
+    #Some indices to be used later
+    edge = int(np.fix( 20 * fs))
+    tot=int(len(raw_data)-edge*2)
+    start_index = int(edge)
+    end_index = int(start_index+tot-1)
+    
+    if tot <= 0:
+        # The datset is too short
+        print("Unexpectedly short dataset in process_fdchp with shape: {}".format(raw_data.shape))
+        return None
+    
     #UNITS Velocities seem to be stored as cm/s, and must be converted to m/s
     #TODO: is this right for the case where this already represents a temperature?
     # This is the sonic temperature computed from speed of sound
@@ -65,7 +76,7 @@ def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwa
         Tv = sos
     else:
         # We convert SoS to temperature T1=C1^2/403 
-        print("adjusting speed of sound")
+        # print("adjusting speed of sound")
         Tv = (sos**2)/403.0 - FREEZING_POINT_K
 
     if despike:
@@ -150,11 +161,6 @@ def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwa
     euler,dr = get_euler_angles(ahi,bhi,fs,platform_accelerations,ang_rates,gyro,G)    # euler angles are right-handed
     acc, uvwplat, nope = get_platform_vel_pos(bhi,ahi,fs,platform_accelerations,euler,G)
     uvw,uvwr,uvwrot = sonic(sonics,dr,euler,uvwplat,Rvec)
-
-    edge = int(np.fix( 20 * fs))
-    tot=int(np.max(uvw.shape)-edge*2)
-    start_index = int(edge)
-    end_index = int(start_index+tot-1)
 
     UVW = uvw[start_index:end_index, :]
     Ts = Tv[start_index:end_index]

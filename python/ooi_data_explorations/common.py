@@ -691,8 +691,8 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
 
     # Process the data files found above and concatenate into a single data set
     print('Downloading %d data file(s) from the user''s OOI M2M THREDDS catalog' % len(files))
-    if len(files) < 4:
-        # just 1 to 3 files, download sequentially
+    if len(files) <= 5:
+        # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='M2M', use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
                                                                                                'Processing Data Files')]
     else:
@@ -764,8 +764,8 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    if len(files) < 4:
-        # just 1 to 3 files, download sequentially
+    if len(files) <= 5:
+        # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='GC', use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
                                                                                               'Processing Data '
                                                                                               'Files')]
@@ -838,8 +838,8 @@ def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the local kdata directory' % len(files))
-    if len(files) < 4:
-        # just 1 to 3 files, download sequentially
+    if len(files) <= 5:
+        # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='KDATA', use_dask=use_dask) for file in tqdm(files, desc='Loading and '
                                                                                                  'Processing Data '
                                                                                                  'Files')]

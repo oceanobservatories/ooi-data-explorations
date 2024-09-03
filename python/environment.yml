@@ -1,12 +1,12 @@
 name: ooi
 channels:
   - conda-forge
+  - nodefaults
 dependencies:
   - python=3.10
   - argcomplete
   - beautifulsoup4
   - bottleneck
-  - cgsn_parsers
   - chest
   - conda-build
   - configobj
@@ -22,17 +22,14 @@ dependencies:
   - jupyterlab
   - libnetcdf
   - matplotlib
-  - munch>=2.1.0
   - netcdf4
   - nodejs
   - nose
   - numexpr
   - numpy
   - pip
-  - pocean-core
   - pyasn1
-  - pyaxiom
-  - pygc
+  - pyCO2SYS
   - pyIGRF
   - pyncml
   - pytz
@@ -45,6 +42,3 @@ dependencies:
   - xarray
   - xlrd
   - yaml
-  - pip:
-    - https://bitbucket.org/ooicgsn/pyseas/get/develop.zip
-    - https://bitbucket.org/ooicgsn/cgsn-processing/get/master.zip

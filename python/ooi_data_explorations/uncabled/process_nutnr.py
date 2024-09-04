@@ -101,7 +101,7 @@ def quality_checks(ds):
     return qc_flag
 
 
-def suna_datalogger(ds, burst=True):
+def suna_datalogger(ds, burst=False):
     """
     Takes SUNA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is

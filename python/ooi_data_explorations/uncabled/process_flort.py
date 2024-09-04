@@ -203,17 +203,16 @@ def flort_datalogger(ds, burst=False):
         'optical_backscatter_qc_results': 'bback_qc_results',
         'seawater_scattering_coefficient': 'sea_water_scattering_coefficient',
     }
-    ds = ds.rename(rename)
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # reset some attributes
     for key, value in ATTRS.items():
         for atk, atv in value.items():
             if key in ds.variables:
                 ds[key].attrs[atk] = atv
-
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
 
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high

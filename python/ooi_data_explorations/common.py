@@ -951,7 +951,7 @@ def process_file(catalog_file, gc=None, use_dask=False):
             if isinstance(ds[v].attrs['units'], str):  # because some units use non-standard characters...
                 if time_pattern.match(ds[v].attrs['units']):
                     del (ds[v].attrs['_FillValue'])  # no fill values for time!
-                    del (ds[v].encoding['units'])    # time units are set via the encoding
+                    del (ds[v].attrs['units'])       # time units are set via the encoding
                     ds[v].encoding = {'_FillValue': None, 'units': 'seconds since 1900-01-01T00:00:00.000Z'}
                     np_time = ntp_date + (ds[v] * 1e9).astype('timedelta64[ns]')
                     ds[v] = np_time

@@ -219,7 +219,13 @@ def flort_datalogger(ds, burst=False):
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
-    # create QC flags for the data and add them to the OOI QC summary flags
+    # check if the older QC flags are present, if not add summary flags with a default value of 1
+    flags = ['beta_700_qc_summary_flag', 'fluorometric_cdom_qc_summary_flag', 'estimated_chlorophyll_qc_summary_flag']
+    for flag in flags:
+        if flag not in ds.variables:
+            ds[flag] = ds['time'].astype('int32') * 0 + 1  # default flag values, no errors
+
+    # create QC flags for the data and add them to the QC summary flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
                                                          beta_flag])).max(axis=0, initial=1))

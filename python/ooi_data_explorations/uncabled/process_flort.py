@@ -231,18 +231,18 @@ def flort_datalogger(ds, burst=False):
 
     if burst:
         # resample the data to the defined time interval
-        burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
-                                                                                        keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
 
         # for each of the three FLORT measurements, calculate stats (min, max, and the standard deviation)
         # for each of the bursts
-        cdom = ds['fluorometric_cdom'].resample(time='900s', base=3150, loffset='450s', skipna=True)
+        cdom = ds['fluorometric_cdom'].resample(time='900s', skipna=True)
         cdom = np.array([cdom.min('time').values, cdom.max('time').values, cdom.std('time').values])
 
-        chl = ds['estimated_chlorophyll'].resample(time='900s', base=3150, loffset='450s', skipna=True)
+        chl = ds['estimated_chlorophyll'].resample(time='900s', skipna=True)
         chl = np.array([chl.min('time').values, chl.max('time').values, chl.std('time').values])
 
-        beta = ds['beta_700'].resample(time='900s', base=3150, loffset='450s', skipna=True)
+        beta = ds['beta_700'].resample(time='900s', skipna=True)
         beta = np.array([beta.min('time').values, beta.max('time').values, beta.std('time').values])
 
         # create a data set with the burst statistics for the variables

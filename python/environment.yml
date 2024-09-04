@@ -27,7 +27,7 @@ dependencies:
   - nodejs
   - nose
   - numexpr
-  - numpy
+  - numpy=1.26
   - pip
   - pyasn1
   - pyCO2SYS
@@ -43,3 +43,5 @@ dependencies:
   - xarray
   - xlrd
   - yaml
+  - pip:
+    - https://bitbucket.org/ooicgsn/pyseas/get/develop.zip

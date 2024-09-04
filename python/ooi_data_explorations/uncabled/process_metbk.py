@@ -190,12 +190,12 @@ def metbk_datalogger(ds, burst=False):
     quality_checks(ds)
 
     if burst:   # re-sample the data to a 15-minute interval using a median average
-        burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s',skipna=True).median(keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly average data
-        ds = burst
+        ds = burst.copy()
 
     return ds
 
@@ -241,12 +241,12 @@ def metct_datalogger(ds, burst=False):
     quality_checks(ds)
 
     if burst:   # re-sample the data to a 15-minute interval using a median average
-        burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly average data
-        ds = burst
+        ds = burst.copy()
 
     return ds
 
@@ -300,12 +300,12 @@ def metct_instrument(ds, burst=False):
     quality_checks(ds)
 
     if burst:   # re-sample the data to a 15-minute interval using a median average
-        burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(dim='time', keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly average data
-        ds = burst
+        ds = burst.copy()
 
     return ds
 

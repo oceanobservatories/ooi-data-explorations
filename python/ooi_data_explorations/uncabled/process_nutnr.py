@@ -226,9 +226,8 @@ def suna_datalogger(ds, burst=True):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds
-        burst.load()
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly averaged data
@@ -350,13 +349,12 @@ def suna_instrument(ds, burst=True):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds
-        burst.load()
-        burst = burst.resample(time='900s', base=3150, loffset='450s', skipna=True).median(keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # save the newly averaged data
-        ds = burst
+        ds = burst.copy()
 
         # and reset some data types
         data_types = ['deployment', 'spectrum_average', 'serial_number', 'dark_value_used_for_fit',

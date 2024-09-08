@@ -435,8 +435,8 @@ def optaa_datalogger(ds, cal_file, a_purewater_file = None, c_purewater_file=Non
     # calculate the median of the remaining data per burst measurement
     print('Calculating burst averages ...')
     start_time = time.time()
-    burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
-                                                                                    keep_attrs=True)
+    ds['time'] = ds['time'] + np.timedelta64(450, 's')
+    burst = ds.resample(time='900s', skipna=True).reduce(np.median, dim='time', keep_attrs=True)
     burst = burst.where(~np.isnan(burst.deployment), drop=True)
     stop_time = time.time()
     elapsed_time = stop_time - start_time

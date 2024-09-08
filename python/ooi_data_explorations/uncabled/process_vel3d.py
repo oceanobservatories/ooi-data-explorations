@@ -903,7 +903,7 @@ def vel3d_datalogger(header, system, velocity, burst=False):
         vel3d['heading'] = ('time', np.unwrap(np.radians(vel3d['heading'])))
 
         # resample the data to 30 minute intervals using a median average
-        vel3d = vel3d.resample(time='1800s').median(dim='time', keep_attrs=True, skipna=True)
+        vel3d = vel3d.resample(time='1800s', skipna=True).median(dim='time', keep_attrs=True)
         vel3d = vel3d.where(~np.isnan(vel3d.deployment), drop=True)  # drop the fill values
 
         # convert the heading back to degrees after burst averaging

@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import time
 import netrc
 import requests
@@ -7,9 +8,16 @@ import datetime
 import numpy as np
 import pandas as pd
 import xarray as xr
-from halo import HaloNotebook
+from queue import Queue
 from bs4 import BeautifulSoup
 from urllib.request import urlretrieve
+
+# Add paths
+sys.path.append('../')
+
+# Import shared utilies
+from pyOOI.utils import ntp_seconds_to_datetime, convert_time, unix_epoch_time
+from pyOOI.Download import setup_download_dir, download_file, DownloadWorker
 
 # Initialize credentials
 try:
@@ -44,31 +52,6 @@ adapter = requests.adapters.HTTPAdapter(max_retries=0)
 SESSION.mount("https://", adapter)
 
 
-def ntp_seconds_to_datetime(ntp_seconds):
-    """Convert OOINet timestamps to unix-convertable timestamps."""
-    # Specify some constant needed for timestamp conversions
-    ntp_epoch = datetime.datetime(1900, 1, 1)
-    unix_epoch = datetime.datetime(1970, 1, 1)
-    ntp_delta = (unix_epoch - ntp_epoch).total_seconds()
-
-    return datetime.datetime.utcfromtimestamp(ntp_seconds - ntp_delta)
-
-
-def convert_time(ms):
-    """Calculate UTC timestamp from OOI milliseconds"""
-    if ms is None:
-        return None
-    else:
-        return datetime.datetime.utcfromtimestamp(ms/1000)
-
-
-def unix_epoch_time(date_time):
-    """Convert a datetime to unix epoch microseconds."""
-    # Convert the date time to a string
-    date_time = int(pd.to_datetime(date_time).strftime("%s"))*1000
-    return date_time
-
-
 def get_api(url, params=None):
     """Function which gets OOINet API endpoint"""
     r = SESSION.get(url, params=params, auth=(login, password))
@@ -99,17 +82,24 @@ def get_datasets(search_url, datasets=pd.DataFrame(), **kwargs):
         deployments = get_api(deploy_url)
 
         # Put the data into a dictionary
-        info = pd.DataFrame(data=np.array([[array, node, instrument,
-                                            refdes, search_url, deployments
-                                            ]]),
-                            columns=["array", "node", "instrument",
-                                     "refdes", "url", "deployments"])
+        info = {
+            "array": array,
+            "node": node,
+            "instrument": instrument,
+            "refdes": refdes,
+            "url": search_url,
+            "deployments": [deployments],
+        }
+        
+        # Convert it to a dataframe
+        info_df = pd.DataFrame(info)
+        
         # add the dictionary to the dataframe
-        datasets = datasets.append(info, ignore_index=True)
+        datasets = pd.concat([datasets, info_df])
 
     else:
         endpoints = get_api(search_url)
-
+                   
         while len(endpoints) > 0:
 
             # Get one endpoint
@@ -157,9 +147,9 @@ def search_datasets(array=None, node=None, instrument=None,
     # Truncate the url at the first "none"
     dataset_url = dataset_url[:dataset_url.find("None")-1]
 
-    with HaloNotebook(f"Searching {dataset_url}", spinner="clock"):
-        # Get the datasets
-        datasets = get_datasets(dataset_url)
+    print(f"Searching {dataset_url}")
+    # Get the datasets
+    datasets = get_datasets(dataset_url)
 
     # Now, it node is not None, can filter on that
     if node is not None:
@@ -244,7 +234,7 @@ def get_vocab(refdes):
 
     # Put the returned vocab data into a pandas dataframe
     vocab = pd.DataFrame()
-    vocab = vocab.append(data)
+    vocab = pd.concat([vocab, pd.DataFrame(data)])
 
     # Finally, return the results
     return vocab
@@ -256,13 +246,14 @@ def reformat_calInfo(calInfo, deployNum, uid):
     # Reformat the calibration info
     for cal in calInfo["calibration"]:
         for calData in cal["calData"]:
-            calDataFrame = calDataFrame.append({
-                "deploymentNumber": int(deployNum),
-                "uid": uid,
-                "calCoef": calData["eventName"],
-                "value": calData["value"],
-                "calFile": calData["dataSource"]
-            }, ignore_index=True)
+            df = pd.DataFrame({
+                "deploymentNumber": [int(deployNum)],
+                "uid": [uid],
+                "calCoef": list(calData["eventName"]),
+                "value": list(calData["value"]),
+                "calFile": list(calData["dataSource"])
+            })
+            calDataFrame = pd.concat([calDataFrame, df], ignore_index=True)
     return calDataFrame
 
 
@@ -365,13 +356,14 @@ def get_calibrations_by_uid(uid, params=None):
     calibrations = pd.DataFrame(columns=columns)
     for c in calInfo["calibration"]:
         for cc in c["calData"]:
-            calibrations = calibrations.append({
+            caldf = pd.DataFrame({
                 "uid": cc["assetUid"],
                 "calCoef": cc["eventName"],
                 "calDate": convert_time(cc["eventStartTime"]),
                 "value": cc["value"],
                 "calFile": cc["dataSource"]
-            }, ignore_index=True)
+            })
+            calibrations = pd.concat([calibrations, caldf], ignore_index=True)
     calibrations.sort_values(by=["calDate", "calCoef"], inplace=True)
 
     return calibrations
@@ -458,13 +450,43 @@ def get_deployments(refdes, deploy_num="-1", results=pd.DataFrame()):
         df = pd.DataFrame(data=data, columns=columns)
 
         # Generate the table results
-        results = results.append(df)
+        results = pd.concat([results, df])
 
     # Sort the deployments by deployment number and reset the index
     results = results.sort_values(by="deploymentNumber")
     results = results.reset_index(drop=True)
 
     return results
+
+
+def get_datastreams(refdes):
+        """Retrieve methods and data streams for a reference designator."""
+        # Build the url
+        array, node, instrument = refdes.split("-", 2)
+        method_url = "/".join((URLS["data"], array, node, instrument))
+
+        # Build a table linking the reference designators, methods, and data
+        # streams
+        stream_df = pd.DataFrame(columns=["refdes", "method", "stream"])
+        methods = get_api(method_url)
+        for method in methods:
+            if "bad" in method:
+                continue
+            stream_url = "/".join((method_url, method))
+            streams = get_api(stream_url)
+            new_dict = {
+                "refdes": refdes,
+                "method": method,
+                "stream": streams,
+            }
+            stream_df = pd.concat([stream_df, pd.DataFrame(new_dict)])
+
+        # Expand so that each row of the dataframe is unique
+        stream_df = stream_df.explode('stream').reset_index(drop=True)
+
+        # Return the results
+        return stream_df
+
 
 
 def parse_metadata(metadata):
@@ -673,16 +695,20 @@ def get_thredds_url(refdes, method, stream, goldCopy=False, **kwargs):
     params = kwargs
 
     # Request the data
-    with HaloNotebook(text="Waiting for request to process", spinner="clock"):
-        # Get the urls
-        urls = get_api(data_request_url, params=params)
-        # Check the status of the dataset preparation
-        status_url = [url for url in urls["allURLs"] if re.match(r'.*async_results.*', url)][0]
-        status_url = status_url + "/status.txt"
+    print("Waiting for request to process")
+    # Get the urls
+    urls = get_api(data_request_url, params=params)
+    # Check the status of the dataset preparation
+    status_url = [url for url in urls["allURLs"] if re.match(r'.*async_results.*', url)][0]
+    status_url = status_url + "/status.txt"
+    status = SESSION.get(status_url)
+    dt = 0
+    while status.status_code != requests.codes.ok:
+        time.sleep(2)
+        dt += 2
+        if dt%2 == 0 and dt%5 == 0:
+            print("Waiting for request to process")
         status = SESSION.get(status_url)
-        while status.status_code != requests.codes.ok:
-            time.sleep(2)
-            status = SESSION.get(status_url)
 
     # The asynchronous data request is contained in the 'allURLs' key,
     # in which we want to find the url to the thredds server
@@ -717,7 +743,7 @@ def get_thredds_catalog(thredds_url):
     return catalog
 
 
-def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
+def download_netCDF_files(catalog, goldCopy=False, saveDir=None, verbose=True):
     """Download netCDF files for given netCDF datasets.
 
     Downloads the netCDF files returned by parse_catalog. If no path is
@@ -733,6 +759,8 @@ def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
     saveDir: (str)
         The path to the directory where to download the netCDF files. If no path
         is specified will download to your current directory
+    verbose: (boolean)
+        If True, show status of download.
     """
     # Step 1 - parse the catalog to get the correct web address to download the files
     if goldCopy is True:
@@ -742,17 +770,66 @@ def download_netCDF_files(catalog, goldCopy=False, saveDir=None):
     netCDF_files = [re.sub("catalog.html\?dataset=", fileServer, file) for file in catalog]
 
     # Step 2 - Specify and make the relevant save directory
-    if saveDir is not None:
-        # Make the save directory if it doesn't exists
-        if not os.path.exists(saveDir):
-            os.makedirs(saveDir)
-    else:
-        saveDir = os.getcwd()
+    setup_download_dir(saveDir)
 
-    # Step 3 - Download the files to the specified save directory
-    with HaloNotebook(f"Downloading...", spinner="clock"):
-        for file in netCDF_files:
-            filename = file.split("/")[-1]
-            saveFile = "/".join((saveDir, filename))
-            print(f"Saving {filename} to {saveFile} \n")
-            urlretrieve(file, saveFile)
+    # Step 3 - Initialize workers
+    # 3A. Identify number availabe cores and divide in half
+    cores = os.cpu_count()
+    workers = int(cores / 2)
+    # 3B. Setup a Queue
+    queue = Queue()
+    # 3C. Start workers
+    for worker in range(workers):
+        worker = DownloadWorker(queue)
+        worker.daemon = True
+        worker.start()
+
+    # Step 4. Execute the processes and download the files
+    print("----- Downloading files -----")
+    for file in netCDF_files:
+        queue.put((saveDir, file))
+    # Execute
+    queue.join()
+
+
+def clean_catalog(catalog, stream, deployments=None):
+    """Clean up the THREDDS catalog of unwanted datasets"""
+    # Next, check that the netCDF datasets are not empty by getting the timestamps in the
+    # datasets and checking if they are 
+    datasets = []
+    for dset in catalog:
+        # Get the timestamps
+        timestamps = dset.split("_")[-1].replace(".nc","").split("-")
+        t1, t2 = timestamps
+        # Check if the timestamps are equal
+        if t1 == t2:
+            pass
+        else:
+            datasets.append(dset)
+            
+    # Next, check if you want to filter for certain deployments
+    if deployments is not None:
+        # Check that the deployments are a list
+        deployments = list(deployments["deploymentNumber"].astype(int))
+        datasets = []
+        for dset in catalog:
+            dep = re.findall("deployment[\d]{4}", dset)[0]
+            depNum = int(dep[-4:])
+            if depNum not in deployments:
+                pass
+            else:
+                datasets.append(dset)        
+        
+    # Finally, determine if the dataset is either for the given instrument
+    # or an ancillary instrument which supplies and input variable
+    catalog = datasets
+    datasets = []
+    ancillary = []
+    for dset in catalog:
+        check = dset.split("/")[-1]
+        if stream in check:
+            datasets.append(dset)
+        else:
+            ancillary.append(dset)
+                       
+    return datasets, ancillary

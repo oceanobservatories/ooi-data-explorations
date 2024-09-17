@@ -102,7 +102,7 @@ def quality_checks(ds):
     return qc_flag
 
 
-def suna_datalogger(ds, burst=True):
+def suna_datalogger(ds, burst=False):
     """
     Takes SUNA data recorded by the data loggers used in the CGSN/EA moorings
     and cleans up the data set to make it more user-friendly.  Primary task is
@@ -229,9 +229,8 @@ def suna_datalogger(ds, burst=True):
 
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds.copy()
-        burst['time'] = burst['time'] + pd.Timedelta('450s')  # shift the time to the middle of the averaging period
-        burst = burst.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -361,9 +360,9 @@ def suna_instrument(ds, burst=True):
     ds['nitrate_sensor_quality_flag'] = quality_checks(ds)
 
     if burst:   # re-sample the data to a defined time interval using a median average
-        burst = ds.copy()
-        burst['time'] = burst['time'] + pd.Timedelta('450s')  # shift the time to the middle of the averaging period
-        burst = burst.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+        # create the burst averaging
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...

@@ -64,10 +64,9 @@ def ctdbp_datalogger(ds, burst=False):
             ds[value].attrs['ooinet_variable_name'] = key
 
     if burst:   # re-sample the data to a defined time interval using a median average
-        # create the burst averaging data set
-        burst = ds.copy()
-        burst['time'] = burst['time'] + pd.Timedelta('450s')  # shift the time to the middle of the averaging period
-        burst = burst.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+        # create the burst averaging
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -139,10 +138,9 @@ def ctdbp_instrument(ds, burst=False):
             ds[value].attrs['ooinet_variable_name'] = key
 
     if burst:   # re-sample the data to a defined time interval using a median average
-        # create the burst averaging data set
-        burst = ds.copy()
-        burst['time'] = burst['time'] + pd.Timedelta('450s')  # shift the time to the middle of the averaging period
-        burst = burst.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+        # create the burst averaging
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...

@@ -203,7 +203,10 @@ def flort_datalogger(ds, burst=False):
         'optical_backscatter_qc_results': 'bback_qc_results',
         'seawater_scattering_coefficient': 'sea_water_scattering_coefficient',
     }
-    ds = ds.rename(rename)
+    for key, value in rename.items():
+        if key in ds.variables:
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # reset some attributes
     for key, value in ATTRS.items():
@@ -211,16 +214,18 @@ def flort_datalogger(ds, burst=False):
             if key in ds.variables:
                 ds[key].attrs[atk] = atv
 
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
-
     # parse the OOI QC variables and add QARTOD style QC summary flags to the data, converting the
     # bitmap represented flags into an integer value representing pass == 1, suspect or of high
     # interest == 3, and fail == 4.
     ds = parse_qc(ds)
 
-    # create QC flags for the data and add them to the OOI QC summary flags
+    # check if the older QC flags are present, if not add summary flags with a default value of 1
+    flags = ['beta_700_qc_summary_flag', 'fluorometric_cdom_qc_summary_flag', 'estimated_chlorophyll_qc_summary_flag']
+    for flag in flags:
+        if flag not in ds.variables:
+            ds[flag] = ds['time'].astype('int32') * 0 + 1  # default flag values, no errors
+
+    # create QC flags for the data and add them to the QC summary flags
     beta_flag, cdom_flag, chl_flag = quality_checks(ds)
     ds['beta_700_qc_summary_flag'] = ('time', (np.array([ds.beta_700_qc_summary_flag,
                                                          beta_flag])).max(axis=0, initial=1))
@@ -231,18 +236,18 @@ def flort_datalogger(ds, burst=False):
 
     if burst:
         # resample the data to the defined time interval
-        burst = ds.resample(time='900s', base=3150, loffset='450s', skipna=True).reduce(np.median, dim='time',
-                                                                                        keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
 
         # for each of the three FLORT measurements, calculate stats (min, max, and the standard deviation)
         # for each of the bursts
-        cdom = ds['fluorometric_cdom'].resample(time='900s', base=3150, loffset='450s', skipna=True)
+        cdom = ds['fluorometric_cdom'].resample(time='900s', skipna=True)
         cdom = np.array([cdom.min('time').values, cdom.max('time').values, cdom.std('time').values])
 
-        chl = ds['estimated_chlorophyll'].resample(time='900s', base=3150, loffset='450s', skipna=True)
+        chl = ds['estimated_chlorophyll'].resample(time='900s', skipna=True)
         chl = np.array([chl.min('time').values, chl.max('time').values, chl.std('time').values])
 
-        beta = ds['beta_700'].resample(time='900s', base=3150, loffset='450s', skipna=True)
+        beta = ds['beta_700'].resample(time='900s', skipna=True)
         beta = np.array([beta.min('time').values, beta.max('time').values, beta.std('time').values])
 
         # create a data set with the burst statistics for the variables

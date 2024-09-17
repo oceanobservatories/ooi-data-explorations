@@ -112,8 +112,8 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
         btime = int(resample_time / 2)
         gtime = '{:d}Min'.format(resample_time * 3)
         ds = ds.sortby('time')
-        ds['time'] = ds['time'] + pd.Timedelta(btime, 'minutes')
-        avg = ds.resample(time=itime, skipna=True).median(dim='time', keep_attrs=True)
+        ds['time'] = ds['time'] + np.timedelta64(btime, 'm')
+        avg = ds.resample(time=itime, skipna=True).median(keep_attrs=True)
         avg = avg.interpolate_na(dim='time', max_gap=gtime)
         avg = avg.where(~np.isnan(avg.deployment), drop=True)
 

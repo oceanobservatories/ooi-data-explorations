@@ -8,6 +8,7 @@
 """
 import dateutil.parser as parser
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 import pandas as pd
 import warnings
@@ -116,13 +117,16 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax2.set_ylabel('Practical Salinity (psu)')
 
     ax3 = fig.add_subplot(gs[3:5, 0])
+    zoom = [dates[0] - pd.Timedelta('15D'), dates[0] + pd.Timedelta('15D')]
     ax3.plot(merged.time, merged.sea_water_practical_salinity, label='Active', color='RoyalBlue')
     if pre_merged is not None:
         ax3.plot(pre_merged.time, pre_merged.sea_water_practical_salinity, label='Pre', color='grey')
-    ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='*', label='PSU1')
-    ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 2 [psu]'], marker='*', label='PSU2')
-    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete')
-    zoom = [dates[0] - pd.Timedelta('7D'), dates[0] + pd.Timedelta('7D')]
+    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*',label='Discrete',
+                color='DarkOrange')
+    ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='+', label='PSU1',
+                color='ForestGreen')
+    ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 2 [psu]'], marker='x', label='PSU2',
+                color='DarkRed')
     ax3.set_xlim(zoom)
     x_fmt = DateFormatter('%b-%d')
     ax3.xaxis.set_major_formatter(x_fmt)
@@ -130,20 +134,25 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax3.set_ylim([20, 35])
     ax3.set_yticks([20, 25, 30, 35])
     ax3.set_ylabel('Practical Salinity (psu)')
+    ax3.legend(loc='lower left')
 
     ax4 = fig.add_subplot(gs[3:5, 1])
+    zoom = [dates[1] - pd.Timedelta('15D'), dates[1] + pd.Timedelta('15D')]
     ax4.plot(merged.time, merged.sea_water_practical_salinity, label='Active', color='RoyalBlue')
     if post_merged is not None:
         ax4.plot(post_merged.time, post_merged.sea_water_practical_salinity, label='Post', color='grey')
-    ax4.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='*', label='PSU1')
-    ax4.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 2 [psu]'], marker='*', label='PSU2')
-    ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete')
-    zoom = [dates[1] - pd.Timedelta('7D'), dates[1] + pd.Timedelta('7D')]
+    ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete',
+                color='DarkOrange')
+    ax4.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='+', label='PSU1',
+                color='ForestGreen')
+    ax4.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 2 [psu]'], marker='x', label='PSU2',
+                color='DarkRed')
     ax4.set_xlim(zoom)
     ax4.xaxis.set_major_formatter(x_fmt)
     ax4.set_xlabel('')
     ax4.set_ylim([20, 35])
     ax4.set_yticks([20, 25, 30, 35])
+    ax4.legend(loc='lower left')
 
     ax5 = fig.add_subplot(gs[5, :])
     ax5.plot(merged.time, merged.sea_water_electrical_conductivity, label='Active', color='RoyalBlue')
@@ -293,39 +302,44 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     merged = merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
 
     # combine the pre- and post- data from the three delivery methods into a single dataset (pre- and post- data are
-    # really used just for plotting purposes) trimmed to a +- 7-day window around the deployment dates
+    # really used just for plotting purposes) trimmed to a +- 15-day window around the deployment dates
     pre_merged = combine_datasets(pre_data[0], pre_data[1], pre_data[2], None)
     if pre_merged is not None:
-        pre_merged['time'] = pre_merged['time'] + pd.Timedelta('30Min')
-        pre_merged = pre_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
-        pre_merged = pre_merged.sel(time=slice(start - pd.Timedelta('7D'), start + pd.Timedelta('7D')))
+        pre_merged = pre_merged.sel(time=slice(start - pd.Timedelta('15D'), start + pd.Timedelta('15D')))
+        if pre_merged.time.size > 0:
+            pre_merged['time'] = pre_merged['time'] + pd.Timedelta('30Min')
+            pre_merged = pre_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
+            pre_merged = pre_merged.where(~np.isnan(pre_merged.deployment), drop=True)
+        else:
+            pre_merged = None
 
     post_merged = combine_datasets(post_data[0], post_data[1], post_data[2], None)
     if post_merged is not None:
-        post_merged['time'] = post_merged['time'] + pd.Timedelta('30Min')
-        post_merged = post_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
-        post_merged = post_merged.sel(time=slice(end - pd.Timedelta('7D'), end + pd.Timedelta('7D')))
+        post_merged = post_merged.sel(time=slice(end - pd.Timedelta('15D'), end + pd.Timedelta('15D')))
+        if post_merged.time.size > 0:
+            post_merged['time'] = post_merged['time'] + pd.Timedelta('30Min')
+            post_merged = post_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
+            post_merged = post_merged.where(~np.isnan(post_merged.deployment), drop=True)
+        else:
+            post_merged = None
 
     # load the discrete sample data for the deployment cruise
     samples = get_discrete_samples('Endurance', cruise=cruise_name)
+
+    # limit the discrete samples to those collected within 3 meters of the instrument depth
+    samples = samples[(samples['CTD Depth [m]'] - 7.0).abs() <= 3.0]
 
     # determine the distance to the sampling location for each discrete sample relative to the mooring location
     distance = distance_to_cast(samples, merged.attrs['lat'], merged.attrs['lon'])
 
     # use the distance to the cast to determine the closest samples to the mooring location within a defined distance
-    dmin = 5.0  # default to 5.0 km
-    idx = distance[distance < dmin].index
-    samples = samples.iloc[idx, :]
+    dmin = 1.0  # 1.0 km for the shallow, inshore sites
+    if site in ['CE02SHSM', 'CE07SHSM']:
+        dmin = 3.0  # 3.0 km for the shelf sites
+    if site in ['CE04OSSM', 'CE09OSSM']:
+        dmin = 5.0  # 5.0 km for the offshore sites
 
-    # find the samples collected within a set number of meters of the instrument depth
-    vocab = get_vocabulary(site, node, sensor)[0]
-    depth = vocab['maxdepth']
-    if node == 'MFD37':
-        drange = 8.0
-    else:
-        drange = 3.0
-    idx = list(samples[(samples['CTD Depth [m]'] - depth).abs() <= drange].index)
-    samples = samples.loc[idx]
+    samples = samples[distance <= dmin]
 
     # generate the report plot
     fig = plotting(site, node, sensor, deployment, dates, availability, merged, qartod,

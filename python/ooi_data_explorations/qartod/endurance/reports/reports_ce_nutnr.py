@@ -14,7 +14,6 @@ import os
 import pandas as pd
 import warnings
 
-from matplotlib.backends.backend_pdf import PdfPages
 from ooi_data_explorations.common import get_annotations, get_deployment_dates, load_gc_thredds
 from ooi_data_explorations.combine_data import combine_datasets
 from ooi_data_explorations.uncabled.process_nutnr import suna_datalogger, suna_instrument
@@ -45,17 +44,17 @@ def combine_delivery_methods(site, node, sensor, deployment):
     # download the data from the telemetered data stream
     try:
         telem = load_gc_thredds(site, node, sensor, 'telemetered', 'suna_dcl_recovered', tag)
-    except UserWarning as e:
+    except UserWarning:
         telem = None
     # download the data from the recovered_host data stream
     try:
         rhost = load_gc_thredds(site, node, sensor, 'recovered_host', 'suna_dcl_recovered', tag)
-    except UserWarning as e:
+    except UserWarning:
         rhost = None
     # download the data from the recovered_inst data stream
     try:
         rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', 'suna_instrument_recovered', tag)
-    except UserWarning as e:
+    except UserWarning:
         rinst = None
     # reset the warnings to default behavior
     warnings.resetwarnings()
@@ -87,8 +86,9 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
 
     # initialize the report figure and set the title
     fig = plt.figure(layout='tight')
-    fig.suptitle('{}-{}-{}, Deployment {:02d}'.format(site.upper(), node.upper(), sensor.upper(), deployment))
     gs = fig.add_gridspec(9, 2)
+    fig.subplots_adjust(top=0.90)
+    fig.suptitle('{}-{}-{}, Deployment {:02d}'.format(site.upper(), node.upper(), sensor.upper(), deployment), y=0.99)
 
     # create the plots for each parameter
     ax1 = fig.add_subplot(gs[0, :])
@@ -97,7 +97,8 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     yvalues = [1.3, 1, 0.7]
     for i in range(len(availability)):
         if len(availability[i]) > 0:
-            ax1.plot(availability[i], availability[i].astype(int) * 0 + yvalues[i], 'o', label=labels[i], color=colors[i])
+            ax1.plot(availability[i], availability[i].astype(int) * 0 + yvalues[i], 'o',
+                     label=labels[i], color=colors[i])
     ax1.set_xlim(dates)
     ax1.set_ylim([0.5, 1.50])
     ax1.set_yticks(yvalues)
@@ -106,7 +107,7 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax2 = fig.add_subplot(gs[1:3, :])
     ax2.plot(merged.time, merged.nitrate_concentration, label='reported', color='DarkOrange')
     ax2.plot(merged.time, merged.corrected_nitrate_concentration, label='calculated', color='RoyalBlue')
-    ax2.plot(merged.time, merged.nitrate_concentration * 0, label='', color='grey')
+    ax2.plot(dates, [-2, -2], label='', color='DarkRed')
     ax2.set_xlim(dates)
     ax2.set_ylim([-5, 45])
     ax2.set_yticks([-5, 0, 15, 30, 45])
@@ -114,13 +115,14 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax2.legend(loc='upper left')
 
     ax3 = fig.add_subplot(gs[3:5, 0])
+    zoom = [dates[0] - pd.Timedelta('15D'), dates[0] + pd.Timedelta('15D')]
     ax3.plot(merged.time, merged.nitrate_concentration, label='reported', color='DarkOrange')
     ax3.plot(merged.time, merged.corrected_nitrate_concentration, label='calculated', color='RoyalBlue')
-    ax3.plot(merged.time, merged.nitrate_concentration * 0, label='', color='grey')
+    ax3.plot(zoom, [-2, -2], label='', color='DarkRed')
     if pre_merged is not None:
         ax3.plot(pre_merged.time, pre_merged.corrected_nitrate_concentration, label='Pre', color='grey')
-    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete')
-    zoom = [dates[0] - pd.Timedelta('7D'), dates[0] + pd.Timedelta('7D')]
+    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete',
+                color='DarkOrange')
     ax3.set_xlim(zoom)
     x_fmt = mdates.DateFormatter('%b-%d')
     ax3.xaxis.set_major_formatter(x_fmt)
@@ -131,13 +133,14 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax3.legend(loc='upper left')
 
     ax4 = fig.add_subplot(gs[3:5, 1])
+    zoom = [dates[1] - pd.Timedelta('15D'), dates[1] + pd.Timedelta('15D')]
     ax4.plot(merged.time, merged.nitrate_concentration, label='reported', color='DarkOrange')
     ax4.plot(merged.time, merged.corrected_nitrate_concentration, label='calculated', color='RoyalBlue')
-    ax4.plot(merged.time, merged.nitrate_concentration, label='', color='grey')
+    ax4.plot(zoom, [-2, -2], label='', color='DarkRed')
     if post_merged is not None:
         ax4.plot(post_merged.time, post_merged.corrected_nitrate_concentration, label='Post', color='grey')
-    ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete')
-    zoom = [dates[1] - pd.Timedelta('7D'), dates[1] + pd.Timedelta('7D')]
+    ax4.scatter(samples['Start Time [UTC]'], samples['Discrete Nitrate [uM]'], marker='*', label='Discrete',
+                color='DarkOrange')
     ax4.set_xlim(zoom)
     ax4.xaxis.set_major_formatter(x_fmt)
     ax4.set_xlabel('')
@@ -148,7 +151,7 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax5 = fig.add_subplot(gs[5, :])
     ax5.plot(merged.time, merged.spectrum_average, label='Spectrum', color='RoyalBlue')
     ax5.plot(merged.time, merged.dark_value_used_for_fit, label='Dark', color='DarkOrange')
-    ax5.plot(merged.time, merged.spectrum_average * 0 + 10000, label='', color='grey')
+    ax5.plot(dates, [10000, 10000], label='', color='DarkRed')
     ax5.set_xlim(dates)
     ax5.set_ylim([0, 50000])
     ax5.set_ylabel('Average (counts)')
@@ -157,15 +160,15 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax6 = fig.add_subplot(gs[6, :])
     ax6.plot(merged.time, merged.absorbance_at_254_nm, label='254 nm', color='RoyalBlue')
     ax6.plot(merged.time, merged.absorbance_at_350_nm, label='350 nm', color='DarkOrange')
-    ax6.plot(merged.time, merged.absorbance_at_254_nm * 0 + 1.3, label='', color='grey')
+    ax6.plot(dates, [1.3, 1.3], label='', color='DarkRed')
     ax6.set_xlim(dates)
     ax6.set_ylim([0, 5])
     ax6.set_ylabel('Absorption (AU)')
     ax6.legend(loc='upper left')
 
     ax7 = fig.add_subplot(gs[7, :])
-    ax7.plot(merged.time, merged.fit_rmse, label='measured', color='RoyalBlue')
-    ax7.plot(merged.time, merged.fit_rmse * 0 + 0.001, label='suspect', color='grey')
+    ax7.plot(merged.time, merged.fit_rmse, label='Measured', color='RoyalBlue')
+    ax7.plot(dates, [0.001, 0.001], label='Suspect', color='DarkRed')
     ax7.set_xlim(dates)
     ax7.set_ylim([1e-6, 1.0])
     ax7.set_yticks([1e-6, 1e-4, 1e-2, 1.0])
@@ -226,9 +229,6 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     start = parser.parse(start, ignoretz=True)
     end = parser.parse(end, ignoretz=True)
     dates = [start, end]
-
-    # load the discrete sample data for the deployment cruise
-    samples = get_discrete_samples('Endurance', cruise=cruise_name)
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -305,33 +305,49 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     merged = merged.where(~np.isnan(merged.deployment), drop=True)
 
     # combine the pre- and post- data from the three delivery methods into a single dataset (pre- and post- data are
-    # really used just for plotting purposes)
-    pre_merged = combine_datasets(pre_data[0], pre_data[1], pre_data[2], 60)
-    post_merged = combine_datasets(post_data[0], post_data[1], post_data[2], 60)
-
-    # trim the pre- and post- data to the deployment dates plus a buffer
+    # really used just for plotting purposes) trimmed to a +- 15-day window around the deployment dates
+    pre_merged = combine_datasets(pre_data[0], pre_data[1], pre_data[2], None)
     if pre_merged is not None:
-        pre_merged = pre_merged.sel(time=slice(start - pd.Timedelta('7D'), start + pd.Timedelta('7D')))
+        pre_merged = pre_merged.sel(time=slice(start - pd.Timedelta('15D'), start + pd.Timedelta('15D')))
+        if pre_merged.time.size > 0:
+            pre_merged['time'] = pre_merged['time'] + pd.Timedelta('30Min')
+            pre_merged = pre_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
+            pre_merged = pre_merged.where(~np.isnan(pre_merged.deployment), drop=True)
+        else:
+            pre_merged = None
+
+    post_merged = combine_datasets(post_data[0], post_data[1], post_data[2], None)
     if post_merged is not None:
-        post_merged = post_merged.sel(time=slice(end - pd.Timedelta('7D'), end + pd.Timedelta('7D')))
+        post_merged = post_merged.sel(time=slice(end - pd.Timedelta('15D'), end + pd.Timedelta('15D')))
+        if post_merged.time.size > 0:
+            post_merged['time'] = post_merged['time'] + pd.Timedelta('30Min')
+            post_merged = post_merged.resample(time='1h', skipna=True).median(dim='time', keep_attrs=True)
+            post_merged = post_merged.where(~np.isnan(post_merged.deployment), drop=True)
+        else:
+            post_merged = None
+
+    # load the discrete sample data for the deployment cruise
+    samples = get_discrete_samples('Endurance', cruise=cruise_name)
+
+    # limit the discrete samples to those collected within 3 meters of the instrument depth
+    samples = samples[(samples['CTD Depth [m]'] - 7.0).abs() <= 3.0]
+    samples = samples.reset_index()
 
     # determine the distance to the sampling location for each discrete sample relative to the mooring location
     distance = distance_to_cast(samples, merged.attrs['lat'], merged.attrs['lon'])
 
     # use the distance to the cast to determine the closest samples to the mooring location within a defined distance
-    dmin = 1.0  # 1.0 km for the shallow, inshore sites. This is the default value.
+    dmin = 1.0  # 1.0 km for the shallow, inshore sites
     if site in ['CE02SHSM', 'CE07SHSM']:
-        dmin = 1.5  # 1.5 km for the shelf sites
-    if site in ['CE040SSM', 'CE09OSSM']:
-        dmin = 2.0  # 2.0 km for the offshore sites
-    idx = distance[distance < dmin].index
-    samples = samples.iloc[idx, :]
+        dmin = 3.0  # 3.0 km for the shelf sites
+    if site in ['CE04OSSM', 'CE09OSSM']:
+        dmin = 5.0  # 5.0 km for the offshore sites
 
-    idx = list(samples[(samples['CTD Depth [m]'] - 7.0).abs() <= 5.0].index)
-    samples = samples.loc[idx]
+    samples = samples[distance <= dmin]
 
     # generate the report plot
-    fig = plotting(site, node, sensor, deployment, dates, availability, merged, qartod, pre_merged, post_merged, samples)
+    fig = plotting(site, node, sensor, deployment, dates, availability, merged, qartod,
+                   pre_merged, post_merged, samples)
 
     # return the data, the figure object and the annotations
     return merged, fig, annotations
@@ -367,11 +383,9 @@ def main(argv=None):
     anno_csv = '{}-{}-{}.Deploy{:02d}.quality_annotations.csv'.format(site, node, sensor, deployment)
     annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=ANNO_HEADER)
 
-    # save the plot to a pdf file for review
-    pdf = '{}-{}-{}.Deploy{:02d}.review_plots.pdf'.format(site, node, sensor, deployment)
-    with PdfPages(os.path.join(out_path, pdf)) as pdf_pages:
-        pdf_pages.savefig(fig, bbox_inches='tight')
-
+    # save the plot to a png file for later review
+    png = '{}-{}-{}.Deploy{:02d}.review_plots.png'.format(site, node, sensor, deployment)
+    fig.savefig(os.path.join(out_path, png), format='png', dpi=300)
     plt.close(fig)
 
 

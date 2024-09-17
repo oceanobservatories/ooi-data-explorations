@@ -157,19 +157,25 @@ def distance_to_cast(samples, lat, lon):
     """
     Calculate the distance to the CTD cast (or other sampling method) location
     from the specified lat/lon coordinates (usually the mooring) using the
-    Haversine formula .
+    Haversine formula.
 
     :param samples: pandas DataFrame containing the discrete sample data
     :param lat: latitude of the location to calculate the distance from
     :param lon: longitude of the location to calculate the distance from
     :return distance: pandas Series containing the distance to the cast location
     """
-    # calculate the distance to the cast location using the Haversine formula
     r = 6371.0  # radius of the Earth in km (assumes a spherical Earth)
-    dlat = np.radians(samples['Start Latitude [degrees]'] - lat)
-    dlon = np.radians(samples['Start Longitude [degrees]'] - lon)
-    a = (np.sin(dlat / 2) * np.sin(dlat / 2) + np.cos(np.radians(lat)) *
-         np.cos(np.radians(samples['Start Latitude [degrees]'])) * np.sin(dlon / 2) * np.sin(dlon / 2))
+    mlat = np.radians(lat)                                  # mooring latitude
+    slat = np.radians(samples['Start Latitude [degrees]'])  # sample latitudes
+
+    # calculate the differences in latitude and longitude
+    dlat = np.radians(lat - samples['Start Latitude [degrees]'])
+    dlon = np.radians(lon - samples['Start Longitude [degrees]'])
+
+    # calculate the distance using the Haversine formula
+    a = np.sin(dlat / 2)**2 + np.cos(mlat) * np.cos(slat) * np.sin(dlon / 2)**2
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+
+    # calculate the distance in km
     distance = r * c
     return distance

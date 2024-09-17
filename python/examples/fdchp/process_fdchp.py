@@ -1,12 +1,12 @@
 import numpy as np
-from fdchp_utils import (alignwind, calculate_and_write_metrics, despikesimple,
+from examples.fdchp.fdchp_utils import (alignwind, calculate_and_write_metrics, despikesimple,
                          get_euler_angles, get_platform_vel_pos,
                          gravity_from_latitude, heave_calc, sonic,
                          write_metrics)
 from scipy.signal import detrend, filtfilt
 
 
-def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwave=30, despike=True, despikecompass=False, file_suffix=None):
+def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwave=30, despike=True, despikecompass=False, flux_filepath=None):
     # JBE 06/29 JW 11Aug2014
     # 1.5 JW 3Sep2014
     # 2.0 JBE 06/12/2021
@@ -346,7 +346,7 @@ def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwa
         waveheight
     ]
 
-    file_path = 'fluxes' + file_suffix if file_suffix else ""
+    file_path = flux_filepath if flux_filepath else "fluxes"
     write_metrics(flux_out, file_path=file_path)
     # calculate_and_write_metrics(mean_time, sonics, ang_rates, platform_accelerations, compass, roll, pitch, waveheight, fluxes)
     

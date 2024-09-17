@@ -116,7 +116,7 @@ dcfsdata(15,1:L) = rawdata(17,1:L); % accel z -- fdchp_z_accel_g
 % Not required with R3
 
 sos=dcfsdata(5,1:L);
-if median(sos, "omitmissing")<50
+if median(sos, "omitnan")<50
     dcfsdata(5,1:L)=sos;
 else
     dcfsdata(5,1:L)=sos.^2./403 - 273.15;
@@ -599,8 +599,8 @@ DS=4;
 for tot=1:col
     for iter=1:3         %Do it threetime
         X=Y(tot,1:L);
-        M=median(X, "omitmissing");
-        S=std(X, "omitmissing");
+        M=median(X, "omitnan");
+        S=std(X, "omitnan");
         j=find(X<M+DS*S & X>M-DS*S);
         k=length(j);
         if k>0

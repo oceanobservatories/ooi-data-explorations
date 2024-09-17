@@ -52,10 +52,15 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
             continue
         end
         filename = [filelist(k).folder, '/', filelist(k).name]
-        
-        [td,dd] = fdchpread_raw(filename);
         rawdata=ones(21,L)*NaN;           %Preallocate
-        rawdata=dd(1:21,1:L);
+        try
+            [td,dd] = fdchpread_raw(filename);
+            rawdata=dd(1:21,1:L);
+        catch exception
+            msgText = getReport(exception)
+            disp(["Error reading filename: ", msgText])
+            continue
+        end
         
         %********************************************
         % Compute means and fluxes from the raw data
@@ -74,10 +79,10 @@ function [uw, U, sigH] = fdchpread_raw_from_folder(foldername)
     plot(U,uw,'bo','markersize',5)
     xlabel('U (m/s)','fontsize',18)
     ylabel('-<uw> (m/s)','fontsize',18)
-    axis([6.5 9 0.02 0.16])
+    axis([0.0 20.0 0.00 1.0])
     
     figure(2);clf
     plot(U,sigH,'bo','markersize',5)
     xlabel('U (m/s)','fontsize',18)
     ylabel('\sigma_H (m)','fontsize',18)
-    axis([6.5 9 0 4])
+    axis([0 15 0 4])

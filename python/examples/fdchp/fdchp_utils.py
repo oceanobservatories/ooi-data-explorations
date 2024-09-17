@@ -6,6 +6,7 @@ from mi.dataset.parser.fdchp_a import FdchpADataParticle, FdchpAParser
 from scipy import integrate, interpolate
 from scipy.signal import detrend, filtfilt
 
+PADLENGTH = 12 # (3*(np.max([len(bhi), len(ahi)]) - 1) == 12)
 
 def exception_handler(exception):
     print("Exception!".format(exception))
@@ -256,7 +257,7 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     theta[sensible_x_acc] = np.arcsin(normalized_x_acceleration[sensible_x_acc])
     #TODO: check out filtfilt some more. It looks like scipy default filtering may be different than MATLAB's:
     # https://dsp.stackexchange.com/questions/11466/differences-between-python-and-matlab-filtfilt-function
-    theta_slow = theta - filtfilt(bhi, ahi, theta, padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
+    theta_slow = theta - filtfilt(bhi, ahi, theta, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
 
     # ROLL
     normalized_y_acceleration = accelerations[:, 1]/gravity
@@ -265,14 +266,14 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     acc_y_grav_cos_theta_slow = normalized_y_acceleration/np.cos(theta_slow)
     sensible_y_acc = np.nonzero(np.abs(acc_y_grav_cos_theta_slow) < 1)
     phi[sensible_y_acc] = np.arcsin(acc_y_grav_cos_theta_slow[sensible_y_acc]) # Get indices where y-acceleration is less than g
-    phi_slow = phi - filtfilt(bhi, ahi, phi, padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
+    phi_slow = phi - filtfilt(bhi, ahi, phi, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
 
     # YAW
     # HERE, WE ESTIMATE THE SLOW HEADING. THE 'FAST HEADING' IS NOT NEEDED
     # FOR THE EULER ANGLE UPDATE MATRIX.
     # Using the microstrain compass for heading
     # THE COMPASS IS PASSED RIGHT HANDED SO IT CAN BE TREATED LIKE PITCH AND ROLL
-    psi_slow = gyro - filtfilt(bhi, ahi, gyro, padlen = 3*(max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
+    psi_slow = gyro - filtfilt(bhi, ahi, gyro, padlen = PADLENGTH) #3*(max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
 
     # USE SLOW ANGLES AS FIRST GUESS
     euler  = np.array([phi_slow, theta_slow, psi_slow]).T
@@ -281,11 +282,11 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     for i in np.arange(iterations):
         #TODO: check column/row ordering of phi,theta, psi from rates
         phi_int = integrate.cumulative_trapezoid(rates[:, 0], dx = 1/sampling_frequency, initial=0)
-        phi = phi_slow + filtfilt(bhi, ahi, phi_int, padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
+        phi = phi_slow + filtfilt(bhi, ahi, phi_int, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
         theta_int = integrate.cumulative_trapezoid(rates[:, 1], dx = 1/sampling_frequency, initial=0)
-        theta = theta_slow + filtfilt(bhi, ahi, theta_int, padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
+        theta = theta_slow + filtfilt(bhi, ahi, theta_int, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
         psi_int = integrate.cumulative_trapezoid(rates[:, 2], dx = 1/sampling_frequency, initial=0)
-        psi = psi_slow + filtfilt(bhi, ahi, psi_int, padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
+        psi = psi_slow + filtfilt(bhi, ahi, psi_int, padlen = PADLENGTH) #3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
 
         euler  = np.array([phi, theta, psi]).T
         rates = get_angle_update_matrix(ang_rates, euler)
@@ -323,10 +324,10 @@ def heave_calc(omegam, euler, accm, sampling_frequency, bhi, ahi, R, gravity):
     
     for i in range(3):
         platform_velocity[:, i] = integrate.cumulative_trapezoid(acc[:, i], dx = 1/sampling_frequency, initial=0) + uvwrot[:, i]
-        platform_velocity[:, i] = filtfilt(bhi, ahi, platform_velocity[:, i], padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
+        platform_velocity[:, i] = filtfilt(bhi, ahi, platform_velocity[:, i], padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
         # INTEGRATE AGAIN TO GET DISPLACEMENTS
         platform_disp[:, i] = integrate.cumulative_trapezoid(platform_velocity[:, i], dx = 1/sampling_frequency, initial=0)
-        platform_disp[:, i] = filtfilt(bhi, ahi, platform_disp[:, i], padlen = 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
+        platform_disp[:, i] = filtfilt(bhi, ahi, platform_disp[:, i], padlen = PADLENGTH) #3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
 
     return (platform_velocity, platform_disp)
 
@@ -360,10 +361,10 @@ def get_platform_vel_pos(bhi, ahi, sampling_frequency, accm, euler, gravity):
     platform_disp = np.zeros(acc.shape)
     for i in range(3):
         lin_velocities[:, i] = integrate.cumulative_trapezoid(acc[:, i], dx = 1/sampling_frequency, initial=0)
-        lin_velocities[:, i] = filtfilt(bhi, ahi, lin_velocities[:, i])
+        lin_velocities[:, i] = filtfilt(bhi, ahi, lin_velocities[:, i], padlen = PADLENGTH)
         # INTEGRATE AGAIN TO GET DISPLACEMENTS
         platform_disp[:, i] = integrate.cumulative_trapezoid(lin_velocities[:, i], dx = 1/sampling_frequency, initial=0)
-        platform_disp[:, i] = filtfilt(bhi, ahi, platform_disp[:, i])
+        platform_disp[:, i] = filtfilt(bhi, ahi, platform_disp[:, i], padlen = PADLENGTH)
 
     return (acc, lin_velocities, platform_disp)
 

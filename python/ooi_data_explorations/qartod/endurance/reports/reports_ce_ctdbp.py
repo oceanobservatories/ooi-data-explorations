@@ -121,7 +121,7 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax3.plot(merged.time, merged.sea_water_practical_salinity, label='Active', color='RoyalBlue')
     if pre_merged is not None:
         ax3.plot(pre_merged.time, pre_merged.sea_water_practical_salinity, label='Pre', color='grey')
-    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*',label='Discrete',
+    ax3.scatter(samples['Start Time [UTC]'], samples['Discrete Salinity [psu]'], marker='*', label='Discrete',
                 color='DarkOrange')
     ax3.scatter(samples['Start Time [UTC]'], samples['CTD Salinity 1 [psu]'], marker='+', label='PSU1',
                 color='ForestGreen')
@@ -194,7 +194,7 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     return fig
 
 
-def generate_report(site, node, sensor, deployment, cruise_name):
+def generate_report(site, node, sensor, deployment):
     """
     Load the CTD data for a defined reference designator (using the site, node
     and sensor names to construct the reference designator) collected via the
@@ -208,7 +208,10 @@ def generate_report(site, node, sensor, deployment, cruise_name):
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
     :param deployment: deployment number to download the data for
-    :param cruise_name: name of the deployment cruise(s) to search for
+
+    :return merged: the merged CTDBP data streams for the deployment
+    :return fig: the report figure object for the deployment
+    :return annotations: the annotations for the sensor for the deployment
     """
     # load the data from the three delivery methods
     data = combine_delivery_methods(site, node, sensor, deployment)
@@ -324,7 +327,7 @@ def generate_report(site, node, sensor, deployment, cruise_name):
             post_merged = None
 
     # load the discrete sample data for the deployment cruise
-    samples = get_discrete_samples('Endurance', cruise=cruise_name)
+    samples = get_discrete_samples('Endurance')
 
     # limit the discrete samples to those collected within 3 meters of the instrument depth
     samples = samples[(samples['CTD Depth [m]'] - 7.0).abs() <= 3.0]
@@ -360,7 +363,6 @@ def main(argv=None):
     node = args.node
     sensor = args.sensor
     deployment = args.deployment
-    cruise_name = args.cruise
 
     # save the downloaded annotations and plots to a local directory
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports')
@@ -375,7 +377,7 @@ def main(argv=None):
         os.makedirs(out_path)
 
     # generate the report data, plot and annotations
-    data, fig, annotations = generate_report(site, node, sensor, deployment, cruise_name)
+    data, fig, annotations = generate_report(site, node, sensor, deployment)
 
     # save the data to a netCDF file for further processing
     nc_file = '{}-{}-{}.Deploy{:02d}.merged_data.nc'.format(site, node, sensor, deployment)

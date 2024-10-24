@@ -3,9 +3,11 @@ from datetime import datetime
 from glob import glob
 
 import numpy as np
-from fdchp_utils import particles_to_pandas, read_file, read_file_to_pandas
-from process_fdchp import process_fdchp
-from plot_fdchp import plot_x_velocity_vs_wind_speed, plot_wave_height_vs_wind_speed
+from examples.fdchp.fdchp_utils import (particles_to_pandas, read_file,
+                                        read_file_to_pandas)
+from examples.fdchp.plot_fdchp import (plot_wave_height_vs_wind_speed,
+                                       plot_x_velocity_vs_wind_speed)
+from examples.fdchp.process_fdchp import process_fdchp
 
 PA=0
 EA=0
@@ -50,15 +52,15 @@ for filename in files:
     #     filename = os.path.join(file_path, 'fdchp_20200818_'+ str(incr)+ '0200.dat')
 
     print("Processing file {}: {}".format(incr + 1, filename))
-    try:
-        data = read_file(filename)
-    except Exception as e:
-        print("Error reading in file: {}".format(e))
-        continue
+    # try:
+    #     data = read_file(filename)
+    # except Exception as e:
+    #     print("Error reading in file: {}".format(e))
+    #     continue
               
-    raw_data = particles_to_pandas(data)
+    # raw_data = particles_to_pandas(data)
 
-    # raw_data = read_file_to_pandas(filename)
+    raw_data = read_file_to_pandas(filename)
 
     data_readin = datetime.now()
     

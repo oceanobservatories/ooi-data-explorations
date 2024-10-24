@@ -15,15 +15,13 @@ def read_file(file_path):
     data = []
     with open(file_path, 'rb') as input:
         parser = FdchpAParser(input, exception_handler)
-        # parser.parse_file()
-        particle = parser.get_records()
-        
-        while particle:
-            data.append(particle[0])
-            particle = parser.get_records()
+        parser.parse_file()
+        parser._file_parsed = True
+        num_particles = len(parser._record_buffer)
+        data = parser.get_records(num_particles)
     return data
 
-def read_file_to_pandas(file_path):
+def read_file_to_pandas(file_path, convert_to_nwu=True):
     data = []
     with open(file_path, 'rb') as input:
         parser = FdchpAParser(input, exception_handler)
@@ -31,10 +29,23 @@ def read_file_to_pandas(file_path):
         particle = parser.get_records()
         
         while particle:
-            data.append({ value['value_id']: [value['value']] for value in particle[0].generate_dict()['values']})
+            data.append({ value['value_id']: value['value'] for value in particle[0].generate_dict()['values']})
             particle = parser.get_records()
     if data:
         df = pd.DataFrame(data)
+    if df is not None:
+        df['time'] = df.apply(lambda row: datetime.datetime( int(row.year), int(row.month), int(row.day), int(row.hour), int(row.minute), int(row.second), int(row.millisecond)*1000), axis=1)
+        
+        if convert_to_nwu:
+            # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
+            # Note that we can leave the x-axis variable as measured.
+
+            df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
+            df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
+            df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
+            df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
+            df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
+            df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
     return df
 
 def particles_to_pandas(particles, convert_to_nwu=True):

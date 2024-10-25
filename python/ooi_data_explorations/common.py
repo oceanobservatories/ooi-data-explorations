@@ -111,6 +111,12 @@ class InputError(Error):
     def __init__(self, message):
         self.message = message
 
+def convert_time(ms):
+    """Calculate UTC timestamp from OOI milliseconds"""
+    if ms is None:
+        return None
+    else:
+        return datetime.utcfromtimestamp(ms/1000)
 
 # Sensor Information
 def list_sites():
@@ -356,17 +362,40 @@ def get_deployment_dates(site, node, sensor, deploy):
 
 
 # Calibration Information
-def get_calibrations_by_uid(uid):
+def get_calibrations_by_uid(uid, to_dataframe=False):
     """
     Returns all calibration information for a given unique asset identifier or
     UID. Results are interchangeable with get_calibrations_by_asset_id.
 
     :param uid: unique asset identifier (UID), e.g. CGINS-DOSTAD-00134
+    :param to_dataframe: convert the calibration json object to a pandas
+        dataframe (Optional, default is False)
     :return: calibration information for the identified UID
     """
     r = SESSION.get(BASE_URL + ASSET_URL + '/cal?uid=' + uid, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
-        return r.json()
+        if not to_dataframe:
+            return r.json()
+        else:
+            calInfo = r.json()
+            # Convert the json object to a pandas dataframe
+            calibrations = None
+            for c in calInfo["calibration"]:
+                for cc in c["calData"]:
+                    calDict = {
+                        "uid": [cc["assetUid"]],
+                        "calCoef": [cc["eventName"]],
+                        "calDate": [convert_time(cc["eventStartTime"])],
+                        "value": [cc["value"]],
+                        "calFile": [cc["dataSource"]]
+                    }
+                    caldf = pd.DataFrame(calDict)
+                    if calibrations is None:
+                        calibrations = caldf
+                    else:
+                        calibrations = pd.concat([calibrations, caldf], ignore_index=True)
+            calibrations.sort_values(by=["calDate", "calCoef"], inplace=True)
+            return calibrations
     else:
         return None
 
@@ -386,7 +415,7 @@ def get_calibrations_by_asset_id(asset_id):
         return None
 
 
-def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
+def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None, to_dataframe=False):
     """
     Returns a list of deployments with calibration information for the
     reference designator specified by the site, node and sensor names.
@@ -400,6 +429,8 @@ def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
         of record)
     :param stop: Stop time for data request (Optional, default is through the
         end of the record)
+    :param to_dataframe: Converts the returned json object into a pandas
+        dataframe (Optional, default is False)
     :return: calibration information for sensor(s) deployed at the specified
         reference designator
     """
@@ -414,7 +445,32 @@ def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
             'You must specify both start and stop time, or leave both of those fields empty.')
 
     if r.status_code == requests.codes.ok:
-        return r.json()
+        if not to_dataframe:
+            return r.json()
+        else:
+            # Convert to a dataframe and return the dataframe
+            calInfo = r.json()
+            calibrations = None
+            for cal in calInfo:
+                deploy_num = cal["deploymentNumber"]
+                for c in cal["sensor"]['calibration']:
+                    for cc in c["calData"]:
+                        calDict = {
+                            "deploymentNumber": [deploy_num],
+                            "uid": [cc["assetUid"]],
+                            "calCoef": [cc["eventName"]],
+                            "calDate": [convert_time(cc["eventStartTime"])],
+                            "value": [cc["value"]],
+                            "calFile": [cc["dataSource"]]
+                        }
+                        caldf = pd.DataFrame(calDict)
+                        if calibrations is None:
+                            calibrations = caldf
+                        else:
+                            calibrations = pd.concat([calibrations, caldf], ignore_index=True)
+            calibrations.sort_values(by=["calDate", "calCoef"], inplace=True)
+            calibrations = calibrations.reset_index(drop=True)
+            return calibrations
     else:
         return None
 

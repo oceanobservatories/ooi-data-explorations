@@ -29,7 +29,9 @@ data = []
 # file_path = '/c/Data/flux_calculations/FDCHPTester'
 
 # directory = '/home/jovyan/ooi/uncabled/GI01SUMO/R00008/instruments/dcl12/FDCHP_sn144904/D202105'
-directory = '/home/jovyan/ooi/uncabled/GI01SUMO/R00008/instruments/dcl12/FDCHP_sn144904/D202110'
+# directory = '/home/jovyan/ooi/uncabled/GI01SUMO/R00008/instruments/dcl12/FDCHP_sn144904/D202110'
+directory = '/c/Data/flux_calculations/20211027'
+errors = {}
 
 files = glob(os.path.join(directory, '*.dat'))
 output_filepath = "fluxes"
@@ -59,8 +61,11 @@ for filename in files:
     #     continue
               
     # raw_data = particles_to_pandas(data)
-
-    raw_data = read_file_to_pandas(filename)
+    try:
+        raw_data = read_file_to_pandas(filename)
+    except Exception as e:
+        print("Exception processing file {}: {}".format(filename, e))
+        errors[filename] = e
 
     data_readin = datetime.now()
     
@@ -84,10 +89,11 @@ uw = np.array(uw)
 U = np.array(U)
 sigH = np.array(sigH)
 
+print("{} errors during processing.".format(len(errors)))
+print("End time: {}".format(datetime.now()))
 
 plot_x_velocity_vs_wind_speed(U, uw)
 
 plot_wave_height_vs_wind_speed(U, sigH)
 
-print("End time: {}".format(datetime.now()))
 print("Fin")

@@ -25,11 +25,12 @@ nc_all = regexp(catalog, '<a href=''([^>]+.nc)''>', 'tokens');
 nc_all = [nc_all{:}]';
 
 % drop 'catalog.html?dataset=' from URL
-nc_all = cellfun(@(x) x(22:end), nc_all, 'UniformOutput', 0); %
+nc_all = cellfun(@(x) x(22:end), nc_all, 'UniformOutput', 0);
+[~, files, ~] = fileparts(nc_all);
 
 % use the regex tag to select only files of interest
-nc_all = cellfun(@(x) regexp(x, tag, 'match'), nc_all, 'UniformOutput', 0);
-nc_all(cellfun('isempty', nc_all)) = [];  % remove empty matches
+files = cellfun(@(x) regexp([x, '.nc'], tag, 'match'), files, 'UniformOutput', 0);
+nc_all(cellfun('isempty', files)) = [];  % remove empty matches
 
 % convert the list to a string array
 nc_files = string(nc_all(:));
@@ -50,12 +51,6 @@ file_info = ncinfo(filename);
 
 % load the data into a timetable
 data = nc_reader(filename);
-
-% remove some of the variables that are not used or are better served elsewhere
-m = ismember(data.Properties.VariableNames, {'id', 'provenance', ...
-    'dcl_controller_timestamp', 'driver_timestamp', 'ingestion_timestamp', ...
-    'port_timestamp', 'preferred_timestamp', 'station', 'z'});
-data = removevars(data, m);
 
 % add global attributes to the timetable
 m = reshape(strcmp({file_info.Attributes.Name}, 'publisher_name'), size(file_info.Attributes));
@@ -112,7 +107,7 @@ if nframes > 1
                 varnames = frames{i-1}.Properties.VariableNames(m);
                 t = frames{i};
                 for j = numel(varnames)
-                    t = addvars(t, repmat(datenum(t.Time), 1, 1) .* -inf, 'NewVariableNames', varnames{j});
+                    t = addvars(t, repmat(convertTo(t.Time, "datenum"), 1, 1) .* -inf, 'NewVariableNames', varnames{j});
                 end %for
                 frames{i} = t;
             elseif nvars1 < nvars2
@@ -120,7 +115,7 @@ if nframes > 1
                 varnames = frames{i}.Properties.VariableNames(m);
                 t = frames{i-1};
                 for j = numel(varnames)
-                    t = addvars(t, repmat(datenum(t.Time), 1, 1) .* -inf, 'NewVariableNames', varnames{j});
+                    t = addvars(t, repmat(convertTo(t.Time, "datenum"), 1, 1) .* -inf, 'NewVariableNames', varnames{j});
                 end %for
                 frames{i-1} = t;
             else
@@ -139,7 +134,7 @@ if nframes > 1
 end %if
 clear nframes nvars1 nvars2 m t
 
-% finally, sort the data first by deployment and time
+% finally, sort the data first by deployment and then time
 data = unique(data, 'rows');  % remove any duplicate entries
 data = sortrows(data, {'deployment', 'Time'});
 end %function

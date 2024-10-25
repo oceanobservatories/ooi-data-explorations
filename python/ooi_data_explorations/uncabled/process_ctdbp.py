@@ -62,35 +62,10 @@ def ctdbp_datalogger(ds, burst=False):
             ds = ds.rename({key: value})
             ds[value].attrs['ooinet_variable_name'] = key
 
-    # correct incorrect units
-    #ds['seawater_temperature'].attrs['units'] = 'degree_Celsius'
-
-    # ancillary_variables attribute set incorrectly (should be a space separated list) for certain variables
-    #ds['seawater_temperature'].attrs['ancillary_variables'] = ('seawater_temperature_qc_executed '
-    #                                                           'seawater_temperature_qc_results '
-    #                                                           'seawater_temperature_qartod_executed '
-    #                                                           'seawater_temperature_qartod_results')
-    #ds['seawater_conductivity'].attrs['ancillary_variables'] = ('seawater_conductivity_qc_executed '
-    #                                                            'seawater_conductivity_qc_results '
-    #                                                            'seawater_conductivity_qartod_executed '
-    #                                                            'seawater_conductivity_qartod_results')
-    #ds['seawater_pressure'].attrs['ancillary_variables'] = ('seawater_pressure_qc_executed '
-    #                                                        'seawater_pressure_qc_results '
-    #                                                        'seawater_pressure_qartod_executed '
-    #                                                        'seawater_pressure_qartod_results')
-    #ds['practical_salinity'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature '
-    #                                                         'seawater_pressure '
-    #                                                         'practical_salinity_qc_executed '
-    #                                                         'practical_salinity_qc_results '
-    #                                                         'practical_salinity_qartod_executed '
-    #                                                         'practical_salinity_qartod_results')
-    #ds['density'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature seawater_pressure '
-    #                                              'lat lon density_qc_executed density_qc_results')
-
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -99,7 +74,7 @@ def ctdbp_datalogger(ds, burst=False):
             burst[v].attrs = ds[v].attrs
 
         # save the newly average data
-        ds = burst
+        ds = burst.copy()
 
     return ds
 
@@ -129,11 +104,10 @@ def ctdbp_instrument(ds, burst=False):
     #   conductivity_qc_*, pressure_qc_* == raw measurements, no QC tests should be run
     ds = ds.reset_coords()
     drop_vars = ['ctd_time', 'internal_timestamp', 'conductivity_qc_executed', 'conductivity_qc_results',
-                  'pressure_qc_executed', 'pressure_qc_results']
+                 'pressure_qc_executed', 'pressure_qc_results']
     for v in drop_vars:
         if v in ds.variables:
             ds = ds.drop(v)
-
 
     # rename some of the variables for better clarity, two blocks to keep from stepping on ourselves
     rename = {
@@ -162,55 +136,10 @@ def ctdbp_instrument(ds, burst=False):
             ds = ds.rename({key: value})
             ds[value].attrs['ooinet_variable_name'] = key
 
-    # correct incorrect units and attributes
-    #ds['seawater_temperature'].attrs['units'] = 'degree_Celsius'
-
-    #ds['raw_seawater_conductivity'].attrs['long_name'] = 'Raw Seawater Conductivity'
-    #ds['raw_seawater_conductivity'].attrs['comment'] = ('Raw seawater conductivity measurement recorded internally by '
-    #                                                    'the instrument in counts')
-
-    #ds['raw_seawater_temperature'].attrs['long_name'] = 'Raw Seawater Temperature'
-    #ds['raw_seawater_temperature'].attrs['comment'] = ('Raw seawater temperature measurement recorded internally by '
-    #                                                   'the instrument in counts')
-
-    #ds['raw_seawater_pressure'].attrs['long_name'] = 'Raw Seawater Pressure'
-    #ds['raw_seawater_pressure'].attrs['comment'] = ('Raw seawater pressure measurement recorded internally by the '
-    #                                                'instrument in counts')
-
-    #ds['raw_pressure_temperature'].attrs['long_name'] = 'Raw Seawater Pressure Sensor Temperature'
-    #ds['raw_pressure_temperature'].attrs['comment'] = ('Raw pressure sensor thermistor temperature, internal to the '
-    #                                                   'sensor and recorded internally by the instrument in counts. '
-    #                                                   'Used to convert the raw pressure measurement, compensating '
-    #                                                   'for the sensor temperature, to pressure reported in dbar.')
-
-    # ancillary_variables attribute set incorrectly (should be a space separated list) for certain variables
-    #ds['seawater_temperature'].attrs['ancillary_variables'] = ('raw_seawater_temperature '
-    #                                                           'seawater_temperature_qc_executed '
-    #                                                           'seawater_temperature_qc_results '
-    #                                                           'seawater_temperature_qartod_executed '
-    #                                                           'seawater_temperature_qartod_results')
-    #ds['seawater_conductivity'].attrs['ancillary_variables'] = ('raw_seawater_conductivity '
-    #                                                            'seawater_conductivity_qc_executed '
-    #                                                            'seawater_conductivity_qc_results '
-    #                                                            'seawater_conductivity_qartod_executed '
-    #                                                            'seawater_conductivity_qartod_results')
-    #ds['seawater_pressure'].attrs['ancillary_variables'] = ('raw_seawater_pressure raw_pressure_temperature '
-    #                                                        'seawater_pressure_qc_executed '
-    #                                                        'seawater_pressure_qc_results'
-    #                                                        'seawater_pressure_qartod_executed '
-    #                                                        'seawater_pressure_qartod_results')
-    #ds['practical_salinity'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature '
-    #                                                         'seawater_pressure practical_salinity_qc_executed '
-    #                                                         'practical_salinity_qc_results '
-    #                                                         'practical_salinity_qartod_executed '
-    #                                                         'practical_salinity_qartod_results')
-    #ds['density'].attrs['ancillary_variables'] = ('seawater_conductivity seawater_temperature seawater_pressure '
-    #                                              'lat lon density_qc_executed density_qc_results')
-
     if burst:   # re-sample the data to a defined time interval using a median average
         # create the burst averaging
-        burst = ds
-        burst = burst.resample(time='900s', base=3150, loffset='450s', keep_attrs=True, skipna=True).median()
+        ds['time'] = ds['time'] + np.timedelta64(450, 's')
+        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
         burst = burst.where(~np.isnan(burst.deployment), drop=True)
 
         # reset the attributes...which keep_attrs should do...
@@ -219,7 +148,7 @@ def ctdbp_instrument(ds, burst=False):
             burst[v].attrs = ds[v].attrs
 
         # save the newly average data
-        ds = burst
+        ds = burst.copy()
 
     return ds
 

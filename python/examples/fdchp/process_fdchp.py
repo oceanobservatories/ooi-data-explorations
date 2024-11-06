@@ -190,9 +190,9 @@ def process_fdchp(raw_data, latitude, anemometer_relative_position, tc1=20, tcwa
     Ts = detrend(Ts)
 
     fluxes = np.zeros(3)
-    uwavg = np.mean(u[0:tot, 2]*u[0:tot, 0]) #TODO: check 
-    vwavg = np.mean(u[0:tot, 2]*u[0:tot, 1])
-    wTavg = np.mean(u[0:tot, 2]*Ts)
+    uwavg = np.mean(u[0:tot, 2]*u[0:tot, 0]) # Along-Wind component of momentum flux
+    vwavg = np.mean(u[0:tot, 2]*u[0:tot, 1]) # Cross-Wind component of momentum flux
+    wTavg = np.mean(u[0:tot, 2]*Ts) # Heat flux (vertical velocity times temp)
     #JBE Fixed a bug here by replacing mean with std
 
     Ucorstd = np.std(u[0:tot, 0])

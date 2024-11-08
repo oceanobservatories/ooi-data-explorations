@@ -1,19 +1,56 @@
-function annotations = get_annotations(site, node, sensor)
-% GET_ANNOTATIONS Based on the site, node and sensor name download the
-% annotation records associated with this sensor.
+function annotations = get_annotations(site, varargin)
+% GET_ANNOTATIONS Based on the site, node and sensor names.
 %
-%   Uses the site, node and sensor designators to obtain the annotation records
-%   for the instrument. The annotations represent the HITL QC efforts on the
-%   part of the OOI data teams, and as such provide a great deal of valuable
-%   information about the instrument of interest.
+%   Uses the site, node and sensor names to obtain the annotation records
+%   for the instrument. Any request based on the site only, the site +
+%   node, or the site + node + sensor will work, allowing the user to
+%   request annotations in granular fashion for the site, node, sensor of
+%   interest.
 %
-% C. Wingard, 2020-02-12
+%   The annotations represent the HITL QC efforts on the part of the OOI
+%   data teams, and as such provide a great deal of valuable information
+%   about the instrument of interest.
+%
+%   Examples:
+%
+%   % All annotations for the site CE01ISSP
+%   annotations = get_annotations('CE01ISSP');  
+%
+%   % All annotations for the site CE01ISSP and the node SP001
+%   annotations = get_annotations('CE01ISSP', 'SP001');  
+%
+%   % All annotations for the site CE01ISSP, the node 'SP001', and the
+%   sensor '09-CTDPFJ000'.
+%   annotations = get_annotations('CE01ISSP', 'SP001', '09-CTDPFJ');
+%
+%   Note, the order of the site, node and sensor is important, and reflects
+%   how the reference designators are constructed. If your request fails,
+%   make sure you are properly structuring the request (use examples above,
+%   which should work).
+%
+% C. Wingard, 2020-02-12 -- Original code
+% C. Wingard, 2024-08-26 -- Updated to allow for granular requests
 
 % load the default names and access credentials
 ooinet_defaults
 
-% request a list of the nodes that are available
-annos = webread([BASE_URL ANNO_URL 'find?beginDT=0&refdes=' upper(site) '-' upper(node) '-' upper(sensor)], options);
+% request the annotations based on either the site, the site and node, or
+% the site, node and sensor
+switch length(varargin)
+    case 0
+        annos = webread([BASE_URL ANNO_URL 'find?beginDT=0&refdes=' upper(site)], options);
+    case 1
+        node = varargin{1};
+        annos = webread([BASE_URL ANNO_URL 'find?beginDT=0&refdes=' upper(site) '-' upper(node)], options);
+    case 2
+        node = varargin{1};
+        sensor = varargin{2};
+        annos = webread([BASE_URL ANNO_URL 'find?beginDT=0&refdes=' upper(site) '-' upper(node) '-' upper(sensor)], options);
+    otherwise
+        error 'Incorrect numberof input arguements';
+end %switch
+
+% set up the annotations table
 varNames = {'id', 'subsite', 'node', 'sensor', 'stream', 'method', ...
     'parameters', 'beginDate', 'endDate', 'exclusionFlag', 'qcFlag', ...
     'source', 'annotation'};

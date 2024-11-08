@@ -261,9 +261,10 @@ def phsen_datalogger(ds):
         'ph_seawater_qc_executed': 'seawater_ph_qc_executed',
         'ph_seawater_qc_results': 'seawater_ph_qc_results',
     }
-    for key in rename.keys():
+    for key, value in rename.items():
         if key in ds.variables:
-            ds = ds.rename({key: rename.get(key)})
+            ds = ds.rename({key: value})
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # now we need to reset the light and reference arrays to named variables that will be more meaningful and useful in
     # the final data files
@@ -300,8 +301,8 @@ def phsen_datalogger(ds):
     ds = ds.drop(['reference_light_measurements_dim_0', 'spectrum', 'light_measurements',
                   'reference_light_measurements'])
 
-    # these two dimensional variables may or may not be present depending on how the data was requested.
-    # remove them if they do exist so we can merge different data sets together
+    # these two-dimensional variables may or may not be present depending on how the data was requested.
+    # remove them if they do exist, so we can merge different data sets together
     maybe = ['phsen_abcdef_signal_intensity_434_dim_0', 'phsen_abcdef_signal_intensity_578_dim_0']
     for k, v in ds.dims.items():
         if k in maybe:
@@ -318,10 +319,6 @@ def phsen_datalogger(ds):
         for atk, atv in value.items():
             if key in ds.variables:
                 ds[key].attrs[atk] = atv
-
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
 
     # and reset some of the data types
     data_types = ['deployment', 'raw_thermistor_end', 'raw_thermistor_start', 'unique_id', 'raw_battery_voltage']
@@ -359,9 +356,11 @@ def phsen_instrument(ds):
         'ph_seawater_qc_executed': 'seawater_ph_qc_executed',
         'ph_seawater_qc_results': 'seawater_ph_qc_results'
     }
-    for key in rename.keys():
+    # add the original variable name as an attribute, if renamed
+    for key, value in rename.items():
         if key in ds.variables:
             ds = ds.rename({key: rename.get(key)})
+            ds[value].attrs['ooinet_variable_name'] = key
 
     # now we need to reset the light and reference arrays to named variables that will be more meaningful and useful in
     # the final data files
@@ -398,8 +397,8 @@ def phsen_instrument(ds):
     ds = ds.drop(['light_measurements', 'reference_light_measurements', 'spectrum',
                   'reference_light_measurements_dim_0'])
 
-    # these two dimensional variables may or may not be present depending on how the data was requested.
-    # remove them if they do exist so we can merge different data sets together
+    # these two-dimensional variables may or may not be present depending on how the data was requested.
+    # remove them if they do exist, so we can merge different data sets together
     maybe = ['phsen_abcdef_signal_intensity_434_dim_0', 'phsen_abcdef_signal_intensity_578_dim_0']
     for k, v in ds.dims.items():
         if k in maybe:
@@ -416,10 +415,6 @@ def phsen_instrument(ds):
         for atk, atv in value.items():
             if key in ds.variables:
                 ds[key].attrs[atk] = atv
-
-    # add the original variable name as an attribute, if renamed
-    for key, value in rename.items():
-        ds[value].attrs['ooinet_variable_name'] = key
 
     # and reset some of the data types
     data_types = ['deployment', 'raw_thermistor_end', 'raw_thermistor_start', 'raw_battery_voltage']
@@ -529,7 +524,7 @@ def phsen_imodem(ds):
 
 
 def main(argv=None):
-    # setup the input arguments
+    # set up the input arguments
     args = inputs(argv)
     site = args.site
     node = args.node

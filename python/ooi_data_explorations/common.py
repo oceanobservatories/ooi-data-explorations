@@ -25,7 +25,7 @@ import pandas as pd
 
 from bs4 import BeautifulSoup
 from collections.abc import Mapping
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime, timezone
 from functools import partial
 from requests.adapters import HTTPAdapter
@@ -41,9 +41,8 @@ retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 SESSION.mount('https://', adapter)
 
-# set up constants used in parallel and multithreading processing
-N_CORES = min(16, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
-N_THREADS = os.cpu_count()  # number of threads to use for multithreading operations (1 per core)
+# set up constants used in parallel processing
+N_CORES = min(10, int(os.cpu_count() / 2) - 1)  # number of physical cores to use for parallel processing
 
 # set the base URL for the M2M interface
 BASE_URL = 'https://ooinet.oceanobservatories.org/api/m2m/'  # base M2M URL
@@ -111,6 +110,12 @@ class InputError(Error):
     def __init__(self, message):
         self.message = message
 
+def convert_time(ms):
+    """Calculate UTC timestamp from OOI milliseconds"""
+    if ms is None:
+        return None
+    else:
+        return datetime.utcfromtimestamp(ms/1000)
 
 # Sensor Information
 def list_sites():
@@ -356,17 +361,40 @@ def get_deployment_dates(site, node, sensor, deploy):
 
 
 # Calibration Information
-def get_calibrations_by_uid(uid):
+def get_calibrations_by_uid(uid, to_dataframe=False):
     """
     Returns all calibration information for a given unique asset identifier or
     UID. Results are interchangeable with get_calibrations_by_asset_id.
 
     :param uid: unique asset identifier (UID), e.g. CGINS-DOSTAD-00134
+    :param to_dataframe: convert the calibration json object to a pandas
+        dataframe (Optional, default is False)
     :return: calibration information for the identified UID
     """
     r = SESSION.get(BASE_URL + ASSET_URL + '/cal?uid=' + uid, auth=(AUTH[0], AUTH[2]))
     if r.status_code == requests.codes.ok:
-        return r.json()
+        if not to_dataframe:
+            return r.json()
+        else:
+            calInfo = r.json()
+            # Convert the json object to a pandas dataframe
+            calibrations = None
+            for c in calInfo["calibration"]:
+                for cc in c["calData"]:
+                    calDict = {
+                        "uid": [cc["assetUid"]],
+                        "calCoef": [cc["eventName"]],
+                        "calDate": [convert_time(cc["eventStartTime"])],
+                        "value": [cc["value"]],
+                        "calFile": [cc["dataSource"]]
+                    }
+                    caldf = pd.DataFrame(calDict)
+                    if calibrations is None:
+                        calibrations = caldf
+                    else:
+                        calibrations = pd.concat([calibrations, caldf], ignore_index=True)
+            calibrations.sort_values(by=["calDate", "calCoef"], inplace=True)
+            return calibrations
     else:
         return None
 
@@ -386,7 +414,7 @@ def get_calibrations_by_asset_id(asset_id):
         return None
 
 
-def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
+def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None, to_dataframe=False):
     """
     Returns a list of deployments with calibration information for the
     reference designator specified by the site, node and sensor names.
@@ -400,6 +428,8 @@ def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
         of record)
     :param stop: Stop time for data request (Optional, default is through the
         end of the record)
+    :param to_dataframe: Converts the returned json object into a pandas
+        dataframe (Optional, default is False)
     :return: calibration information for sensor(s) deployed at the specified
         reference designator
     """
@@ -414,7 +444,32 @@ def get_calibrations_by_refdes(site, node, sensor, start=None, stop=None):
             'You must specify both start and stop time, or leave both of those fields empty.')
 
     if r.status_code == requests.codes.ok:
-        return r.json()
+        if not to_dataframe:
+            return r.json()
+        else:
+            # Convert to a dataframe and return the dataframe
+            calInfo = r.json()
+            calibrations = None
+            for cal in calInfo:
+                deploy_num = cal["deploymentNumber"]
+                for c in cal["sensor"]['calibration']:
+                    for cc in c["calData"]:
+                        calDict = {
+                            "deploymentNumber": [deploy_num],
+                            "uid": [cc["assetUid"]],
+                            "calCoef": [cc["eventName"]],
+                            "calDate": [convert_time(cc["eventStartTime"])],
+                            "value": [cc["value"]],
+                            "calFile": [cc["dataSource"]]
+                        }
+                        caldf = pd.DataFrame(calDict)
+                        if calibrations is None:
+                            calibrations = caldf
+                        else:
+                            calibrations = pd.concat([calibrations, caldf], ignore_index=True)
+            calibrations.sort_values(by=["calDate", "calCoef"], inplace=True)
+            calibrations = calibrations.reset_index(drop=True)
+            return calibrations
     else:
         return None
 
@@ -691,16 +746,17 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
 
     # Process the data files found above and concatenate into a single data set
     print('Downloading %d data file(s) from the user''s OOI M2M THREDDS catalog' % len(files))
-    if len(files) < 4:
-        # just 1 to 3 files, download sequentially
+    if len(files) <= 5:
+        # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='M2M', use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
-                                                                                               'Processing Data Files')]
+                                                                                               'Processing the Data '
+                                                                                               'Files')]
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='M2M', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=N_THREADS) as executor:
+        with ProcessPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
-                               desc='Downloading and Processing Data Files', file=sys.stdout))
+                               desc='Downloading and Processing the Data Files', file=sys.stdout))
 
     if not frames:
         message = 'No data files were downloaded from the user''s M2M THREDDS server.'
@@ -708,9 +764,11 @@ def m2m_collect(data, tag='.*\\.nc$', use_dask=False):
         return None
 
     # merge the data frames into a single data set
-    m2m = merge_frames(frames)
+    print('Merging the data files into a single dataset')
+    data = merge_frames(frames)
+    del frames
 
-    return m2m
+    return data
 
 
 def load_gc_thredds(site, node, sensor, method, stream, tag='.*\\.nc$', use_dask=False):
@@ -756,7 +814,7 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
     :return gc: the collected Gold Copy data as a xarray dataset
     """
     # construct the THREDDS catalog URL based on the dataset ID
-    gc_url = 'http://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/'
+    gc_url = 'https://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/'
     url = gc_url + dataset_id
 
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
@@ -764,17 +822,17 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the OOI Gold Copy THREDSS catalog' % len(files))
-    if len(files) < 4:
-        # just 1 to 3 files, download sequentially
+    if len(files) <= 5:
+        # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='GC', use_dask=use_dask) for file in tqdm(files, desc='Downloading and '
-                                                                                              'Processing Data '
+                                                                                              'Processing the Data '
                                                                                               'Files')]
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='GC', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=N_THREADS) as executor:
+        with ProcessPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
-                               desc='Downloading and Processing Data Files', file=sys.stdout))
+                               desc='Downloading and Processing the Data Files', file=sys.stdout))
 
     if not frames:
         message = "No data files were downloaded from the Gold Copy THREDDS server."
@@ -782,7 +840,9 @@ def gc_collect(dataset_id, tag='.*\\.nc$', use_dask=False):
         return None
 
     # merge the data frames into a single data set
+    print('Merging the data files into a single dataset')
     data = merge_frames(frames)
+    del frames
 
     return data
 
@@ -838,15 +898,15 @@ def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the local kdata directory' % len(files))
-    if len(files) < 4:
-        # just 1 to 3 files, download sequentially
+    if len(files) <= 5:
+        # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='KDATA', use_dask=use_dask) for file in tqdm(files, desc='Loading and '
                                                                                                  'Processing Data '
                                                                                                  'Files')]
     else:
         # multiple files, use multithreading to download concurrently
         part_files = partial(process_file, gc='KDATA', use_dask=use_dask)
-        with ThreadPoolExecutor(max_workers=min(8, int(os.cpu_count() / 4))) as executor:
+        with ProcessPoolExecutor(max_workers=N_CORES) as executor:
             frames = list(tqdm(executor.map(part_files, files), total=len(files),
                                desc='Loading and Processing Data Files', file=sys.stdout))
 
@@ -856,7 +916,9 @@ def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
         return None
 
     # merge the data frames into a single data set
+    print('Merging the data files into a single dataset')
     data = merge_frames(frames)
+    del frames
 
     return data
 
@@ -911,7 +973,7 @@ def process_file(catalog_file, gc=None, use_dask=False):
             else:
                 # use the user's M2M THREDDS server
                 dods_url = 'https://opendap.oceanobservatories.org/thredds/fileServer/'
-            url = re.sub('catalog.html\?dataset=', dods_url, catalog_file)
+            url = re.sub(r'catalog.html\?dataset=', dods_url, catalog_file)
             r = SESSION.get(url, timeout=(3.05, 120))
             if r.ok:
                 data = io.BytesIO(r.content)
@@ -944,8 +1006,8 @@ def process_file(catalog_file, gc=None, use_dask=False):
         if 'units' in ds[v].attrs.keys():
             if isinstance(ds[v].attrs['units'], str):  # because some units use non-standard characters...
                 if time_pattern.match(ds[v].attrs['units']):
-                    del(ds[v].attrs['_FillValue'])  # no fill values for time!
-                    ds[v].attrs['units'] = 'seconds since 1900-01-01T00:00:00.000Z'
+                    del (ds[v].attrs['_FillValue'])  # no fill values for time!
+                    del (ds[v].attrs['units'])       # time units are set via the encoding
                     ds[v].encoding = {'_FillValue': None, 'units': 'seconds since 1900-01-01T00:00:00.000Z'}
                     np_time = ntp_date + (ds[v] * 1e9).astype('timedelta64[ns]')
                     ds[v] = np_time
@@ -957,7 +1019,7 @@ def process_file(catalog_file, gc=None, use_dask=False):
     keys = ['DODS.strlen', 'DODS.dimName', 'DODS_EXTRA.Unlimited_Dimension', '_NCProperties', 'feature_Type']
     for key in keys:
         if key in ds.attrs:
-            del(ds.attrs[key])
+            del (ds.attrs[key])
 
     if ds.encoding['unlimited_dims']:
         del ds.encoding['unlimited_dims']
@@ -1086,8 +1148,8 @@ def update_dataset(ds, depth):
         else:
             lat = ds.attrs['lat'][0]
             lon = ds.attrs['lon'][0]
-        del(ds.attrs['lat'])
-        del(ds.attrs['lon'])
+        del (ds.attrs['lat'])
+        del (ds.attrs['lon'])
 
     # use depth, if available, to set the vertical coordinate
     if 'depth' in ds.variables:
@@ -1185,7 +1247,7 @@ def update_dataset(ds, depth):
                 ds[v] = ds[v].astype(np.uint8)
                 ds[v].attrs['flag_masks'] = flag_masks
                 ds[v].attrs['flag_meanings'] = ('global_range_test local_range_test spike_test poly_trend_test '
-                                                'stuck_value_test gradient_test undefined propogate_flags')
+                                                'stuck_value_test gradient_test undefined propagate_flags')
                 ds[v].attrs['comment'] = 'Automated QC tests executed for the associated named variable.'
                 ds[v].attrs['standard_name'] = 'quality_flag'
 

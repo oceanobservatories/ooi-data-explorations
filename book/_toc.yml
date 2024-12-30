@@ -1,0 +1,10 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+chapters:
+- file: ProcessFdchpRaw.ipynb
+- file: carbonate_climatologies.ipynb
+- file: m2m_explorations.ipynb
+- file: PCO2_Calculations.ipynb

@@ -3,6 +3,7 @@ import datetime
 import numpy as np
 import pandas as pd
 from mi.dataset.parser.fdchp_a import FdchpADataParticle, FdchpAParser
+
 from scipy import integrate, interpolate
 from scipy.signal import detrend, filtfilt
 
@@ -33,6 +34,8 @@ def read_file_to_pandas(file_path, convert_to_nwu=True):
             particle = parser.get_records()
     if data:
         df = pd.DataFrame(data)
+    else:
+        df = None
     if df is not None:
         df['time'] = df.apply(lambda row: datetime.datetime( int(row.year), int(row.month), int(row.day), int(row.hour), int(row.minute), int(row.second), int(row.millisecond)*1000), axis=1)
         

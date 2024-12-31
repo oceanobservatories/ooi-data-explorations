@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -63,7 +63,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'carbonate_climatologies';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Accessing OOI Data and Metadata through the M2M API" href="m2m_explorations.html" />
+    <link rel="next" title="Assessing the pCO2 Data for the CE01ISSM-00011 7 m Platform (NSIF)" href="PCO2_Calculations.html" />
     <link rel="prev" title="FDCHP Data Processing" href="ProcessFdchpRaw.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -169,9 +169,9 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessFdchpRaw.html">FDCHP Data Processing</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Carbonate Climatologies Using PCO2a Sensor Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCO2_Calculations.html">Assessing the pCO2 Data for the CE01ISSM-00011 7 m Platform (NSIF)</a></li>
 </ul>
 
@@ -434,6 +434,15 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Uncomment and run the following pip commands if the above imports fail</span>
+<span class="c1">#pip install -r requirements.txt</span>
+<span class="c1">#pip install -e ../python</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ooi_data_explorations.qartod.climatology</span> <span class="kn">import</span> <span class="n">Climatology</span>
 <span class="n">clm</span> <span class="o">=</span> <span class="n">Climatology</span><span class="p">()</span>
 </pre></div>
@@ -570,7 +579,9 @@ for further analysis.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>### Downloading the PCO2A data from CE02SHSM ###
-### -- Downloading the telemetered data
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>### -- Downloading the telemetered data
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading 740 data file(s) from the OOI Gold Copy THREDSS catalog
@@ -579,700 +590,289 @@ for further analysis.</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   0%|                                                                                                                                                                                                                              | 0/740 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   0%|▎                                                                                                                                                                                                                     | 1/740 [00:00&lt;10:12,  1.21it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   0%|▎                                                                                                                                                                                                                     | 1/740 [00:00&lt;10:31,  1.17it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   1%|███▏                                                                                                                                                                                                                 | 11/740 [00:01&lt;01:33,  7.79it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   1%|██▌                                                                                                                                                                                                                   | 9/740 [00:01&lt;01:02, 11.62it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   3%|██████                                                                                                                                                                                                               | 21/740 [00:02&lt;00:56, 12.82it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   2%|███▋                                                                                                                                                                                                                 | 13/740 [00:01&lt;01:22,  8.85it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   3%|██████▉                                                                                                                                                                                                              | 24/740 [00:02&lt;00:49, 14.37it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   3%|██████                                                                                                                                                                                                               | 21/740 [00:02&lt;01:03, 11.40it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   4%|████████▉                                                                                                                                                                                                            | 31/740 [00:02&lt;00:49, 14.34it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   4%|████████▎                                                                                                                                                                                                            | 29/740 [00:02&lt;00:39, 18.09it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   4%|█████████▍                                                                                                                                                                                                           | 33/740 [00:02&lt;00:47, 14.75it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   5%|█████████▊                                                                                                                                                                                                           | 34/740 [00:02&lt;00:49, 14.15it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   6%|███████████▊                                                                                                                                                                                                         | 41/740 [00:03&lt;00:46, 14.99it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   6%|███████████▊                                                                                                                                                                                                         | 41/740 [00:03&lt;00:49, 14.12it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   6%|████████████▋                                                                                                                                                                                                        | 44/740 [00:03&lt;00:42, 16.50it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   6%|█████████████▏                                                                                                                                                                                                       | 46/740 [00:03&lt;00:39, 17.45it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   7%|██████████████▋                                                                                                                                                                                                      | 51/740 [00:03&lt;00:44, 15.60it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   7%|██████████████▋                                                                                                                                                                                                      | 51/740 [00:03&lt;00:47, 14.49it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   7%|███████████████▎                                                                                                                                                                                                     | 53/740 [00:04&lt;00:45, 15.13it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   7%|███████████████▌                                                                                                                                                                                                     | 54/740 [00:04&lt;00:43, 15.91it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   8%|████████████████▉                                                                                                                                                                                                    | 59/740 [00:04&lt;00:32, 20.90it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   8%|█████████████████▎                                                                                                                                                                                                   | 60/740 [00:04&lt;00:32, 21.04it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   8%|█████████████████▊                                                                                                                                                                                                   | 62/740 [00:04&lt;00:44, 15.17it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   9%|██████████████████▍                                                                                                                                                                                                  | 64/740 [00:04&lt;00:43, 15.40it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   9%|███████████████████▌                                                                                                                                                                                                 | 68/740 [00:04&lt;00:32, 20.72it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   9%|████████████████████▏                                                                                                                                                                                                | 70/740 [00:04&lt;00:33, 19.71it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  10%|████████████████████▋                                                                                                                                                                                                | 72/740 [00:05&lt;00:45, 14.84it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  10%|█████████████████████▎                                                                                                                                                                                               | 74/740 [00:05&lt;00:44, 15.02it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  10%|█████████████████████▌                                                                                                                                                                                               | 75/740 [00:05&lt;00:40, 16.60it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  11%|██████████████████████▍                                                                                                                                                                                              | 78/740 [00:05&lt;00:39, 16.87it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  11%|███████████████████████                                                                                                                                                                                              | 80/740 [00:05&lt;00:41, 15.95it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  11%|███████████████████████▎                                                                                                                                                                                             | 81/740 [00:05&lt;00:47, 13.95it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  11%|███████████████████████▉                                                                                                                                                                                             | 83/740 [00:05&lt;00:42, 15.41it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  11%|███████████████████████▉                                                                                                                                                                                             | 83/740 [00:05&lt;00:44, 14.71it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  12%|█████████████████████████▉                                                                                                                                                                                           | 90/740 [00:06&lt;00:43, 14.79it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  12%|█████████████████████████▎                                                                                                                                                                                           | 88/740 [00:05&lt;00:32, 19.88it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  12%|██████████████████████████▍                                                                                                                                                                                          | 92/740 [00:06&lt;00:43, 14.76it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  12%|██████████████████████████▏                                                                                                                                                                                          | 91/740 [00:06&lt;00:45, 14.28it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  14%|████████████████████████████▋                                                                                                                                                                                       | 100/740 [00:06&lt;00:38, 16.46it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  13%|███████████████████████████                                                                                                                                                                                          | 94/740 [00:06&lt;00:39, 16.29it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  14%|█████████████████████████████▏                                                                                                                                                                                      | 102/740 [00:07&lt;00:41, 15.30it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  13%|████████████████████████████▏                                                                                                                                                                                        | 98/740 [00:06&lt;00:31, 20.15it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  15%|███████████████████████████████▌                                                                                                                                                                                    | 110/740 [00:07&lt;00:37, 16.60it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  14%|████████████████████████████▉                                                                                                                                                                                       | 101/740 [00:06&lt;00:44, 14.28it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  15%|████████████████████████████████                                                                                                                                                                                    | 112/740 [00:07&lt;00:38, 16.27it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  14%|█████████████████████████████▊                                                                                                                                                                                      | 104/740 [00:07&lt;00:41, 15.36it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  16%|██████████████████████████████████                                                                                                                                                                                  | 119/740 [00:07&lt;00:26, 23.54it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  15%|███████████████████████████████▏                                                                                                                                                                                    | 109/740 [00:07&lt;00:31, 20.03it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  17%|███████████████████████████████████▏                                                                                                                                                                                | 123/740 [00:08&lt;00:39, 15.70it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  15%|████████████████████████████████                                                                                                                                                                                    | 112/740 [00:07&lt;00:45, 13.72it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  17%|████████████████████████████████████▉                                                                                                                                                                               | 129/740 [00:08&lt;00:33, 18.31it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  16%|█████████████████████████████████▊                                                                                                                                                                                  | 118/740 [00:07&lt;00:31, 19.94it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  18%|█████████████████████████████████████▊                                                                                                                                                                              | 132/740 [00:08&lt;00:41, 14.74it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  16%|██████████████████████████████████▉                                                                                                                                                                                 | 122/740 [00:08&lt;00:44, 13.74it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  19%|███████████████████████████████████████▊                                                                                                                                                                            | 139/740 [00:09&lt;00:36, 16.59it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  17%|████████████████████████████████████▉                                                                                                                                                                               | 129/740 [00:08&lt;00:32, 18.71it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  19%|████████████████████████████████████████▋                                                                                                                                                                           | 142/740 [00:09&lt;00:40, 14.80it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  18%|█████████████████████████████████████▊                                                                                                                                                                              | 132/740 [00:08&lt;00:42, 14.41it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  20%|██████████████████████████████████████████▋                                                                                                                                                                         | 149/740 [00:09&lt;00:38, 15.39it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  18%|██████████████████████████████████████▋                                                                                                                                                                             | 135/740 [00:14&lt;04:34,  2.20it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  20%|███████████████████████████████████████████▎                                                                                                                                                                        | 151/740 [00:09&lt;00:38, 15.48it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  29%|█████████████████████████████████████████████████████████████▌                                                                                                                                                      | 215/740 [00:14&lt;00:25, 20.34it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  21%|████████████████████████████████████████████▍                                                                                                                                                                       | 155/740 [00:10&lt;00:32, 17.93it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  31%|██████████████████████████████████████████████████████████████████▍                                                                                                                                                 | 232/740 [00:15&lt;00:26, 19.13it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  21%|█████████████████████████████████████████████▌                                                                                                                                                                      | 159/740 [00:10&lt;00:36, 15.80it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  33%|██████████████████████████████████████████████████████████████████████▏                                                                                                                                             | 245/740 [00:16&lt;00:26, 18.98it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  22%|██████████████████████████████████████████████                                                                                                                                                                      | 161/740 [00:10&lt;00:36, 15.71it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  34%|█████████████████████████████████████████████████████████████████████████                                                                                                                                           | 255/740 [00:16&lt;00:26, 18.14it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  22%|███████████████████████████████████████████████▎                                                                                                                                                                    | 165/740 [00:10&lt;00:30, 18.88it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  35%|███████████████████████████████████████████████████████████████████████████                                                                                                                                         | 262/740 [00:17&lt;00:27, 17.57it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  23%|████████████████████████████████████████████████▍                                                                                                                                                                   | 169/740 [00:11&lt;00:35, 15.93it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  36%|████████████████████████████████████████████████████████████████████████████▊                                                                                                                                       | 268/740 [00:17&lt;00:26, 17.97it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  23%|████████████████████████████████████████████████▉                                                                                                                                                                   | 171/740 [00:11&lt;00:38, 14.83it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  37%|██████████████████████████████████████████████████████████████████████████████▏                                                                                                                                     | 273/740 [00:17&lt;00:26, 17.45it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  24%|██████████████████████████████████████████████████▋                                                                                                                                                                 | 177/740 [00:11&lt;00:25, 21.89it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  37%|███████████████████████████████████████████████████████████████████████████████▎                                                                                                                                    | 277/740 [00:18&lt;00:28, 16.01it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  24%|███████████████████████████████████████████████████▌                                                                                                                                                                | 180/740 [00:11&lt;00:40, 13.86it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  38%|████████████████████████████████████████████████████████████████████████████████▌                                                                                                                                   | 281/740 [00:18&lt;00:26, 17.05it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  25%|████████████████████████████████████████████████████▋                                                                                                                                                               | 184/740 [00:12&lt;00:37, 14.75it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  38%|█████████████████████████████████████████████████████████████████████████████████▎                                                                                                                                  | 284/740 [00:18&lt;00:24, 18.24it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  26%|██████████████████████████████████████████████████████▏                                                                                                                                                             | 189/740 [00:12&lt;00:32, 17.13it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  39%|██████████████████████████████████████████████████████████████████████████████████▏                                                                                                                                 | 287/740 [00:18&lt;00:26, 16.97it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  26%|███████████████████████████████████████████████████████                                                                                                                                                             | 192/740 [00:12&lt;00:33, 16.57it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  39%|███████████████████████████████████████████████████████████████████████████████████                                                                                                                                 | 290/740 [00:18&lt;00:28, 15.95it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  26%|███████████████████████████████████████████████████████▌                                                                                                                                                            | 194/740 [00:12&lt;00:33, 16.11it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  40%|████████████████████████████████████████████████████████████████████████████████████▏                                                                                                                               | 294/740 [00:19&lt;00:24, 18.34it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  27%|████████████████████████████████████████████████████████▋                                                                                                                                                           | 198/740 [00:12&lt;00:31, 17.07it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  40%|█████████████████████████████████████████████████████████████████████████████████████                                                                                                                               | 297/740 [00:19&lt;00:27, 16.36it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  27%|█████████████████████████████████████████████████████████▎                                                                                                                                                          | 200/740 [00:12&lt;00:36, 14.82it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  40%|█████████████████████████████████████████████████████████████████████████████████████▋                                                                                                                              | 299/740 [00:19&lt;00:28, 15.42it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  28%|██████████████████████████████████████████████████████████▍                                                                                                                                                         | 204/740 [00:13&lt;00:29, 17.89it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  41%|██████████████████████████████████████████████████████████████████████████████████████▌                                                                                                                             | 302/740 [00:19&lt;00:25, 16.93it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  28%|███████████████████████████████████████████████████████████                                                                                                                                                         | 206/740 [00:13&lt;00:29, 18.05it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  41%|███████████████████████████████████████████████████████████████████████████████████████▋                                                                                                                            | 306/740 [00:19&lt;00:27, 16.02it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  28%|███████████████████████████████████████████████████████████▌                                                                                                                                                        | 208/740 [00:13&lt;00:41, 12.93it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  42%|████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                                           | 308/740 [00:20&lt;00:28, 15.19it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  29%|█████████████████████████████████████████████████████████████                                                                                                                                                       | 213/740 [00:13&lt;00:28, 18.41it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  42%|████████████████████████████████████████████████████████████████████████████████████████▊                                                                                                                           | 310/740 [00:20&lt;00:29, 14.55it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  29%|█████████████████████████████████████████████████████████████▉                                                                                                                                                      | 216/740 [00:13&lt;00:28, 18.64it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  43%|██████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                                         | 315/740 [00:20&lt;00:20, 21.03it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  30%|██████████████████████████████████████████████████████████████▋                                                                                                                                                     | 219/740 [00:14&lt;00:41, 12.65it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  43%|███████████████████████████████████████████████████████████████████████████████████████████                                                                                                                         | 318/740 [00:20&lt;00:29, 14.19it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  30%|████████████████████████████████████████████████████████████████▏                                                                                                                                                   | 224/740 [00:14&lt;00:28, 18.07it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  43%|███████████████████████████████████████████████████████████████████████████████████████████▉                                                                                                                        | 321/740 [00:20&lt;00:26, 16.04it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  31%|█████████████████████████████████████████████████████████████████                                                                                                                                                   | 227/740 [00:14&lt;00:27, 18.50it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  44%|█████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                                      | 326/740 [00:21&lt;00:25, 16.20it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  31%|█████████████████████████████████████████████████████████████████▉                                                                                                                                                  | 230/740 [00:14&lt;00:34, 14.73it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  44%|█████████████████████████████████████████████████████████████████████████████████████████████▉                                                                                                                      | 328/740 [00:21&lt;00:31, 13.18it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  31%|██████████████████████████████████████████████████████████████████▊                                                                                                                                                 | 233/740 [00:14&lt;00:31, 16.21it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  45%|███████████████████████████████████████████████████████████████████████████████████████████████▉                                                                                                                    | 335/740 [00:21&lt;00:18, 21.67it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  32%|███████████████████████████████████████████████████████████████████▉                                                                                                                                                | 237/740 [00:15&lt;00:27, 18.35it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  46%|█████████████████████████████████████████████████████████████████████████████████████████████████                                                                                                                   | 339/740 [00:27&lt;03:08,  2.13it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  32%|████████████████████████████████████████████████████████████████████▊                                                                                                                                               | 240/740 [00:15&lt;00:33, 15.15it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  51%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                       | 378/740 [00:35&lt;01:29,  4.03it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  33%|█████████████████████████████████████████████████████████████████████▎                                                                                                                                              | 242/740 [00:15&lt;00:34, 14.32it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  72%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                            | 531/740 [00:35&lt;00:09, 21.72it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  33%|██████████████████████████████████████████████████████████████████████▏                                                                                                                                             | 245/740 [00:15&lt;00:29, 16.86it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  77%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                | 571/740 [00:37&lt;00:08, 20.27it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  34%|███████████████████████████████████████████████████████████████████████                                                                                                                                             | 248/740 [00:15&lt;00:28, 17.18it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  81%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                        | 599/740 [00:39&lt;00:07, 19.29it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  34%|███████████████████████████████████████████████████████████████████████▌                                                                                                                                            | 250/740 [00:15&lt;00:30, 16.02it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  84%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                  | 620/740 [00:40&lt;00:06, 18.46it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  34%|████████████████████████████████████████████████████████████████████████▏                                                                                                                                           | 252/740 [00:16&lt;00:32, 15.05it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  86%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                              | 635/740 [00:41&lt;00:05, 18.18it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  34%|████████████████████████████████████████████████████████████████████████▊                                                                                                                                           | 254/740 [00:16&lt;00:30, 15.71it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  87%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                           | 646/740 [00:42&lt;00:05, 17.87it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  35%|█████████████████████████████████████████████████████████████████████████▋                                                                                                                                          | 257/740 [00:16&lt;00:30, 16.07it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  88%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                        | 654/740 [00:42&lt;00:04, 17.84it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  35%|██████████████████████████████████████████████████████████████████████████▏                                                                                                                                         | 259/740 [00:16&lt;00:31, 15.07it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  89%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                      | 661/740 [00:43&lt;00:04, 17.25it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  35%|███████████████████████████████████████████████████████████████████████████                                                                                                                                         | 262/740 [00:16&lt;00:29, 16.18it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                     | 666/740 [00:43&lt;00:04, 17.51it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  36%|███████████████████████████████████████████████████████████████████████████▉                                                                                                                                        | 265/740 [00:16&lt;00:25, 18.59it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  91%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                    | 670/740 [00:43&lt;00:04, 17.11it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  36%|████████████████████████████████████████████████████████████████████████████▍                                                                                                                                       | 267/740 [00:17&lt;00:35, 13.36it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  91%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                   | 674/740 [00:44&lt;00:03, 16.96it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  37%|█████████████████████████████████████████████████████████████████████████████▉                                                                                                                                      | 272/740 [00:17&lt;00:27, 16.93it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  91%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                  | 677/740 [00:44&lt;00:03, 17.65it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  37%|██████████████████████████████████████████████████████████████████████████████▊                                                                                                                                     | 275/740 [00:17&lt;00:27, 16.88it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  92%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                 | 680/740 [00:44&lt;00:03, 16.71it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  37%|███████████████████████████████████████████████████████████████████████████████▎                                                                                                                                    | 277/740 [00:17&lt;00:27, 16.65it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  92%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                | 683/740 [00:44&lt;00:03, 15.02it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  38%|███████████████████████████████████████████████████████████████████████████████▉                                                                                                                                    | 279/740 [00:17&lt;00:27, 17.02it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  93%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████               | 688/740 [00:44&lt;00:02, 18.29it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  38%|████████████████████████████████████████████████████████████████████████████████▌                                                                                                                                   | 281/740 [00:17&lt;00:26, 17.62it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  93%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉              | 691/740 [00:45&lt;00:02, 16.69it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  38%|█████████████████████████████████████████████████████████████████████████████████▎                                                                                                                                  | 284/740 [00:18&lt;00:28, 15.99it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  94%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊             | 694/740 [00:45&lt;00:02, 16.49it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  39%|██████████████████████████████████████████████████████████████████████████████████▏                                                                                                                                 | 287/740 [00:18&lt;00:30, 15.09it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  94%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍            | 696/740 [00:45&lt;00:02, 16.09it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  39%|███████████████████████████████████████████████████████████████████████████████████                                                                                                                                 | 290/740 [00:18&lt;00:25, 17.40it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌           | 700/740 [00:45&lt;00:02, 16.95it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  39%|███████████████████████████████████████████████████████████████████████████████████▋                                                                                                                                | 292/740 [00:18&lt;00:27, 16.40it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████           | 702/740 [00:45&lt;00:02, 17.29it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  40%|████████████████████████████████████████████████████████████████████████████████████▏                                                                                                                               | 294/740 [00:18&lt;00:26, 16.57it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋          | 704/740 [00:45&lt;00:02, 16.55it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  40%|█████████████████████████████████████████████████████████████████████████████████████                                                                                                                               | 297/740 [00:18&lt;00:28, 15.58it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎         | 706/740 [00:46&lt;00:02, 16.36it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  41%|█████████████████████████████████████████████████████████████████████████████████████▉                                                                                                                              | 300/740 [00:19&lt;00:24, 17.80it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊         | 708/740 [00:46&lt;00:01, 16.18it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  41%|██████████████████████████████████████████████████████████████████████████████████████▌                                                                                                                             | 302/740 [00:19&lt;00:26, 16.70it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍        | 710/740 [00:46&lt;00:01, 16.79it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  41%|███████████████████████████████████████████████████████████████████████████████████████                                                                                                                             | 304/740 [00:19&lt;00:27, 15.66it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉        | 712/740 [00:46&lt;00:01, 17.39it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  41%|███████████████████████████████████████████████████████████████████████████████████████▋                                                                                                                            | 306/740 [00:19&lt;00:27, 15.85it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌       | 714/740 [00:46&lt;00:01, 16.52it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  42%|████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                                           | 308/740 [00:19&lt;00:26, 16.53it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████       | 716/740 [00:46&lt;00:01, 16.23it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  42%|████████████████████████████████████████████████████████████████████████████████████████▊                                                                                                                           | 310/740 [00:19&lt;00:24, 17.21it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉      | 719/740 [00:46&lt;00:01, 14.79it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  42%|█████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                                          | 312/740 [00:19&lt;00:25, 17.11it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  98%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊     | 722/740 [00:47&lt;00:01, 17.96it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  42%|█████████████████████████████████████████████████████████████████████████████████████████▉                                                                                                                          | 314/740 [00:19&lt;00:26, 16.21it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  98%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍    | 724/740 [00:47&lt;00:00, 17.02it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  43%|██████████████████████████████████████████████████████████████████████████████████████████▌                                                                                                                         | 316/740 [00:20&lt;00:26, 15.78it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  98%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉    | 726/740 [00:47&lt;00:00, 16.57it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  43%|███████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                                        | 319/740 [00:20&lt;00:25, 16.54it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  99%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊   | 729/740 [00:47&lt;00:00, 15.09it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  44%|████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                                       | 322/740 [00:20&lt;00:26, 15.54it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  99%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋  | 732/740 [00:47&lt;00:00, 17.92it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  44%|████████████████████████████████████████████████████████████████████████████████████████████▊                                                                                                                       | 324/740 [00:20&lt;00:26, 15.88it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  99%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎ | 734/740 [00:47&lt;00:00, 16.94it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  44%|█████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                                      | 326/740 [00:20&lt;00:30, 13.68it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  99%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊ | 736/740 [00:47&lt;00:00, 16.76it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  44%|██████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                                     | 329/740 [00:20&lt;00:27, 15.05it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍| 738/740 [00:47&lt;00:00, 17.43it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  45%|███████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                                    | 333/740 [00:21&lt;00:20, 19.62it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 740/740 [00:48&lt;00:00, 16.19it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  45%|████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                                   | 336/740 [00:21&lt;00:24, 16.33it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  46%|████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                                                                   | 338/740 [00:21&lt;00:24, 16.08it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  46%|█████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                                  | 340/740 [00:21&lt;00:26, 14.83it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  46%|██████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                                 | 343/740 [00:21&lt;00:22, 17.86it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  47%|███████████████████████████████████████████████████████████████████████████████████████████████████                                                                                                                 | 346/740 [00:21&lt;00:22, 17.13it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  47%|███████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                                                                | 348/740 [00:22&lt;00:25, 15.39it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  47%|████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                               | 350/740 [00:22&lt;00:24, 16.17it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  48%|█████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                              | 353/740 [00:22&lt;00:21, 18.12it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  48%|█████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                                                              | 355/740 [00:22&lt;00:21, 18.12it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  48%|██████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                             | 357/740 [00:22&lt;00:22, 17.21it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  49%|██████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                                                             | 359/740 [00:22&lt;00:24, 15.32it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  49%|███████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                            | 361/740 [00:22&lt;00:25, 14.60it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  49%|████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                                                           | 365/740 [00:22&lt;00:20, 18.37it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  50%|█████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                          | 367/740 [00:23&lt;00:21, 17.49it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  50%|█████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                                                          | 369/740 [00:23&lt;00:26, 14.07it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  50%|██████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                         | 371/740 [00:23&lt;00:26, 14.03it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  51%|███████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                        | 375/740 [00:23&lt;00:18, 19.41it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  51%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                       | 378/740 [00:23&lt;00:22, 15.98it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  51%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                                                       | 380/740 [00:24&lt;00:26, 13.82it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  52%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                                                      | 384/740 [00:24&lt;00:22, 15.68it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  52%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                    | 388/740 [00:24&lt;00:19, 17.66it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  53%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                                                    | 390/740 [00:24&lt;00:25, 13.95it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  53%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                                  | 395/740 [00:24&lt;00:22, 15.28it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  54%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                 | 399/740 [00:25&lt;00:20, 16.68it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  54%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                                                 | 401/740 [00:25&lt;00:21, 15.91it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  54%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                                | 403/740 [00:25&lt;00:24, 13.97it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  55%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                                               | 407/740 [00:25&lt;00:21, 15.65it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  55%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                              | 410/740 [00:25&lt;00:19, 16.53it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  56%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                             | 413/740 [00:26&lt;00:17, 18.18it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  56%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                                             | 415/740 [00:26&lt;00:19, 16.44it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  56%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                                            | 418/740 [00:26&lt;00:22, 14.25it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  57%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                                           | 422/740 [00:26&lt;00:18, 17.44it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  57%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                          | 424/740 [00:26&lt;00:20, 15.11it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  58%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                                         | 428/740 [00:26&lt;00:18, 17.33it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  58%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                        | 430/740 [00:27&lt;00:20, 15.05it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  59%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                       | 434/740 [00:27&lt;00:19, 15.98it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  59%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                                      | 438/740 [00:27&lt;00:16, 17.91it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  59%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                                      | 440/740 [00:27&lt;00:20, 14.84it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  60%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                    | 444/740 [00:27&lt;00:18, 16.26it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  61%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                   | 448/740 [00:28&lt;00:16, 18.23it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  61%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                                   | 450/740 [00:28&lt;00:19, 15.08it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  61%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                                  | 454/740 [00:28&lt;00:17, 15.96it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  62%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                                | 458/740 [00:28&lt;00:15, 18.51it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  62%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                                | 460/740 [00:28&lt;00:18, 15.27it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  63%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                               | 464/740 [00:29&lt;00:16, 16.51it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  63%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                              | 468/740 [00:29&lt;00:14, 18.50it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  64%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                             | 470/740 [00:29&lt;00:18, 14.93it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  64%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                            | 474/740 [00:29&lt;00:15, 16.75it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  65%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                           | 478/740 [00:29&lt;00:14, 18.48it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  65%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                          | 480/740 [00:30&lt;00:17, 14.96it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  65%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                         | 483/740 [00:30&lt;00:16, 15.15it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  66%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                        | 488/740 [00:30&lt;00:13, 18.91it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  66%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                                       | 490/740 [00:30&lt;00:16, 15.13it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  67%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                      | 493/740 [00:31&lt;00:18, 13.26it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  67%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                                                     | 499/740 [00:31&lt;00:14, 17.18it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  68%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                    | 502/740 [00:31&lt;00:12, 18.95it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  68%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                   | 505/740 [00:31&lt;00:14, 16.66it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  69%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                                  | 507/740 [00:31&lt;00:14, 16.25it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  69%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                                  | 509/740 [00:31&lt;00:13, 16.52it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  69%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                                 | 512/740 [00:32&lt;00:11, 19.27it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  70%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                | 515/740 [00:32&lt;00:15, 14.47it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  70%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                               | 518/740 [00:32&lt;00:16, 13.20it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  71%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                              | 523/740 [00:32&lt;00:14, 15.29it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  71%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                            | 528/740 [00:33&lt;00:13, 15.42it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  72%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                            | 530/740 [00:33&lt;00:13, 16.03it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  72%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                           | 533/740 [00:33&lt;00:12, 16.81it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  73%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                          | 537/740 [00:33&lt;00:11, 18.28it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  73%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                         | 539/740 [00:33&lt;00:12, 16.17it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  73%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                        | 542/740 [00:33&lt;00:11, 17.06it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  74%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                        | 544/740 [00:34&lt;00:12, 16.03it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  74%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                       | 547/740 [00:34&lt;00:11, 17.44it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  74%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                      | 549/740 [00:34&lt;00:12, 14.75it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  75%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                     | 552/740 [00:34&lt;00:12, 15.46it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  75%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                     | 555/740 [00:34&lt;00:10, 17.73it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  75%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                    | 557/740 [00:34&lt;00:10, 17.64it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  76%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                                   | 559/740 [00:35&lt;00:10, 16.51it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  76%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                   | 561/740 [00:35&lt;00:10, 16.90it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  76%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                  | 563/740 [00:35&lt;00:10, 16.98it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  76%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                                                  | 565/740 [00:35&lt;00:10, 17.22it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  77%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                                 | 567/740 [00:35&lt;00:10, 16.45it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  77%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                 | 569/740 [00:35&lt;00:11, 14.40it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  77%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                | 571/740 [00:35&lt;00:12, 13.38it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  78%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                                               | 575/740 [00:35&lt;00:08, 18.83it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  78%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                              | 578/740 [00:36&lt;00:11, 14.48it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  79%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                             | 581/740 [00:36&lt;00:10, 15.52it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  79%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                            | 585/740 [00:36&lt;00:08, 19.35it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  79%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                           | 588/740 [00:36&lt;00:10, 14.96it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  80%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                          | 591/740 [00:37&lt;00:09, 15.78it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  80%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                                         | 595/740 [00:37&lt;00:07, 19.45it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  81%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                        | 598/740 [00:37&lt;00:09, 15.17it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  81%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                       | 601/740 [00:37&lt;00:08, 15.92it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  82%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                                      | 605/740 [00:37&lt;00:06, 19.36it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  82%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                     | 608/740 [00:38&lt;00:08, 15.17it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  83%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                     | 611/740 [00:38&lt;00:08, 15.89it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  83%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                                   | 615/740 [00:38&lt;00:06, 19.36it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  84%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                   | 618/740 [00:38&lt;00:08, 15.19it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  84%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                  | 621/740 [00:38&lt;00:07, 15.98it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  84%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                 | 625/740 [00:38&lt;00:05, 19.21it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  85%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                                | 628/740 [00:39&lt;00:07, 15.28it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  85%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                               | 631/740 [00:39&lt;00:06, 16.09it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  86%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                              | 633/740 [00:39&lt;00:06, 16.57it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  86%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                             | 636/740 [00:39&lt;00:05, 17.68it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  86%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                             | 638/740 [00:39&lt;00:06, 15.38it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  87%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                            | 641/740 [00:40&lt;00:06, 16.46it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  87%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                           | 644/740 [00:40&lt;00:05, 18.60it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  87%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                           | 646/740 [00:40&lt;00:05, 15.90it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  88%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                          | 648/740 [00:40&lt;00:05, 15.52it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  88%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                         | 651/740 [00:40&lt;00:05, 16.65it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  88%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                         | 653/740 [00:40&lt;00:05, 17.31it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  89%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                        | 656/740 [00:40&lt;00:05, 16.54it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  89%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                       | 658/740 [00:41&lt;00:05, 15.65it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  89%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                      | 661/740 [00:41&lt;00:04, 16.94it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                     | 664/740 [00:41&lt;00:04, 18.88it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  90%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                     | 666/740 [00:41&lt;00:05, 14.19it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  90%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                    | 668/740 [00:41&lt;00:04, 14.61it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  91%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                   | 672/740 [00:41&lt;00:04, 16.12it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  91%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                  | 676/740 [00:42&lt;00:04, 15.94it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  92%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                 | 678/740 [00:42&lt;00:03, 15.90it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  92%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                | 682/740 [00:42&lt;00:03, 16.86it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  92%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                | 684/740 [00:42&lt;00:03, 15.62it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  93%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊               | 687/740 [00:42&lt;00:03, 15.78it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  93%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉              | 691/740 [00:42&lt;00:02, 19.19it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  94%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊             | 694/740 [00:43&lt;00:02, 17.63it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  94%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍            | 696/740 [00:43&lt;00:02, 16.13it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  94%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉            | 698/740 [00:43&lt;00:02, 16.20it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊           | 701/740 [00:43&lt;00:02, 19.02it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋          | 704/740 [00:43&lt;00:02, 15.80it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  95%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎         | 706/740 [00:43&lt;00:02, 16.05it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▊         | 708/740 [00:44&lt;00:01, 16.12it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋        | 711/740 [00:44&lt;00:01, 19.12it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  96%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌       | 714/740 [00:44&lt;00:01, 13.21it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍      | 717/740 [00:44&lt;00:01, 15.77it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  97%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌     | 721/740 [00:44&lt;00:00, 20.00it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  98%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍    | 724/740 [00:45&lt;00:01, 13.87it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  98%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉    | 726/740 [00:45&lt;00:01,  7.54it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  98%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌   | 728/740 [00:45&lt;00:01,  8.83it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋| 739/740 [00:46&lt;00:00, 16.55it/s]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 740/740 [00:46&lt;00:00, 15.94it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 740/740 [00:48&lt;00:00, 15.37it/s]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Merging the data files into a single dataset
@@ -1287,16 +887,19 @@ for further analysis.</p>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   0%|                                                                                                                                                                                                                               | 0/23 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   4%|█████████▎                                                                                                                                                                                                             | 1/23 [00:00&lt;00:19,  1.11it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:   4%|█████████▎                                                                                                                                                                                                             | 1/23 [00:00&lt;00:19,  1.14it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  48%|██████████████████████████████████████████████████████████████████████████████████████████████████████▎                                                                                                               | 11/23 [00:02&lt;00:02,  5.62it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  43%|█████████████████████████████████████████████████████████████████████████████████████████████                                                                                                                         | 10/23 [00:01&lt;00:01, 12.98it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 23/23 [00:02&lt;00:00, 12.59it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  65%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌                                                                          | 15/23 [00:01&lt;00:00,  9.86it/s]
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 23/23 [00:02&lt;00:00,  9.62it/s]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files:  91%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍                  | 21/23 [00:02&lt;00:00, 10.37it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 23/23 [00:02&lt;00:00, 10.26it/s]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Merging the data files into a single dataset
@@ -1304,7 +907,7 @@ for further analysis.</p>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">22</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">22</span>
 <span class="g g-Whitespace">     </span><span class="mi">20</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;### Downloading the PCO2A data from </span><span class="si">%s</span><span class="s1"> ###&#39;</span> <span class="o">%</span> <span class="n">site</span><span class="p">)</span>
 <span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="n">pco2a</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merge_pco2a</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="s1">&#39;SBD12&#39;</span><span class="p">,</span> <span class="s1">&#39;04-PCO2AA000&#39;</span><span class="p">))</span>
 <span class="ne">---&gt; </span><span class="mi">22</span> <span class="n">pco2a</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">pco2a_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4&#39;</span><span class="p">)</span> <span class="c1">#, engine=&#39;h5netcdf&#39;)</span>
@@ -1717,11 +1320,11 @@ for further analysis.</p>
       </div>
     </a>
     <a class="right-next"
-       href="m2m_explorations.html"
+       href="PCO2_Calculations.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Accessing OOI Data and Metadata through the M2M API</p>
+        <p class="prev-next-title">Assessing the pCO2 Data for the CE01ISSM-00011 7 m Platform (NSIF)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

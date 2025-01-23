@@ -49,6 +49,186 @@ ATTRS = {
     }
 }
 
+# Pull in the ts calculation from ion-functions (easier to just add it as
+# a function rather than add and import ion-function libraries)
+def ts_corrected_nitrate(cal_temp, wl, eno3, eswa, di, dark_value, ctd_t,
+                         ctd_sp, data_in, frame_type, wllower=217, wlupper=240):
+    """
+    Description:
+
+        This Python code is based on Matlab code
+        (NUTNR_Example_MATLAB_Code_20140521_ver_1_00.m) that was
+        developed by O.E. Kawka (UW/RSN).
+
+        The code below calculates the Dissolved Nitrate Concentration
+        with the Sakamoto et. al. (2009) algorithm that uses the observed
+        sample salinity and temperature to subtract the bromide component
+        of the overall seawater UV absorption spectrum before solving for
+        the nitrate concentration.
+
+        The output represents the OOI L2 Dissolved Nitrate Concentration,
+        Temperature and Salinity Corrected (NITRTSC).
+
+    Implemented by:
+
+        2014-05-22: Craig Risien. Initial Code
+        2014-05-27: Craig Risien. This function now looks for the light vs
+                    dark frame measurements and only calculates nitrate
+                    concentration based on the light frame measurements.
+        2015-04-09: Russell Desiderio. CI is now implementing cal coeffs
+                    by tiling in time, requiring coding changes. The
+                    tiling includes the wllower and wlupper variables
+                    when supplied by CI.
+
+    Usage:
+
+        NO3_conc = ts_corrected_nitrate(cal_temp, wl, eno3, eswa, di,
+                                        dark_value, ctd_t, ctd_sp, data_in,
+                                        frame_type, wllower, wlupper)
+
+            where
+
+        cal_temp = Calibration water temperature value
+        wl = (256,) array of wavelength bins
+        eno3 = (256,) array of wavelength-dependent nitrate
+                extinction coefficients
+        eswa = (256,) array of seawater extinction coefficients
+        di = (256,) array of deionized water reference spectrum
+        dark_value = (N,) array of dark average scalar value
+        ctd_t = (N,) array of water temperature values from
+                colocated CTD [deg C].
+                (see 1341-00010_Data_Product_Spec_TEMPWAT)
+        ctd_sp = (N,) array of practical salinity values from
+                colocated CTD [unitless].
+                (see 1341-00040_Data_Product_Spec_PRACSAL)
+        data_in = (N x 256) array of nitrate measurement values
+                from the UV absorption spectrum data product
+                (L0 NITROPT) [unitless]
+        NO3_conc = L2 Dissolved Nitrate Concentration, Temperature and
+                Corrected (NITRTSC) [uM]
+        frame_type = (N,) array of Frame type, either a light or dark
+                measurement. This function only uses the data from light
+                frame measurements.
+        wllower = Lower wavelength limit for spectra fit.
+                  From DPS: 217 nm (1-cm pathlength probe tip) or
+                            220 nm (4-cm pathlength probe tip)
+        wlupper = Upper wavelength limit for spectra fit.
+                  From DPS: 240 nm (1-cm pathlength probe tip) or
+                            245 nm (4-cm pathlength probe tip)
+    Notes:
+
+        2015-04-10: R. Desiderio.
+            CI has determined that cal coefficients will implemented as time-vectorized
+            arguments as inputs to DPAs. This means that all input calibration coefficients
+            originally dimensioned as (256,) will now be dimensioned as (N,256), where N is
+            the number of data packets.
+
+            This change broke the code ("Blocker Bug #2942") and so necessitated a revision
+            of this DPA and its unit test. The useindex construct along with variables WL,
+            ENO3, ESWA, and DI were originally set up outside the loop. However, with this CI
+            change, it is now possible that the cal coefficients could change inside of the
+            cal coeff variable arrays (reflecting data coming from two different instruments).
+            I took the conservative approach and moved these calculations inside the loop to
+            be calculated for each data packet.
+
+            Fill values on output have been changed to np.nan.
+
+    References:
+
+        OOI (2014). Data Product Specification for NUTNR Data Products.
+            Document Control Number 1341-00620.
+            https://alfresco.oceanobservatories.org/ (See: Company Home >>
+            OOI >> Controlled >> 1000 System Level >>
+            1341-00620_Data_Product_Spec_NUTNR_OOI.pdf)
+        Johnson, K. S., and L. J. Coletti. 2002. In situ ultraviolet
+            spectrophotometry for high resolution and long-term monitoring
+            of nitrate, bromide and bisulfide in the ocean. Deep-Sea Res.
+            I 49:1291-1305
+        Sakamoto, C.M., K.S. Johnson, and L.J. Coletti (2009). Improved
+            algorithm for the computation of nitrate concentrations in
+            seawater using an in situ ultraviolet spectrophotometer.
+            Limnology and Oceanography: Methods 7: 132-143
+    """
+    n_data_packets = data_in.shape[0]
+
+    # make sure that the dimensionalities of wllower and wlupper are consistent
+    # regardless of whether or not they are specified in the argument list.
+    if np.isscalar(wllower):
+        wllower = np.tile(wllower, n_data_packets)
+
+    if np.isscalar(wlupper):
+        wlupper = np.tile(wlupper, n_data_packets)
+        
+    if np.isscalar(cal_temp):
+        cal_temp = np.tile(cal_temp, n_data_packets)
+        
+    # Make the calibration inputs match the data_in shape
+    wl = np.tile(wl, (n_data_packets, 1))
+    di = np.tile(di, (n_data_packets, 1))
+    eno3 = np.tile(eno3, (n_data_packets, 1))
+    eswa = np.tile(eswa, (n_data_packets, 1))
+
+    # coefficients to equation 4 of Sakamoto et al 2009 that give the
+    # absorbance of seasalt at 35 salinity versus temperature
+    Asak = 1.1500276
+    Bsak = 0.02840
+    Csak = -0.3101349
+    Dsak = 0.001222
+
+    NO3_conc = np.ones(n_data_packets)
+
+    for i in range(0, n_data_packets):
+
+        if frame_type[i] == 'SDB' or frame_type[i] == 'SDF' or frame_type[i] == "NDF":
+
+            ## Ignore and fill dark frame measurements
+            #NO3_conc[i] = -9999999.0
+
+            # change this to output nans instead.
+            NO3_conc[i] = np.nan
+
+        else:
+
+            # Find wavelength bins that fall between the upper and lower
+            # limits for spectra fit
+            useindex = np.logical_and(wllower[i] <= wl[i, :], wl[i, :] <= wlupper[i])
+
+            # subset data so that we only use wavelengths between wllower & wlupper
+            WL = wl[i, useindex]
+            ENO3 = eno3[i, useindex]
+            ESWA = eswa[i, useindex]
+            DI = np.array(di[i, useindex], dtype='float64')
+            SW = np.array(data_in[i, useindex], dtype='float64')
+
+            # correct each SW intensity for dark current
+            SWcorr = SW - dark_value[i]
+
+            # calculate absorbance
+            Absorbance = np.log10(DI / SWcorr)
+
+            # now estimate molar absorptivity of seasalt at in situ temperature
+            # use Satlantic calibration and correct as in Sakamoto et al. 2009.
+            SWA_Ext_at_T = (ESWA * ((Asak + Bsak * ctd_t[i]) / (Asak + Bsak * cal_temp[i]))
+                            * np.exp(Dsak * (ctd_t[i] - cal_temp[i]) * (WL - 210.0)))
+
+            # absorbance due to seasalt
+            A_SWA = ctd_sp[i] * SWA_Ext_at_T
+            # subtract seasalt absorbance from measured absorbance
+            Acomp = np.array(Absorbance - A_SWA, ndmin=2).T
+
+            # ENO3 plus a linear baseline
+            subset_array_size = np.shape(ENO3)
+            # for the constant in the linear baseline
+            Ones = np.ones((subset_array_size[0],), dtype='float64') / 100
+            M = np.vstack((ENO3, Ones, WL / 1000)).T
+
+            # C has NO3, baseline constant, and slope (vs. WL)
+            C = np.dot(np.linalg.pinv(M), Acomp)
+
+            NO3_conc[i] = C[0, 0]
+
+    return NO3_conc
+
 
 def quality_checks(ds):
     """
@@ -100,6 +280,115 @@ def quality_checks(ds):
     qc_flag[m] = 4
 
     return qc_flag
+
+
+def drift_correction(ds, site, node, sensor):
+    """
+    Apply a drift correction to a processed SUNA dataset.
+    
+    This function takes in a SUNA dataset which has been
+    reprocessed, get the pre-and-post deployment calibrations,
+    calculates the differences between the two, and applies
+    a linear drift to the temperature-and-salinity corrected
+    nitrate concentration. 
+    
+    :param ds: A SUNA dataset reprocessed using the suna_datalogger
+               or suna_instrument functions
+    :param site: The site of the associated SUNA dataset
+    :param node: The node of the associated SUNA dataset
+    :param sensor: The sensor of the associated SUNA dataset
+    """
+    
+    # ----------------------------------------
+    # Get the appropriate calibration files and 
+    # Coefficients
+    # First, grab the deployment of the dataset
+    depNum = int(np.unique(ds["deployment"])[0])
+    
+    # Next, get the deployment start and end times
+    deployStart, deployEnd = get_deployment_dates(site, node, sensor, depNum)
+
+    # Use the deployment start and end times to get the deployment specific calibrations
+    calInfo = get_calibrations_by_refdes(site, node, sensor, deployStart, deployEnd, to_dataframe=True)
+    pre_deploy_cal = calInfo[calInfo["deploymentNumber"] == depNum]
+
+    # Get the UID of the instrument
+    uid = pre_deploy_cal["uid"].unique()[0]
+
+    # Now, get all of the deployments for the given instrument
+    calInfo = get_calibrations_by_uid(uid, to_dataframe=True)
+
+    # Find the next calibration AFTER the one used for the deployment
+    pre_date = pre_deploy_cal["calDate"].unique()[0]
+    delta_t = calInfo["calDate"].apply(lambda x: x - pre_date)
+    delta_t = delta_t[delta_t.dt.days > 0]
+    delta_t = delta_t[delta_t == np.min(delta_t)]
+
+    # Use the delta_t indices to get the post-cruise calibration
+    post_deploy_cal = calInfo.loc[delta_t.index]
+    
+    # ---------------------------------------------------
+    # Use the post-cruise DI values to recalculate the 
+    # T-S corrected nitrogen
+    # Get the calibration values
+    cal_temp = np.array(pre_deploy_cal[pre_deploy_cal["calCoef"] == "CC_cal_temp"]["value"].values[0], dtype='float64')
+    wl = np.array(pre_deploy_cal[pre_deploy_cal["calCoef"] == "CC_wl"]["value"].values[0], dtype='float64')
+    di = np.array(post_deploy_cal[post_deploy_cal["calCoef"] == "CC_di"]["value"].values[0], dtype='float64')
+    eno3 = np.array(pre_deploy_cal[pre_deploy_cal["calCoef"] == "CC_eno3"]["value"].values[0], dtype='float64')
+    eswa = np.array(pre_deploy_cal[pre_deploy_cal["calCoef"] == "CC_eswa"]["value"].values[0], dtype='float64')
+
+    # Get the spectral input values
+    dark_counts = ds['dark_value_used_for_fit'].values
+    data_in = ds['raw_spectral_measurements'].values
+    frame_type = np.array(len(dark_counts)*['Light'], dtype='str')
+
+    # Get the CTD temperature and salinity values
+    ctd_t = ds['sea_water_temperature'].values
+    ctd_sp = ds['sea_water_practical_salinity'].values
+
+    # Now run with the post-cal di
+    post_cal_nitrate = ts_corrected_nitrate(float(cal_temp), wl, eno3, eswa, di, dark_counts, ctd_t, ctd_sp, data_in, frame_type)
+    ds["post_cal_nitrate"] = (["time"], post_cal_nitrate)
+    ds["post_cal_nitrate"].attrs = {
+        "long_name": "T-S Corrected Dissolved Nitrate Concentration",
+        "units": "umol L-1",
+        "comment": ("Temperature and salinity corrected dissolved nitrate concentration recalculated "
+                    "using the post-cruise DI-water calibration.")
+    }
+    
+    # Get the calibration file names
+    pre_deploy_file = pre_deploy_cal["calFile"].unique()[0]
+    post_deploy_file = post_deploy_cal["calFile"].unique()[0]
+    
+    
+    # Now, calculate a drift rate based on the offset between the
+    # initial T-S corrected nitrogen from the pre-deploy calibration
+    # and the post-cruise calibration. This operates on the assumption of
+    # a linear drift, thus is LTI
+    dno3 = (post_cal_nitrate - ds['corrected_nitrate_concentration']).sel(time=slice(ds["time"].min(),ds["time"].min()+pd.Timedelta('1D'))).mean()
+    pre_date = pre_deploy_file.split("__")[-1].split("_")[0]
+    post_date = post_deploy_file.split("__")[-1].split("_")[0]
+    dt = (pd.to_datetime(post_date) - pd.to_datetime(pre_date)).total_seconds()*1E9
+    dno3_dt = dno3 / int(dt)
+    delta_t = (ds.time - ds.time.min()).astype('int')
+
+    # Apply the drift correction
+    drift_correction = dno3_dt.values*delta_t
+    drift_corrected_nitrate = ds["corrected_nitrate_concentration"] + drift_correction
+    ds["drift_corrected_nitrate"] = drift_corrected_nitrate
+    ds["drift_corrected_nitrate"].attrs = {
+        "long_name": "Drift and T-S Corrected Dissolved Nitrate Concentration",
+        "units": "umol L-1",
+        "comment": ("Temperature and salinity corrected dissolved nitrate concentration with "
+                    "linear drift, estimated from the difference between pre-and-post cruise "
+                    "DI-water calibrations, removed."),
+        "pre_cruise_calibration": pre_deploy_file,
+        "post_cruise_calibration": post_deploy_file,
+        "dNO3": str(dno3),
+        "dt": str(dt)
+    }
+    
+    return ds
 
 
 def suna_datalogger(ds, burst=False):

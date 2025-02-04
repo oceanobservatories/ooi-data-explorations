@@ -1,0 +1,2 @@
+subsite,node,sensor,stream,parameter,qcConfig,source,notes
+CE04OSPS,PC01B,4A-CTDPFA109,ctdpf_optode_sample,{'inp': 'sea_water_electrical_conductivity'},"{'qartod': {'gross_range_test': {'suspect_span': [3.2625, 3.63155], 'fail_span': [0, 9]}}}",,"User range based on percentiles of the observations, which are not normally distributed. Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule."

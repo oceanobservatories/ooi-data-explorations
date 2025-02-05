@@ -5,6 +5,7 @@ import argparse
 from ast import literal_eval
 import dateutil.parser as parser
 import numpy as np
+import os
 import pandas as pd
 import pytz
 import s3fs
@@ -13,7 +14,7 @@ import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, add_annotation_qc_flags
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology
-from rca_data_tools.qaqc import decimate
+import decimate
 
 
 def decimateData(xs,decimationThreshold):
@@ -36,6 +37,11 @@ def exportTables(qartodDict,site,node,sensor,qartod_tests):
     headers['climatology'] = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
     testOrder = {'lookup': 0,'table': 1}
 
+    folderPath = os.path.join(os.path.expanduser('~'), 'qartod_staging')
+    folderPath = os.path.abspath(folderPath)
+    if not os.path.exists(folderPath):
+        os.makedirs(folderPath)
+
     for param in qartodDict:
         for test in qartodDict[param]:
             output = qartod_tests[test]['output']
@@ -45,8 +51,8 @@ def exportTables(qartodDict,site,node,sensor,qartod_tests):
                 if 'lookup' in fileOut:
                     for method in qartodDict[param][test]:
                         print('method: ', method)
-                        #print(qartodDict[param][test][method])
-                        qartod_csv = '-'.join([site,node,sensor,param]) + '.' + test + '.csv' + '.' + method
+                        qartod_csv_name = '-'.join([site,node,sensor,param]) + '.' + test + '.csv' + '.' + method
+                        qartod_csv = os.path.join(folderPath, qartod_csv_name)
                         print('exporting ',qartod_csv)
                         if len(output) > 1:
                             if 'binned' in method:
@@ -82,8 +88,8 @@ def exportTables(qartodDict,site,node,sensor,qartod_tests):
                 elif 'table' in fileOut:
                     for method in qartodDict[param][test]:
                         print('method: ', method)
-                        #print(qartodDict[param][test][method])
-                        qartod_csv = qartod_csv = '-'.join([site,node,sensor,param]) + '.csv' + '.' + method + '_' + test
+                        qartod_csv_name = '-'.join([site,node,sensor,param]) + '.' + test + '.csv' + '.' + method
+                        qartod_csv = os.path.join(folderPath, qartod_csv_name)
                         print('exporting ', qartod_csv)
                         if len(output) > 1:
                             if 'binned' in method:
@@ -271,7 +277,7 @@ def main(argv=None):
     qartodDict = {}
     
     if 'fixed' in platform:
-        if len(data['time']) > decThreshold: 
+        if ( (len(data['time']) > decThreshold) and (decThreshold > 0) ):
             data = decimateData(data, decThreshold)
         for param in dataVars:
             data = processData(data,param)
@@ -304,7 +310,7 @@ def main(argv=None):
             for test in qartodTests_dict[param]['tests']:
                 qartodDict[param][test] = {}
                 if 'integrated' in qartod_tests[test]['profileCalc']:
-                    if len(data['time']) > decThreshold:
+                    if ( (len(data['time']) > decThreshold) and (decThreshold > 0) ): 
                         data = decimateData(data, decThreshold)
                     data = processData(data,param)
                     data, annotations = filterData(data, node, site, sensor, param, cut_off)
@@ -319,7 +325,7 @@ def main(argv=None):
                         if (data_bin[pressParam].isnull()).all():
                             print('no data available for bin: ', pressBin)
                         else:
-                            if len(data_bin['time']) > decThreshold:
+                            if ( (len(data['time']) > decThreshold) and (decThreshold > 0) ):
                                 data_bin = decimateData(data_bin, decThreshold)
                             data_bin = processData(data_bin,param)
                             data_bin, annotations = filterData(data_bin, node, site, sensor, param, cut_off)

@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameter,qcConfig,source,notes
-RS03AXPS,PC03A,4A-CTDPFA303,ctdpf_optode_sample,{'inp': 'sea_water_pressure'},"{'qartod': {'gross_range_test': {'suspect_span': [188.23203, 193.31524], 'fail_span': [0, 6000]}}}",,User range based on the mean +- 3 standard deviations of all observations.

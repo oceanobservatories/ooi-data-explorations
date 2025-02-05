@@ -271,7 +271,7 @@ def main(argv=None):
     qartodDict = {}
     
     if 'fixed' in platform:
-        if ( (len(data['time']) > decThreshold) and (decThreshold > 0) ):
+        if len(data['time']) > decThreshold: 
             data = decimateData(data, decThreshold)
         for param in dataVars:
             data = processData(data,param)
@@ -304,7 +304,7 @@ def main(argv=None):
             for test in qartodTests_dict[param]['tests']:
                 qartodDict[param][test] = {}
                 if 'integrated' in qartod_tests[test]['profileCalc']:
-                    if ( (len(data['time']) > decThreshold) and (decThreshold > 0) ): 
+                    if len(data['time']) > decThreshold:
                         data = decimateData(data, decThreshold)
                     data = processData(data,param)
                     data, annotations = filterData(data, node, site, sensor, param, cut_off)
@@ -319,7 +319,7 @@ def main(argv=None):
                         if (data_bin[pressParam].isnull()).all():
                             print('no data available for bin: ', pressBin)
                         else:
-                            if ( (len(data['time']) > decThreshold) and (decThreshold > 0) ):
+                            if len(data_bin['time']) > decThreshold:
                                 data_bin = decimateData(data_bin, decThreshold)
                             data_bin = processData(data_bin,param)
                             data_bin, annotations = filterData(data_bin, node, site, sensor, param, cut_off)

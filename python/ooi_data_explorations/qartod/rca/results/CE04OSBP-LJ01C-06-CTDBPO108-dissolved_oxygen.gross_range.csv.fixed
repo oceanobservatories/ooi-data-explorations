@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameter,qcConfig,source,notes
-CE04OSBP,LJ01C,06-CTDBPO108,ctdbp_no_sample,{'inp': 'dissolved_oxygen'},"{'qartod': {'gross_range_test': {'suspect_span': [7.689, 32.74307], 'fail_span': [0, 500]}}}",,"User range based on percentiles of the observations, which are not normally distributed. Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule."

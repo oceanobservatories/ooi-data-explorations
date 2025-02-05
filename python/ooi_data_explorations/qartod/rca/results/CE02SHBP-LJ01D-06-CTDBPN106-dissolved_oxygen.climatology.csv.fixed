@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameters,climatologyTable,source,notes
-CE02SHBP,LJ01D,06-CTDBPN106,ctdbp_no_sample,"{'inp': 'dissolved_oxygen', 'tinp': 'time', 'zinp': 'None'}",climatology_tables/CE02SHBP-LJ01D-06-CTDBPN106-dissolved_oxygen.csv,,The variance explained by the climatological model is 76.8%.

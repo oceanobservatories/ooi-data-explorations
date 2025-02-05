@@ -5,17 +5,15 @@ import argparse
 from ast import literal_eval
 import dateutil.parser as parser
 import numpy as np
-import os
 import pandas as pd
 import pytz
 import s3fs
 import sys
 import xarray as xr
 
-import decimate
-
 from ooi_data_explorations.common import get_annotations, add_annotation_qc_flags
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology
+from rca_data_tools.qaqc import decimate
 
 
 def decimateData(xs,decimationThreshold):
@@ -33,11 +31,6 @@ def decimateData(xs,decimationThreshold):
 
 def exportTables(qartodDict,site,node,sensor,qartod_tests):
 
-    folderPath = os.path.join(os.path.expanduser('~'), 'qartod_staging')
-    folderPath = os.path.abspath(folderPath)
-    if not os.path.exists(folderPath):
-        os.makedirs(folderPath)
-
     headers = {}
     headers['gross_range'] = ['subsite', 'node', 'sensor', 'stream', 'parameter', 'qcConfig', 'source', 'notes']
     headers['climatology'] = ['subsite', 'node', 'sensor', 'stream', 'parameters', 'climatologyTable', 'source', 'notes']
@@ -52,8 +45,8 @@ def exportTables(qartodDict,site,node,sensor,qartod_tests):
                 if 'lookup' in fileOut:
                     for method in qartodDict[param][test]:
                         print('method: ', method)
-                        qartod_csv_name = '-'.join([site,node,sensor,param]) + '.' + test + '.csv' + '.' + method
-                        qartod_csv = os.path.join(folderPath, qartod_csv_name)
+                        #print(qartodDict[param][test][method])
+                        qartod_csv = '-'.join([site,node,sensor,param]) + '.' + test + '.csv' + '.' + method
                         print('exporting ',qartod_csv)
                         if len(output) > 1:
                             if 'binned' in method:
@@ -89,8 +82,8 @@ def exportTables(qartodDict,site,node,sensor,qartod_tests):
                 elif 'table' in fileOut:
                     for method in qartodDict[param][test]:
                         print('method: ', method)
-                        qartod_csv_name = '-'.join([site,node,sensor,param]) + '.' + test + '.csv' + '.' + method
-                        qartod_csv = os.path.join(folderPath, qartod_csv_name)
+                        #print(qartodDict[param][test][method])
+                        qartod_csv = qartod_csv = '-'.join([site,node,sensor,param]) + '.csv' + '.' + method + '_' + test
                         print('exporting ', qartod_csv)
                         if len(output) > 1:
                             if 'binned' in method:

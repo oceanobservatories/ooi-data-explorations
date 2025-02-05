@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameters,climatologyTable,source,notes
-CE02SHBP,LJ01D,06-CTDBPN106,ctdbp_no_sample,"{'inp': 'sea_water_temperature', 'tinp': 'time', 'zinp': 'None'}",climatology_tables/CE02SHBP-LJ01D-06-CTDBPN106-sea_water_temperature.csv,,The variance explained by the climatological model is 75.8%.

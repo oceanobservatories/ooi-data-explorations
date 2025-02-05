@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameters,climatologyTable,source,notes
-RS03AXPS,PC03A,4A-CTDPFA303,ctdpf_optode_sample,"{'inp': 'sea_water_temperature', 'tinp': 'time', 'zinp': 'None'}",climatology_tables/RS03AXPS-PC03A-4A-CTDPFA303-sea_water_temperature.csv,,The variance explained by the climatological model is 1.8%.

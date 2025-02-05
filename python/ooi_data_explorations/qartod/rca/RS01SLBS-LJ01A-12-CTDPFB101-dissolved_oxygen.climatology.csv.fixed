@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameters,climatologyTable,source,notes
-RS01SLBS,LJ01A,12-CTDPFB101,ctdpf_optode_sample,"{'inp': 'dissolved_oxygen', 'tinp': 'time', 'zinp': 'None'}",climatology_tables/RS01SLBS-LJ01A-12-CTDPFB101-dissolved_oxygen.csv,,The variance explained by the climatological model is 6.9%.

@@ -1,2 +1,0 @@
-subsite,node,sensor,stream,parameter,qcConfig,source,notes
-RS03CCAL,MJ03F,12-CTDPFB305,ctdpf_optode_sample,{'inp': 'sea_water_pressure'},"{'qartod': {'gross_range_test': {'suspect_span': [1538.67983, 1547.14128], 'fail_span': [0, 6000]}}}",,"User range based on percentiles of the observations, which are not normally distributed. Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule."

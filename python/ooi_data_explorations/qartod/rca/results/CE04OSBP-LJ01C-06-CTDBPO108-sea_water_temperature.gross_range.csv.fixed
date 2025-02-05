@@ -1,0 +1,2 @@
+subsite,node,sensor,stream,parameter,qcConfig,source,notes
+CE04OSBP,LJ01C,06-CTDBPO108,ctdbp_no_sample,{'inp': 'sea_water_temperature'},"{'qartod': {'gross_range_test': {'suspect_span': [4.3713, 5.53344], 'fail_span': [-5, 35]}}}",,User range based on the mean +- 3 standard deviations of all observations.

@@ -116,3 +116,6 @@ venv.bak/
 # Custom
 *.jpg
 *.mp4
+
+# JupyterBook
+_build/

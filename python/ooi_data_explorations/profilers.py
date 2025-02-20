@@ -235,7 +235,8 @@ def pair_profiles(ds, break_t = 60):
 
     parameters = [p for p in ds.variables]
     if 'profile' not in parameters:
-        raise NameError('Dataset must have the variable "profile"')
+        # Add the profile parameter
+        ds = create_profile_id(ds)
 
     # First, identify the start times of each individual profile
     t = []
@@ -288,7 +289,7 @@ def pair_profiles(ds, break_t = 60):
         'comment': ('The unique identifier for the profile that is paired to the '
                     '"profile". The standard operation of deployed profilers is '
                     'to collect a pair of profiles. However, mechanical issues or '
-                    'power limitations may cause the profiler to operate in "singe" '
+                    'power limitations may cause the profiler to operate in "single" '
                     'profile mode.')
     }
 

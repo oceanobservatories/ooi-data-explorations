@@ -246,8 +246,8 @@ def pair_profiles(ds, break_t = 60):
     # Next, calculate the time differences
     dt = np.diff(t).astype('timedelta64[m]')
     
-    # Find where the breaks exceed 1 hour
-    breaks, = np.where(dt > np.timedelta64(60))
+    # Find where the breaks exceed the break time
+    breaks, = np.where(dt > np.timedelta64(break_t))
 
     # Now, we need to use the locations of the breaks to group profiles
     profiles = np.unique(ds['profile'])

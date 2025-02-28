@@ -72,9 +72,10 @@ if sum(m) == 1
             'table', 'table', 'table'};
         data = addprop(data, prop_names, prop_types);    
         for i = 1:size(prop_types, 2)
-            m = reshape(strcmp({file_info.Attributes.Name}, prop_names{i}), ...
-                size(file_info.Attributes));
-            data.Properties.CustomProperties.(prop_names{i}) = file_info.Attributes(m).Value;
+            m = reshape(strcmp({file_info.Attributes.Name}, prop_names{i}), size(file_info.Attributes));
+            if sum(m) == 1
+                data.Properties.CustomProperties.(prop_names{i}) = file_info.Attributes(m).Value;
+            end %if
         end %for
         clear prop_names prop_types i
     end %if

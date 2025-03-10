@@ -16,10 +16,11 @@ function nc_files = list_files(url, tag)
 % cwingard 2023-07-09
 
 % use webread to scrape the catalog
-catalog = webread(url);
+options = weboptions('ContentType', 'text');
+catalog = webread(url, options);
 
 % pull a list of netCDF files out of the catalog
-nc_all = regexp(catalog, '<a href=''([^>]+.nc)''>', 'tokens');
+nc_all = regexp(catalog, '<a href="([^>]+.nc)">', 'tokens');
 
 % cell elements are themselves cells, convert to cell array of character vectors
 nc_all = [nc_all{:}]';

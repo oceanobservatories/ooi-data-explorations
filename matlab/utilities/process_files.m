@@ -38,7 +38,7 @@ nc_files = string(nc_all(:));
 
 % check to see if we found any files to download, if not throw an error
 if size(nc_files, 1) == 0
-    error("Unable to find any files to download using %s at %s", [tag, url])
+    warning("Unable to find any files to download using tag '%s' from '%s'", tag, url)
 end %if
 end %function
 

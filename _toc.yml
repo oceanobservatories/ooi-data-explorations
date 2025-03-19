@@ -1,0 +1,12 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+chapters:
+- file: python/m2m_explorations.ipynb
+- file: python/FdchpExample.ipynb
+- file: matlab/examples/coastal_arrays/example_metbk.ipynb
+# - file: python/examples/notebooks/pco2a/carbonate_climatologies.ipynb
+# - file: python/examples/notebooks/pco2w/PCO2_Calculations.ipynb
+# - file: ./R/cp04ospm_temperature.ipynb

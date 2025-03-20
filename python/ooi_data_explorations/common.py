@@ -898,6 +898,21 @@ def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the local kdata directory' % len(files))
+    return kdata_collect_from_file_list(files, use_dask)
+
+def kdata_collect_from_file_list(files, use_dask=False):
+    """
+    Collect data from the OOI JupyterHub kdata directory. 
+    The collected data is gathered into a xarray dataset for further processing.
+
+    :param files: list of files in kdata directory
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
+    :return gc: the collected Gold Copy data as a xarray dataset
+    """
+
+    # Process the data files found above and concatenate them into a single list
+    print('Downloading %d data file(s) from the local kdata directory' % len(files))
     if len(files) <= 5:
         # just 1 to 5 files, download sequentially
         frames = [process_file(file, gc='KDATA', use_dask=use_dask) for file in tqdm(files, desc='Loading and '

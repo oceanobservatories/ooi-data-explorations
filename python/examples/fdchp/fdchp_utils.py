@@ -22,6 +22,14 @@ def read_file(file_path):
         data = parser.get_records(num_particles)
     return data
 
+def convert_data_to_nwu(data):
+    data['fdchp_heading'] = -data['fdchp_heading']   # z heading(yaw) counter clockwise
+    data['fdchp_pitch'] = -data['fdchp_pitch']   # y pitch east to west
+    data['fdchp_y_ang_rate'] = -data['fdchp_y_ang_rate'] # angular rate around y-axis
+    data['fdchp_z_ang_rate'] = -data['fdchp_z_ang_rate'] # angular rate around z-axis 
+    data['fdchp_y_accel_g'] = -data['fdchp_y_accel_g'] # linear acceleration along y-axis
+    data['fdchp_z_accel_g'] = -data['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+
 def read_file_to_pandas(file_path, convert_to_nwu=True):
     data = []
     with open(file_path, 'rb') as input:

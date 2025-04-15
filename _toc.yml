@@ -5,7 +5,7 @@ format: jb-book
 root: intro
 chapters:
 - file: python/m2m_explorations.ipynb
-- file: python/FdchpExample.ipynb
+- file: python/examples/notebooks/fdchp/FdchpExample.ipynb
 - file: matlab/examples/coastal_arrays/example_metbk.ipynb
 # - file: python/examples/notebooks/pco2a/carbonate_climatologies.ipynb
 # - file: python/examples/notebooks/pco2w/PCO2_Calculations.ipynb

@@ -10,7 +10,7 @@ from scipy.signal import detrend, filtfilt
 PADLENGTH = 12 # (3*(np.max([len(bhi), len(ahi)]) - 1) == 12)
 
 def exception_handler(exception):
-    print("Exception!".format(exception))
+    print("Exception! {}".format(exception))
     
 def read_file(file_path):
     data = []
@@ -23,6 +23,9 @@ def read_file(file_path):
     return data
 
 def convert_data_to_nwu(data):
+    """
+    Rotate direction, angular rate, and accelerations to North-West-Up coordinate system.
+    """
     data['fdchp_heading'] = -data['fdchp_heading']   # z heading(yaw) counter clockwise
     data['fdchp_pitch'] = -data['fdchp_pitch']   # y pitch east to west
     data['fdchp_y_ang_rate'] = -data['fdchp_y_ang_rate'] # angular rate around y-axis
@@ -50,13 +53,8 @@ def read_file_to_pandas(file_path, convert_to_nwu=True):
         if convert_to_nwu:
             # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
             # Note that we can leave the x-axis variable as measured.
-
-            df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
-            df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
-            df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
-            df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
-            df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
-            df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+            convert_data_to_nwu(df)
+            
     return df
 
 def particles_to_pandas(particles, convert_to_nwu=True):
@@ -73,13 +71,7 @@ def particles_to_pandas(particles, convert_to_nwu=True):
         if convert_to_nwu:
             # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
             # Note that we can leave the x-axis variable as measured.
-
-            df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
-            df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
-            df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
-            df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
-            df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
-            df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+            convert_data_to_nwu(df)
         
     return df
     
@@ -91,7 +83,6 @@ def despikesimple(Y, exclusion_stdevs = 4, iterations = 3):
     # iterations is number of passes
     # exclusion_stdevs is the number of standard deviations beyond which to exclude data
 
-    # TODO: fix this function - seems not to work like the MATLAB version
     data_shape = Y.shape
     rows = data_shape[0]
 
@@ -277,7 +268,7 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     theta = np.maximum(theta,-1)                    
     sensible_x_acc =np.nonzero(np.abs(normalized_x_acceleration) < 1)  # Get indices where x-acceleration is less than g
     theta[sensible_x_acc] = np.arcsin(normalized_x_acceleration[sensible_x_acc])
-    #TODO: check out filtfilt some more. It looks like scipy default filtering may be different than MATLAB's:
+    # Scipy default filtering differs from MATLAB's:
     # https://dsp.stackexchange.com/questions/11466/differences-between-python-and-matlab-filtfilt-function
     theta_slow = theta - filtfilt(bhi, ahi, theta, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
 

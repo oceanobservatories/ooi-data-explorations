@@ -73,9 +73,9 @@ try:
     nrc = netrc.netrc()
     AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
     if AUTH is None:
-        raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
+        warnings.warn('Not entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file. M2M queries will not work without appropriate authorization.')
 except FileNotFoundError as e:
-    raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
+    warnings.warn('NetRC file ({}/.netrc) not found. M2M queries will not work without appropriate authorization.'.format(os.path.expanduser('~')))
 
 # set up a default location to save the data
 home = os.path.expanduser('~')

@@ -452,6 +452,25 @@
 </div>
 <p>Check that the first line of the <code class="docutils literal notranslate"><span class="pre">argv</span></code> array in <code class="docutils literal notranslate"><span class="pre">kernel.json</span></code> points to the python from the new virtual environment: <code class="docutils literal notranslate"><span class="pre">&quot;/home/jovyan/venv/bin/python&quot;,</span></code></p>
 <p>Now, select the <code class="docutils literal notranslate"><span class="pre">Kernel</span></code> menu, click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">kernel...</span></code> and select the new <code class="docutils literal notranslate"><span class="pre">fdchp</span></code> environment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">mi</span><span class="o">-</span><span class="n">instrument</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: mi-instrument in /home/jovyan/envs/fdchp/lib/python3.12/site-packages (1.0.14)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> A new release of pip is available: <span class=" -Color -Color-Red">24.2</span> -&gt; <span class=" -Color -Color-Green">25.0.1</span>
+<span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> To update, run: <span class=" -Color -Color-Green">python -m pip install --upgrade pip</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Note: you may need to restart the kernel to use updated packages.
+</pre></div>
+</div>
+</div>
+</div>
 <section id="import-necessary-libraries">
 <h2>Import necessary libraries<a class="headerlink" href="#import-necessary-libraries" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
@@ -480,10 +499,6 @@
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/jovyan/mi-instrument/mi/core/log.py:108: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
   parsed = yaml.load(logconfig)
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/jovyan/ooi-data-explorations/python/examples/fdchp/plot_fdchp.py:21: SyntaxWarning: invalid escape sequence &#39;\s&#39;
-  ax.set_ylabel(&#39;$\sigma_H$ (m)&#39;)
 </pre></div>
 </div>
 </div>
@@ -608,7 +623,7 @@
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">IndexError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">vars_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">xarrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">variables</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;fdchp_a&#39;</span><span class="p">)]</span>
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">vars_to_drop</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">,</span> <span class="s1">&#39;minute&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="s1">&#39;millisecond&#39;</span><span class="p">]</span>
 <span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">trimmed_datasets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -724,40 +739,40 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-04-17 00:13:52.552310
-File processing finished for hour 24 of 720. Process time: 0:00:34.042569
-File processing finished for hour 48 of 720. Process time: 0:01:43.705663
-File processing finished for hour 72 of 720. Process time: 0:03:29.114849
-File processing finished for hour 96 of 720. Process time: 0:05:49.427060
-File processing finished for hour 120 of 720. Process time: 0:08:44.242793
-File processing finished for hour 144 of 720. Process time: 0:12:13.092807
-File processing finished for hour 168 of 720. Process time: 0:16:16.391819
-File processing finished for hour 192 of 720. Process time: 0:20:54.703642
-File processing finished for hour 216 of 720. Process time: 0:26:07.336560
-File processing finished for hour 240 of 720. Process time: 0:31:54.144543
-File processing finished for hour 264 of 720. Process time: 0:38:14.560890
-File processing finished for hour 288 of 720. Process time: 0:45:08.679737
-File processing finished for hour 312 of 720. Process time: 0:52:36.621451
-File processing finished for hour 336 of 720. Process time: 1:00:38.889970
-File processing finished for hour 360 of 720. Process time: 1:09:15.316410
-File processing finished for hour 384 of 720. Process time: 1:18:26.528032
-File processing finished for hour 408 of 720. Process time: 1:28:12.890300
-File processing finished for hour 432 of 720. Process time: 1:38:34.141675
-File processing finished for hour 456 of 720. Process time: 1:49:30.603060
-File processing finished for hour 480 of 720. Process time: 2:01:02.169301
-File processing finished for hour 504 of 720. Process time: 2:13:07.803513
-File processing finished for hour 528 of 720. Process time: 2:25:47.266826
-File processing finished for hour 552 of 720. Process time: 2:39:01.648459
-File processing finished for hour 576 of 720. Process time: 2:52:51.696915
-File processing finished for hour 600 of 720. Process time: 3:07:16.934853
-File processing finished for hour 624 of 720. Process time: 3:22:16.876031
-File processing finished for hour 648 of 720. Process time: 3:37:52.017259
-File processing finished for hour 672 of 720. Process time: 3:54:02.253668
-File processing finished for hour 696 of 720. Process time: 4:10:47.636363
-File processing finished for hour 720 of 720. Process time: 4:28:08.310530
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-04-17 21:15:02.955540
+File processing finished for hour 24 of 720. Process time: 0:00:33.381845
+File processing finished for hour 48 of 720. Process time: 0:01:42.419139
+File processing finished for hour 72 of 720. Process time: 0:03:27.231170
+File processing finished for hour 96 of 720. Process time: 0:05:46.864219
+File processing finished for hour 120 of 720. Process time: 0:08:40.942209
+File processing finished for hour 144 of 720. Process time: 0:12:09.072075
+File processing finished for hour 168 of 720. Process time: 0:16:11.792494
+File processing finished for hour 192 of 720. Process time: 0:20:49.542554
+File processing finished for hour 216 of 720. Process time: 0:26:01.625059
+File processing finished for hour 240 of 720. Process time: 0:31:47.938212
+File processing finished for hour 264 of 720. Process time: 0:38:07.895633
+File processing finished for hour 288 of 720. Process time: 0:45:01.491008
+File processing finished for hour 312 of 720. Process time: 0:52:28.930431
+File processing finished for hour 336 of 720. Process time: 1:00:30.444683
+File processing finished for hour 360 of 720. Process time: 1:09:06.322077
+File processing finished for hour 384 of 720. Process time: 1:18:17.186547
+File processing finished for hour 408 of 720. Process time: 1:28:03.263572
+File processing finished for hour 432 of 720. Process time: 1:38:24.388865
+File processing finished for hour 456 of 720. Process time: 1:49:20.753169
+File processing finished for hour 480 of 720. Process time: 2:00:52.212066
+File processing finished for hour 504 of 720. Process time: 2:12:57.606107
+File processing finished for hour 528 of 720. Process time: 2:25:36.726480
+File processing finished for hour 552 of 720. Process time: 2:38:50.779810
+File processing finished for hour 576 of 720. Process time: 2:52:40.663152
+File processing finished for hour 600 of 720. Process time: 3:07:05.497464
+File processing finished for hour 624 of 720. Process time: 3:22:04.782486
+File processing finished for hour 648 of 720. Process time: 3:37:39.151853
+File processing finished for hour 672 of 720. Process time: 3:53:48.717852
+File processing finished for hour 696 of 720. Process time: 4:10:33.428679
+File processing finished for hour 720 of 720. Process time: 4:27:53.317429
 0 errors during processing.
-End time: 2025-04-17 00:14:36.630356
-Processed 720 hours of data in 0:00:44.077991.
+End time: 2025-04-17 21:15:46.999320
+Processed 720 hours of data in 0:00:44.043727.
 </pre></div>
 </div>
 </div>
@@ -805,7 +820,7 @@ Processed 720 hours of data in 0:00:44.077991.
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Deployments: dict_keys([&#39;deployment0010&#39;])
 Downloading 180 data file(s) from the local kdata directory
 Downloading 180 data file(s) from the local kdata directory
-Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 93.37it/s] 
+Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 112.00it/s]
 Merging the data files into a single dataset
 </pre></div>
 </div>
@@ -818,18 +833,18 @@ Merging the data files into a single dataset
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">PathCollection</span>
 <span class="kn">from</span> <span class="nn">matplotlib.legend_handler</span> <span class="kn">import</span> <span class="n">HandlerPathCollection</span><span class="p">,</span> <span class="n">HandlerLine2D</span>
-<span class="c1"># %matplotlib inline</span>
-<span class="o">%</span><span class="k">matplotlib</span> ipympl
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="c1"># %matplotlib ipympl</span>
 
 <span class="n">marker_size</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">legend_marker_size</span> <span class="o">=</span> <span class="mi">20</span>
-<span class="n">tick_size</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">tick_size</span> <span class="o">=</span> <span class="mi">14</span>
 
 <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">orig</span><span class="p">):</span>
     <span class="n">handle</span><span class="o">.</span><span class="n">update_from</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span>
     <span class="n">handle</span><span class="o">.</span><span class="n">set_sizes</span><span class="p">([</span><span class="n">legend_marker_size</span><span class="p">])</span>
     
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">uw</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="n">marker_size</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Computed&quot;</span><span class="p">)</span>
 
 <span class="n">scatter</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">telemetered_dataset</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">telemetered_dataset</span><span class="p">[</span><span class="s1">&#39;uw_momentum_flux&#39;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="n">marker_size</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Telemetered&quot;</span><span class="p">)</span>
@@ -848,7 +863,8 @@ Merging the data files into a single dataset
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "c0c13e57ccf54bf08dd8c95542b9e359", "version_major": 2, "version_minor": 0}</script></div>
+<img alt="../../../../_images/400dd9105fdaaa5655db9fcb3b4bc80f24fa69e809199f6685a1154e8f986c54.png" src="../../../../_images/400dd9105fdaaa5655db9fcb3b4bc80f24fa69e809199f6685a1154e8f986c54.png" />
+</div>
 </div>
 </section>
 </section>

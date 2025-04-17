@@ -1,0 +1,65 @@
+Traceback (most recent call last):
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# find the endurance instruments affected
+sites = ['CE02SHSM', 'CE04OSSM', 'CE07SHSM', 'CE09OSSM']
+node = 'RID27'
+sensor = '04-DOSTAD000'
+nsif = missing_two_point(sites, node, sensor)
+sites = ['CE01ISSP', 'CE02SHSP', 'CE06ISSP', 'CE07SHSP']
+node = 'SP001'
+sensor = '01-DOSTAJ000'
+cspp = missing_two_point(sites, node, sensor)
+endurance = pd.concat([nsif, cspp], ignore_index=True)
+endurance
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+[0;32m/tmp/ipykernel_12393/751300919.py[0m in [0;36m?[0;34m()[0m
+[1;32m      1[0m [0;31m# find the endurance instruments affected[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      2[0m [0msites[0m [0;34m=[0m [0;34m[[0m[0;34m'CE02SHSM'[0m[0;34m,[0m [0;34m'CE04OSSM'[0m[0;34m,[0m [0;34m'CE07SHSM'[0m[0;34m,[0m [0;34m'CE09OSSM'[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m
+[1;32m      3[0m [0mnode[0m [0;34m=[0m [0;34m'RID27'[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      4[0m [0msensor[0m [0;34m=[0m [0;34m'04-DOSTAD000'[0m[0;34m[0m[0;34m[0m[0m
+[0;32m----> 5[0;31m [0mnsif[0m [0;34m=[0m [0mmissing_two_point[0m[0;34m([0m[0msites[0m[0;34m,[0m [0mnode[0m[0;34m,[0m [0msensor[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m      6[0m [0msites[0m [0;34m=[0m [0;34m[[0m[0;34m'CE01ISSP'[0m[0;34m,[0m [0;34m'CE02SHSP'[0m[0;34m,[0m [0;34m'CE06ISSP'[0m[0;34m,[0m [0;34m'CE07SHSP'[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m
+[1;32m      7[0m [0mnode[0m [0;34m=[0m [0;34m'SP001'[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      8[0m [0msensor[0m [0;34m=[0m [0;34m'01-DOSTAJ000'[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/tmp/ipykernel_12393/2565023259.py[0m in [0;36m?[0;34m(sites, node, sensor)[0m
+[1;32m     57[0m                                [0;34m'to re-download the data. The estimated error in the dissolved oxygen '[0m [0;34m+[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     58[0m                                'calculation in this instance is {4:.2f} percent.').format(cal[0]['referenceDesignator'], 
+[1;32m     59[0m                                                                                           [0mdeploy[0m[0;34m,[0m [0mstart[0m[0;34m,[0m [0mstop[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     60[0m                                                                                           [0mpercent_error[0m[0;34m)[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 61[0;31m                 data = data.append({'Array': vocab[0]['tocL1'],  
+[0m[1;32m     62[0m                                     [0;34m'Platform'[0m[0;34m:[0m [0mvocab[0m[0;34m[[0m[0;36m0[0m[0;34m][0m[0;34m[[0m[0;34m'tocL2'[0m[0;34m][0m [0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     63[0m                                     [0;34m'Node'[0m[0;34m:[0m [0mvocab[0m[0;34m[[0m[0;36m0[0m[0;34m][0m[0;34m[[0m[0;34m'tocL3'[0m[0;34m][0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     64[0m                                     [0;34m'Instrument'[0m[0;34m:[0m [0mvocab[0m[0;34m[[0m[0;36m0[0m[0;34m][0m[0;34m[[0m[0;34m'instrument'[0m[0;34m][0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/envs/ooi-data-explorations/lib/python3.12/site-packages/pandas/core/generic.py[0m in [0;36m?[0;34m(self, name)[0m
+[1;32m   6295[0m             [0;32mand[0m [0mname[0m [0;32mnot[0m [0;32min[0m [0mself[0m[0;34m.[0m[0m_accessors[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6296[0m             [0;32mand[0m [0mself[0m[0;34m.[0m[0m_info_axis[0m[0;34m.[0m[0m_can_hold_identifiers_and_holds_name[0m[0;34m([0m[0mname[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6297[0m         [0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6298[0m             [0;32mreturn[0m [0mself[0m[0;34m[[0m[0mname[0m[0;34m][0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 6299[0;31m         [0;32mreturn[0m [0mobject[0m[0;34m.[0m[0m__getattribute__[0m[0;34m([0m[0mself[0m[0;34m,[0m [0mname[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;31mAttributeError[0m: 'DataFrame' object has no attribute 'append'
+

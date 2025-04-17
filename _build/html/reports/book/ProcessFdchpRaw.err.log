@@ -1,0 +1,136 @@
+Traceback (most recent call last):
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+uw_deployment3, U_deployment3, sigH_deployment3, times_deployment3, errors_deployment3 =  process_raw_files(files_deployment3, "deployment3/fluxes")
+plot_x_velocity_vs_wind_speed(U_deployment3, uw_deployment3)
+plot_wave_height_vs_wind_speed(U_deployment3, sigH_deployment3)
+------------------
+
+----- stdout -----
+Processing 6026 files.
+Start time: 2025-02-13 17:26:00.004965
+----- stdout -----
+File processing finished for file 0: fdchp_20160904_100100.dat. Read-in time: 0:00:00.545205, Process time: 0:00:00.398429
+----- stdout -----
+File processing finished for file 100: fdchp_20160910_100300.dat. Read-in time: 0:00:43.750703, Process time: 0:00:05.715501
+----- stdout -----
+File processing finished for file 200: fdchp_20160919_180200.dat. Read-in time: 0:00:43.078384, Process time: 0:00:05.574090
+----- stdout -----
+File processing finished for file 300: fdchp_20160910_070200.dat. Read-in time: 0:00:43.008389, Process time: 0:00:05.599212
+----- stdout -----
+File processing finished for file 400: fdchp_20160901_000100.dat. Read-in time: 0:00:43.100878, Process time: 0:00:05.596341
+----- stdout -----
+File processing finished for file 500: fdchp_20160925_120100.dat. Read-in time: 0:00:43.165516, Process time: 0:00:05.627698
+----- stdout -----
+File processing finished for file 600: fdchp_20160908_140200.dat. Read-in time: 0:00:43.151873, Process time: 0:00:05.558367
+----- stdout -----
+File processing finished for file 700: fdchp_20160902_220300.dat. Read-in time: 0:00:43.040412, Process time: 0:00:05.582360
+----- stdout -----
+File processing finished for file 800: fdchp_20170529_110200.dat. Read-in time: 0:00:43.281618, Process time: 0:00:05.556494
+----- stdout -----
+File processing finished for file 900: fdchp_20170528_030200.dat. Read-in time: 0:00:43.185293, Process time: 0:00:05.562310
+----- stdout -----
+File processing finished for file 1000: fdchp_20170730_160200.dat. Read-in time: 0:00:42.879309, Process time: 0:00:05.440874
+----- stdout -----
+File processing finished for file 1100: fdchp_20161221_140200.dat. Read-in time: 0:00:43.360889, Process time: 0:00:05.599439
+----- stdout -----
+File processing finished for file 1200: fdchp_20161202_000200.dat. Read-in time: 0:00:43.515242, Process time: 0:00:05.662134
+----- stdout -----
+File processing finished for file 1300: fdchp_20161209_120200.dat. Read-in time: 0:00:43.612444, Process time: 0:00:05.682842
+----- stdout -----
+File processing finished for file 1400: fdchp_20161213_110200.dat. Read-in time: 0:00:43.174288, Process time: 0:00:05.625285
+----- stdout -----
+File processing finished for file 1500: fdchp_20161203_000200.dat. Read-in time: 0:00:43.623628, Process time: 0:00:05.676200
+----- stdout -----
+File processing finished for file 1600: fdchp_20161208_060200.dat. Read-in time: 0:00:43.806734, Process time: 0:00:05.662353
+----- stdout -----
+File processing finished for file 1700: fdchp_20161222_020200.dat. Read-in time: 0:00:43.681843, Process time: 0:00:05.658524
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mKeyboardInterrupt[0m                         Traceback (most recent call last)
+[0;32m/tmp/ipykernel_1825/964154428.py[0m in [0;36m?[0;34m()[0m
+[0;32m----> 1[0;31m [0muw_deployment3[0m[0;34m,[0m [0mU_deployment3[0m[0;34m,[0m [0msigH_deployment3[0m[0;34m,[0m [0mtimes_deployment3[0m[0;34m,[0m [0merrors_deployment3[0m [0;34m=[0m  [0mprocess_raw_files[0m[0;34m([0m[0mfiles_deployment3[0m[0;34m,[0m [0;34m"deployment3/fluxes"[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m      2[0m [0mplot_x_velocity_vs_wind_speed[0m[0;34m([0m[0mU_deployment3[0m[0;34m,[0m [0muw_deployment3[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m      3[0m [0mplot_wave_height_vs_wind_speed[0m[0;34m([0m[0mU_deployment3[0m[0;34m,[0m [0msigH_deployment3[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/tmp/ipykernel_1825/2775104313.py[0m in [0;36m?[0;34m(file_list, output_filepath)[0m
+[1;32m     38[0m             [0;32mif[0m [0mraw_data[0m [0;32mis[0m [0;32mNone[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     39[0m                 [0mincr[0m [0;34m+=[0m [0;36m1[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     40[0m                 [0merrors[0m[0;34m[[0m[0mfilename[0m[0;34m][0m [0;34m=[0m [0;34m"Empty file: {}"[0m[0;34m.[0m[0mformat[0m[0;34m([0m[0mfilename[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     41[0m                 [0;32mcontinue[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 42[0;31m         [0;32mexcept[0m [0mException[0m [0;32mas[0m [0me[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m     43[0m             [0mprint[0m[0;34m([0m[0;34m"Exception processing file {}: {}"[0m[0;34m.[0m[0mformat[0m[0;34m([0m[0mfilename[0m[0;34m,[0m [0me[0m[0;34m)[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     44[0m             [0merrors[0m[0;34m[[0m[0mfilename[0m[0;34m][0m [0;34m=[0m [0me[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     45[0m [0;34m[0m[0m
+
+[0;32m~/ooi-data-explorations/python/examples/fdchp/fdchp_utils.py[0m in [0;36m?[0;34m(file_path, convert_to_nwu)[0m
+[1;32m     36[0m         [0mdf[0m [0;34m=[0m [0mpd[0m[0;34m.[0m[0mDataFrame[0m[0;34m([0m[0mdata[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     37[0m     [0;32melse[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     38[0m         [0mdf[0m [0;34m=[0m [0;32mNone[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     39[0m     [0;32mif[0m [0mdf[0m [0;32mis[0m [0;32mnot[0m [0;32mNone[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 40[0;31m         [0mdf[0m[0;34m[[0m[0;34m'time'[0m[0;34m][0m [0;34m=[0m [0mdf[0m[0;34m.[0m[0mapply[0m[0;34m([0m[0;32mlambda[0m [0mrow[0m[0;34m:[0m [0mdatetime[0m[0;34m.[0m[0mdatetime[0m[0;34m([0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0myear[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mmonth[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mday[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mhour[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mminute[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0msecond[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mmillisecond[0m[0;34m)[0m[0;34m*[0m[0;36m1000[0m[0;34m)[0m[0;34m,[0m [0maxis[0m[0;34m=[0m[0;36m1[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m     41[0m [0;34m[0m[0m
+[1;32m     42[0m         [0;32mif[0m [0mconvert_to_nwu[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     43[0m             [0;31m# Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/envs/fdchp/lib/python3.12/site-packages/pandas/core/frame.py[0m in [0;36m?[0;34m(self, func, axis, raw, result_type, args, by_row, engine, engine_kwargs, **kwargs)[0m
+[1;32m  10370[0m             [0mengine_kwargs[0m[0;34m=[0m[0mengine_kwargs[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m  10371[0m             [0margs[0m[0;34m=[0m[0margs[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m  10372[0m             [0mkwargs[0m[0;34m=[0m[0mkwargs[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[1;32m  10373[0m         [0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m> 10374[0;31m         [0;32mreturn[0m [0mop[0m[0;34m.[0m[0mapply[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0m__finalize__[0m[0;34m([0m[0mself[0m[0;34m,[0m [0mmethod[0m[0;34m=[0m[0;34m"apply"[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;32m~/envs/fdchp/lib/python3.12/site-packages/pandas/core/apply.py[0m in [0;36m?[0;34m(self)[0m
+[1;32m    912[0m         [0;31m# raw[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    913[0m         [0;32melif[0m [0mself[0m[0;34m.[0m[0mraw[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    914[0m             [0;32mreturn[0m [0mself[0m[0;34m.[0m[0mapply_raw[0m[0;34m([0m[0mengine[0m[0;34m=[0m[0mself[0m[0;34m.[0m[0mengine[0m[0;34m,[0m [0mengine_kwargs[0m[0;34m=[0m[0mself[0m[0;34m.[0m[0mengine_kwargs[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    915[0m [0;34m[0m[0m
+[0;32m--> 916[0;31m         [0;32mreturn[0m [0mself[0m[0;34m.[0m[0mapply_standard[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;32m~/envs/fdchp/lib/python3.12/site-packages/pandas/core/apply.py[0m in [0;36m?[0;34m(self)[0m
+[1;32m   1061[0m     [0;32mdef[0m [0mapply_standard[0m[0;34m([0m[0mself[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1062[0m         [0;32mif[0m [0mself[0m[0;34m.[0m[0mengine[0m [0;34m==[0m [0;34m"python"[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 1063[0;31m             [0mresults[0m[0;34m,[0m [0mres_index[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mapply_series_generator[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   1064[0m         [0;32melse[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1065[0m             [0mresults[0m[0;34m,[0m [0mres_index[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mapply_series_numba[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1066[0m [0;34m[0m[0m
+
+[0;32m~/envs/fdchp/lib/python3.12/site-packages/pandas/core/apply.py[0m in [0;36m?[0;34m(self)[0m
+[1;32m   1077[0m [0;34m[0m[0m
+[1;32m   1078[0m         [0;32mwith[0m [0moption_context[0m[0;34m([0m[0;34m"mode.chained_assignment"[0m[0;34m,[0m [0;32mNone[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1079[0m             [0;32mfor[0m [0mi[0m[0;34m,[0m [0mv[0m [0;32min[0m [0menumerate[0m[0;34m([0m[0mseries_gen[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1080[0m                 [0;31m# ignore SettingWithCopy here in case the user mutates[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 1081[0;31m                 [0mresults[0m[0;34m[[0m[0mi[0m[0;34m][0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mfunc[0m[0;34m([0m[0mv[0m[0;34m,[0m [0;34m*[0m[0mself[0m[0;34m.[0m[0margs[0m[0;34m,[0m [0;34m**[0m[0mself[0m[0;34m.[0m[0mkwargs[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   1082[0m                 [0;32mif[0m [0misinstance[0m[0;34m([0m[0mresults[0m[0;34m[[0m[0mi[0m[0;34m][0m[0;34m,[0m [0mABCSeries[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1083[0m                     [0;31m# If we have a view on v, we need to make a copy because[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1084[0m                     [0;31m#  series_generator will swap out the underlying data[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/ooi-data-explorations/python/examples/fdchp/fdchp_utils.py[0m in [0;36m?[0;34m(row)[0m
+[0;32m---> 40[0;31m         [0mdf[0m[0;34m[[0m[0;34m'time'[0m[0;34m][0m [0;34m=[0m [0mdf[0m[0;34m.[0m[0mapply[0m[0;34m([0m[0;32mlambda[0m [0mrow[0m[0;34m:[0m [0mdatetime[0m[0;34m.[0m[0mdatetime[0m[0;34m([0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0myear[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mmonth[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mday[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mhour[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mminute[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0msecond[0m[0;34m)[0m[0;34m,[0m [0mint[0m[0;34m([0m[0mrow[0m[0;34m.[0m[0mmillisecond[0m[0;34m)[0m[0;34m*[0m[0;36m1000[0m[0;34m)[0m[0;34m,[0m [0maxis[0m[0;34m=[0m[0;36m1[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m
+[0;32m~/envs/fdchp/lib/python3.12/site-packages/pandas/core/generic.py[0m in [0;36m?[0;34m(self, name)[0m
+[0;32m-> 6284[0;31m     [0;34m@[0m[0mfinal[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   6285[0m     [0;32mdef[0m [0m__getattr__[0m[0;34m([0m[0mself[0m[0;34m,[0m [0mname[0m[0;34m:[0m [0mstr[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   6286[0m         """
+[1;32m   6287[0m         [0mAfter[0m [0mregular[0m [0mattribute[0m [0maccess[0m[0;34m,[0m [0;32mtry[0m [0mlooking[0m [0mup[0m [0mthe[0m [0mname[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mKeyboardInterrupt[0m: 
+

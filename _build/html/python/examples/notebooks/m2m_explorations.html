@@ -1,0 +1,2723 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Accessing OOI Data and Metadata through the M2M API &#8212; OOI Data Explorations</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'python/examples/notebooks/m2m_explorations';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="FDCHP Data Processing" href="fdchp/FdchpExample.html" />
+    <link rel="prev" title="Welcome to OOI Data Explorations" href="../../../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/NSF-OOI-RGB.png" class="logo__image only-light" alt="OOI Data Explorations - Home"/>
+    <script>document.write(`<img src="../../../_static/NSF-OOI-RGB.png" class="logo__image only-dark" alt="OOI Data Explorations - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Welcome to OOI Data Explorations
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Accessing OOI Data and Metadata through the M2M API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fdchp/FdchpExample.html">FDCHP Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../matlab/examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is just a test for R notebooks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./python/examples/notebooks/m2m_explorations.ipynb&branch=book" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on JupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="JupyterHub logo" src="../../../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2Fpython/examples/notebooks/m2m_explorations.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/python/examples/notebooks/m2m_explorations.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Accessing OOI Data and Metadata through the M2M API</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensor-information">Sensor Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preload-information">Preload Information</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="accessing-ooi-data-and-metadata-through-the-m2m-api">
+<h1>Accessing OOI Data and Metadata through the M2M API<a class="headerlink" href="#accessing-ooi-data-and-metadata-through-the-m2m-api" title="Link to this heading">#</a></h1>
+<p>Most users utilize the <a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">OOI M2M API</a> to access (request and download) data from the various instruments and sensors deployed across the arrays. Indeed, the code in this repo is largely built around this activity. There are, however, additional API calls available to users that go beyond just requesting data. These can be used to request more information about, for example, the various sites, different deployments, instrument serial numbers, and calibration coefficients.</p>
+<p>All of this information, which is stored in the <a class="reference external" href="https://github.com/oceanobservatories/asset-management">OOI Asset Management Database</a>, is combined to form the metadata (the data about the data) that users can utilize to create data requests, re-process data, or add additional data to the requested data. This notebook will demonstrate how to use these API calls, which have been mapped to functions within this repo, to access and utilize the OOI metadata. To understand the terminalogy used below, please refer to the <a class="reference external" href="https://github.com/oceanobservatories/ooi-data-explorations/tree/master/python#m2m-terminology">README</a> for this repo and to the <a class="reference external" href="https://oceanobservatories.org/research-arrays/">OOI website</a>.</p>
+<p>The functions were built based off of the <a class="reference external" href="https://github.com/ooi-data-review/2018-data-workshops/raw/master/handouts/API%20Cheat%20Sheet.pdf">API Cheat Sheet</a> developed for the <a class="reference external" href="https://oceanobservatories.org/data-workshops/">2018 Early Career Data Workshops</a> hosted at Rutgers University. They can be broken down into six categories:</p>
+<ul class="simple">
+<li><p>Sensor Information: Develop lists about the various sites, nodes and sensors deployed by OOI, and lists of the data delivery methods, data streams, and the parameters included in, and the time ranges covered by each stream.</p></li>
+<li><p>Preload Information: Pull information from the backend data base that defines streams and the parameters contained within a stream.</p></li>
+<li><p>Deployment Information: Download deployment information (deployment number, dates, sensors deployed, location, etc).</p></li>
+<li><p>Calibration Information: Download calibration data for an instrument defined by the site, node and sensor, or for a specific instrument as defined by it’s unique ID (derived from the serial number)</p></li>
+<li><p>Asset Information: In many ways a duplicate of the Calibration Information functions, with queires and results returned differing slightly.</p></li>
+<li><p>Annotations: Use the site, node and sensor names to obtain annotations (notes and HITL QC assessments of the data) about the instrument of interest.</p></li>
+</ul>
+<p>Several of these functions will return a firehose of information. Users will need to spend time understanding the responses and how they can be used. The examples below will hopefully help with that process.</p>
+<section id="sensor-information">
+<h2>Sensor Information<a class="headerlink" href="#sensor-information" title="Link to this heading">#</a></h2>
+<p>All of the functions used below return lists of the information a user can pull out of the <a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">OOI M2M API</a> system. The first three functions imported below are hierarchical, in other words they are build on each other (e.g. listing the sites in OOI, then using a specific site to list the available nodes, and then using a specific site and node to list the available sensors). The combination of a specific site, node and sensor is used within OOI to create <a class="reference external" href="https://oceanobservatories.org/knowledgebase/how-to-decipher-a-reference-designator/">the reference designator</a>. The reference designator provides the unique code needed to access a specific instance of an instrument within OOI (e.g. the CTD on the midwater platform of the Oregon Shelf Surface mooring).</p>
+<p>The remaining three methods all provide different pieces of information about that specific instrument, or reference designator: data delivery methods, streams (aka datasets), the available parameters and the time ranges covered by the different streams.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="c1"># import the functions used to list available information about sites, nodes and sensors ...</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_sites</span><span class="p">,</span> <span class="n">list_nodes</span><span class="p">,</span> <span class="n">list_sensors</span>
+
+<span class="c1"># ... and the more detailed information about a specific site, node and sensor (reference designator)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_methods</span><span class="p">,</span> <span class="n">list_streams</span><span class="p">,</span> <span class="n">list_metadata</span>
+
+<span class="c1"># Some basics from the common package to construct our own requests</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">BASE_URL</span><span class="p">,</span> <span class="n">SENSOR_URL</span><span class="p">,</span> <span class="n">AUTH</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a list of all the sites in OOI</span>
+<span class="n">sites</span> <span class="o">=</span> <span class="n">list_sites</span><span class="p">()</span>
+<span class="n">sites</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;CE01ISSM&#39;,
+ &#39;CE01ISSP&#39;,
+ &#39;CE02SHBP&#39;,
+ &#39;CE02SHSM&#39;,
+ &#39;CE02SHSP&#39;,
+ &#39;CE04OSBP&#39;,
+ &#39;CE04OSPD&#39;,
+ &#39;CE04OSPI&#39;,
+ &#39;CE04OSPS&#39;,
+ &#39;CE04OSSM&#39;,
+ &#39;CE05MOAS&#39;,
+ &#39;CE06ISSM&#39;,
+ &#39;CE06ISSP&#39;,
+ &#39;CE07SHSM&#39;,
+ &#39;CE07SHSP&#39;,
+ &#39;CE09OSPM&#39;,
+ &#39;CE09OSSM&#39;,
+ &#39;CP01CNPM&#39;,
+ &#39;CP01CNSM&#39;,
+ &#39;CP01CNSP&#39;,
+ &#39;CP02PMCI&#39;,
+ &#39;CP02PMCO&#39;,
+ &#39;CP02PMUI&#39;,
+ &#39;CP02PMUO&#39;,
+ &#39;CP03ISPM&#39;,
+ &#39;CP03ISSM&#39;,
+ &#39;CP03ISSP&#39;,
+ &#39;CP04OSPM&#39;,
+ &#39;CP04OSSM&#39;,
+ &#39;CP05MOAS&#39;,
+ &#39;CP10CNSM&#39;,
+ &#39;CP11NOSM&#39;,
+ &#39;CP11SOSM&#39;,
+ &#39;CP12CNSW&#39;,
+ &#39;CP12WESW&#39;,
+ &#39;CP13EAPM&#39;,
+ &#39;CP13NOPM&#39;,
+ &#39;CP13SOPM&#39;,
+ &#39;CP14NEPM&#39;,
+ &#39;CP14SEPM&#39;,
+ &#39;CP15MOAS&#39;,
+ &#39;CP16MOAS&#39;,
+ &#39;GA01SUMO&#39;,
+ &#39;GA02HYPM&#39;,
+ &#39;GA03FLMA&#39;,
+ &#39;GA03FLMB&#39;,
+ &#39;GA05MOAS&#39;,
+ &#39;GI01SUMO&#39;,
+ &#39;GI02HYPM&#39;,
+ &#39;GI03FLMA&#39;,
+ &#39;GI03FLMB&#39;,
+ &#39;GI05MOAS&#39;,
+ &#39;GP02HYPM&#39;,
+ &#39;GP03FLMA&#39;,
+ &#39;GP03FLMB&#39;,
+ &#39;GP05MOAS&#39;,
+ &#39;GS01SUMO&#39;,
+ &#39;GS02HYPM&#39;,
+ &#39;GS03FLMA&#39;,
+ &#39;GS03FLMB&#39;,
+ &#39;GS05MOAS&#39;,
+ &#39;RS01OSBP&#39;,
+ &#39;RS01SBPD&#39;,
+ &#39;RS01SBPS&#39;,
+ &#39;RS01SHBP&#39;,
+ &#39;RS01SHDR&#39;,
+ &#39;RS01SLBS&#39;,
+ &#39;RS01SUM1&#39;,
+ &#39;RS01SUM2&#39;,
+ &#39;RS03ASHS&#39;,
+ &#39;RS03AXBS&#39;,
+ &#39;RS03AXPD&#39;,
+ &#39;RS03AXPS&#39;,
+ &#39;RS03AXSM&#39;,
+ &#39;RS03CCAL&#39;,
+ &#39;RS03ECAL&#39;,
+ &#39;RS03INT1&#39;,
+ &#39;RS03INT2&#39;,
+ &#39;SSRSPACC&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select CE02SHSM as the site to use for the rest of this example</span>
+<span class="n">site</span> <span class="o">=</span> <span class="n">sites</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="c1"># create a list of nodes available for a particular site</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">list_nodes</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">nodes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;RIC21&#39;, &#39;RID26&#39;, &#39;RID27&#39;, &#39;SBC11&#39;, &#39;SBD11&#39;, &#39;SBD12&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select RID27 (1 of 2 data loggers on the midwater platform) as the node to use for the rest of this example</span>
+<span class="n">node</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="c1"># create a list of sensors for a particular node</span>
+<span class="n">sensors</span> <span class="o">=</span> <span class="n">list_sensors</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+<span class="n">sensors</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;00-DCLENG000&#39;,
+ &#39;01-OPTAAD000&#39;,
+ &#39;02-FLORTD000&#39;,
+ &#39;03-CTDBPC000&#39;,
+ &#39;04-DOSTAD000&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select the CTD as the sensor to use for the rest of this example</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">sensors</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The above steps pedantically construct the reference designator that will be used in a future requests below. There are other sources of this information, such as the <a class="reference external" href="https://oceanobservatories.org/">OOI website</a>, <a class="reference external" href="https://ooinet.oceanobservatories.org/">Data Portal</a> or <a class="reference external" href="https://dataexplorer.oceanobservatories.org/">Data Explorer</a> that a user to could work through to construct the reference designator manually. The above methods provide programmitic tools to walk through all of the OOI instruments, of which there are 1398 unique instances (counting engineering and science instruments). It might take awhile to manually search through all those entries. Alternatively, we can programatically find every instance of, for example, the <a class="reference external" href="https://oceanobservatories.org/instrument-class/ctd/">CTDBP</a> instruments in OOI …</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">ctdbp</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">sites</span><span class="p">:</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">list_nodes</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="n">sensors</span>  <span class="o">=</span> <span class="n">list_sensors</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sensor</span> <span class="ow">in</span> <span class="n">sensors</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sensor</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;CTDBP&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ctdbp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sensor</span><span class="p">]))</span>
+
+<span class="n">ctdbp</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 241 ms, sys: 4.14 ms, total: 245 ms
+Wall time: 7.75 s
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;CE01ISSM-MFD37-03-CTDBPC000&#39;,
+ &#39;CE01ISSM-RID16-03-CTDBPC000&#39;,
+ &#39;CE01ISSM-SBD17-06-CTDBPC000&#39;,
+ &#39;CE02SHBP-LJ01D-06-CTDBPN106&#39;,
+ &#39;CE02SHSM-RID27-03-CTDBPC000&#39;,
+ &#39;CE04OSBP-LJ01C-06-CTDBPO108&#39;,
+ &#39;CE04OSSM-RID27-03-CTDBPC000&#39;,
+ &#39;CE06ISSM-MFD37-03-CTDBPC000&#39;,
+ &#39;CE06ISSM-RID16-03-CTDBPC000&#39;,
+ &#39;CE06ISSM-SBD17-06-CTDBPC000&#39;,
+ &#39;CE07SHSM-MFD37-03-CTDBPC000&#39;,
+ &#39;CE07SHSM-RID27-03-CTDBPC000&#39;,
+ &#39;CE09OSSM-MFD37-03-CTDBPE000&#39;,
+ &#39;CE09OSSM-RID27-03-CTDBPC000&#39;,
+ &#39;CP01CNSM-MFD37-03-CTDBPD000&#39;,
+ &#39;CP01CNSM-RID27-03-CTDBPC000&#39;,
+ &#39;CP03ISSM-MFD37-03-CTDBPD000&#39;,
+ &#39;CP03ISSM-RID27-03-CTDBPC000&#39;,
+ &#39;CP04OSSM-MFD37-03-CTDBPE000&#39;,
+ &#39;CP04OSSM-RID27-03-CTDBPC000&#39;,
+ &#39;CP10CNSM-MFD37-03-CTDBPC000&#39;,
+ &#39;CP10CNSM-RID27-03-CTDBPC000&#39;,
+ &#39;CP11NOSM-MFD37-03-CTDBPD000&#39;,
+ &#39;CP11NOSM-RID27-03-CTDBPC000&#39;,
+ &#39;CP11SOSM-MFD37-03-CTDBPD000&#39;,
+ &#39;CP11SOSM-RID27-03-CTDBPC000&#39;,
+ &#39;GA01SUMO-RID16-03-CTDBPF000&#39;,
+ &#39;GA01SUMO-RII11-02-CTDBPP031&#39;,
+ &#39;GA01SUMO-RII11-02-CTDBPP032&#39;,
+ &#39;GA01SUMO-RII11-02-CTDBPP033&#39;,
+ &#39;GI01SUMO-RID16-03-CTDBPF000&#39;,
+ &#39;GI01SUMO-RII11-02-CTDBPP031&#39;,
+ &#39;GI01SUMO-RII11-02-CTDBPP032&#39;,
+ &#39;GI01SUMO-RII11-02-CTDBPP033&#39;,
+ &#39;GS01SUMO-RID16-03-CTDBPF000&#39;,
+ &#39;GS01SUMO-RII11-02-CTDBPP031&#39;,
+ &#39;GS01SUMO-RII11-02-CTDBPP032&#39;,
+ &#39;GS01SUMO-RII11-02-CTDBPP033&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<p>… in ~7 seconds. There are 32 of them.</p>
+<p>Circling back to the CTD on the Oregon Shelf Surface Mooring midwater platform, or <code class="docutils literal notranslate"><span class="pre">CE02SHSM-RID27-03-CTDBPC000</span></code>, we can use the remaining Sensor Information functions to gather more information about this particular sensor.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the site, node and sensor to CE02SHSM-RID27-03-CTDBPC000</span>
+<span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;CE02SHSM&#39;</span>
+<span class="n">node</span> <span class="o">=</span> <span class="s1">&#39;RID27&#39;</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="s1">&#39;03-CTDBPC000&#39;</span>
+
+<span class="c1"># create a list of the data delivery methods available for this sensor</span>
+<span class="n">methods</span> <span class="o">=</span> <span class="n">list_methods</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sensor</span><span class="p">)</span>
+<span class="n">methods</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;recovered_host&#39;, &#39;recovered_inst&#39;, &#39;telemetered&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select recovered_host as the data delivery method to use for the rest of this example</span>
+<span class="n">method</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># create a list of the data streams (aka datasets) available from this sensor and data delivery method</span>
+<span class="n">streams</span> <span class="o">=</span> <span class="n">list_streams</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sensor</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+<span class="n">streams</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;ctdbp_cdef_dcl_instrument_recovered&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># select the one stream for this data delivery method to use for the rest of this example</span>
+<span class="n">stream</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># create lists of dictionaries with the available parameters and time ranges covered by each </span>
+<span class="c1"># dataset associated with the sensor</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">list_metadata</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sensor</span><span class="p">)</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;parameters&#39;</span><span class="p">)</span>
+<span class="n">time_ranges</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">]</span>
+
+<span class="c1"># print the parameter dictionaries for the parameters associated with this stream</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;stream&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;conductivity&#39;,
+ &#39;pdId&#39;: &#39;PD1&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;FLOAT&#39;,
+ &#39;units&#39;: &#39;S m-1&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;pressure&#39;,
+ &#39;pdId&#39;: &#39;PD2&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;FLOAT&#39;,
+ &#39;units&#39;: &#39;dbar&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;density&#39;,
+ &#39;pdId&#39;: &#39;PD5&#39;,
+ &#39;shape&#39;: &#39;FUNCTION&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;FLOAT&#39;,
+ &#39;units&#39;: &#39;kg m-3&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;temp&#39;,
+ &#39;pdId&#39;: &#39;PD6&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;FLOAT&#39;,
+ &#39;units&#39;: &#39;degrees_Celsius&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;time&#39;,
+ &#39;pdId&#39;: &#39;PD7&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;DOUBLE&#39;,
+ &#39;units&#39;: &#39;seconds since 1900-01-01&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;port_timestamp&#39;,
+ &#39;pdId&#39;: &#39;PD10&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;DOUBLE&#39;,
+ &#39;units&#39;: &#39;seconds since 1900-01-01&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;driver_timestamp&#39;,
+ &#39;pdId&#39;: &#39;PD11&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;DOUBLE&#39;,
+ &#39;units&#39;: &#39;seconds since 1900-01-01&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;internal_timestamp&#39;,
+ &#39;pdId&#39;: &#39;PD12&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;DOUBLE&#39;,
+ &#39;units&#39;: &#39;seconds since 1900-01-01&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;practical_salinity&#39;,
+ &#39;pdId&#39;: &#39;PD13&#39;,
+ &#39;shape&#39;: &#39;FUNCTION&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;FLOAT&#39;,
+ &#39;units&#39;: &#39;1&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;empty&#39;,
+ &#39;particleKey&#39;: &#39;preferred_timestamp&#39;,
+ &#39;pdId&#39;: &#39;PD16&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;STRING&#39;,
+ &#39;units&#39;: None,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;empty&#39;,
+ &#39;particleKey&#39;: &#39;date_time_string&#39;,
+ &#39;pdId&#39;: &#39;PD93&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;STRING&#39;,
+ &#39;units&#39;: None,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999&#39;,
+ &#39;particleKey&#39;: &#39;ingestion_timestamp&#39;,
+ &#39;pdId&#39;: &#39;PD863&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;DOUBLE&#39;,
+ &#39;units&#39;: &#39;seconds since 1900-01-01&#39;,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;empty&#39;,
+ &#39;particleKey&#39;: &#39;dcl_controller_timestamp&#39;,
+ &#39;pdId&#39;: &#39;PD2605&#39;,
+ &#39;shape&#39;: &#39;SCALAR&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;STRING&#39;,
+ &#39;units&#39;: None,
+ &#39;unsigned&#39;: False}
+{&#39;fillValue&#39;: &#39;-9999999&#39;,
+ &#39;particleKey&#39;: &#39;depth&#39;,
+ &#39;pdId&#39;: &#39;PD8100&#39;,
+ &#39;shape&#39;: &#39;FUNCTION&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;,
+ &#39;type&#39;: &#39;FLOAT&#39;,
+ &#39;units&#39;: &#39;m&#39;,
+ &#39;unsigned&#39;: False}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># print the time range for this stream</span>
+<span class="n">times</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">time_ranges</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;stream&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">pp</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">t</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;beginTime&#39;: &#39;2015-04-02T20:45:22.170Z&#39;,
+ &#39;count&#39;: 2100923,
+ &#39;endTime&#39;: &#39;2024-10-14T21:29:55.128Z&#39;,
+ &#39;method&#39;: &#39;recovered_host&#39;,
+ &#39;stream&#39;: &#39;ctdbp_cdef_dcl_instrument_recovered&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="preload-information">
+<h2>Preload Information<a class="headerlink" href="#preload-information" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">START</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="s1">&#39;beginTime&#39;</span><span class="p">]</span>
+<span class="n">STOP</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="s1">&#39;endTime&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grab the provenance info and the driver associated with this data stream for this deployment</span>
+<span class="n">STREAM</span> <span class="o">=</span> <span class="s1">&#39;ctdbp_cdef_dcl_instrument&#39;</span>
+<span class="n">OPTIONS</span> <span class="o">=</span> <span class="s1">&#39;?beginDT=&#39;</span> <span class="o">+</span> <span class="n">START</span> <span class="o">+</span> <span class="s1">&#39;&amp;endDT=&#39;</span> <span class="o">+</span> <span class="n">STOP</span> <span class="o">+</span> <span class="s1">&#39;&amp;limit=2&amp;parameters=7&amp;include_provenance=true&amp;strict_range=true&#39;</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">BASE_URL</span> <span class="o">+</span> <span class="n">SENSOR_URL</span> <span class="o">+</span> <span class="n">site</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span>
+                    <span class="n">node</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">sensor</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">method</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span> <span class="n">stream</span> <span class="o">+</span> <span class="n">OPTIONS</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="n">AUTH</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">AUTH</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1"># note this will fail if the system does not have any data, we want to know that so will need to code for failures</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{
+  &quot;data&quot;: [
+    {
+      &quot;pk&quot;: {
+        &quot;node&quot;: &quot;RID27&quot;,
+        &quot;stream&quot;: &quot;ctdbp_cdef_dcl_instrument_recovered&quot;,
+        &quot;subsite&quot;: &quot;CE02SHSM&quot;,
+        &quot;deployment&quot;: 1,
+        &quot;time&quot;: 3636996322.17,
+        &quot;sensor&quot;: &quot;03-CTDBPC000&quot;,
+        &quot;method&quot;: &quot;recovered_host&quot;
+      },
+      &quot;provenance&quot;: &quot;9d1105d1-58d5-48a1-9c2d-bb5dc281b2ab&quot;,
+      &quot;time&quot;: 3636996322.17
+    },
+    {
+      &quot;pk&quot;: {
+        &quot;node&quot;: &quot;RID27&quot;,
+        &quot;stream&quot;: &quot;ctdbp_cdef_dcl_instrument_recovered&quot;,
+        &quot;subsite&quot;: &quot;CE02SHSM&quot;,
+        &quot;deployment&quot;: 18,
+        &quot;time&quot;: 3937930195.1280003,
+        &quot;sensor&quot;: &quot;03-CTDBPC000&quot;,
+        &quot;method&quot;: &quot;recovered_host&quot;
+      },
+      &quot;provenance&quot;: &quot;3212a27f-8c0e-4c21-853d-5f208e48cd2a&quot;,
+      &quot;time&quot;: 3937930195.1280003
+    }
+  ],
+  &quot;provenance&quot;: {
+    &quot;3212a27f-8c0e-4c21-853d-5f208e48cd2a&quot;: {
+      &quot;file_name&quot;: &quot;/omc_data/whoi/OMC/CE02SHSM/R00018/cg_data/dcl27/ctdbp/20241014.ctdbp.log&quot;,
+      &quot;parser_name&quot;: &quot;mi.dataset.driver.ctdbp_cdef.dcl.ctdbp_cdef_dcl_recovered_driver&quot;,
+      &quot;parser_version&quot;: &quot;15.7.1&quot;
+    },
+    &quot;9d1105d1-58d5-48a1-9c2d-bb5dc281b2ab&quot;: {
+      &quot;file_name&quot;: &quot;/omc_data/whoi/OMC/CE02SHSM/R00001/cg_data/dcl27/ctdbp/20150402.ctdbp.log&quot;,
+      &quot;parser_name&quot;: &quot;mi.dataset.driver.ctdbp_cdef.dcl.ctdbp_cdef_dcl_recovered_driver&quot;,
+      &quot;parser_version&quot;: &quot;15.7.1&quot;
+    }
+  },
+  &quot;instrument_provenance&quot;: {
+    &quot;CE02SHSM-RID27-03-CTDBPC000&quot;: [
+      {
+        &quot;@class&quot;: &quot;.XDeployment&quot;,
+        &quot;eventId&quot;: 1357,
+        &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+        &quot;eventName&quot;: &quot;CE02SHSM-RID27-03-CTDBPC000&quot;,
+        &quot;eventType&quot;: &quot;DEPLOYMENT&quot;,
+        &quot;referenceDesignator&quot;: &quot;CE02SHSM-RID27-03-CTDBPC000&quot;,
+        &quot;deploymentNumber&quot;: 1,
+        &quot;versionNumber&quot;: 1,
+        &quot;inductiveId&quot;: null,
+        &quot;assetUid&quot;: null,
+        &quot;dataSource&quot;: &quot;Load from [CE02SHSM_Deploy.csv]&quot;,
+        &quot;lastModifiedTimestamp&quot;: 1744314836760,
+        &quot;tense&quot;: &quot;UNKNOWN&quot;,
+        &quot;ingestInfo&quot;: [],
+        &quot;notes&quot;: null,
+        &quot;mooring&quot;: {
+          &quot;@class&quot;: &quot;.XMooring&quot;,
+          &quot;assetId&quot;: 1135,
+          &quot;assetType&quot;: &quot;Mooring&quot;,
+          &quot;dataSource&quot;: &quot;BulkLoad from [platform_bulk_load-AssetRecord.csv]&quot;,
+          &quot;deliveryDate&quot;: null,
+          &quot;deliveryOrderNumber&quot;: null,
+          &quot;depthRating&quot;: null,
+          &quot;description&quot;: &quot;Coastal Endurance Oregon Shelf Surface Mooring&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;events&quot;: [],
+          &quot;firmwareVersion&quot;: null,
+          &quot;institutionPropertyNumber&quot;: null,
+          &quot;institutionPurchaseOrderNumber&quot;: null,
+          &quot;lastModifiedTimestamp&quot;: 1744314766067,
+          &quot;location&quot;: null,
+          &quot;manufacturer&quot;: &quot;WHOI&quot;,
+          &quot;mobile&quot;: false,
+          &quot;modelNumber&quot;: &quot;CE02SHSM&quot;,
+          &quot;name&quot;: &quot;CE02SHSM-00001&quot;,
+          &quot;notes&quot;: null,
+          &quot;ooiPartNumber&quot;: null,
+          &quot;ooiPropertyNumber&quot;: null,
+          &quot;ooiSerialNumber&quot;: null,
+          &quot;owner&quot;: &quot;Oregon State University&quot;,
+          &quot;physicalInfo&quot;: {
+            &quot;height&quot;: -1.0,
+            &quot;length&quot;: -1.0,
+            &quot;weight&quot;: -1.0,
+            &quot;width&quot;: -1.0
+          },
+          &quot;powerRequirements&quot;: null,
+          &quot;purchaseDate&quot;: null,
+          &quot;purchasePrice&quot;: null,
+          &quot;remoteResources&quot;: [],
+          &quot;serialNumber&quot;: &quot;CE02SHSM-00001&quot;,
+          &quot;shelfLifeExpirationDate&quot;: null,
+          &quot;softwareVersion&quot;: null,
+          &quot;uid&quot;: &quot;CGMCE-02SHSM-00001&quot;
+        },
+        &quot;node&quot;: null,
+        &quot;eventStartTime&quot;: 1428005700000,
+        &quot;eventStopTime&quot;: 1442908080000,
+        &quot;waterDepth&quot;: 80.0,
+        &quot;location&quot;: {
+          &quot;depth&quot;: 7.0,
+          &quot;latitude&quot;: 44.63833,
+          &quot;longitude&quot;: -124.30388,
+          &quot;orbitRadius&quot;: 250.0,
+          &quot;location&quot;: [
+            -124.30388,
+            44.63833
+          ]
+        },
+        &quot;deployedBy&quot;: null,
+        &quot;deployCruiseInfo&quot;: {
+          &quot;@class&quot;: &quot;.CruiseInfo&quot;,
+          &quot;assetUid&quot;: null,
+          &quot;cruiseIdentifier&quot;: null,
+          &quot;dataSource&quot;: &quot;Load from [CruiseInformation.csv]&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;eventId&quot;: 27,
+          &quot;eventName&quot;: &quot;OC1503D&quot;,
+          &quot;eventStartTime&quot;: 1427932800000,
+          &quot;eventStopTime&quot;: 1428883199000,
+          &quot;eventType&quot;: &quot;CRUISE_INFO&quot;,
+          &quot;lastModifiedTimestamp&quot;: 1744314614949,
+          &quot;notes&quot;: null,
+          &quot;shipName&quot;: &quot;Oceanus&quot;,
+          &quot;tense&quot;: &quot;UNKNOWN&quot;,
+          &quot;uniqueCruiseIdentifier&quot;: &quot;OC1503D&quot;
+        },
+        &quot;recoveredBy&quot;: null,
+        &quot;recoverCruiseInfo&quot;: {
+          &quot;@class&quot;: &quot;.CruiseInfo&quot;,
+          &quot;assetUid&quot;: null,
+          &quot;cruiseIdentifier&quot;: null,
+          &quot;dataSource&quot;: &quot;Load from [CruiseInformation.csv]&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;eventId&quot;: 43,
+          &quot;eventName&quot;: &quot;TN330&quot;,
+          &quot;eventStartTime&quot;: 1442880000000,
+          &quot;eventStopTime&quot;: 1443398399000,
+          &quot;eventType&quot;: &quot;CRUISE_INFO&quot;,
+          &quot;lastModifiedTimestamp&quot;: 1744314615003,
+          &quot;notes&quot;: null,
+          &quot;shipName&quot;: &quot;Thomas G. Thompson&quot;,
+          &quot;tense&quot;: &quot;UNKNOWN&quot;,
+          &quot;uniqueCruiseIdentifier&quot;: &quot;TN330&quot;
+        },
+        &quot;sensor&quot;: {
+          &quot;@class&quot;: &quot;.XInstrument&quot;,
+          &quot;assetId&quot;: 1692,
+          &quot;assetType&quot;: &quot;Sensor&quot;,
+          &quot;dataSource&quot;: &quot;BulkLoad from [sensor_bulk_load-AssetRecord.csv]&quot;,
+          &quot;deliveryDate&quot;: 1393200000000,
+          &quot;deliveryOrderNumber&quot;: null,
+          &quot;depthRating&quot;: null,
+          &quot;description&quot;: &quot;CTD Pumped: CTDBP Series C&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;events&quot;: [],
+          &quot;firmwareVersion&quot;: null,
+          &quot;institutionPropertyNumber&quot;: null,
+          &quot;institutionPurchaseOrderNumber&quot;: null,
+          &quot;lastModifiedTimestamp&quot;: 1744314805494,
+          &quot;location&quot;: null,
+          &quot;manufacturer&quot;: &quot;Sea-Bird Electronics&quot;,
+          &quot;mobile&quot;: false,
+          &quot;modelNumber&quot;: &quot;SBE 16plus V2&quot;,
+          &quot;name&quot;: &quot;16-50012&quot;,
+          &quot;notes&quot;: null,
+          &quot;ooiPartNumber&quot;: null,
+          &quot;ooiPropertyNumber&quot;: null,
+          &quot;ooiSerialNumber&quot;: null,
+          &quot;owner&quot;: null,
+          &quot;physicalInfo&quot;: {
+            &quot;height&quot;: -1.0,
+            &quot;length&quot;: -1.0,
+            &quot;weight&quot;: -1.0,
+            &quot;width&quot;: -1.0
+          },
+          &quot;powerRequirements&quot;: null,
+          &quot;purchaseDate&quot;: 1393200000000,
+          &quot;purchasePrice&quot;: 11500.0,
+          &quot;remoteResources&quot;: [],
+          &quot;serialNumber&quot;: &quot;16-50012&quot;,
+          &quot;shelfLifeExpirationDate&quot;: null,
+          &quot;softwareVersion&quot;: null,
+          &quot;uid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+          &quot;calibration&quot;: [
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32158,
+                  &quot;eventName&quot;: &quot;CC_i&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.0002672917
+                }
+              ],
+              &quot;name&quot;: &quot;CC_i&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32160,
+                  &quot;eventName&quot;: &quot;CC_h&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.139731
+                }
+              ],
+              &quot;name&quot;: &quot;CC_h&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32162,
+                  &quot;eventName&quot;: &quot;CC_g&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.9794006
+                }
+              ],
+              &quot;name&quot;: &quot;CC_g&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32164,
+                  &quot;eventName&quot;: &quot;CC_pa0&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.146232899
+                }
+              ],
+              &quot;name&quot;: &quot;CC_pa0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32166,
+                  &quot;eventName&quot;: &quot;CC_pa2&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -5.95646353e-12
+                }
+              ],
+              &quot;name&quot;: &quot;CC_pa2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32168,
+                  &quot;eventName&quot;: &quot;CC_pa1&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.000487158914
+                }
+              ],
+              &quot;name&quot;: &quot;CC_pa1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32170,
+                  &quot;eventName&quot;: &quot;CC_ptca1&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -18.3216153
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptca1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32172,
+                  &quot;eventName&quot;: &quot;CC_ptcb2&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.0
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptcb2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32174,
+                  &quot;eventName&quot;: &quot;CC_ptca0&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 524875.411
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptca0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32176,
+                  &quot;eventName&quot;: &quot;CC_ptcb1&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.000325
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptcb1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32178,
+                  &quot;eventName&quot;: &quot;CC_ptca2&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.179273715
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptca2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32180,
+                  &quot;eventName&quot;: &quot;CC_ptcb0&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 25.100625
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptcb0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32182,
+                  &quot;eventName&quot;: &quot;CC_a0&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.001254062
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32184,
+                  &quot;eventName&quot;: &quot;CC_ptempa2&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.355813045
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptempa2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32186,
+                  &quot;eventName&quot;: &quot;CC_a1&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.0002748597
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32188,
+                  &quot;eventName&quot;: &quot;CC_a2&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -1.176268e-06
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32190,
+                  &quot;eventName&quot;: &quot;CC_ptempa1&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 53.6581701
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptempa1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32192,
+                  &quot;eventName&quot;: &quot;CC_a3&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 1.840381e-07
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a3&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32194,
+                  &quot;eventName&quot;: &quot;CC_ptempa0&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -59.2784052
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptempa0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32196,
+                  &quot;eventName&quot;: &quot;CC_cpcor&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -9.57e-08
+                }
+              ],
+              &quot;name&quot;: &quot;CC_cpcor&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32198,
+                  &quot;eventName&quot;: &quot;CC_ctcor&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 3.25e-06
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ctcor&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-50012&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-50012__20140220.csv&quot;,
+                  &quot;eventId&quot;: 32200,
+                  &quot;eventName&quot;: &quot;CC_j&quot;,
+                  &quot;eventStartTime&quot;: 1392854400000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314941448,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 4.001858e-05
+                }
+              ],
+              &quot;name&quot;: &quot;CC_j&quot;
+            }
+          ]
+        }
+      },
+      {
+        &quot;@class&quot;: &quot;.XDeployment&quot;,
+        &quot;eventId&quot;: 1877,
+        &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+        &quot;eventName&quot;: &quot;CE02SHSM-RID27-03-CTDBPC000&quot;,
+        &quot;eventType&quot;: &quot;DEPLOYMENT&quot;,
+        &quot;referenceDesignator&quot;: &quot;CE02SHSM-RID27-03-CTDBPC000&quot;,
+        &quot;deploymentNumber&quot;: 18,
+        &quot;versionNumber&quot;: 1,
+        &quot;inductiveId&quot;: null,
+        &quot;assetUid&quot;: null,
+        &quot;dataSource&quot;: &quot;Load from [CE02SHSM_Deploy.csv]&quot;,
+        &quot;lastModifiedTimestamp&quot;: 1744314838707,
+        &quot;tense&quot;: &quot;UNKNOWN&quot;,
+        &quot;ingestInfo&quot;: [],
+        &quot;notes&quot;: null,
+        &quot;mooring&quot;: {
+          &quot;@class&quot;: &quot;.XMooring&quot;,
+          &quot;assetId&quot;: 1113,
+          &quot;assetType&quot;: &quot;Mooring&quot;,
+          &quot;dataSource&quot;: &quot;BulkLoad from [platform_bulk_load-AssetRecord.csv]&quot;,
+          &quot;deliveryDate&quot;: null,
+          &quot;deliveryOrderNumber&quot;: null,
+          &quot;depthRating&quot;: null,
+          &quot;description&quot;: &quot;Coastal Endurance Oregon Shelf Surface Mooring&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;events&quot;: [],
+          &quot;firmwareVersion&quot;: null,
+          &quot;institutionPropertyNumber&quot;: null,
+          &quot;institutionPurchaseOrderNumber&quot;: null,
+          &quot;lastModifiedTimestamp&quot;: 1744314765999,
+          &quot;location&quot;: null,
+          &quot;manufacturer&quot;: &quot;WHOI&quot;,
+          &quot;mobile&quot;: false,
+          &quot;modelNumber&quot;: &quot;CE02SHSM&quot;,
+          &quot;name&quot;: &quot;CE02SHSM-00018&quot;,
+          &quot;notes&quot;: null,
+          &quot;ooiPartNumber&quot;: null,
+          &quot;ooiPropertyNumber&quot;: null,
+          &quot;ooiSerialNumber&quot;: null,
+          &quot;owner&quot;: &quot;Oregon State University&quot;,
+          &quot;physicalInfo&quot;: {
+            &quot;height&quot;: -1.0,
+            &quot;length&quot;: -1.0,
+            &quot;weight&quot;: -1.0,
+            &quot;width&quot;: -1.0
+          },
+          &quot;powerRequirements&quot;: null,
+          &quot;purchaseDate&quot;: null,
+          &quot;purchasePrice&quot;: null,
+          &quot;remoteResources&quot;: [],
+          &quot;serialNumber&quot;: &quot;CE02SHSM-00018&quot;,
+          &quot;shelfLifeExpirationDate&quot;: null,
+          &quot;softwareVersion&quot;: null,
+          &quot;uid&quot;: &quot;CGMCE-02SHSM-00018&quot;
+        },
+        &quot;node&quot;: null,
+        &quot;eventStartTime&quot;: 1712528700000,
+        &quot;eventStopTime&quot;: 1728945660000,
+        &quot;waterDepth&quot;: 80.0,
+        &quot;location&quot;: {
+          &quot;depth&quot;: 7.0,
+          &quot;latitude&quot;: 44.63532,
+          &quot;longitude&quot;: -124.3032,
+          &quot;orbitRadius&quot;: 250.0,
+          &quot;location&quot;: [
+            -124.3032,
+            44.63532
+          ]
+        },
+        &quot;deployedBy&quot;: null,
+        &quot;deployCruiseInfo&quot;: {
+          &quot;@class&quot;: &quot;.CruiseInfo&quot;,
+          &quot;assetUid&quot;: null,
+          &quot;cruiseIdentifier&quot;: null,
+          &quot;dataSource&quot;: &quot;Load from [CruiseInformation.csv]&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;eventId&quot;: 341,
+          &quot;eventName&quot;: &quot;SKQ202405S&quot;,
+          &quot;eventStartTime&quot;: 1711753200000,
+          &quot;eventStopTime&quot;: 1712880000000,
+          &quot;eventType&quot;: &quot;CRUISE_INFO&quot;,
+          &quot;lastModifiedTimestamp&quot;: 1744314615644,
+          &quot;notes&quot;: null,
+          &quot;shipName&quot;: &quot;Sikuliaq&quot;,
+          &quot;tense&quot;: &quot;UNKNOWN&quot;,
+          &quot;uniqueCruiseIdentifier&quot;: &quot;SKQ202405S&quot;
+        },
+        &quot;recoveredBy&quot;: null,
+        &quot;recoverCruiseInfo&quot;: {
+          &quot;@class&quot;: &quot;.CruiseInfo&quot;,
+          &quot;assetUid&quot;: null,
+          &quot;cruiseIdentifier&quot;: null,
+          &quot;dataSource&quot;: &quot;Load from [CruiseInformation.csv]&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;eventId&quot;: 364,
+          &quot;eventName&quot;: &quot;SKQ202415S&quot;,
+          &quot;eventStartTime&quot;: 1728074400000,
+          &quot;eventStopTime&quot;: 1729287000000,
+          &quot;eventType&quot;: &quot;CRUISE_INFO&quot;,
+          &quot;lastModifiedTimestamp&quot;: 1744314615687,
+          &quot;notes&quot;: null,
+          &quot;shipName&quot;: &quot;Sikuliaq&quot;,
+          &quot;tense&quot;: &quot;UNKNOWN&quot;,
+          &quot;uniqueCruiseIdentifier&quot;: &quot;SKQ202415S&quot;
+        },
+        &quot;sensor&quot;: {
+          &quot;@class&quot;: &quot;.XInstrument&quot;,
+          &quot;assetId&quot;: 3975,
+          &quot;assetType&quot;: &quot;Sensor&quot;,
+          &quot;dataSource&quot;: &quot;BulkLoad from [sensor_bulk_load-AssetRecord.csv]&quot;,
+          &quot;deliveryDate&quot;: 1356566400000,
+          &quot;deliveryOrderNumber&quot;: null,
+          &quot;depthRating&quot;: null,
+          &quot;description&quot;: &quot;CTD Pumped: CTDBP Series C&quot;,
+          &quot;editPhase&quot;: &quot;OPERATIONAL&quot;,
+          &quot;events&quot;: [],
+          &quot;firmwareVersion&quot;: null,
+          &quot;institutionPropertyNumber&quot;: null,
+          &quot;institutionPurchaseOrderNumber&quot;: null,
+          &quot;lastModifiedTimestamp&quot;: 1744314812865,
+          &quot;location&quot;: null,
+          &quot;manufacturer&quot;: &quot;Sea-Bird Electronics&quot;,
+          &quot;mobile&quot;: false,
+          &quot;modelNumber&quot;: &quot;SBE 16plus V2&quot;,
+          &quot;name&quot;: &quot;16-7243&quot;,
+          &quot;notes&quot;: null,
+          &quot;ooiPartNumber&quot;: null,
+          &quot;ooiPropertyNumber&quot;: null,
+          &quot;ooiSerialNumber&quot;: null,
+          &quot;owner&quot;: null,
+          &quot;physicalInfo&quot;: {
+            &quot;height&quot;: -1.0,
+            &quot;length&quot;: -1.0,
+            &quot;weight&quot;: -1.0,
+            &quot;width&quot;: -1.0
+          },
+          &quot;powerRequirements&quot;: null,
+          &quot;purchaseDate&quot;: 1356566400000,
+          &quot;purchasePrice&quot;: 11150.0,
+          &quot;remoteResources&quot;: [],
+          &quot;serialNumber&quot;: &quot;16-7243&quot;,
+          &quot;shelfLifeExpirationDate&quot;: null,
+          &quot;softwareVersion&quot;: null,
+          &quot;uid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+          &quot;calibration&quot;: [
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30419,
+                  &quot;eventName&quot;: &quot;CC_i&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.0003736453
+                }
+              ],
+              &quot;name&quot;: &quot;CC_i&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30420,
+                  &quot;eventName&quot;: &quot;CC_h&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.157056
+                }
+              ],
+              &quot;name&quot;: &quot;CC_h&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30421,
+                  &quot;eventName&quot;: &quot;CC_g&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.9941896000000001
+                }
+              ],
+              &quot;name&quot;: &quot;CC_g&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30422,
+                  &quot;eventName&quot;: &quot;CC_pa0&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.0234367
+                }
+              ],
+              &quot;name&quot;: &quot;CC_pa0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30423,
+                  &quot;eventName&quot;: &quot;CC_pa2&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -4.241994999999999e-12
+                }
+              ],
+              &quot;name&quot;: &quot;CC_pa2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30424,
+                  &quot;eventName&quot;: &quot;CC_pa1&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.0004881439
+                }
+              ],
+              &quot;name&quot;: &quot;CC_pa1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30425,
+                  &quot;eventName&quot;: &quot;CC_ptca1&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -3.504476
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptca1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30426,
+                  &quot;eventName&quot;: &quot;CC_ptcb2&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.0
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptcb2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30427,
+                  &quot;eventName&quot;: &quot;CC_ptca0&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 525542.3
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptca0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30428,
+                  &quot;eventName&quot;: &quot;CC_ptcb1&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.000675
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptcb1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30429,
+                  &quot;eventName&quot;: &quot;CC_ptca2&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.06955997
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptca2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30430,
+                  &quot;eventName&quot;: &quot;CC_ptcb0&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 25.06838
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptcb0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: &quot;date in filename comes from latest sensor caldate within QCT cap file&quot;,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30431,
+                  &quot;eventName&quot;: &quot;CC_a0&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.001265448
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30432,
+                  &quot;eventName&quot;: &quot;CC_ptempa2&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -0.4679394
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptempa2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30433,
+                  &quot;eventName&quot;: &quot;CC_a1&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 0.0002704579
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30434,
+                  &quot;eventName&quot;: &quot;CC_a2&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -6.813988e-07
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a2&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30435,
+                  &quot;eventName&quot;: &quot;CC_ptempa1&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 52.8005
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptempa1&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30436,
+                  &quot;eventName&quot;: &quot;CC_a3&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 1.631968e-07
+                }
+              ],
+              &quot;name&quot;: &quot;CC_a3&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30437,
+                  &quot;eventName&quot;: &quot;CC_ptempa0&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -65.76881
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ptempa0&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30438,
+                  &quot;eventName&quot;: &quot;CC_cpcor&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: -9.57e-08
+                }
+              ],
+              &quot;name&quot;: &quot;CC_cpcor&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30439,
+                  &quot;eventName&quot;: &quot;CC_ctcor&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 3.25e-06
+                }
+              ],
+              &quot;name&quot;: &quot;CC_ctcor&quot;
+            },
+            {
+              &quot;@class&quot;: &quot;.XCalibration&quot;,
+              &quot;calData&quot;: [
+                {
+                  &quot;@class&quot;: &quot;.XCalibrationData&quot;,
+                  &quot;assetUid&quot;: &quot;CGINS-CTDBPC-07243&quot;,
+                  &quot;comments&quot;: null,
+                  &quot;dataSource&quot;: &quot;CGINS-CTDBPC-07243__20240117.csv&quot;,
+                  &quot;eventId&quot;: 30440,
+                  &quot;eventName&quot;: &quot;CC_j&quot;,
+                  &quot;eventStartTime&quot;: 1705449600000,
+                  &quot;eventStopTime&quot;: null,
+                  &quot;eventType&quot;: &quot;CALIBRATION_DATA&quot;,
+                  &quot;lastModifiedTimestamp&quot;: 1744314936531,
+                  &quot;notes&quot;: null,
+                  &quot;tense&quot;: &quot;UNKNOWN&quot;,
+                  &quot;value&quot;: 5.303048000000001e-05
+                }
+              ],
+              &quot;name&quot;: &quot;CC_j&quot;
+            }
+          ]
+        }
+      }
+    ]
+  },
+  &quot;computed_provenance&quot;: {
+    &quot;errors&quot;: [],
+    &quot;calculations&quot;: {
+      &quot;feb8604b-b042-4f1b-b162-b655edb2d8e5&quot;: {
+        &quot;function_owner&quot;: &quot;ion_functions.data.ctd_functions&quot;,
+        &quot;arguments&quot;: {
+          &quot;p&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 2,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;pressure&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRESWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;c&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 1,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;conductivity&quot;,
+            &quot;data_product_identifier&quot;: &quot;CONDWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;t&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 6,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;temp&quot;,
+            &quot;data_product_identifier&quot;: &quot;TEMPWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;time_source&quot;: {
+            &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;begin&quot;: 3636996322.17,
+            &quot;end&quot;: 3636996322.17,
+            &quot;endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          }
+        },
+        &quot;function_type&quot;: &quot;PythonFunction&quot;,
+        &quot;argument_list&quot;: [
+          &quot;p&quot;,
+          &quot;c&quot;,
+          &quot;t&quot;
+        ],
+        &quot;function_id&quot;: 26,
+        &quot;function_version&quot;: &quot;2.1.0&quot;,
+        &quot;function_name&quot;: &quot;ctd_pracsal&quot;
+      },
+      &quot;237c3aee-3158-41d5-a89b-b746d2e87272&quot;: {
+        &quot;function_owner&quot;: &quot;ion_functions.data.ctd_functions&quot;,
+        &quot;arguments&quot;: {
+          &quot;p&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 2,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;pressure&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRESWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;c&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 1,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;conductivity&quot;,
+            &quot;data_product_identifier&quot;: &quot;CONDWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;t&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 6,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;temp&quot;,
+            &quot;data_product_identifier&quot;: &quot;TEMPWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;time_source&quot;: {
+            &quot;beginDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;begin&quot;: 3937930195.1280003,
+            &quot;end&quot;: 3937930195.1280003,
+            &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          }
+        },
+        &quot;function_type&quot;: &quot;PythonFunction&quot;,
+        &quot;argument_list&quot;: [
+          &quot;p&quot;,
+          &quot;c&quot;,
+          &quot;t&quot;
+        ],
+        &quot;function_id&quot;: 26,
+        &quot;function_version&quot;: &quot;2.1.0&quot;,
+        &quot;function_name&quot;: &quot;ctd_pracsal&quot;
+      },
+      &quot;46332963-0a5e-49ec-9c19-fcbe65f6f614&quot;: {
+        &quot;function_owner&quot;: &quot;ion_functions.data.ctd_functions&quot;,
+        &quot;arguments&quot;: {
+          &quot;SP&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 13,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;practical_salinity&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRACSAL_L2&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;lon&quot;: {
+            &quot;data_begin&quot;: 3636996322.17,
+            &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;data_end&quot;: 3636996322.17,
+            &quot;sources&quot;: -124.30388,
+            &quot;type&quot;: &quot;CC&quot;
+          },
+          &quot;time_source&quot;: {
+            &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;begin&quot;: 3636996322.17,
+            &quot;end&quot;: 3636996322.17,
+            &quot;endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;p&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 2,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;pressure&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRESWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;t&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 6,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;temp&quot;,
+            &quot;data_product_identifier&quot;: &quot;TEMPWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;lat&quot;: {
+            &quot;data_begin&quot;: 3636996322.17,
+            &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;data_end&quot;: 3636996322.17,
+            &quot;sources&quot;: 44.63833,
+            &quot;type&quot;: &quot;CC&quot;
+          }
+        },
+        &quot;function_type&quot;: &quot;PythonFunction&quot;,
+        &quot;argument_list&quot;: [
+          &quot;lat&quot;,
+          &quot;p&quot;,
+          &quot;SP&quot;,
+          &quot;lon&quot;,
+          &quot;t&quot;
+        ],
+        &quot;function_id&quot;: 27,
+        &quot;function_version&quot;: &quot;2.1.0&quot;,
+        &quot;function_name&quot;: &quot;ctd_density&quot;
+      },
+      &quot;36bce854-27ff-4999-abc9-f768895f2e71&quot;: {
+        &quot;function_owner&quot;: &quot;ion_functions.data.adcp_functions&quot;,
+        &quot;arguments&quot;: {
+          &quot;latitude&quot;: {
+            &quot;data_begin&quot;: 3636996322.17,
+            &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;data_end&quot;: 3636996322.17,
+            &quot;sources&quot;: 44.63833,
+            &quot;type&quot;: &quot;CC&quot;
+          },
+          &quot;pressure&quot;: {
+            &quot;time_end&quot;: 3636996322.17,
+            &quot;parameter_id&quot;: 2,
+            &quot;time_start&quot;: 3636996322.17,
+            &quot;name&quot;: &quot;pressure&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRESWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              1
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;time_source&quot;: {
+            &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+            &quot;begin&quot;: 3636996322.17,
+            &quot;end&quot;: 3636996322.17,
+            &quot;endDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;
+          },
+          &quot;pressure_scale_factor&quot;: {
+            &quot;constant&quot;: 1
+          }
+        },
+        &quot;function_type&quot;: &quot;PythonFunction&quot;,
+        &quot;argument_list&quot;: [
+          &quot;latitude&quot;,
+          &quot;pressure&quot;,
+          &quot;pressure_scale_factor&quot;
+        ],
+        &quot;function_id&quot;: 217,
+        &quot;function_version&quot;: &quot;2.1.0&quot;,
+        &quot;function_name&quot;: &quot;depth_from_pressure_dbar&quot;
+      },
+      &quot;43e30d7c-3033-4623-a741-95882d90b655&quot;: {
+        &quot;function_owner&quot;: &quot;ion_functions.data.ctd_functions&quot;,
+        &quot;arguments&quot;: {
+          &quot;SP&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 13,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;practical_salinity&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRACSAL_L2&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;lon&quot;: {
+            &quot;data_begin&quot;: 3937930195.1280003,
+            &quot;beginDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;data_end&quot;: 3937930195.1280003,
+            &quot;sources&quot;: -124.3032,
+            &quot;type&quot;: &quot;CC&quot;
+          },
+          &quot;time_source&quot;: {
+            &quot;beginDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;begin&quot;: 3937930195.1280003,
+            &quot;end&quot;: 3937930195.1280003,
+            &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;p&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 2,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;pressure&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRESWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;t&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 6,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;temp&quot;,
+            &quot;data_product_identifier&quot;: &quot;TEMPWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;lat&quot;: {
+            &quot;data_begin&quot;: 3937930195.1280003,
+            &quot;beginDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;data_end&quot;: 3937930195.1280003,
+            &quot;sources&quot;: 44.63532,
+            &quot;type&quot;: &quot;CC&quot;
+          }
+        },
+        &quot;function_type&quot;: &quot;PythonFunction&quot;,
+        &quot;argument_list&quot;: [
+          &quot;lat&quot;,
+          &quot;p&quot;,
+          &quot;SP&quot;,
+          &quot;lon&quot;,
+          &quot;t&quot;
+        ],
+        &quot;function_id&quot;: 27,
+        &quot;function_version&quot;: &quot;2.1.0&quot;,
+        &quot;function_name&quot;: &quot;ctd_density&quot;
+      },
+      &quot;bab8dd83-b29c-412e-8080-8c3b22b8da3c&quot;: {
+        &quot;function_owner&quot;: &quot;ion_functions.data.adcp_functions&quot;,
+        &quot;arguments&quot;: {
+          &quot;latitude&quot;: {
+            &quot;data_begin&quot;: 3937930195.1280003,
+            &quot;beginDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;data_end&quot;: 3937930195.1280003,
+            &quot;sources&quot;: 44.63532,
+            &quot;type&quot;: &quot;CC&quot;
+          },
+          &quot;pressure&quot;: {
+            &quot;time_end&quot;: 3937930195.1280003,
+            &quot;parameter_id&quot;: 2,
+            &quot;time_start&quot;: 3937930195.1280003,
+            &quot;name&quot;: &quot;pressure&quot;,
+            &quot;data_product_identifier&quot;: &quot;PRESWAT_L1&quot;,
+            &quot;interpolated&quot;: false,
+            &quot;deployments&quot;: [
+              18
+            ],
+            &quot;source&quot;: &quot;CE02SHSM|RID27|03-CTDBPC000|recovered_host|ctdbp_cdef_dcl_instrument_recovered&quot;,
+            &quot;time_startDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;type&quot;: &quot;parameter&quot;,
+            &quot;time_endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;time_source&quot;: {
+            &quot;beginDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+            &quot;begin&quot;: 3937930195.1280003,
+            &quot;end&quot;: 3937930195.1280003,
+            &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;
+          },
+          &quot;pressure_scale_factor&quot;: {
+            &quot;constant&quot;: 1
+          }
+        },
+        &quot;function_type&quot;: &quot;PythonFunction&quot;,
+        &quot;argument_list&quot;: [
+          &quot;latitude&quot;,
+          &quot;pressure&quot;,
+          &quot;pressure_scale_factor&quot;
+        ],
+        &quot;function_id&quot;: 217,
+        &quot;function_version&quot;: &quot;2.1.0&quot;,
+        &quot;function_name&quot;: &quot;depth_from_pressure_dbar&quot;
+      }
+    },
+    &quot;parameters&quot;: {
+      &quot;sea_water_density&quot;: [
+        &quot;46332963-0a5e-49ec-9c19-fcbe65f6f614&quot;,
+        &quot;43e30d7c-3033-4623-a741-95882d90b655&quot;
+      ],
+      &quot;depth&quot;: [
+        &quot;36bce854-27ff-4999-abc9-f768895f2e71&quot;,
+        &quot;bab8dd83-b29c-412e-8080-8c3b22b8da3c&quot;
+      ],
+      &quot;sea_water_practical_salinity&quot;: [
+        &quot;feb8604b-b042-4f1b-b162-b655edb2d8e5&quot;,
+        &quot;237c3aee-3158-41d5-a89b-b746d2e87272&quot;
+      ]
+    }
+  },
+  &quot;query_parameter_provenance&quot;: {
+    &quot;query_type&quot;: &quot;JSON&quot;,
+    &quot;query_uuid&quot;: &quot;7dc2b3a7-b4ae-4014-975a-088f50a3532d&quot;,
+    &quot;begin&quot;: 3636996322.17,
+    &quot;beginDT&quot;: &quot;2015-04-02T20:45:22.170000&quot;,
+    &quot;end&quot;: 3937930195.1280003,
+    &quot;endDT&quot;: &quot;2024-10-14T21:29:55.128000&quot;,
+    &quot;limit&quot;: 2,
+    &quot;requested_stream&quot;: &quot;CE02SHSM-RID27-03-CTDBPC000-recovered_host-ctdbp_cdef_dcl_instrument_recovered&quot;,
+    &quot;include_provenance&quot;: true,
+    &quot;include_annotations&quot;: false,
+    &quot;strict_range&quot;: true
+  },
+  &quot;provenance_messages&quot;: [],
+  &quot;requestUUID&quot;: &quot;7dc2b3a7-b4ae-4014-975a-088f50a3532d&quot;
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># determine the driver used to parse the data and the source of the data</span>
+<span class="n">provenance</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;provenance&#39;</span><span class="p">]</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="p">[</span><span class="n">provenance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;parser_name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">provenance</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">infile</span> <span class="o">=</span> <span class="p">[</span><span class="n">provenance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;file_name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">provenance</span><span class="o">.</span><span class="n">keys</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">infile</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>b&#39;mi.dataset.driver.ctdbp_cdef.dcl.ctdbp_cdef_dcl_recovered_driver&#39; b&#39;/omc_data/whoi/OMC/CE02SHSM/R00018/cg_data/dcl27/ctdbp/20241014.ctdbp.log&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "fdchp"
+        },
+        kernelOptions: {
+            name: "fdchp",
+            path: "./python/examples/notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'fdchp'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to OOI Data Explorations</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="fdchp/FdchpExample.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">FDCHP Data Processing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sensor-information">Sensor Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preload-information">Preload Information</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Ocean Observatories Initiative
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

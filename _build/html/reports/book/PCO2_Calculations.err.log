@@ -1,0 +1,70 @@
+Traceback (most recent call last):
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/jovyan/envs/ooi-data-explorations/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+def request_data(site, node, sensor, method, stream, deploy, start, stop):
+    r = m2m_request(site, node, sensor, method, stream, start, stop)
+    data = m2m_collect(r, '^(?!.*blank).*deployment0011.*PCO2W.*nc$')
+    return data
+
+data = [request_data(site, node, sensor, methods[i], streams[i], deploy, start, stop) for i in range(3)]
+------------------
+
+----- stdout -----
+Requesting:
+	refdes: CE01ISSM-RID16-05-PCO2WB000
+	method: telemetered
+	stream: pco2w_abc_dcl_instrument
+	from 2019-04-20T03:01:00.000Z to 2019-10-22T23:57:00.000Z
+Waiting for OOINet to process and prepare data request, this may take up to 20 minutes.
+----- stdout -----
+Waiting:   0%|                                                                                                                                                                                                                                                                     | 0/400 [00:00<?, ?it/s]
+----- stdout -----
+Waiting:   0%|▋                                                                                                                                                                                                                                                            | 1/400 [00:00<00:04, 83.52it/s]
+----- stdout -----
+Waiting:   0%|█▎                                                                                                                                                                                                                                                           | 2/400 [00:03<10:00,  1.51s/it]
+----- stdout -----
+Waiting:   0%|█▎                                                                                                                                                                                                                                                           | 2/400 [00:03<10:00,  1.51s/it]
+----- stdout -----
+Waiting:   0%|█▎                                                                                                                                                                                                                                                           | 2/400 [00:03<10:44,  1.62s/it]
+----- stdout -----
+
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mKeyboardInterrupt[0m                         Traceback (most recent call last)
+Cell [0;32mIn[4], line 6[0m
+[1;32m      3[0m     data [38;5;241m=[39m m2m_collect(r, [38;5;124m'[39m[38;5;124m^(?!.*blank).*deployment0011.*PCO2W.*nc$[39m[38;5;124m'[39m)
+[1;32m      4[0m     [38;5;28;01mreturn[39;00m data
+[0;32m----> 6[0m data [38;5;241m=[39m [[43mrequest_data[49m[43m([49m[43msite[49m[43m,[49m[43m [49m[43mnode[49m[43m,[49m[43m [49m[43msensor[49m[43m,[49m[43m [49m[43mmethods[49m[43m[[49m[43mi[49m[43m][49m[43m,[49m[43m [49m[43mstreams[49m[43m[[49m[43mi[49m[43m][49m[43m,[49m[43m [49m[43mdeploy[49m[43m,[49m[43m [49m[43mstart[49m[43m,[49m[43m [49m[43mstop[49m[43m)[49m [38;5;28;01mfor[39;00m i [38;5;129;01min[39;00m [38;5;28mrange[39m([38;5;241m3[39m)]
+
+Cell [0;32mIn[4], line 2[0m, in [0;36mrequest_data[0;34m(site, node, sensor, method, stream, deploy, start, stop)[0m
+[1;32m      1[0m [38;5;28;01mdef[39;00m [38;5;21mrequest_data[39m(site, node, sensor, method, stream, deploy, start, stop):
+[0;32m----> 2[0m     r [38;5;241m=[39m [43mm2m_request[49m[43m([49m[43msite[49m[43m,[49m[43m [49m[43mnode[49m[43m,[49m[43m [49m[43msensor[49m[43m,[49m[43m [49m[43mmethod[49m[43m,[49m[43m [49m[43mstream[49m[43m,[49m[43m [49m[43mstart[49m[43m,[49m[43m [49m[43mstop[49m[43m)[49m
+[1;32m      3[0m     data [38;5;241m=[39m m2m_collect(r, [38;5;124m'[39m[38;5;124m^(?!.*blank).*deployment0011.*PCO2W.*nc$[39m[38;5;124m'[39m)
+[1;32m      4[0m     [38;5;28;01mreturn[39;00m data
+
+File [0;32m~/ooi-data-explorations/python/ooi_data_explorations/common.py:724[0m, in [0;36mm2m_request[0;34m(site, node, sensor, method, stream, start, stop)[0m
+[1;32m    722[0m             [38;5;28;01mbreak[39;00m
+[1;32m    723[0m         [38;5;28;01melse[39;00m:
+[0;32m--> 724[0m             [43mtime[49m[38;5;241;43m.[39;49m[43msleep[49m[43m([49m[38;5;241;43m3[39;49m[43m)[49m
+[1;32m    726[0m [38;5;28;01mreturn[39;00m data
+
+[0;31mKeyboardInterrupt[0m: 
+

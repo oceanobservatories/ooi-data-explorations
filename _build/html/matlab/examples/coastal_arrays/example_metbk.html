@@ -61,7 +61,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="This is just a test for R notebooks" href="../../../R/R_test.html" />
-    <link rel="prev" title="FDCHP Data Processing" href="../../../python/examples/notebooks/fdchp/FdchpExample.html" />
+    <link rel="prev" title="OOI Data Explorations with MATLAB" href="../../README.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -179,10 +179,20 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../python/examples/notebooks/m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../python/examples/notebooks/fdchp/FdchpExample.html">FDCHP Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python/examples/camds/uncabled.html">Making a Timelapse From Uncabled Images</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">OOI Data Explorations with MATLAB</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">METBK Data Acess Example</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is just a test for R notebooks</a></li>
 </ul>
 
@@ -462,21 +472,111 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading 2 files from the local kdata directory ...
-Elapsed time is 22.166961 seconds.
+Elapsed time is 9.041018 seconds.
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">VariableNames</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">length</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">VariableNames</span><span class="p">)</span>
+<span class="w">    </span><span class="n">variable</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">VariableNames</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+<span class="w">    </span><span class="nb">fprintf</span><span class="p">([</span><span class="n">variable</span><span class="w"> </span><span class="s">&#39;\n&#39;</span><span class="p">])</span>
+<span class="k">end</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><html><body><pre>ans = 1x87 cell array
-    {'air_temperature'}    {'air_temperature_qartod_executed'}    {'air_temperature_qartod_results'}    {'air_temperature_qc_executed'}    {'air_temperature_qc_results'}    {'barometric_pressure'}    {'barometric_pressure_qartod_executed'}    {'barometric_pressure_qartod_results'}    {'barometric_pressure_qc_executed'}    {'barometric_pressure_qc_results'}    {'ct_depth'}    {'deployment'}    {'eastward_velocity'}    {'eastward_wind_velocity'}    {'eastward_wind_velocity_qartod_executed'}    {'eastward_wind_velocity_qartod_results'}    {'eastward_wind_velocity_qc_executed'}    {'eastward_wind_velocity_qc_results'}    {'internal_timestamp'}    {'longwave_irradiance'}    {'longwave_irradiance_qartod_executed'}    {'longwave_irradiance_qartod_results'}    {'longwave_irradiance_qc_executed'}    {'longwave_irradiance_qc_results'}    {'met_barpres'}    {'met_barpres_qc_executed'}    {'met_barpres_qc_results'}    {'met_current_direction'}    {'met_current_direction_qc_executed'}    {'met_current_direction_qc_results'}    {'met_current_speed'}    {'met_current_speed_qc_executed'}    {'met_current_speed_qc_results'}    {'met_heatflx_minute'}    {'met_latnflx_minute'}    {'met_netlirr_minute'}    {'met_netsirr'}    {'met_netsirr_qc_executed'}    {'met_netsirr_qc_results'}    {'met_relwind_direction'}    {'met_relwind_direction_qc_executed'}    {'met_relwind_direction_qc_results'}    {'met_relwind_speed'}    {'met_relwind_speed_qc_executed'}    {'met_relwind_speed_qc_results'}    {'met_salsurf'}    {'met_salsurf_qartod_executed'}    {'met_salsurf_qartod_results'}    {'met_salsurf_qc_executed'}    {'met_salsurf_qc_results'}    {'met_sensflx_minute'}    {'met_spechum'}    {'met_spechum_qc_executed'}    {'met_spechum_qc_results'}    {'met_windavg_mag_corr_east'}    {'met_windavg_mag_corr_north'}    {'northward_velocity'}    {'northward_wind_velocity'}    {'northward_wind_velocity_qartod_executed'}    {'northward_wind_velocity_qartod_results'}    {'northward_wind_velocity_qc_executed'}    {'northward_wind_velocity_qc_results'}    {'precipitation'}    {'precipitation_qartod_executed'}    {'precipitation_qartod_results'}    {'precipitation_qc_executed'}    {'precipitation_qc_results'}    {'relative_humidity'}    {'relative_humidity_qartod_executed'}    {'relative_humidity_qartod_results'}    {'relative_humidity_qc_executed'}    {'relative_humidity_qc_results'}    {'sea_surface_conductivity'}    {'sea_surface_conductivity_qartod_executed'}    {'sea_surface_conductivity_qartod_results'}    {'sea_surface_conductivity_qc_executed'}    {'sea_surface_conductivity_qc_results'}    {'sea_surface_temperature'}    {'sea_surface_temperature_qartod_executed'}    {'sea_surface_temperature_qartod_results'}    {'sea_surface_temperature_qc_executed'}    {'sea_surface_temperature_qc_results'}    {'shortwave_irradiance'}    {'shortwave_irradiance_qartod_executed'}    {'shortwave_irradiance_qartod_results'}    {'shortwave_irradiance_qc_executed'}    {'shortwave_irradiance_qc_results'}
-</pre></body></html></div></div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>air_temperature
+air_temperature_qartod_executed
+air_temperature_qartod_results
+air_temperature_qc_executed
+air_temperature_qc_results
+barometric_pressure
+barometric_pressure_qartod_executed
+barometric_pressure_qartod_results
+barometric_pressure_qc_executed
+barometric_pressure_qc_results
+ct_depth
+deployment
+eastward_velocity
+eastward_wind_velocity
+eastward_wind_velocity_qartod_executed
+eastward_wind_velocity_qartod_results
+eastward_wind_velocity_qc_executed
+eastward_wind_velocity_qc_results
+internal_timestamp
+longwave_irradiance
+longwave_irradiance_qartod_executed
+longwave_irradiance_qartod_results
+longwave_irradiance_qc_executed
+longwave_irradiance_qc_results
+met_barpres
+met_barpres_qc_executed
+met_barpres_qc_results
+met_current_direction
+met_current_direction_qc_executed
+met_current_direction_qc_results
+met_current_speed
+met_current_speed_qc_executed
+met_current_speed_qc_results
+met_heatflx_minute
+met_latnflx_minute
+met_netlirr_minute
+met_netsirr
+met_netsirr_qc_executed
+met_netsirr_qc_results
+met_relwind_direction
+met_relwind_direction_qc_executed
+met_relwind_direction_qc_results
+met_relwind_speed
+met_relwind_speed_qc_executed
+met_relwind_speed_qc_results
+met_salsurf
+met_salsurf_qartod_executed
+met_salsurf_qartod_results
+met_salsurf_qc_executed
+met_salsurf_qc_results
+met_sensflx_minute
+met_spechum
+met_spechum_qc_executed
+met_spechum_qc_results
+met_windavg_mag_corr_east
+met_windavg_mag_corr_north
+northward_velocity
+northward_wind_velocity
+northward_wind_velocity_qartod_executed
+northward_wind_velocity_qartod_results
+northward_wind_velocity_qc_executed
+northward_wind_velocity_qc_results
+precipitation
+precipitation_qartod_executed
+precipitation_qartod_results
+precipitation_qc_executed
+precipitation_qc_results
+relative_humidity
+relative_humidity_qartod_executed
+relative_humidity_qartod_results
+relative_humidity_qc_executed
+relative_humidity_qc_results
+sea_surface_conductivity
+sea_surface_conductivity_qartod_executed
+sea_surface_conductivity_qartod_results
+sea_surface_conductivity_qc_executed
+sea_surface_conductivity_qc_results
+sea_surface_temperature
+sea_surface_temperature_qartod_executed
+sea_surface_temperature_qartod_results
+sea_surface_temperature_qc_executed
+sea_surface_temperature_qc_results
+shortwave_irradiance
+shortwave_irradiance_qartod_executed
+shortwave_irradiance_qartod_results
+shortwave_irradiance_qc_executed
+shortwave_irradiance_qc_results
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="make-a-plot-of-the-east-component-of-average-wind-speed">
@@ -485,20 +585,22 @@ Elapsed time is 22.166961 seconds.
 <div class="cell_input docutils container">
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%%</span>
 <span class="c">%Example plot</span>
-<span class="nb">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fig</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 <span class="c">%Plot W/E Winds</span>
 <span class="nb">subplot</span><span class="p">(</span><span class="mi">311</span><span class="p">)</span>
 <span class="nb">plot</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">Time</span><span class="p">,</span><span class="n">data</span><span class="p">.</span><span class="n">met_windavg_mag_corr_east</span><span class="p">)</span>
 <span class="nb">xlim</span><span class="p">([</span><span class="n">data</span><span class="p">.</span><span class="n">Properties</span><span class="p">.</span><span class="n">StartTime</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">Time</span><span class="p">)])</span>
 <span class="nb">datetick</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;keeplimits&#39;</span><span class="p">)</span>
-<span class="nb">title</span><span class="p">([</span><span class="n">site</span><span class="w"> </span><span class="s">&#39;-&#39;</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="s">&#39;-&#39;</span><span class="w"> </span><span class="n">sensor</span><span class="w"> </span><span class="s">&#39;_&#39;</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="s">&#39;_&#39;</span><span class="w"> </span><span class="n">stream</span><span class="w"> </span><span class="s">&#39;  data.met_windavg_mag_corr_east&#39;</span><span class="p">])</span>
+<span class="nb">title</span><span class="p">({[</span><span class="n">site</span><span class="w"> </span><span class="s">&#39;-&#39;</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="s">&#39;-&#39;</span><span class="w"> </span><span class="n">sensor</span><span class="w"> </span><span class="s">&#39;_&#39;</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="s">&#39;_&#39;</span><span class="w"> </span><span class="n">stream</span><span class="w"> </span><span class="p">],</span><span class="w">  </span><span class="p">[</span><span class="s">&#39;met_windavg_mag_corr_east&#39;</span><span class="p">]},</span><span class="w"> </span><span class="s">&#39;Interpreter&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;none&#39;</span><span class="p">)</span>
 <span class="nb">ylabel</span><span class="p">(</span><span class="s">&#39;m/s&#39;</span><span class="p">)</span>
-<span class="nb">ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">10</span><span class="w"> </span><span class="mi">10</span><span class="p">])</span>
+<span class="nb">ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">15</span><span class="w"> </span><span class="mi">15</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">.</span><span class="n">Position</span><span class="p">(</span><span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">)=[</span><span class="mi">750</span><span class="p">,</span><span class="mi">600</span><span class="p">];</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/7c066dee1c6928f8673adc69a230283e5a29bcd6a6585f4b955def5456c124ed.png" src="../../../_images/7c066dee1c6928f8673adc69a230283e5a29bcd6a6585f4b955def5456c124ed.png" />
+<img alt="../../../_images/536c46dcff9df7eb0aa69aca34fb7a75ac3f9c54d86942f8eeb9c3adf9ea31e4.png" src="../../../_images/536c46dcff9df7eb0aa69aca34fb7a75ac3f9c54d86942f8eeb9c3adf9ea31e4.png" />
 </div>
 </div>
 </section>
@@ -535,12 +637,12 @@ Elapsed time is 22.166961 seconds.
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../../../python/examples/notebooks/fdchp/FdchpExample.html"
+       href="../../README.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">FDCHP Data Processing</p>
+        <p class="prev-next-title">OOI Data Explorations with MATLAB</p>
       </div>
     </a>
     <a class="right-next"

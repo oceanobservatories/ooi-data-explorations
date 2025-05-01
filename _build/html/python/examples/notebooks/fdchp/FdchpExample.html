@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
-  <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../../../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -63,11 +60,10 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'python/examples/notebooks/fdchp/FdchpExample';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="METBK Data Acess Example" href="../../../../matlab/examples/coastal_arrays/example_metbk.html" />
-    <link rel="prev" title="Accessing OOI Data and Metadata through the M2M API" href="../../../m2m_explorations.html" />
+    <link rel="next" title="Making a Timelapse From Uncabled Images" href="../../camds/uncabled.html" />
+    <link rel="prev" title="Accessing OOI Data and Metadata through the M2M API" href="../m2m_explorations.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,8 +79,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="../../../../search.html"
       method="get">
@@ -92,6 +99,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -99,8 +107,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -116,8 +124,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -147,17 +154,21 @@
     
     
     <img src="../../../../_static/NSF-OOI-RGB.png" class="logo__image only-light" alt="OOI Data Explorations - Home"/>
-    <img src="../../../../_static/NSF-OOI-RGB.png" class="logo__image only-dark pst-js-only" alt="OOI Data Explorations - Home"/>
+    <script>document.write(`<img src="../../../../_static/NSF-OOI-RGB.png" class="logo__image only-dark" alt="OOI Data Explorations - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -168,10 +179,21 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">FDCHP Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../camds/uncabled.html">Making a Timelapse From Uncabled Images</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../matlab/README.html">OOI Data Explorations with MATLAB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../matlab/examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../R/R_test.html">This is just a test for R notebooks</a></li>
 </ul>
 
     </div>
@@ -180,14 +202,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -362,16 +379,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -421,8 +446,8 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="fdchp-data-processing">
 <h1>FDCHP Data Processing<a class="headerlink" href="#fdchp-data-processing" title="Link to this heading">#</a></h1>
-<p>This Notebook demonstrates how to process FDCHP data to calculate fluxes using the tools in the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations.python.examples.fdchp</span></code> library.</p>
-<p>This requires setting up a python environment that contains the necessary dependencies to use in this notebook.</p>
+<p>This Notebook demonstrates how to process FDCHP data to calculate fluxes using the tools in the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations.python.examples.fdchp</span></code> library. The FDCHP instrument is on for 20 minutes out of each hour. While the instrument is recording, it includes 10 Hz 3-axis sonic wind data, as well as buoy motion data. Here, we calculate hourly motion-corrected momentum flux from these 20-minute data segments.</p>
+<p>To do the calculations, we need to set up a python environment that contains the necessary dependencies.</p>
 <p>Alongside the base repository containing this Notebook (the location of the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> repository, clone the <code class="docutils literal notranslate"><span class="pre">mi-instrument</span></code> repo</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">joffreyp</span><span class="o">/</span><span class="n">mi</span><span class="o">-</span><span class="n">instrument</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
@@ -452,47 +477,27 @@
 </div>
 <p>Check that the first line of the <code class="docutils literal notranslate"><span class="pre">argv</span></code> array in <code class="docutils literal notranslate"><span class="pre">kernel.json</span></code> points to the python from the new virtual environment: <code class="docutils literal notranslate"><span class="pre">&quot;/home/jovyan/venv/bin/python&quot;,</span></code></p>
 <p>Now, select the <code class="docutils literal notranslate"><span class="pre">Kernel</span></code> menu, click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">kernel...</span></code> and select the new <code class="docutils literal notranslate"><span class="pre">fdchp</span></code> environment.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">mi</span><span class="o">-</span><span class="n">instrument</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: mi-instrument in /home/jovyan/envs/fdchp/lib/python3.12/site-packages (1.0.14)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> A new release of pip is available: <span class=" -Color -Color-Red">24.2</span> -&gt; <span class=" -Color -Color-Green">25.0.1</span>
-<span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> To update, run: <span class=" -Color -Color-Green">python -m pip install --upgrade pip</span>
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Note: you may need to restart the kernel to use updated packages.
-</pre></div>
-</div>
-</div>
-</div>
 <section id="import-necessary-libraries">
 <h2>Import necessary libraries<a class="headerlink" href="#import-necessary-libraries" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">ntplib</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
 
-<span class="kn">from</span> <span class="nn">examples.fdchp</span> <span class="kn">import</span> <span class="n">fdchp_utils</span>
-<span class="kn">from</span> <span class="nn">examples.fdchp.fdchp_utils</span> <span class="kn">import</span> <span class="n">particles_to_pandas</span><span class="p">,</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">read_file_to_pandas</span><span class="p">,</span> <span class="n">convert_data_to_nwu</span>
-<span class="kn">from</span> <span class="nn">examples.fdchp.process_fdchp</span> <span class="kn">import</span> <span class="n">process_fdchp</span><span class="p">,</span> <span class="n">process_fdchp_xarray</span>
-<span class="kn">from</span> <span class="nn">examples.fdchp.plot_fdchp</span> <span class="kn">import</span> <span class="n">plot_x_velocity_vs_wind_speed</span><span class="p">,</span> <span class="n">plot_wave_height_vs_wind_speed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp</span><span class="w"> </span><span class="kn">import</span> <span class="n">fdchp_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp.fdchp_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">particles_to_pandas</span><span class="p">,</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">read_file_to_pandas</span><span class="p">,</span> <span class="n">convert_data_to_nwu</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp.process_fdchp</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_fdchp</span><span class="p">,</span> <span class="n">process_fdchp_xarray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp.plot_fdchp</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_x_velocity_vs_wind_speed</span><span class="p">,</span> <span class="n">plot_wave_height_vs_wind_speed</span>
 
-<span class="kn">from</span> <span class="nn">ooi_data_explorations.common</span> <span class="kn">import</span> <span class="n">kdata_collect_from_file_list</span>
-<span class="kn">from</span> <span class="nn">ooi_data_explorations.common</span> <span class="kn">import</span> <span class="n">load_kdata</span><span class="p">,</span> <span class="n">m2m_request</span><span class="p">,</span> <span class="n">m2m_collect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">kdata_collect_from_file_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_kdata</span><span class="p">,</span> <span class="n">m2m_request</span><span class="p">,</span> <span class="n">m2m_collect</span>
 </pre></div>
 </div>
 </div>
@@ -529,12 +534,12 @@
 <h3>Defining functions for filtering NetCDF files based on data dates contained in the files<a class="headerlink" href="#defining-functions-for-filtering-netcdf-files-based-on-data-dates-contained-in-the-files" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_file_dates</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_file_dates</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
     <span class="c1"># deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20231222T210200.048000-20240107T202200.041000.nc</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">limit_files</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">limit_files</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
         <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">get_file_dates</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
@@ -565,19 +570,19 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>84
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_file_dates</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_file_dates</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
     <span class="c1"># deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20231222T210200.048000-20240107T202200.041000.nc</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">limit_files</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">limit_files</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
         <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">get_file_dates</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
@@ -593,6 +598,12 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_list</span> <span class="o">=</span> <span class="n">limit_files</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/jovyan/ooi/kdata-backups/exclude_folder_removal/GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered/deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20230831T160200.051000-20230916T202200.041000.nc
+/home/jovyan/ooi/kdata-backups/exclude_folder_removal/GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered/deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20230916T210200.047000-20231002T202200.039000.nc
 </pre></div>
 </div>
 </div>
@@ -617,18 +628,6 @@
 <span class="n">trimmed_datasets</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">xarrays</span><span class="p">:</span>
     <span class="n">trimmed_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">drop_vars</span><span class="p">(</span><span class="n">vars_to_drop</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">IndexError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">vars_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">xarrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">variables</span> <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;fdchp_a&#39;</span><span class="p">)]</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">vars_to_drop</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">,</span> <span class="s1">&#39;minute&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="s1">&#39;millisecond&#39;</span><span class="p">]</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">trimmed_datasets</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="ne">IndexError</span>: list index out of range
 </pre></div>
 </div>
 </div>
@@ -662,7 +661,7 @@
 <p>Note that the function <code class="docutils literal notranslate"><span class="pre">process_fdchp_xarray</span></code> is in the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations/python/examples/fdchp/process_fdchp.py</span></code> module. It calls many functions in the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations/python/examples/fdchp/fdchp_utils.py</span></code> module. See those python modules for details on how the computation is performed, and to potentially modify the filtering as desired.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_xarray</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">output_filepath</span><span class="o">=</span><span class="s1">&#39;fluxes&#39;</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">process_xarray</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">output_filepath</span><span class="o">=</span><span class="s1">&#39;fluxes&#39;</span><span class="p">):</span>
     <span class="c1"># Set up some variables for FDCHP processing depending on sensor location</span>
     <span class="n">subsite</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">subsite</span>
     <span class="k">if</span> <span class="n">subsite</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;PA&#39;</span><span class="p">):</span>
@@ -739,40 +738,40 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-04-17 21:15:02.955540
-File processing finished for hour 24 of 720. Process time: 0:00:33.381845
-File processing finished for hour 48 of 720. Process time: 0:01:42.419139
-File processing finished for hour 72 of 720. Process time: 0:03:27.231170
-File processing finished for hour 96 of 720. Process time: 0:05:46.864219
-File processing finished for hour 120 of 720. Process time: 0:08:40.942209
-File processing finished for hour 144 of 720. Process time: 0:12:09.072075
-File processing finished for hour 168 of 720. Process time: 0:16:11.792494
-File processing finished for hour 192 of 720. Process time: 0:20:49.542554
-File processing finished for hour 216 of 720. Process time: 0:26:01.625059
-File processing finished for hour 240 of 720. Process time: 0:31:47.938212
-File processing finished for hour 264 of 720. Process time: 0:38:07.895633
-File processing finished for hour 288 of 720. Process time: 0:45:01.491008
-File processing finished for hour 312 of 720. Process time: 0:52:28.930431
-File processing finished for hour 336 of 720. Process time: 1:00:30.444683
-File processing finished for hour 360 of 720. Process time: 1:09:06.322077
-File processing finished for hour 384 of 720. Process time: 1:18:17.186547
-File processing finished for hour 408 of 720. Process time: 1:28:03.263572
-File processing finished for hour 432 of 720. Process time: 1:38:24.388865
-File processing finished for hour 456 of 720. Process time: 1:49:20.753169
-File processing finished for hour 480 of 720. Process time: 2:00:52.212066
-File processing finished for hour 504 of 720. Process time: 2:12:57.606107
-File processing finished for hour 528 of 720. Process time: 2:25:36.726480
-File processing finished for hour 552 of 720. Process time: 2:38:50.779810
-File processing finished for hour 576 of 720. Process time: 2:52:40.663152
-File processing finished for hour 600 of 720. Process time: 3:07:05.497464
-File processing finished for hour 624 of 720. Process time: 3:22:04.782486
-File processing finished for hour 648 of 720. Process time: 3:37:39.151853
-File processing finished for hour 672 of 720. Process time: 3:53:48.717852
-File processing finished for hour 696 of 720. Process time: 4:10:33.428679
-File processing finished for hour 720 of 720. Process time: 4:27:53.317429
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-05-01 14:45:18.453409
+File processing finished for hour 24 of 720. Process time: 0:00:37.294006
+File processing finished for hour 48 of 720. Process time: 0:01:50.409074
+File processing finished for hour 72 of 720. Process time: 0:03:39.391055
+File processing finished for hour 96 of 720. Process time: 0:06:03.312982
+File processing finished for hour 120 of 720. Process time: 0:09:01.817627
+File processing finished for hour 144 of 720. Process time: 0:12:34.590974
+File processing finished for hour 168 of 720. Process time: 0:16:42.314325
+File processing finished for hour 192 of 720. Process time: 0:21:25.485686
+File processing finished for hour 216 of 720. Process time: 0:26:43.235362
+File processing finished for hour 240 of 720. Process time: 0:32:35.201966
+File processing finished for hour 264 of 720. Process time: 0:39:00.801632
+File processing finished for hour 288 of 720. Process time: 0:46:00.083659
+File processing finished for hour 312 of 720. Process time: 0:53:33.312470
+File processing finished for hour 336 of 720. Process time: 1:01:40.672226
+File processing finished for hour 360 of 720. Process time: 1:10:22.302378
+File processing finished for hour 384 of 720. Process time: 1:19:38.942575
+File processing finished for hour 408 of 720. Process time: 1:29:30.926955
+File processing finished for hour 432 of 720. Process time: 1:39:58.021239
+File processing finished for hour 456 of 720. Process time: 1:51:00.436754
+File processing finished for hour 480 of 720. Process time: 2:02:38.467000
+File processing finished for hour 504 of 720. Process time: 2:14:50.820178
+File processing finished for hour 528 of 720. Process time: 2:27:37.017771
+File processing finished for hour 552 of 720. Process time: 2:40:58.242732
+File processing finished for hour 576 of 720. Process time: 2:54:55.254828
+File processing finished for hour 600 of 720. Process time: 3:09:27.533826
+File processing finished for hour 624 of 720. Process time: 3:24:34.577665
+File processing finished for hour 648 of 720. Process time: 3:40:16.990783
+File processing finished for hour 672 of 720. Process time: 3:56:34.671104
+File processing finished for hour 696 of 720. Process time: 4:13:27.624016
+File processing finished for hour 720 of 720. Process time: 4:30:55.998895
 0 errors during processing.
-End time: 2025-04-17 21:15:46.999320
-Processed 720 hours of data in 0:00:44.043727.
+End time: 2025-05-01 14:46:02.854279
+Processed 720 hours of data in 0:00:44.400803.
 </pre></div>
 </div>
 </div>
@@ -793,9 +792,10 @@ Processed 720 hours of data in 0:00:44.043727.
 <section id="get-telemetered-data-from-kdata-directory">
 <h2>Get Telemetered data from kdata directory<a class="headerlink" href="#get-telemetered-data-from-kdata-directory" title="Link to this heading">#</a></h2>
 <p>Find all deployments, assemble and join datasets. This presumes that the initial datasets were recovered of some kind. If not, modify the code below to pick a different method (replace the ‘telemetered’ parameter in <code class="docutils literal notranslate"><span class="pre">load_kdata</span></code> below).</p>
+<p>The telemetered datasets include the fluxes calculated onboard the FDCHP instrument with flux values telemetered each hour.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ooi_data_explorations.common</span> <span class="kn">import</span> <span class="n">load_kdata</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_kdata</span>
 
 <span class="n">deployments</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
@@ -820,7 +820,7 @@ Processed 720 hours of data in 0:00:44.043727.
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Deployments: dict_keys([&#39;deployment0010&#39;])
 Downloading 180 data file(s) from the local kdata directory
 Downloading 180 data file(s) from the local kdata directory
-Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 112.00it/s]
+Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 114.53it/s]
 Merging the data files into a single dataset
 </pre></div>
 </div>
@@ -831,8 +831,8 @@ Merging the data files into a single dataset
 <h2>Plot calculated vs telemetered<a class="headerlink" href="#plot-calculated-vs-telemetered" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib.collections</span> <span class="kn">import</span> <span class="n">PathCollection</span>
-<span class="kn">from</span> <span class="nn">matplotlib.legend_handler</span> <span class="kn">import</span> <span class="n">HandlerPathCollection</span><span class="p">,</span> <span class="n">HandlerLine2D</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.legend_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">HandlerPathCollection</span><span class="p">,</span> <span class="n">HandlerLine2D</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="c1"># %matplotlib ipympl</span>
 
@@ -840,7 +840,7 @@ Merging the data files into a single dataset
 <span class="n">legend_marker_size</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">tick_size</span> <span class="o">=</span> <span class="mi">14</span>
 
-<span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">orig</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">orig</span><span class="p">):</span>
     <span class="n">handle</span><span class="o">.</span><span class="n">update_from</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span>
     <span class="n">handle</span><span class="o">.</span><span class="n">set_sizes</span><span class="p">([</span><span class="n">legend_marker_size</span><span class="p">])</span>
     
@@ -900,7 +900,7 @@ Merging the data files into a single dataset
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../../../m2m_explorations.html"
+       href="../m2m_explorations.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
@@ -909,11 +909,11 @@ Merging the data files into a single dataset
       </div>
     </a>
     <a class="right-next"
-       href="../../../../matlab/examples/coastal_arrays/example_metbk.html"
+       href="../../camds/uncabled.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">METBK Data Acess Example</p>
+        <p class="prev-next-title">Making a Timelapse From Uncabled Images</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -924,8 +924,7 @@ Merging the data files into a single dataset
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -995,8 +994,8 @@ By Ocean Observatories Initiative
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>

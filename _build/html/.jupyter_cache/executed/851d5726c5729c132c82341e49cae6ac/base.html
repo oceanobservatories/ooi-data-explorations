@@ -1,0 +1,742 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>&lt;no title&gt; &#8212; OOI Data Explorations</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '.jupyter_cache/executed/851d5726c5729c132c82341e49cae6ac/base';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/NSF-OOI-RGB.png" class="logo__image only-light" alt="OOI Data Explorations - Home"/>
+    <script>document.write(`<img src="../../../_static/NSF-OOI-RGB.png" class="logo__image only-dark" alt="OOI Data Explorations - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Welcome to OOI Data Explorations
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../python/examples/notebooks/m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python/examples/notebooks/fdchp/FdchpExample.html">FDCHP Data Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python/examples/camds/uncabled.html">Making a Timelapse From Uncabled Images</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../../../python/examples/notebooks/dosta/ooiea_uncabled_dosta_data.html">Accessing OOI Endurance Array Surface Mooring Dissolved Oxygen Data</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../matlab/README.html">OOI Data Explorations with MATLAB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../matlab/examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is just a test for R notebooks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./.jupyter_cache/executed/851d5726c5729c132c82341e49cae6ac/base.ipynb&branch=book" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on JupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="JupyterHub logo" src="../../../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2F.jupyter_cache/executed/851d5726c5729c132c82341e49cae6ac/base.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/.jupyter_cache/executed/851d5726c5729c132c82341e49cae6ac/base.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1><no title></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="simple visible nav section-nav flex-column">
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-white&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_deployments</span><span class="p">,</span> <span class="n">get_deployment_dates</span><span class="p">,</span> <span class="n">get_vocabulary</span><span class="p">,</span> <span class="n">m2m_request</span><span class="p">,</span> \
+    <span class="n">m2m_collect</span><span class="p">,</span> <span class="n">update_dataset</span><span class="p">,</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="n">ENCODINGS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.uncabled.process_dosta</span><span class="w"> </span><span class="kn">import</span> <span class="n">dosta_ctdbp_datalogger</span><span class="p">,</span> <span class="n">dosta_datalogger</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup needed parameters for the request for CE06ISSM</span>
+<span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;CE06ISSM&#39;</span>           <span class="c1"># OOI Net site designator</span>
+<span class="n">node</span> <span class="o">=</span> <span class="s1">&#39;RID16&#39;</span>              <span class="c1"># OOI Net node designator</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="s1">&#39;03-DOSTAD000&#39;</span>     <span class="c1"># OOI Net sensor designator</span>
+<span class="n">stream</span> <span class="o">=</span> <span class="s1">&#39;dosta_abcdjm_ctdbp_dcl_instrument&#39;</span>  <span class="c1"># OOI Net stream name</span>
+<span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;telemetered&#39;</span>      <span class="c1"># OOI Net data delivery method</span>
+
+<span class="c1"># Set the start date to June 1, 2020. Leaving the stop date empty will request through the end of the record.</span>
+<span class="n">start</span> <span class="o">=</span> <span class="s1">&#39;2025-04-01T00:00:00.000Z&#39;</span>    <span class="c1"># explicit date/time format required for M2M requests</span>
+
+<span class="c1"># request the data</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">m2m_request</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sensor</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requesting:
+	refdes: CE06ISSM-RID16-03-DOSTAD000
+	method: telemetered
+	stream: dosta_abcdjm_ctdbp_dcl_instrument
+	from 2025-04-01T00:00:00.000Z to None
+Waiting for OOINet to process and prepare data request, this may take up to 20 minutes.
+Waiting: 100%|██████████| 400/400 [04:30&lt;00:00,  1.48it/s]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># collect and download the DOSTA data from the NSIF in an xarray dataset</span>
+<span class="n">nsif06</span> <span class="o">=</span> <span class="n">m2m_collect</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s1">&#39;.*DOSTA.*</span><span class="se">\\</span><span class="s1">.nc$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading 1 data file(s) from the users OOI M2M THREDDS catalog
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████| 1/1 [00:01&lt;00:00,  1.96s/it]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Merging the data files into a single dataset
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># CE06ISSM MFN</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">m2m_request</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="s1">&#39;MFD37&#39;</span><span class="p">,</span> <span class="n">sensor</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+<span class="n">mfn06</span> <span class="o">=</span> <span class="n">m2m_collect</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s1">&#39;.*DOSTA.*</span><span class="se">\\</span><span class="s1">.nc$&#39;</span><span class="p">)</span>
+
+<span class="c1"># CE07SHSM NSIF</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">m2m_request</span><span class="p">(</span><span class="s1">&#39;CE07SHSM&#39;</span><span class="p">,</span> <span class="s1">&#39;RID27&#39;</span><span class="p">,</span> <span class="s1">&#39;04-DOSTAD000&#39;</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="s1">&#39;dosta_abcdjm_dcl_instrument&#39;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+<span class="n">nsif07</span> <span class="o">=</span> <span class="n">m2m_collect</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s1">&#39;.*DOSTA.*</span><span class="se">\\</span><span class="s1">.nc$&#39;</span><span class="p">)</span>
+
+<span class="c1"># CE07SHSM MFN</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">m2m_request</span><span class="p">(</span><span class="s1">&#39;CE07SHSM&#39;</span><span class="p">,</span> <span class="s1">&#39;MFD37&#39;</span><span class="p">,</span> <span class="n">sensor</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+<span class="n">mfn07</span> <span class="o">=</span> <span class="n">m2m_collect</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s1">&#39;.*DOSTA.*</span><span class="se">\\</span><span class="s1">.nc$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requesting:
+	refdes: CE06ISSM-MFD37-03-DOSTAD000
+	method: telemetered
+	stream: dosta_abcdjm_ctdbp_dcl_instrument
+	from 2025-04-01T00:00:00.000Z to None
+Waiting for OOINet to process and prepare data request, this may take up to 20 minutes.
+Waiting: 100%|██████████| 400/400 [04:00&lt;00:00,  1.66it/s]
+Downloading 1 data file(s) from the users OOI M2M THREDDS catalog
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████| 1/1 [00:00&lt;00:00,  2.79it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Merging the data files into a single dataset
+Requesting:
+	refdes: CE07SHSM-RID27-04-DOSTAD000
+	method: telemetered
+	stream: dosta_abcdjm_dcl_instrument
+	from 2025-04-01T00:00:00.000Z to None
+Waiting for OOINet to process and prepare data request, this may take up to 20 minutes.
+Waiting: 100%|██████████| 400/400 [04:30&lt;00:00,  1.48it/s]
+Downloading 1 data file(s) from the users OOI M2M THREDDS catalog
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████| 1/1 [00:01&lt;00:00,  1.84s/it]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Merging the data files into a single dataset
+Requesting:
+	refdes: CE07SHSM-MFD37-03-DOSTAD000
+	method: telemetered
+	stream: dosta_abcdjm_ctdbp_dcl_instrument
+	from 2025-04-01T00:00:00.000Z to None
+Waiting for OOINet to process and prepare data request, this may take up to 20 minutes.
+Waiting: 100%|██████████| 400/400 [03:30&lt;00:00,  1.90it/s]
+Downloading 1 data file(s) from the users OOI M2M THREDDS catalog
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading and Processing the Data Files: 100%|██████████| 1/1 [00:00&lt;00:00,  2.80it/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Merging the data files into a single dataset
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nsif06</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">nsif06</span><span class="o">.</span><span class="n">dissolved_oxygen</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;7 m&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mfn06</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">mfn06</span><span class="o">.</span><span class="n">dissolved_oxygen</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;29 m&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Washington Inshore Surface Mooring, April 2025 to Present&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Dissolved Oxygen (umol/kg)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/a580a21848c26fd86d18f57727dc8022838dbc5fe054ecdc0ccf668f930fd8e3.png" src="../../../_images/a580a21848c26fd86d18f57727dc8022838dbc5fe054ecdc0ccf668f930fd8e3.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nsif07</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">nsif07</span><span class="o">.</span><span class="n">dissolved_oxygen</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;7 m&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mfn07</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">mfn07</span><span class="o">.</span><span class="n">dissolved_oxygen</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;87 m&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Washington Shelf Surface Mooring, April 2025 to Present&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Dissolved Oxygen (umol/kg)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/06c79660006411e2e67b8084b78b587ead2d5a40c8c00a8b03edd1cd4b6d4df8.png" src="../../../_images/06c79660006411e2e67b8084b78b587ead2d5a40c8c00a8b03edd1cd4b6d4df8.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">save_dosta</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">instrmt</span><span class="p">):</span>
+    <span class="n">home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">)</span>
+    <span class="n">m2m_base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s1">&#39;ooidata/m2m&#39;</span><span class="p">))</span>
+    <span class="n">out_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">m2m_base</span><span class="p">,</span> <span class="n">site</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">instrmt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+    <span class="n">out_file</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">.Summer2020.nc&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">instrmt</span><span class="p">))</span>
+    <span class="n">nc_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="n">out_file</span><span class="p">)</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">nc_out</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;h5netcdf&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">ENCODINGS</span><span class="p">)</span>
+
+<span class="c1"># clean up, update and save the datasets -- CE06ISSM</span>
+<span class="n">nsif06</span> <span class="o">=</span> <span class="n">dosta_ctdbp_datalogger</span><span class="p">(</span><span class="n">nsif06</span><span class="p">)</span>
+<span class="n">nsif06</span> <span class="o">=</span> <span class="n">update_dataset</span><span class="p">(</span><span class="n">nsif06</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">save_dosta</span><span class="p">(</span><span class="n">nsif06</span><span class="p">,</span> <span class="s1">&#39;ce06issm&#39;</span><span class="p">,</span> <span class="s1">&#39;nsif&#39;</span><span class="p">,</span> <span class="s1">&#39;dosta&#39;</span><span class="p">)</span>
+<span class="n">mfn06</span> <span class="o">=</span> <span class="n">dosta_ctdbp_datalogger</span><span class="p">(</span><span class="n">mfn06</span><span class="p">)</span>
+<span class="n">mfn06</span> <span class="o">=</span> <span class="n">update_dataset</span><span class="p">(</span><span class="n">mfn06</span><span class="p">,</span> <span class="mi">29</span><span class="p">)</span>
+<span class="n">save_dosta</span><span class="p">(</span><span class="n">mfn06</span><span class="p">,</span> <span class="s1">&#39;ce06issm&#39;</span><span class="p">,</span> <span class="s1">&#39;seafloor&#39;</span><span class="p">,</span> <span class="s1">&#39;dosta&#39;</span><span class="p">)</span>
+
+<span class="c1"># clean up, update and save the datasets -- CE07SHSM</span>
+<span class="n">nsif07</span> <span class="o">=</span> <span class="n">dosta_datalogger</span><span class="p">(</span><span class="n">nsif07</span><span class="p">,</span> <span class="n">burst</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">nsif07</span> <span class="o">=</span> <span class="n">update_dataset</span><span class="p">(</span><span class="n">nsif07</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">save_dosta</span><span class="p">(</span><span class="n">nsif07</span><span class="p">,</span> <span class="s1">&#39;ce07shsm&#39;</span><span class="p">,</span> <span class="s1">&#39;nsif&#39;</span><span class="p">,</span> <span class="s1">&#39;dosta&#39;</span><span class="p">)</span>
+<span class="n">mfn07</span> <span class="o">=</span> <span class="n">dosta_ctdbp_datalogger</span><span class="p">(</span><span class="n">mfn07</span><span class="p">)</span>
+<span class="n">mfn07</span> <span class="o">=</span> <span class="n">update_dataset</span><span class="p">(</span><span class="n">mfn07</span><span class="p">,</span> <span class="mi">87</span><span class="p">)</span>
+<span class="n">save_dosta</span><span class="p">(</span><span class="n">mfn07</span><span class="p">,</span> <span class="s1">&#39;ce07shsm&#39;</span><span class="p">,</span> <span class="s1">&#39;seafloor&#39;</span><span class="p">,</span> <span class="s1">&#39;dosta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "fdchp"
+        },
+        kernelOptions: {
+            name: "fdchp",
+            path: "./.jupyter_cache/executed/851d5726c5729c132c82341e49cae6ac"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'fdchp'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="simple visible nav section-nav flex-column">
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Ocean Observatories Initiative
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

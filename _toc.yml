@@ -9,6 +9,7 @@ parts:
     - file: python/examples/notebooks/m2m_explorations.ipynb
     - file: python/examples/notebooks/fdchp/FdchpExample.ipynb
     - file: python/examples/camds/uncabled.ipynb
+    - file: python/examples/notebooks/dosta/ooiea_uncabled_dosta_data.ipynb
   - caption: Matlab Examples
     chapters:
     - file: matlab/README.md

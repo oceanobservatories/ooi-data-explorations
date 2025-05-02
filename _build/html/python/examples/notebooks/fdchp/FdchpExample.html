@@ -185,6 +185,7 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">FDCHP Data Processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../camds/uncabled.html">Making a Timelapse From Uncabled Images</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="../dosta/ooiea_uncabled_dosta_data.html">Accessing OOI Endurance Array Surface Mooring Dissolved Oxygen Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
 <ul class="nav bd-sidenav">
@@ -565,45 +566,12 @@ document.write(`
 <span class="n">kdata</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kdata</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">))</span>
 
 <span class="n">files</span> <span class="o">=</span> <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">kdata</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;deployment*&#39;</span> <span class="o">+</span> <span class="n">dataset_id</span> <span class="o">+</span> <span class="s1">&#39;*.nc&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">))</span>
+<span class="c1"># print(len(files))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>84
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_file_dates</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
-    <span class="c1"># deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20231222T210200.048000-20240107T202200.041000.nc</span>
-    <span class="n">dates</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">limit_files</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
-        <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">get_file_dates</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="n">end_date</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">&gt;=</span> <span class="n">start_date</span><span class="p">:</span>
-            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">files</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_list</span> <span class="o">=</span> <span class="n">limit_files</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/jovyan/ooi/kdata-backups/exclude_folder_removal/GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered/deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20230831T160200.051000-20230916T202200.041000.nc
-/home/jovyan/ooi/kdata-backups/exclude_folder_removal/GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered/deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20230916T210200.047000-20231002T202200.039000.nc
 </pre></div>
 </div>
 </div>

@@ -73,9 +73,9 @@ try:
     nrc = netrc.netrc()
     AUTH = nrc.authenticators('ooinet.oceanobservatories.org')
     if AUTH is None:
-        raise RuntimeError('No entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file')
+        warnings.warn('Not entry found for machine ``ooinet.oceanobservatories.org`` in the .netrc file. M2M queries will not work without appropriate authorization.')
 except FileNotFoundError as e:
-    raise OSError(e, os.strerror(e.errno), os.path.expanduser('~'))
+    warnings.warn('NetRC file ({}/.netrc) not found. M2M queries will not work without appropriate authorization.'.format(os.path.expanduser('~')))
 
 # set up a default location to save the data
 home = os.path.expanduser('~')
@@ -895,6 +895,21 @@ def kdata_collect(dataset_id, tag='*.nc', use_dask=False):
 
     # Create a list of the files from the request above using a simple regex as a tag to discriminate the files
     files = glob.glob(kdata + '/' + tag)
+
+    # Process the data files found above and concatenate them into a single list
+    print('Downloading %d data file(s) from the local kdata directory' % len(files))
+    return kdata_collect_from_file_list(files, use_dask)
+
+def kdata_collect_from_file_list(files, use_dask=False):
+    """
+    Collect data from the OOI JupyterHub kdata directory. 
+    The collected data is gathered into a xarray dataset for further processing.
+
+    :param files: list of files in kdata directory
+    :param use_dask: Boolean flag indicating whether to load the data using
+        dask arrays (default=False)
+    :return gc: the collected Gold Copy data as a xarray dataset
+    """
 
     # Process the data files found above and concatenate them into a single list
     print('Downloading %d data file(s) from the local kdata directory' % len(files))

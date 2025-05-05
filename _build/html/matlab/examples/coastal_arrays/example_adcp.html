@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example Apex Profiler Mooring CTDs &#8212; OOI Data Explorations</title>
+    <title>Example ADCP &#8212; OOI Data Explorations</title>
   
   
   
@@ -57,11 +57,11 @@
     <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'matlab/examples/global_arrays/example_apex_profiler_mooring_ctds';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'matlab/examples/coastal_arrays/example_adcp';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="This is just a test for R notebooks" href="../../../R/R_test.html" />
-    <link rel="prev" title="Example ADCP" href="../coastal_arrays/example_adcp.html" />
+    <link rel="next" title="Example Apex Profiler Mooring CTDs" href="../global_arrays/example_apex_profiler_mooring_ctds.html" />
+    <link rel="prev" title="METBK Data Acess Example" href="example_metbk.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -194,9 +194,9 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../matlab.html">Explore OOI Data with MATLAB</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../README.html">OOI Data Explorations with MATLAB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../coastal_arrays/example_adcp.html">Example ADCP</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Example Apex Profiler Mooring CTDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_metbk.html">METBK Data Acess Example</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Example ADCP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../global_arrays/example_apex_profiler_mooring_ctds.html">Example Apex Profiler Mooring CTDs</a></li>
 
 </ul>
 </details></li>
@@ -258,7 +258,7 @@
       
       
       
-      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./matlab/examples/global_arrays/example_apex_profiler_mooring_ctds.ipynb&branch=book" target="_blank"
+      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./matlab/examples/coastal_arrays/example_adcp.ipynb&branch=book" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch on JupyterHub"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -306,7 +306,7 @@
       
       
       
-      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2Fmatlab/examples/global_arrays/example_apex_profiler_mooring_ctds.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2Fmatlab/examples/coastal_arrays/example_adcp.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -336,7 +336,7 @@
       
       
       
-      <li><a href="../../../_sources/matlab/examples/global_arrays/example_apex_profiler_mooring_ctds.ipynb" target="_blank"
+      <li><a href="../../../_sources/matlab/examples/coastal_arrays/example_adcp.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -420,7 +420,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Example Apex Profiler Mooring CTDs</h1>
+    <h1>Example ADCP</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -430,26 +430,21 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Example Apex Profiler Mooring CTDs</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform">Platform:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node">Node:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instrument-class">Instrument Class:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method">Method:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-user-access-credentials-for-ooinet">Load user access credentials for OOINet</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-access-credentials">Load the access credentials</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-time-period-of-interest">Set time period of interest</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-metadata-for-station-papa-upper-mclane-profiler">Specify metadata for Station Papa upper McLane profiler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-metadata">Specify metadata</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-m2m-url">Get M2M URL</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#make-m2m-call">Make M2M Call</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-data">Get Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-metadata-for-station-papa-lower-mclane-profiler">Specify metadata for Station Papa lower McLane profiler</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Get M2M URL</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Make M2M Call</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Get Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-adcp-plots">Example ADCP plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-w-e-and-plot-n-s">Plot W/E and Plot N/S</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#example-plot">Example plot</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -460,56 +455,42 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="example-apex-profiler-mooring-ctds">
-<h1>Example Apex Profiler Mooring CTDs<a class="headerlink" href="#example-apex-profiler-mooring-ctds" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="example-adcp">
+<h1>Example ADCP<a class="headerlink" href="#example-adcp" title="Link to this heading">#</a></h1>
 <section id="platform">
 <h2>Platform:<a class="headerlink" href="#platform" title="Link to this heading">#</a></h2>
-<p><strong>Station Papa</strong>:</p>
+<p><strong>Endurance Array</strong>:</p>
 <ul class="simple">
-<li><p>GP03FLMA, GP03FLMB, GP02HYPM</p></li>
-<li><p>GPGL276, GPGL361, GPGL362, GPGL363, GPGL364, GPGL365, GPGL453, GPGL523, GPGL525, GPGL537, GPGL469</p></li>
-<li><p>GPPG514, GPPG515, GPPG575, GPPG576</p></li>
+<li><p>CE01ISSM, CE01ISSP, CE02SHSM, CE02SHBP, CE02SHSP, CE04OSSM, CE04OSBP, CE06ISSM, CE06ISSP, CE07SHSM, CE07SHSP, CE09OSSM, CE09OSPM</p></li>
+<li><p>CEGL386, CEGL384, CEGL383, CEGL382, CEGL381, CEGL327, CEGL326, CEGL320, CEGL319, CEGL312, CEGL311, CEGL247</p></li>
 </ul>
-<p><strong>Irminger Sea</strong>:</p>
+<p><strong>Pioneer Array</strong>:</p>
 <ul class="simple">
-<li><p>GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM</p></li>
-<li><p>GIGL463, GIGL469, GIGL477, GIGL478, GIGL484, GIGL485, GIGL486, GIGL493, GIGL495, GIGL559, GIGL453, GIGL525, GIGL560</p></li>
-<li><p>GIPG528, GIPG564, GIPG577, GIPG581</p></li>
-</ul>
-<p><strong>Southern Ocean</strong>:</p>
-<ul class="simple">
-<li><p>GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM</p></li>
-<li><p>GSGL484, GSGL485, GSGL486, GSGL524, GSGL560, GSGL561</p></li>
-<li><p>GSPG565, GSPG566</p></li>
-</ul>
-<p><strong>Argentine Basin</strong>:</p>
-<ul class="simple">
-<li><p>GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM</p></li>
-<li><p>GAGL364, GAGL470, GAGL493, GAGL494, GAGL495, GAGL496, GAGL538</p></li>
-<li><p>GAPG562, GAPG563, GAPG578, GAPG580</p></li>
+<li><p>CP01CNPM, CP01CNSM, CP02PMCI, CP02PMCO, CP02PMUI, CP02PMUO, CP03ISPM, CP03ISSM, CP04OSPM, CP04OSSM</p></li>
+<li><p>CPGL335, CPGL336, CPGL339, CPGL340, CPGL374, CPGL375, CPGL376, CPGL379, CPGL380, CPGL387, CPGL388, CPGL389, CPGL514</p></li>
 </ul>
 </section>
 <section id="node">
 <h2>Node:<a class="headerlink" href="#node" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>RISER, BUOY, NSIF, PROFILER-U, PROFILER-L</p></li>
+<li><p>BUOY, NSIF, MFN, BEP, PROFILER, GLIDER</p></li>
 </ul>
 </section>
 <section id="instrument-class">
 <h2>Instrument Class:<a class="headerlink" href="#instrument-class" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>ADCP, CTD, DOSTA, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT</p></li>
+<li><p>ADCP, CTD, DOSTA, FDCHP, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT, ZPLSC</p></li>
 <li><p>WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier</p></li>
 </ul>
 </section>
 <section id="method">
 <h2>Method:<a class="headerlink" href="#method" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Telemetered, RecoveredHost, RecoveredInst, RecoveredWFP</p></li>
+<li><p>Telemetered, RecoveredHost, RecoveredInst, RecoveredCSPP, RecoveredWFP, Streamed</p></li>
 </ul>
 </section>
-<section id="load-user-access-credentials-for-ooinet">
-<h2>Load user access credentials for OOINet<a class="headerlink" href="#load-user-access-credentials-for-ooinet" title="Link to this heading">#</a></h2>
+<section id="load-the-access-credentials">
+<h2>Load the access credentials<a class="headerlink" href="#load-the-access-credentials" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">try</span>
@@ -518,7 +499,7 @@ document.write(`
 <span class="w">    </span><span class="nb">error</span><span class="p">([</span><span class="s">&#39;Unable to load access credentials. Users need to create a &#39;</span><span class="w"> </span><span class="k">...</span>
 <span class="w">           </span><span class="s">&#39;weboptions object with their personal OOINet API keys. See &#39;</span><span class="w"> </span><span class="k">...</span>
 <span class="w">           </span><span class="s">&#39;README for more information on how to create this.&#39;</span><span class="p">])</span>
-<span class="k">end</span>
+<span class="k">end</span><span class="w"> </span>
 </pre></div>
 </div>
 </div>
@@ -528,21 +509,21 @@ document.write(`
 <h2>Set time period of interest<a class="headerlink" href="#set-time-period-of-interest" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">start_date</span><span class="p">=</span><span class="s">&#39;2018-01-01T00:00:00.000Z&#39;</span><span class="p">;</span>
-<span class="n">end_date</span><span class="p">=</span><span class="s">&#39;2018-06-30T23:59:59.000Z&#39;</span><span class="p">;</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">start_date</span><span class="p">=</span><span class="s">&#39;2017-08-01T00:00:00.000Z&#39;</span><span class="p">;</span>
+<span class="n">end_date</span><span class="p">=</span><span class="s">&#39;2017-10-30T23:59:59.000Z&#39;</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="specify-metadata-for-station-papa-upper-mclane-profiler">
-<h2>Specify metadata for Station Papa upper McLane profiler<a class="headerlink" href="#specify-metadata-for-station-papa-upper-mclane-profiler" title="Link to this heading">#</a></h2>
+<section id="specify-metadata">
+<h2>Specify metadata<a class="headerlink" href="#specify-metadata" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">platform_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;GP02HYPM&#39;</span><span class="p">;</span>
-<span class="n">node</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;PROFILER-U&#39;</span><span class="p">;</span>
-<span class="n">instrument_class</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;CTD&#39;</span><span class="p">;</span>
-<span class="n">method</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;RecoveredWFP&#39;</span><span class="p">;</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">platform_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;CE09OSSM&#39;</span><span class="p">;</span>
+<span class="n">node</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;NSIF&#39;</span><span class="p">;</span>
+<span class="n">instrument_class</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;ADCP&#39;</span><span class="p">;</span>
+<span class="n">method</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;RecoveredInst&#39;</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
@@ -556,28 +537,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">uframe_dataset_name</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><html><body><pre>uframe_dataset_name = "GP02HYPM/WFP02/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered"</pre></body></html></div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><html><body><pre>variables = 1x6 struct array with fields:
-    name
-    data
-    units
-</pre></body></html></div></div>
 </div>
 </section>
 <section id="make-m2m-call">
@@ -594,7 +553,7 @@ document.write(`
 uframe_m2m_status: request complete
 uframe_m2m_status: successful
 THREDDS Catalog URL:
-https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T171739108Z-GP02HYPM-WFP02-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T165611323Z-CE09OSSM-RID26-01-ADCPTC000-recovered_inst-adcp_velocity_earth/catalog.html
  
 </pre></div>
 </div>
@@ -605,93 +564,50 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
 <h2>Get Data<a class="headerlink" href="#get-data" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%[ctd_variables_upper_wfp, ctd_mtime_upper_wfp, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files</span>
-<span class="p">[</span><span class="n">ctd_variables_upper_wfp</span><span class="p">,</span><span class="w"> </span><span class="n">ctd_mtime_upper_wfp</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Data</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="w"> </span><span class="n">nclist</span><span class="p">);</span><span class="w">  </span><span class="c">%This will use the opendap to read in the data from remote files</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%[adcp_variables, adcp_mtime, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files</span>
+<span class="p">[</span><span class="n">adcp_variables</span><span class="p">,</span><span class="w"> </span><span class="n">adcp_mtime</span><span class="p">,</span><span class="w"> </span><span class="n">netcdfFilenames</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Data</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="w"> </span><span class="n">nclist</span><span class="p">);</span><span class="w">  </span><span class="c">%This will use the opendap to read in the data from remote files</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="specify-metadata-for-station-papa-lower-mclane-profiler">
-<h2>Specify metadata for Station Papa lower McLane profiler<a class="headerlink" href="#specify-metadata-for-station-papa-lower-mclane-profiler" title="Link to this heading">#</a></h2>
+<section id="example-adcp-plots">
+<h2>Example ADCP plots<a class="headerlink" href="#example-adcp-plots" title="Link to this heading">#</a></h2>
+<section id="plot-w-e-and-plot-n-s">
+<h3>Plot W/E and Plot N/S<a class="headerlink" href="#plot-w-e-and-plot-n-s" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">platform_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;GP02HYPM&#39;</span><span class="p">;</span>
-<span class="n">node</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;PROFILER-L&#39;</span><span class="p">;</span>
-<span class="n">instrument_class</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;CTD&#39;</span><span class="p">;</span>
-<span class="n">method</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;RecoveredWFP&#39;</span><span class="p">;</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="id1">
-<h2>Get M2M URL<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">uframe_dataset_name</span><span class="p">,</span><span class="n">variables</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_URLs</span><span class="p">(</span><span class="n">platform_name</span><span class="p">,</span><span class="n">node</span><span class="p">,</span><span class="n">instrument_class</span><span class="p">,</span><span class="n">method</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="id2">
-<h2>Make M2M Call<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">nclist</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Call</span><span class="p">(</span><span class="n">uframe_dataset_name</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>M2M REQUEST MADE, not yet completed:
-10 20 30 40 50 60 70 80 done
-uframe_m2m_status: request complete
-uframe_m2m_status: successful
-THREDDS Catalog URL:
-https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T171842136Z-GP02HYPM-WFP03-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
- 
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="id3">
-<h2>Get Data<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%[ctd_variables_lower_wfp, ctd_mtime_lower_wfp, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files</span>
-<span class="p">[</span><span class="n">ctd_variables_lower_wfp</span><span class="p">,</span><span class="w"> </span><span class="n">ctd_mtime_lower_wfp</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Data</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="w"> </span><span class="n">nclist</span><span class="p">);</span><span class="w">  </span><span class="c">%This will use the opendap to read in the data from remote files</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="example-plot">
-<h1>Example plot<a class="headerlink" href="#example-plot" title="Link to this heading">#</a></h1>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="nb">figure</span>
-<span class="nb">scatter</span><span class="p">(</span><span class="n">ctd_mtime_upper_wfp</span><span class="p">,</span><span class="n">ctd_variables_upper_wfp</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">data</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">ctd_variables_upper_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">data</span><span class="p">)</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="nb">subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">)</span>
+<span class="nb">pcolor</span><span class="p">(</span><span class="n">adcp_mtime</span><span class="p">,</span><span class="nb">squeeze</span><span class="p">(</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">data</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)),</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">shading</span><span class="w"> </span><span class="n">flat</span>
+<span class="nb">datetick</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">caxis</span><span class="p">([</span><span class="o">-</span><span class="mf">.5</span><span class="w"> </span><span class="mf">.5</span><span class="p">])</span>
+<span class="n">c</span><span class="p">=</span><span class="nb">colorbar</span><span class="p">;</span>
+<span class="nb">title</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">units</span><span class="p">)</span>
 <span class="nb">set</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;YDir&#39;</span><span class="p">,</span><span class="s">&#39;reverse&#39;</span><span class="p">)</span>
 <span class="nb">ylabel</span><span class="p">(</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
-<span class="nb">ylim</span><span class="p">([</span><span class="mi">0</span><span class="w"> </span><span class="mi">4200</span><span class="p">])</span>
-<span class="nb">hold</span><span class="w"> </span><span class="n">on</span>
-<span class="nb">scatter</span><span class="p">(</span><span class="n">ctd_mtime_lower_wfp</span><span class="p">,</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">data</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">data</span><span class="p">)</span>
-<span class="nb">caxis</span><span class="p">([</span><span class="mi">2</span><span class="w"> </span><span class="mi">6</span><span class="p">])</span>
-<span class="n">c</span><span class="p">=</span><span class="nb">colorbar</span><span class="p">;</span>
-<span class="nb">title</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">units</span><span class="p">)</span>
+<span class="nb">ylim</span><span class="p">([</span><span class="mi">0</span><span class="w"> </span><span class="mi">110</span><span class="p">])</span>
+<span class="nb">title</span><span class="p">([</span><span class="n">platform_name</span><span class="w"> </span><span class="s">&#39; &#39;</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="s">&#39; &#39;</span><span class="w"> </span><span class="nb">strrep</span><span class="p">(</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">6</span><span class="p">).</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">)])</span>
+<span class="nb">subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="nb">pcolor</span><span class="p">(</span><span class="n">adcp_mtime</span><span class="p">,</span><span class="nb">squeeze</span><span class="p">(</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">data</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)),</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">7</span><span class="p">).</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">shading</span><span class="w"> </span><span class="n">flat</span>
 <span class="nb">datetick</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">title</span><span class="p">([</span><span class="n">platform_name</span><span class="w"> </span><span class="s">&#39; &#39;</span><span class="w"> </span><span class="nb">strrep</span><span class="p">(</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">)])</span>
-<span class="nb">box</span><span class="w"> </span><span class="n">on</span>
+<span class="nb">caxis</span><span class="p">([</span><span class="o">-</span><span class="mf">.5</span><span class="w"> </span><span class="mf">.5</span><span class="p">])</span>
+<span class="n">c</span><span class="p">=</span><span class="nb">colorbar</span><span class="p">;</span>
+<span class="nb">title</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">7</span><span class="p">).</span><span class="n">units</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;YDir&#39;</span><span class="p">,</span><span class="s">&#39;reverse&#39;</span><span class="p">)</span>
+<span class="nb">ylabel</span><span class="p">(</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
+<span class="nb">ylim</span><span class="p">([</span><span class="mi">0</span><span class="w"> </span><span class="mi">110</span><span class="p">])</span>
+<span class="nb">title</span><span class="p">([</span><span class="n">platform_name</span><span class="w"> </span><span class="s">&#39; &#39;</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="s">&#39; &#39;</span><span class="w"> </span><span class="nb">strrep</span><span class="p">(</span><span class="n">adcp_variables</span><span class="p">(</span><span class="mi">7</span><span class="p">).</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">)])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/94bc7c2bd2b88d093db00928734295ea1c6f587bcb9490f901e84dff4849088a.png" src="../../../_images/94bc7c2bd2b88d093db00928734295ea1c6f587bcb9490f901e84dff4849088a.png" />
+<img alt="../../../_images/014bea7f8f495e2ffa6117becf3fa665f31f8c5d27cb32ed5f1a266b0910ae9a.png" src="../../../_images/014bea7f8f495e2ffa6117becf3fa665f31f8c5d27cb32ed5f1a266b0910ae9a.png" />
 </div>
 </div>
+</section>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -707,7 +623,7 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
         },
         kernelOptions: {
             name: "jupyter_matlab_kernel",
-            path: "./matlab/examples/global_arrays"
+            path: "./matlab/examples/coastal_arrays"
         },
         predefinedOutput: true
     }
@@ -725,20 +641,20 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../coastal_arrays/example_adcp.html"
+       href="example_metbk.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Example ADCP</p>
+        <p class="prev-next-title">METBK Data Acess Example</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../../R/R_test.html"
+       href="../global_arrays/example_apex_profiler_mooring_ctds.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">This is just a test for R notebooks</p>
+        <p class="prev-next-title">Example Apex Profiler Mooring CTDs</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -758,26 +674,21 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Example Apex Profiler Mooring CTDs</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform">Platform:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node">Node:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instrument-class">Instrument Class:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method">Method:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-user-access-credentials-for-ooinet">Load user access credentials for OOINet</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-the-access-credentials">Load the access credentials</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-time-period-of-interest">Set time period of interest</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-metadata-for-station-papa-upper-mclane-profiler">Specify metadata for Station Papa upper McLane profiler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-metadata">Specify metadata</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-m2m-url">Get M2M URL</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#make-m2m-call">Make M2M Call</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-data">Get Data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-metadata-for-station-papa-lower-mclane-profiler">Specify metadata for Station Papa lower McLane profiler</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Get M2M URL</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Make M2M Call</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Get Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-adcp-plots">Example ADCP plots</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-w-e-and-plot-n-s">Plot W/E and Plot N/S</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#example-plot">Example plot</a></li>
 </ul>
-
   </nav></div>
 
 </div></div>

@@ -14,6 +14,7 @@ parts:
     chapters:
     - file: matlab/README.md
     - file: matlab/examples/coastal_arrays/example_metbk.ipynb
+    - file: matlab/examples/global_arrays/example_apex_profiler_mooring_ctds.ipynb
 # - file: python/examples/notebooks/pco2a/carbonate_climatologies.ipynb
 # - file: python/examples/notebooks/pco2w/PCO2_Calculations.ipynb
   - caption: R Examples

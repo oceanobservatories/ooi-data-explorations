@@ -191,6 +191,8 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">OOI Data Explorations with MATLAB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/global_arrays/example_apex_profiler_mooring_ctds.html">Example Apex Profiler Mooring CTDs</a></li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
@@ -503,10 +505,10 @@ Start and stop times must follow the ISO 8601 format (‘YYYY-mm-ddTHH:MM:SS.sss
 <span class="n">options</span> <span class="o">=</span> <span class="n">weboptions</span><span class="p">(</span><span class="s1">&#39;CertificateFilename&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;HeaderFields&#39;</span><span class="p">,{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">,</span><span class="o">...</span>
     <span class="p">[</span><span class="s1">&#39;Basic &#39;</span> <span class="n">matlab</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">base64encode</span><span class="p">([</span><span class="n">user</span> <span class="s1">&#39;:&#39;</span> <span class="n">token</span><span class="p">])]},</span> <span class="s1">&#39;Timeout&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">);</span>
 
-<span class="n">start</span> <span class="o">=</span> <span class="s1">&#39;2019-05-01T00:00:00.000Z&#39;</span><span class="p">;</span> 
-<span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;2019-08-31T23:59:59.999Z&#39;</span><span class="p">;</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="s1">&#39;2019-05-01T00:00:00.000Z&#39;</span><span class="p">;</span> 
+<span class="n">end_time</span> <span class="o">=</span> <span class="s1">&#39;2019-08-31T23:59:59.999Z&#39;</span><span class="p">;</span>
 
-<span class="n">ce01issm_nc</span> <span class="o">=</span> <span class="n">M2M_Call</span><span class="p">(</span><span class="n">ce01issm_mfn</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>  
+<span class="n">ce01issm_nc</span> <span class="o">=</span> <span class="n">M2M_Call</span><span class="p">(</span><span class="n">ce01issm_mfn</span><span class="p">,</span><span class="n">start_time</span><span class="p">,</span><span class="n">end_time</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>  
 </pre></div>
 </div>
 </section>

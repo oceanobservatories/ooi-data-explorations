@@ -57,9 +57,7 @@
     <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '.jupyter_cache/executed/14901030907658f76e42298aaf248368/base';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '.jupyter_cache/executed/3e8da6384ba17c0058a9aceeb74874cf/base';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -253,7 +251,7 @@
       
       
       
-      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./.jupyter_cache/executed/14901030907658f76e42298aaf248368/base.ipynb&branch=book" target="_blank"
+      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./.jupyter_cache/executed/3e8da6384ba17c0058a9aceeb74874cf/base.ipynb&branch=book" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch on JupyterHub"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -301,7 +299,7 @@
       
       
       
-      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2F.jupyter_cache/executed/14901030907658f76e42298aaf248368/base.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2F.jupyter_cache/executed/3e8da6384ba17c0058a9aceeb74874cf/base.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -331,7 +329,7 @@
       
       
       
-      <li><a href="../../../_sources/.jupyter_cache/executed/14901030907658f76e42298aaf248368/base.ipynb" target="_blank"
+      <li><a href="../../../_sources/.jupyter_cache/executed/3e8da6384ba17c0058a9aceeb74874cf/base.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -439,15 +437,158 @@ document.write(`
                   
   <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">num1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">5</span>
-<span class="n">num2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span>
-
-<span class="n">num1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num2</span>
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="k">try</span>
+<span class="w">    </span><span class="nb">load</span><span class="p">(</span><span class="s">&#39;ooinet.credentials.mat&#39;</span><span class="p">)</span><span class="w">  </span><span class="c">% returns a variable called options</span>
+<span class="k">catch</span>
+<span class="w">    </span><span class="nb">error</span><span class="p">([</span><span class="s">&#39;Unable to load access credentials. Users need to create a &#39;</span><span class="w"> </span><span class="k">...</span>
+<span class="w">           </span><span class="s">&#39;weboptions object with their personal OOINet API keys. See &#39;</span><span class="w"> </span><span class="k">...</span>
+<span class="w">           </span><span class="s">&#39;README for more information on how to create this.&#39;</span><span class="p">])</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">start_date</span><span class="p">=</span><span class="s">&#39;2018-01-01T00:00:00.000Z&#39;</span><span class="p">;</span>
+<span class="n">end_date</span><span class="p">=</span><span class="s">&#39;2018-06-30T23:59:59.000Z&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">platform_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;GP02HYPM&#39;</span><span class="p">;</span>
+<span class="n">node</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;PROFILER-U&#39;</span><span class="p">;</span>
+<span class="n">instrument_class</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;CTD&#39;</span><span class="p">;</span>
+<span class="n">method</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;RecoveredWFP&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">uframe_dataset_name</span><span class="p">,</span><span class="n">variables</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_URLs</span><span class="p">(</span><span class="n">platform_name</span><span class="p">,</span><span class="n">node</span><span class="p">,</span><span class="n">instrument_class</span><span class="p">,</span><span class="n">method</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">uframe_dataset_name</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">15</div></div>
+<div class="output text_html"><html><body><pre>uframe_dataset_name = "GP02HYPM/WFP02/04-CTDPFL000/recovered_wfp/ctdpf_ckl_wfp_instrument_recovered"</pre></body></html></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><html><body><pre>variables = 1x6 struct array with fields:
+    name
+    data
+    units
+</pre></body></html></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">nclist</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Call</span><span class="p">(</span><span class="n">uframe_dataset_name</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    &quot;trying request: &quot;    &quot;https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/GP02HYPM/WFP02/04-CTDPFL00...&quot;
+
+M2M REQUEST MADE, not yet completed:
+10 20 30 40 50 done
+uframe_m2m_status: request complete
+uframe_m2m_status: successful
+THREDDS Catalog URL:
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T153405246Z-GP02HYPM-WFP02-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+ 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%[ctd_variables_upper_wfp, ctd_mtime_upper_wfp, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files</span>
+<span class="p">[</span><span class="n">ctd_variables_upper_wfp</span><span class="p">,</span><span class="w"> </span><span class="n">ctd_mtime_upper_wfp</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Data</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="w"> </span><span class="n">nclist</span><span class="p">);</span><span class="w">  </span><span class="c">%This will use the opendap to read in the data from remote files</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="n">platform_name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;GP02HYPM&#39;</span><span class="p">;</span>
+<span class="n">node</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;PROFILER-L&#39;</span><span class="p">;</span>
+<span class="n">instrument_class</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;CTD&#39;</span><span class="p">;</span>
+<span class="n">method</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">&#39;RecoveredWFP&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">uframe_dataset_name</span><span class="p">,</span><span class="n">variables</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_URLs</span><span class="p">(</span><span class="n">platform_name</span><span class="p">,</span><span class="n">node</span><span class="p">,</span><span class="n">instrument_class</span><span class="p">,</span><span class="n">method</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">nclist</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Call</span><span class="p">(</span><span class="n">uframe_dataset_name</span><span class="p">,</span><span class="n">start_date</span><span class="p">,</span><span class="n">end_date</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    &quot;trying request: &quot;    &quot;https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/GP02HYPM/WFP03/04-CTDPFL00...&quot;
+
+M2M REQUEST MADE, not yet completed:
+10 20 30 40 50 60 70 80 done
+uframe_m2m_status: request complete
+uframe_m2m_status: successful
+THREDDS Catalog URL:
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T153508315Z-GP02HYPM-WFP03-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+ 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="c">%[ctd_variables_lower_wfp, ctd_mtime_lower_wfp, netcdfFilenames] = M2M_Data(variables, nclist, false);   %This will download .nc file(s) and read in the data from the local files</span>
+<span class="p">[</span><span class="n">ctd_variables_lower_wfp</span><span class="p">,</span><span class="w"> </span><span class="n">ctd_mtime_lower_wfp</span><span class="p">,</span><span class="w"> </span><span class="o">~</span><span class="p">]</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">M2M_Data</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span><span class="w"> </span><span class="n">nclist</span><span class="p">);</span><span class="w">  </span><span class="c">%This will use the opendap to read in the data from remote files</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-matlab notranslate"><div class="highlight"><pre><span></span><span class="nb">figure</span>
+<span class="nb">scatter</span><span class="p">(</span><span class="n">ctd_mtime_upper_wfp</span><span class="p">,</span><span class="n">ctd_variables_upper_wfp</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">data</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">ctd_variables_upper_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;YDir&#39;</span><span class="p">,</span><span class="s">&#39;reverse&#39;</span><span class="p">)</span>
+<span class="nb">ylabel</span><span class="p">(</span><span class="s">&#39;depth&#39;</span><span class="p">)</span>
+<span class="nb">ylim</span><span class="p">([</span><span class="mi">0</span><span class="w"> </span><span class="mi">4200</span><span class="p">])</span>
+<span class="nb">hold</span><span class="w"> </span><span class="n">on</span>
+<span class="nb">scatter</span><span class="p">(</span><span class="n">ctd_mtime_lower_wfp</span><span class="p">,</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span><span class="n">data</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">caxis</span><span class="p">([</span><span class="mi">2</span><span class="w"> </span><span class="mi">6</span><span class="p">])</span>
+<span class="n">c</span><span class="p">=</span><span class="nb">colorbar</span><span class="p">;</span>
+<span class="nb">title</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">units</span><span class="p">)</span>
+<span class="nb">datetick</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">title</span><span class="p">([</span><span class="n">platform_name</span><span class="w"> </span><span class="s">&#39; &#39;</span><span class="w"> </span><span class="nb">strrep</span><span class="p">(</span><span class="n">ctd_variables_lower_wfp</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">)])</span>
+<span class="nb">box</span><span class="w"> </span><span class="n">on</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../_images/309370b25d2af683e818283037482d0f4d514291685ec30e107f897b496b96b2.png" src="../../../_images/309370b25d2af683e818283037482d0f4d514291685ec30e107f897b496b96b2.png" />
+</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -459,16 +600,16 @@ document.write(`
         },
         codeMirrorConfig: {
             theme: "abcdef",
-            mode: "r"
+            mode: "jupyter_matlab_kernel"
         },
         kernelOptions: {
-            name: "ir",
-            path: "./.jupyter_cache/executed/14901030907658f76e42298aaf248368"
+            name: "jupyter_matlab_kernel",
+            path: "./.jupyter_cache/executed/3e8da6384ba17c0058a9aceeb74874cf"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'ir'</script>
+    <script>kernelName = 'jupyter_matlab_kernel'</script>
 
                 </article>
               

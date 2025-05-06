@@ -61,7 +61,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="METBK Data Acess Example" href="examples/coastal_arrays/example_metbk.html" />
-    <link rel="prev" title="Making a Timelapse From Uncabled Images" href="../python/examples/camds/uncabled.html" />
+    <link rel="prev" title="Explore OOI Data with MATLAB" href="matlab.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -179,20 +179,30 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../python/examples/notebooks/m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../python/examples/notebooks/fdchp/FdchpExample.html">FDCHP Data Processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../python/examples/camds/uncabled.html">Making a Timelapse From Uncabled Images</a></li>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../python/python.html">Explore OOI Data with Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../python/README.html">Getting started with Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../python/examples/notebooks/m2m_explorations.html">Using the machine-to-machine interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../python/examples/notebooks/fdchp/FdchpExample.html">Processing FDCHP data to produce hourly momentum flux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../python/examples/camds/uncabled.html">Making a timelapse from uncabled CAMDS images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../python/examples/notebooks/dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../python/examples/notebooks/pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="matlab.html">Explore OOI Data with MATLAB</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Getting started with MATLAB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/coastal_arrays/example_adcp.html">Example ADCP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/global_arrays/example_apex_profiler_mooring_ctds.html">Example Apex Profiler Mooring CTDs</a></li>
 
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">OOI Data Explorations with MATLAB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../R/README.html">Getting started with R</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../R/R_test.html">This is just a test for R notebooks</a></li>
 </ul>
 
@@ -502,10 +512,10 @@ Start and stop times must follow the ISO 8601 format (‘YYYY-mm-ddTHH:MM:SS.sss
 <span class="n">options</span> <span class="o">=</span> <span class="n">weboptions</span><span class="p">(</span><span class="s1">&#39;CertificateFilename&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;HeaderFields&#39;</span><span class="p">,{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">,</span><span class="o">...</span>
     <span class="p">[</span><span class="s1">&#39;Basic &#39;</span> <span class="n">matlab</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">base64encode</span><span class="p">([</span><span class="n">user</span> <span class="s1">&#39;:&#39;</span> <span class="n">token</span><span class="p">])]},</span> <span class="s1">&#39;Timeout&#39;</span><span class="p">,</span> <span class="mi">120</span><span class="p">);</span>
 
-<span class="n">start</span> <span class="o">=</span> <span class="s1">&#39;2019-05-01T00:00:00.000Z&#39;</span><span class="p">;</span> 
-<span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;2019-08-31T23:59:59.999Z&#39;</span><span class="p">;</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="s1">&#39;2019-05-01T00:00:00.000Z&#39;</span><span class="p">;</span> 
+<span class="n">end_time</span> <span class="o">=</span> <span class="s1">&#39;2019-08-31T23:59:59.999Z&#39;</span><span class="p">;</span>
 
-<span class="n">ce01issm_nc</span> <span class="o">=</span> <span class="n">M2M_Call</span><span class="p">(</span><span class="n">ce01issm_mfn</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>  
+<span class="n">ce01issm_nc</span> <span class="o">=</span> <span class="n">M2M_Call</span><span class="p">(</span><span class="n">ce01issm_mfn</span><span class="p">,</span><span class="n">start_time</span><span class="p">,</span><span class="n">end_time</span><span class="p">,</span><span class="n">options</span><span class="p">);</span>  
 </pre></div>
 </div>
 </section>
@@ -554,12 +564,12 @@ The return for this function is the data as a series of arrays, time as an array
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../python/examples/camds/uncabled.html"
+       href="matlab.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Making a Timelapse From Uncabled Images</p>
+        <p class="prev-next-title">Explore OOI Data with MATLAB</p>
       </div>
     </a>
     <a class="right-next"

@@ -86,10 +86,10 @@ token = 'OOI-API-TOKEN-HERE'
 options = weboptions('CertificateFilename','','HeaderFields',{'Authorization',...
     ['Basic ' matlab.net.base64encode([user ':' token])]}, 'Timeout', 120);
 
-start = '2019-05-01T00:00:00.000Z'; 
-end = '2019-08-31T23:59:59.999Z';
+start_time = '2019-05-01T00:00:00.000Z'; 
+end_time = '2019-08-31T23:59:59.999Z';
 
-ce01issm_nc = M2M_Call(ce01issm_mfn,start,end,options);  
+ce01issm_nc = M2M_Call(ce01issm_mfn,start_time,end_time,options);  
 ```
 
 #### M2M_Data

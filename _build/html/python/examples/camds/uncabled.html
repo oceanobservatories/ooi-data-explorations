@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'python/examples/camds/uncabled';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="OOI Data Explorations with MATLAB" href="../../../matlab/README.html" />
+    <link rel="next" title="Accessing OOI Endurance Array Surface Mooring Dissolved Oxygen Data" href="../notebooks/dosta/ooiea_uncabled_dosta_data.html" />
     <link rel="prev" title="FDCHP Data Processing" href="../notebooks/fdchp/FdchpExample.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -179,20 +179,30 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/m2m_explorations.html">Accessing OOI Data and Metadata through the M2M API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/fdchp/FdchpExample.html">FDCHP Data Processing</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Making a Timelapse From Uncabled Images</a></li>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../python.html">Explore OOI Data with Python</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../README.html">Getting started with Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/m2m_explorations.html">Using the machine-to-machine interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/fdchp/FdchpExample.html">Processing FDCHP data to produce hourly momentum flux</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Making a timelapse from uncabled CAMDS images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notebooks/pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../matlab/matlab.html">Explore OOI Data with MATLAB</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../matlab/README.html">Getting started with MATLAB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../matlab/examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../matlab/examples/coastal_arrays/example_adcp.html">Example ADCP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../matlab/examples/global_arrays/example_apex_profiler_mooring_ctds.html">Example Apex Profiler Mooring CTDs</a></li>
 
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../matlab/README.html">OOI Data Explorations with MATLAB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../matlab/examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../R/README.html">Getting started with R</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is just a test for R notebooks</a></li>
 </ul>
 
@@ -420,15 +430,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Making a Timelapse From Uncabled Images</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helper-functions">Helper Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#find-and-download-files">Find and Download Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#view-a-file">View a file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#make-a-timelapse">Make A Timelapse</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#make-a-timelapse">Make A Timelapse</a></li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -654,9 +660,8 @@ Wall time: 108 ms
 </div>
 </div>
 </section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="make-a-timelapse">
-<h1>Make A Timelapse<a class="headerlink" href="#make-a-timelapse" title="Link to this heading">#</a></h1>
+<section id="make-a-timelapse">
+<h2>Make A Timelapse<a class="headerlink" href="#make-a-timelapse" title="Link to this heading">#</a></h2>
 <p>The timelapse will be stored as a video file in the same directory as this file. Download the file to view it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -673,6 +678,7 @@ Wall time: 26.7 s
 </div>
 </div>
 </div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -715,11 +721,11 @@ Wall time: 26.7 s
       </div>
     </a>
     <a class="right-next"
-       href="../../../matlab/README.html"
+       href="../notebooks/dosta/ooiea_uncabled_dosta_data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">OOI Data Explorations with MATLAB</p>
+        <p class="prev-next-title">Accessing OOI Endurance Array Surface Mooring Dissolved Oxygen Data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -739,15 +745,11 @@ Wall time: 26.7 s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Making a Timelapse From Uncabled Images</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helper-functions">Helper Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#find-and-download-files">Find and Download Files</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#view-a-file">View a file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#make-a-timelapse">Make A Timelapse</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#make-a-timelapse">Make A Timelapse</a></li>
-</ul>
-
   </nav></div>
 
 </div></div>

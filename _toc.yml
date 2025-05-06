@@ -4,8 +4,8 @@
 format: jb-book
 root: intro
 parts:
-# - caption: Python Examples
-- chapters:
+- caption: Python Examples
+  chapters:
   - file: python/python.md
     sections:
     - file: python/README.md
@@ -23,8 +23,8 @@ parts:
 # - file: python/examples/notebooks/pco2a/carbonate_climatologies.ipynb
 # - file: python/examples/notebooks/pco2w/PCO2_Calculations.ipynb
 
-# - caption: Matlab Examples
-- chapters:
+- caption: Matlab Examples
+  chapters:
   - file: matlab/matlab.md
     sections:
     - file: matlab/README.md

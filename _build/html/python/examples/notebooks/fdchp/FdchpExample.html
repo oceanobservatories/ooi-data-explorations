@@ -179,7 +179,8 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../python.html">Explore OOI Data with Python</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../../README.html">Getting started with Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../m2m_explorations.html">Using the machine-to-machine interface</a></li>
@@ -187,9 +188,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../camds/uncabled.html">Making a timelapse from uncabled CAMDS images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phsen/creating_annotations.html">Creating annotations for pH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data</a></li>
 </ul>
 </details></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../matlab/matlab.html">Explore OOI Data with MATLAB</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../matlab/README.html">Getting started with MATLAB</a></li>
@@ -511,12 +515,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/jovyan/mi-instrument/mi/core/log.py:108: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
-  parsed = yaml.load(logconfig)
-</pre></div>
-</div>
-</div>
 </div>
 </section>
 <section id="get-reference-designator-stream-method-start-and-end-dates-if-specified">
@@ -574,13 +572,13 @@ document.write(`
 <span class="n">kdata</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span> <span class="s1">&#39;ooi/kdata-backups/exclude_folder_removal&#39;</span><span class="p">))</span>
 <span class="n">kdata</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kdata</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">))</span>
 
+<span class="c1"># Get all netcdf files for site, node, sensor, method, stream</span>
 <span class="n">files</span> <span class="o">=</span> <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">kdata</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;deployment*&#39;</span> <span class="o">+</span> <span class="n">dataset_id</span> <span class="o">+</span> <span class="s1">&#39;*.nc&#39;</span><span class="p">)</span>
 <span class="c1"># print(len(files))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>84
+<span class="c1"># filter files based on start and end times</span>
+<span class="n">file_list</span> <span class="o">=</span> <span class="n">limit_files</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+<span class="c1"># for file in file_list:</span>
+<span class="c1">#     print(file)</span>
 </pre></div>
 </div>
 </div>
@@ -591,6 +589,16 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xarrays</span> <span class="o">=</span> <span class="p">[</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">swap_dims</span><span class="p">({</span><span class="s2">&quot;obs&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">xarrays</span> <span class="o">=</span> <span class="p">[</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">swap_dims</span><span class="p">({</span><span class="s2">&quot;obs&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">})</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span> <span class="p">]</span>
+
+<span class="ne">NameError</span>: name &#39;file_list&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -714,44 +722,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-05-01 14:45:18.453409
-File processing finished for hour 24 of 720. Process time: 0:00:37.294006
-File processing finished for hour 48 of 720. Process time: 0:01:50.409074
-File processing finished for hour 72 of 720. Process time: 0:03:39.391055
-File processing finished for hour 96 of 720. Process time: 0:06:03.312982
-File processing finished for hour 120 of 720. Process time: 0:09:01.817627
-File processing finished for hour 144 of 720. Process time: 0:12:34.590974
-File processing finished for hour 168 of 720. Process time: 0:16:42.314325
-File processing finished for hour 192 of 720. Process time: 0:21:25.485686
-File processing finished for hour 216 of 720. Process time: 0:26:43.235362
-File processing finished for hour 240 of 720. Process time: 0:32:35.201966
-File processing finished for hour 264 of 720. Process time: 0:39:00.801632
-File processing finished for hour 288 of 720. Process time: 0:46:00.083659
-File processing finished for hour 312 of 720. Process time: 0:53:33.312470
-File processing finished for hour 336 of 720. Process time: 1:01:40.672226
-File processing finished for hour 360 of 720. Process time: 1:10:22.302378
-File processing finished for hour 384 of 720. Process time: 1:19:38.942575
-File processing finished for hour 408 of 720. Process time: 1:29:30.926955
-File processing finished for hour 432 of 720. Process time: 1:39:58.021239
-File processing finished for hour 456 of 720. Process time: 1:51:00.436754
-File processing finished for hour 480 of 720. Process time: 2:02:38.467000
-File processing finished for hour 504 of 720. Process time: 2:14:50.820178
-File processing finished for hour 528 of 720. Process time: 2:27:37.017771
-File processing finished for hour 552 of 720. Process time: 2:40:58.242732
-File processing finished for hour 576 of 720. Process time: 2:54:55.254828
-File processing finished for hour 600 of 720. Process time: 3:09:27.533826
-File processing finished for hour 624 of 720. Process time: 3:24:34.577665
-File processing finished for hour 648 of 720. Process time: 3:40:16.990783
-File processing finished for hour 672 of 720. Process time: 3:56:34.671104
-File processing finished for hour 696 of 720. Process time: 4:13:27.624016
-File processing finished for hour 720 of 720. Process time: 4:30:55.998895
-0 errors during processing.
-End time: 2025-05-01 14:46:02.854279
-Processed 720 hours of data in 0:00:44.400803.
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -759,10 +729,6 @@ Processed 720 hours of data in 0:00:44.400803.
 <span class="n">plot_wave_height_vs_wind_speed</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">sigH</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">y_max</span><span class="o">=</span><span class="mf">8.0</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../../../../_images/4391e5729843108371ffcf0b083c28bb3636affec8214671118d8dfc0957f2c1.png" src="../../../../_images/4391e5729843108371ffcf0b083c28bb3636affec8214671118d8dfc0957f2c1.png" />
-<img alt="../../../../_images/551622bd1476540ac86a95d11bdfd38eb7a48ae28642a417aadfc0b2711dd13a.png" src="../../../../_images/551622bd1476540ac86a95d11bdfd38eb7a48ae28642a417aadfc0b2711dd13a.png" />
 </div>
 </div>
 </section>
@@ -790,15 +756,6 @@ Processed 720 hours of data in 0:00:44.400803.
 <span class="n">telemetered_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">telemetered_datasets</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
 
 <span class="n">telemetered_dataset</span> <span class="o">=</span> <span class="n">telemetered_dataset</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="n">start_time_64</span><span class="p">,</span> <span class="n">end_time_64</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Deployments: dict_keys([&#39;deployment0010&#39;])
-Downloading 180 data file(s) from the local kdata directory
-Downloading 180 data file(s) from the local kdata directory
-Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 114.53it/s]
-Merging the data files into a single dataset
 </pre></div>
 </div>
 </div>
@@ -838,9 +795,6 @@ Merging the data files into a single dataset
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../../../../_images/400dd9105fdaaa5655db9fcb3b4bc80f24fa69e809199f6685a1154e8f986c54.png" src="../../../../_images/400dd9105fdaaa5655db9fcb3b4bc80f24fa69e809199f6685a1154e8f986c54.png" />
 </div>
 </div>
 </section>

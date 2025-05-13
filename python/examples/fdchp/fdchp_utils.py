@@ -2,25 +2,12 @@ import datetime
 
 import numpy as np
 import pandas as pd
-from mi.dataset.parser.fdchp_a import FdchpADataParticle, FdchpAParser
 
 from scipy import integrate, interpolate
 from scipy.signal import detrend, filtfilt
 
 PADLENGTH = 12 # (3*(np.max([len(bhi), len(ahi)]) - 1) == 12)
 
-def exception_handler(exception):
-    print("Exception! {}".format(exception))
-    
-def read_file(file_path):
-    data = []
-    with open(file_path, 'rb') as input:
-        parser = FdchpAParser(input, exception_handler)
-        parser.parse_file()
-        parser._file_parsed = True
-        num_particles = len(parser._record_buffer)
-        data = parser.get_records(num_particles)
-    return data
 
 def convert_data_to_nwu(data):
     """
@@ -32,8 +19,27 @@ def convert_data_to_nwu(data):
     data['fdchp_z_ang_rate'] = -data['fdchp_z_ang_rate'] # angular rate around z-axis 
     data['fdchp_y_accel_g'] = -data['fdchp_y_accel_g'] # linear acceleration along y-axis
     data['fdchp_z_accel_g'] = -data['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+    
+def exception_handler(exception):
+    print("Exception! {}".format(exception))
+
+
+def read_file(file_path):
+    from mi.dataset.parser.fdchp_a import FdchpAParser
+    
+    data = []
+    with open(file_path, 'rb') as input:
+        parser = FdchpAParser(input, exception_handler)
+        parser.parse_file()
+        parser._file_parsed = True
+        num_particles = len(parser._record_buffer)
+        data = parser.get_records(num_particles)
+    return data
+
 
 def read_file_to_pandas(file_path, convert_to_nwu=True):
+    from mi.dataset.parser.fdchp_a import FdchpAParser
+
     data = []
     with open(file_path, 'rb') as input:
         parser = FdchpAParser(input, exception_handler)
@@ -56,6 +62,7 @@ def read_file_to_pandas(file_path, convert_to_nwu=True):
             convert_data_to_nwu(df)
             
     return df
+
 
 def particles_to_pandas(particles, convert_to_nwu=True):
     df = None
@@ -99,8 +106,7 @@ def despikesimple(Y, exclusion_stdevs = 4, iterations = 3):
         good_data = (data < median + exclusion_stdevs*stdev) & (data > median - exclusion_stdevs*stdev)
         acceptable_points = data[good_data]
         k = np.sum(good_data)
-        # if k != len(data):
-        #     print("despikesimple despiking {} points".format(len(data) - k))
+
         if k == len(rows):
             return data# don't bother iterating when there aren't any points to exclude
         if k > 0:
@@ -164,6 +170,7 @@ def rotate_buoy_to_world(input_angles, euler_angles, iflag = False):
 
     return np.array([u, v, w]).T
 
+
 def sonic(sonics, omegam, euler, uvwplat, R):
     """
     Function from EDDYCORR toolbox
@@ -217,6 +224,7 @@ def get_angle_update_matrix(angular_rates, angles):
     w =  0  + vp*np.sin(p)/np.cos(t) + wp*np.cos(p)/np.cos(t)
 
     return np.array([u, v, w]).T
+
 
 def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates, gyro, gravity, iterations = 5):
     """
@@ -293,7 +301,6 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     rates = get_angle_update_matrix(ang_rates, euler)
     # INTEGRATE AND FILTER ANGLE RATES, AND ADD TO SLOW ANGLES
     for i in np.arange(iterations):
-        #TODO: check column/row ordering of phi,theta, psi from rates
         phi_int = integrate.cumulative_trapezoid(rates[:, 0], dx = 1/sampling_frequency, initial=0)
         phi = phi_slow + filtfilt(bhi, ahi, phi_int, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
         theta_int = integrate.cumulative_trapezoid(rates[:, 1], dx = 1/sampling_frequency, initial=0)
@@ -309,6 +316,7 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
         # rates = rates - np.mean(rates, axis=0)
 
     return (euler, rates)
+
 
 def heave_calc(omegam, euler, accm, sampling_frequency, bhi, ahi, R, gravity):
     """
@@ -343,6 +351,7 @@ def heave_calc(omegam, euler, accm, sampling_frequency, bhi, ahi, R, gravity):
         platform_disp[:, i] = filtfilt(bhi, ahi, platform_disp[:, i], padlen = PADLENGTH) #3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
 
     return (platform_velocity, platform_disp)
+
 
 def get_platform_vel_pos(bhi, ahi, sampling_frequency, accm, euler, gravity):
     """
@@ -381,6 +390,7 @@ def get_platform_vel_pos(bhi, ahi, sampling_frequency, accm, euler, gravity):
 
     return (acc, lin_velocities, platform_disp)
 
+
 def alignwind(U):
     # u,v,w are in platform coordinates;
     # rotate motion corrected velocities into mean wind
@@ -405,6 +415,7 @@ def alignwind(U):
     beta  = beta*180/np.pi
     alpha = alpha*180/np.pi
     return [u, alpha, beta]
+
 
 def calculate_and_write_metrics(mean_time, sonics, ang_rates, platform_accelerations, compass, roll, pitch, fluxes, waveheight, file_path='fluxes'):
     
@@ -481,7 +492,8 @@ def calculate_and_write_metrics(mean_time, sonics, ang_rates, platform_accelerat
                  
     with open(file_path, 'w') as outfile:
         outfile.write(str(fluxes))
-        
+
+
 def write_metrics(metrics_list, file_path='fluxes', rounding=2):
     with open(file_path, 'w') as outfile:
         for metric in metrics_list:

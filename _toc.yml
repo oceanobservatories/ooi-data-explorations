@@ -22,8 +22,11 @@ parts:
       title: Assessing pCO2 Data
     - file: python/examples/notebooks/phsen/creating_annotations.ipynb
       title: Creating annotations for pH data
+    - file: python/examples/notebooks/optaa/process_thredds_optaa.ipynb
+      title: Acessing and processing OPTAA data from Thredds server
     - file: python/examples/notebooks/optaa/process_kdata_optaa.ipynb
-      title: Accessing and processing OPTAA data
+      title: Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs
+
 # - file: python/examples/notebooks/pco2a/carbonate_climatologies.ipynb
 # - file: python/examples/notebooks/pco2w/PCO2_Calculations.ipynb
 

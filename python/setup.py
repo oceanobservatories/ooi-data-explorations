@@ -47,7 +47,11 @@ setup(
         'gsw',
         'requests',
         'beautifulsoup4',
-        'PyYAML'
+        'PyYAML',
+        'matplotlib',
+        'ntplib',
+        'netcdf4',
+        'h5netcdf',
     ],
     include_package_data=True,
     zip_safe=False

@@ -179,7 +179,8 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../python/python.html">Explore OOI Data with Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../python/README.html">Getting started with Python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/m2m_explorations.html">Using the machine-to-machine interface</a></li>
@@ -187,9 +188,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/camds/uncabled.html">Making a timelapse from uncabled CAMDS images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/phsen/creating_annotations.html">Creating annotations for pH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_thredds_optaa_cspp.html">Accessing and processing OPTAA data from the Coastal Surface Piercing Profiler (CSPP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_kdata_cabled_profiler_ce04osps.html">Accessing and processing cabled profiler OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/when_things_go_bad.html">Examining OPTAA instrument failure</a></li>
 </ul>
 </details></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../matlab/matlab.html">Explore OOI Data with MATLAB</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../matlab/README.html">Getting started with MATLAB</a></li>
@@ -203,7 +212,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../R/README.html">Getting started with R</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is just a test for R notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is a test for R notebooks</a></li>
 </ul>
 
     </div>
@@ -509,14 +518,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    &quot;trying request: &quot;    &quot;https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/GP02HYPM/WFP02/04-CTDPFL00...&quot;
-
-M2M REQUEST MADE, not yet completed:
-10 20 30 40 50 done
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>M2M REQUEST MADE, not yet completed:
+10 20 30 40 50 60 70 80 done
 uframe_m2m_status: request complete
 uframe_m2m_status: successful
 THREDDS Catalog URL:
-https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T153405246Z-GP02HYPM-WFP02-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250513T140637753Z-GP02HYPM-WFP02-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
  
 </pre></div>
 </div>
@@ -554,14 +561,12 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    &quot;trying request: &quot;    &quot;https://ooinet.oceanobservatories.org/api/m2m/12576/sensor/inv/GP02HYPM/WFP03/04-CTDPFL00...&quot;
-
-M2M REQUEST MADE, not yet completed:
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>M2M REQUEST MADE, not yet completed:
 10 20 30 40 50 60 70 80 done
 uframe_m2m_status: request complete
 uframe_m2m_status: successful
 THREDDS Catalog URL:
-https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T153508315Z-GP02HYPM-WFP03-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250513T140812148Z-GP02HYPM-WFP03-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
  
 </pre></div>
 </div>
@@ -594,7 +599,7 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/309370b25d2af683e818283037482d0f4d514291685ec30e107f897b496b96b2.png" src="../../../_images/309370b25d2af683e818283037482d0f4d514291685ec30e107f897b496b96b2.png" />
+<img alt="../../../_images/b0e7c9fcfe23871fe207959536111bf9ba5a9866b1237ec83401af6f004b2ce0.png" src="../../../_images/b0e7c9fcfe23871fe207959536111bf9ba5a9866b1237ec83401af6f004b2ce0.png" />
 </div>
 </div>
 

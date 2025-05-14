@@ -9,3 +9,8 @@ requests>=2.23.0
 scipy>=1.7.2
 beautifulsoup4>=4.9.0
 PyYAML>=5.3.1
+matplotlib
+ntplib
+pandas
+netcdf4
+h5netcdf

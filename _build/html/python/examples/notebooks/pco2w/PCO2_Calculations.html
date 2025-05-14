@@ -189,7 +189,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Assessing pCO2 Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../phsen/creating_annotations.html">Creating annotations for pH data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa_cspp.html">Accessing and processing OPTAA data from the Coastal Surface Piercing Profiler (CSPP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_cabled_profiler_ce04osps.html">Accessing and processing cabled profiler OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/when_things_go_bad.html">Examining OPTAA instrument failure</a></li>
 </ul>
 </details></li>
 </ul>
@@ -207,7 +212,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../R/README.html">Getting started with R</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../R/R_test.html">This is just a test for R notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../R/R_test.html">This is a test for R notebooks</a></li>
 </ul>
 
     </div>
@@ -434,17 +439,19 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-needed-parameters-to-request-the-deployment-11-pco2w-data-from-the-ce01issm-midwater-platform-and-request-data">Set up needed parameters to request the deployment 11 PCO2W data from the CE01ISSM midwater platform and request data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#telemetered-dataset">Telemetered dataset</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recovered-host-dataset">Recovered host dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-needed-parameters-to-request-the-deployment-11-pco2w-data-from-the-ce01issm-midwater-platform-and-request-data">Set up needed parameters to request the deployment 11 PCO2W data from the CE01ISSM midwater platform and request data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#telemetered-dataset">Telemetered dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recovered-host-dataset">Recovered host dataset</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recovered-instrument-dataset">Recovered instrument dataset</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-pco2-data-from-the-telemetered-and-recovered-instrument-data-sets">Plot the pCO2 data from the telemetered and recovered instrument data sets.</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#something-is-wrong">Something is wrong!</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#absorbance-ratios">Absorbance Ratios</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-and-assess-the-raw-data">How to read and assess the raw data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resetting-the-blanks">Resetting the blanks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-and-assess-the-raw-data">How to read and assess the raw data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resetting-the-blanks">Resetting the blanks</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#download-the-blanks">Download the blanks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-blanks">Plot the blanks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-the-bad-blanks-from-mid-august-through-mid-october">Remove the bad blanks from mid-August through mid-October</a></li>
@@ -564,9 +571,8 @@ Downloading 1 data file(s) from the users OOI M2M THREDDS catalog
 </div>
 </div>
 </div>
-</section>
 <section id="telemetered-dataset">
-<h2>Telemetered dataset<a class="headerlink" href="#telemetered-dataset" title="Link to this heading">#</a></h2>
+<h3>Telemetered dataset<a class="headerlink" href="#telemetered-dataset" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">telem</span> <span class="o">=</span> <span class="n">pco2w_datalogger</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -1053,7 +1059,7 @@ Attributes: (12/69)
 </div>
 </section>
 <section id="recovered-host-dataset">
-<h2>Recovered host dataset<a class="headerlink" href="#recovered-host-dataset" title="Link to this heading">#</a></h2>
+<h3>Recovered host dataset<a class="headerlink" href="#recovered-host-dataset" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhost</span> <span class="o">=</span> <span class="n">pco2w_datalogger</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -1538,6 +1544,7 @@ Attributes: (12/69)
                &#x27;2019-10-22 23:35:31.067999744&#x27;],
               dtype=&#x27;datetime64[ns]&#x27;, name=&#x27;time&#x27;, length=2224, freq=None))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>duplicates</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-6010ef37-0910-43d5-bcee-3581a4ff2064' class='xr-index-data-in' type='checkbox'/><label for='index-6010ef37-0910-43d5-bcee-3581a4ff2064' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([0, 1], dtype=&#x27;int32&#x27;, name=&#x27;duplicates&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-672dc26d-9c77-4d84-950d-90a66c3ce001' class='xr-section-summary-in' type='checkbox'  ><label for='section-672dc26d-9c77-4d84-950d-90a66c3ce001' class='xr-section-summary' >Attributes: <span>(69)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>node :</span></dt><dd>RID16</dd><dt><span>comment :</span></dt><dd>Data produced by the OOI M2M API and reworked for use in locally stored NetCDF files.</dd><dt><span>publisher_email :</span></dt><dd></dd><dt><span>sourceUrl :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>collection_method :</span></dt><dd>recovered_host</dd><dt><span>stream :</span></dt><dd>pco2w_abc_dcl_instrument_recovered</dd><dt><span>featureType :</span></dt><dd>timeSeries</dd><dt><span>creator_email :</span></dt><dd></dd><dt><span>publisher_name :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>date_modified :</span></dt><dd>2025-05-06T15:14:32.519478</dd><dt><span>keywords :</span></dt><dd></dd><dt><span>cdm_data_type :</span></dt><dd>Station</dd><dt><span>references :</span></dt><dd>More information can be found at http://oceanobservatories.org/</dd><dt><span>Metadata_Conventions :</span></dt><dd>Unidata Dataset Discovery v1.0</dd><dt><span>date_created :</span></dt><dd>2025-05-06T15:14:32.519476</dd><dt><span>id :</span></dt><dd>CE01ISSM-RID16-05-PCO2WB000-recovered_host-pco2w_abc_dcl_instrument_recovered</dd><dt><span>requestUUID :</span></dt><dd>baa179eb-2dd4-452c-a80f-3e5e8211208e</dd><dt><span>contributor_role :</span></dt><dd></dd><dt><span>summary :</span></dt><dd>Dataset Generated by Stream Engine from Ocean Observatories Initiative</dd><dt><span>keywords_vocabulary :</span></dt><dd></dd><dt><span>institution :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>naming_authority :</span></dt><dd>org.oceanobservatories</dd><dt><span>infoUrl :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>license :</span></dt><dd></dd><dt><span>contributor_name :</span></dt><dd></dd><dt><span>uuid :</span></dt><dd>baa179eb-2dd4-452c-a80f-3e5e8211208e</dd><dt><span>creator_name :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>title :</span></dt><dd>Data produced by Stream Engine version 1.20.14 for CE01ISSM-RID16-05-PCO2WB000-recovered_host-pco2w_abc_dcl_instrument_recovered</dd><dt><span>sensor :</span></dt><dd>05-PCO2WB000</dd><dt><span>standard_name_vocabulary :</span></dt><dd>NetCDF Climate and Forecast (CF) Metadata Convention Standard Name Table 29</dd><dt><span>acknowledgement :</span></dt><dd>National Science Foundation</dd><dt><span>Conventions :</span></dt><dd>CF-1.6</dd><dt><span>project :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>source :</span></dt><dd>CE01ISSM-RID16-05-PCO2WB000-recovered_host-pco2w_abc_dcl_instrument_recovered</dd><dt><span>publisher_url :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>creator_url :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>nodc_template_version :</span></dt><dd>NODC_NetCDF_TimeSeries_Orthogonal_Template_v1.1</dd><dt><span>subsite :</span></dt><dd>CE01ISSM</dd><dt><span>processing_level :</span></dt><dd>L2</dd><dt><span>history :</span></dt><dd>2025-05-06T15:14:32.519457 generated from Stream Engine</dd><dt><span>Manufacturer :</span></dt><dd>Sunburst Sensors</dd><dt><span>ModelNumber :</span></dt><dd>SAMI-pCO2</dd><dt><span>SerialNumber :</span></dt><dd>C0119</dd><dt><span>Description :</span></dt><dd>pCO2 Water: PCO2W Series B</dd><dt><span>FirmwareVersion :</span></dt><dd>Not specified.</dd><dt><span>SoftwareVersion :</span></dt><dd>Not specified.</dd><dt><span>AssetUniqueID :</span></dt><dd>CGINS-PCO2WB-C0119</dd><dt><span>Notes :</span></dt><dd>Not specified.</dd><dt><span>Owner :</span></dt><dd>Not specified.</dd><dt><span>RemoteResources :</span></dt><dd>[]</dd><dt><span>ShelfLifeExpirationDate :</span></dt><dd>Not specified.</dd><dt><span>Mobile :</span></dt><dd>False</dd><dt><span>AssetManagementRecordLastModified :</span></dt><dd>2025-05-01T16:56:42.921000</dd><dt><span>time_coverage_start :</span></dt><dd>2019-04-20T03:35:30.576999424Z</dd><dt><span>time_coverage_end :</span></dt><dd>2019-10-22T23:35:31.067999744Z</dd><dt><span>time_coverage_resolution :</span></dt><dd>P7222.67S</dd><dt><span>geospatial_lat_min :</span></dt><dd>44.65683</dd><dt><span>geospatial_lat_max :</span></dt><dd>44.65683</dd><dt><span>geospatial_lat_units :</span></dt><dd>degrees_north</dd><dt><span>geospatial_lat_resolution :</span></dt><dd>0.1</dd><dt><span>geospatial_lon_min :</span></dt><dd>-124.09533</dd><dt><span>geospatial_lon_max :</span></dt><dd>-124.09533</dd><dt><span>geospatial_lon_units :</span></dt><dd>degrees_east</dd><dt><span>geospatial_lon_resolution :</span></dt><dd>0.1</dd><dt><span>geospatial_vertical_units :</span></dt><dd>meters</dd><dt><span>geospatial_vertical_resolution :</span></dt><dd>0.1</dd><dt><span>geospatial_vertical_positive :</span></dt><dd>down</dd><dt><span>lat :</span></dt><dd>44.65683</dd><dt><span>lon :</span></dt><dd>-124.09533</dd></dl></div></li></ul></div></div></div></div>
 </div>
+</section>
 </section>
 <section id="recovered-instrument-dataset">
 <h2>Recovered instrument dataset<a class="headerlink" href="#recovered-instrument-dataset" title="Link to this heading">#</a></h2>
@@ -2139,10 +2146,10 @@ Attributes: (12/69)
 <li><p>The signal levels will range between 0 and 4096 counts. Values greater than 4000 counts may indicate that the channel is over-saturated with light. Low values (below approximately 200 counts) are suspect, and really low values (less than or equal to the dark signal) would indicate a lamp failure.</p></li>
 <li><p>The acceptible range of dark signals is ~50-200 counts. Higher or erratic dark signals indicate a problem.</p></li>
 </ul>
-<section id="resetting-the-blanks">
-<h3>Resetting the blanks<a class="headerlink" href="#resetting-the-blanks" title="Link to this heading">#</a></h3>
-<p>Since most of the telemetered data looks good, we need to reset the blanks used by the telemetered data and then we can recalculate the pCO2 estimate. The full blank record is available in the recovered instrument <code class="docutils literal notranslate"><span class="pre">pco2w_abc_instrument_blank</span></code> stream.</p>
 </section>
+<section id="resetting-the-blanks">
+<h2>Resetting the blanks<a class="headerlink" href="#resetting-the-blanks" title="Link to this heading">#</a></h2>
+<p>Since most of the telemetered data looks good, we need to reset the blanks used by the telemetered data and then we can recalculate the pCO2 estimate. The full blank record is available in the recovered instrument <code class="docutils literal notranslate"><span class="pre">pco2w_abc_instrument_blank</span></code> stream.</p>
 <section id="download-the-blanks">
 <h3>Download the blanks<a class="headerlink" href="#download-the-blanks" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
@@ -2955,17 +2962,19 @@ Attributes: (12/69)
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-needed-parameters-to-request-the-deployment-11-pco2w-data-from-the-ce01issm-midwater-platform-and-request-data">Set up needed parameters to request the deployment 11 PCO2W data from the CE01ISSM midwater platform and request data</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#telemetered-dataset">Telemetered dataset</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recovered-host-dataset">Recovered host dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-needed-parameters-to-request-the-deployment-11-pco2w-data-from-the-ce01issm-midwater-platform-and-request-data">Set up needed parameters to request the deployment 11 PCO2W data from the CE01ISSM midwater platform and request data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#telemetered-dataset">Telemetered dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recovered-host-dataset">Recovered host dataset</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recovered-instrument-dataset">Recovered instrument dataset</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-pco2-data-from-the-telemetered-and-recovered-instrument-data-sets">Plot the pCO2 data from the telemetered and recovered instrument data sets.</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#something-is-wrong">Something is wrong!</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#absorbance-ratios">Absorbance Ratios</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-and-assess-the-raw-data">How to read and assess the raw data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resetting-the-blanks">Resetting the blanks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-and-assess-the-raw-data">How to read and assess the raw data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resetting-the-blanks">Resetting the blanks</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#download-the-blanks">Download the blanks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-the-blanks">Plot the blanks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-the-bad-blanks-from-mid-august-through-mid-october">Remove the bad blanks from mid-August through mid-October</a></li>

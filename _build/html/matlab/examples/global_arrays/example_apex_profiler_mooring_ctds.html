@@ -189,7 +189,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/phsen/creating_annotations.html">Creating annotations for pH data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_kdata_optaa.html">Accessing and processing OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_thredds_optaa_cspp.html">Accessing and processing OPTAA data from the Coastal Surface Piercing Profiler (CSPP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/process_kdata_cabled_profiler_ce04osps.html">Accessing and processing cabled profiler OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../python/examples/notebooks/optaa/when_things_go_bad.html">Examining OPTAA instrument failure</a></li>
 </ul>
 </details></li>
 </ul>
@@ -207,7 +212,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../R/README.html">Getting started with R</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is just a test for R notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../R/R_test.html">This is a test for R notebooks</a></li>
 </ul>
 
     </div>
@@ -435,7 +440,13 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Example Apex Profiler Mooring CTDs</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform">Platform:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform">Platform:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#station-papa">Station Papa:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#irminger-sea">Irminger Sea:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#southern-ocean">Southern Ocean:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#argentine-basin">Argentine Basin:</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node">Node:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instrument-class">Instrument Class:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method">Method:</a></li>
@@ -468,49 +479,57 @@ document.write(`
 <h1>Example Apex Profiler Mooring CTDs<a class="headerlink" href="#example-apex-profiler-mooring-ctds" title="Link to this heading">#</a></h1>
 <section id="platform">
 <h2>Platform:<a class="headerlink" href="#platform" title="Link to this heading">#</a></h2>
-<p><strong>Station Papa</strong>:</p>
-<ul class="simple">
-<li><p>GP03FLMA, GP03FLMB, GP02HYPM</p></li>
-<li><p>GPGL276, GPGL361, GPGL362, GPGL363, GPGL364, GPGL365, GPGL453, GPGL523, GPGL525, GPGL537, GPGL469</p></li>
-<li><p>GPPG514, GPPG515, GPPG575, GPPG576</p></li>
-</ul>
-<p><strong>Irminger Sea</strong>:</p>
-<ul class="simple">
-<li><p>GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM</p></li>
-<li><p>GIGL463, GIGL469, GIGL477, GIGL478, GIGL484, GIGL485, GIGL486, GIGL493, GIGL495, GIGL559, GIGL453, GIGL525, GIGL560</p></li>
-<li><p>GIPG528, GIPG564, GIPG577, GIPG581</p></li>
-</ul>
-<p><strong>Southern Ocean</strong>:</p>
-<ul class="simple">
-<li><p>GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM</p></li>
-<li><p>GSGL484, GSGL485, GSGL486, GSGL524, GSGL560, GSGL561</p></li>
-<li><p>GSPG565, GSPG566</p></li>
-</ul>
-<p><strong>Argentine Basin</strong>:</p>
-<ul class="simple">
-<li><p>GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM</p></li>
-<li><p>GAGL364, GAGL470, GAGL493, GAGL494, GAGL495, GAGL496, GAGL538</p></li>
-<li><p>GAPG562, GAPG563, GAPG578, GAPG580</p></li>
-</ul>
+<section id="station-papa">
+<h3>Station Papa:<a class="headerlink" href="#station-papa" title="Link to this heading">#</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* GP03FLMA, GP03FLMB, GP02HYPM
+* GPGL276, GPGL361, GPGL362, GPGL363, GPGL364, GPGL365, GPGL453, GPGL523, GPGL525, GPGL537, GPGL469
+* GPPG514, GPPG515, GPPG575, GPPG576
+</pre></div>
+</div>
+</section>
+<section id="irminger-sea">
+<h3>Irminger Sea:<a class="headerlink" href="#irminger-sea" title="Link to this heading">#</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* GI03FLMA, GI03FLMB, GI01SUMO, GI02HYPM
+* GIGL463, GIGL469, GIGL477, GIGL478, GIGL484, GIGL485, GIGL486, GIGL493, GIGL495, GIGL559, GIGL453, GIGL525, GIGL560
+* GIPG528, GIPG564, GIPG577, GIPG581
+</pre></div>
+</div>
+</section>
+<section id="southern-ocean">
+<h3>Southern Ocean:<a class="headerlink" href="#southern-ocean" title="Link to this heading">#</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* GS03FLMA, GS03FLMB, GS01SUMO, GS02HYPM
+* GSGL484, GSGL485, GSGL486, GSGL524, GSGL560, GSGL561
+* GSPG565, GSPG566
+</pre></div>
+</div>
+</section>
+<section id="argentine-basin">
+<h3>Argentine Basin:<a class="headerlink" href="#argentine-basin" title="Link to this heading">#</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* GA03FLMA, GA03FLMB, GA01SUMO, GA02HYPM
+* GAGL364, GAGL470, GAGL493, GAGL494, GAGL495, GAGL496, GAGL538
+* GAPG562, GAPG563, GAPG578, GAPG580
+</pre></div>
+</div>
+</section>
 </section>
 <section id="node">
 <h2>Node:<a class="headerlink" href="#node" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>RISER, BUOY, NSIF, PROFILER-U, PROFILER-L</p></li>
-</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* RISER, BUOY, NSIF, PROFILER-U, PROFILER-L
+</pre></div>
+</div>
 </section>
 <section id="instrument-class">
 <h2>Instrument Class:<a class="headerlink" href="#instrument-class" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>ADCP, CTD, DOSTA, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT</p></li>
-<li><p>WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier</p></li>
-</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* ADCP, CTD, DOSTA, FLORT, METBK1, METBK2, METBK1-hr, METBK2-hr, MOPAK, NUTNR, OPTAA, PARAD, PCO2A, PCO2W, PHSEN, PRESF, SPKIR, VEL3D, VELPT
+* WAVSS_Stats, WAVSS_MeanDir, WAVSS_NonDir, WAVSS_Motion, WAVSS_Fourier
+</pre></div>
+</div>
 </section>
 <section id="method">
 <h2>Method:<a class="headerlink" href="#method" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Telemetered, RecoveredHost, RecoveredInst, RecoveredWFP</p></li>
-</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>* Telemetered, RecoveredHost, RecoveredInst, RecoveredWFP
+</pre></div>
+</div>
 </section>
 <section id="load-user-access-credentials-for-ooinet">
 <h2>Load user access credentials for OOINet<a class="headerlink" href="#load-user-access-credentials-for-ooinet" title="Link to this heading">#</a></h2>
@@ -594,11 +613,11 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>M2M REQUEST MADE, not yet completed:
-10 20 30 40 50 done
+10 20 30 40 50 60 70 80 done
 uframe_m2m_status: request complete
 uframe_m2m_status: successful
 THREDDS Catalog URL:
-https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T171739108Z-GP02HYPM-WFP02-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250513T140637753Z-GP02HYPM-WFP02-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
  
 </pre></div>
 </div>
@@ -653,7 +672,7 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
 uframe_m2m_status: request complete
 uframe_m2m_status: successful
 THREDDS Catalog URL:
-https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250505T171842136Z-GP02HYPM-WFP03-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
+https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.edu/20250513T140812148Z-GP02HYPM-WFP03-04-CTDPFL000-recovered_wfp-ctdpf_ckl_wfp_instrument_recovered/catalog.html
  
 </pre></div>
 </div>
@@ -693,7 +712,7 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/94bc7c2bd2b88d093db00928734295ea1c6f587bcb9490f901e84dff4849088a.png" src="../../../_images/94bc7c2bd2b88d093db00928734295ea1c6f587bcb9490f901e84dff4849088a.png" />
+<img alt="../../../_images/b0e7c9fcfe23871fe207959536111bf9ba5a9866b1237ec83401af6f004b2ce0.png" src="../../../_images/b0e7c9fcfe23871fe207959536111bf9ba5a9866b1237ec83401af6f004b2ce0.png" />
 </div>
 </div>
 </section>
@@ -763,7 +782,13 @@ https://opendap.oceanobservatories.org/thredds/catalog/ooi/joffrey.peters@whoi.e
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Example Apex Profiler Mooring CTDs</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform">Platform:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#platform">Platform:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#station-papa">Station Papa:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#irminger-sea">Irminger Sea:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#southern-ocean">Southern Ocean:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#argentine-basin">Argentine Basin:</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node">Node:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instrument-class">Instrument Class:</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method">Method:</a></li>

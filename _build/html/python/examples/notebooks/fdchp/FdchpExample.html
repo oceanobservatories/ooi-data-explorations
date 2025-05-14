@@ -189,7 +189,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../phsen/creating_annotations.html">Creating annotations for pH data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa_cspp.html">Accessing and processing OPTAA data from the Coastal Surface Piercing Profiler (CSPP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_cabled_profiler_ce04osps.html">Accessing and processing cabled profiler OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/when_things_go_bad.html">Examining OPTAA instrument failure</a></li>
 </ul>
 </details></li>
 </ul>
@@ -207,7 +212,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../R/README.html">Getting started with R</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../R/R_test.html">This is just a test for R notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../R/R_test.html">This is a test for R notebooks</a></li>
 </ul>
 
     </div>
@@ -462,10 +467,6 @@ document.write(`
 <h1>FDCHP Data Processing<a class="headerlink" href="#fdchp-data-processing" title="Link to this heading">#</a></h1>
 <p>This Notebook demonstrates how to process FDCHP data to calculate fluxes using the tools in the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations.python.examples.fdchp</span></code> library. The FDCHP instrument is on for 20 minutes out of each hour. While the instrument is recording, it includes 10 Hz 3-axis sonic wind data, as well as buoy motion data. Here, we calculate hourly motion-corrected momentum flux from these 20-minute data segments.</p>
 <p>To do the calculations, we need to set up a python environment that contains the necessary dependencies.</p>
-<p>Alongside the base repository containing this Notebook (the location of the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> repository, clone the <code class="docutils literal notranslate"><span class="pre">mi-instrument</span></code> repo</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">joffreyp</span><span class="o">/</span><span class="n">mi</span><span class="o">-</span><span class="n">instrument</span><span class="o">.</span><span class="n">git</span>
-</pre></div>
-</div>
 <p>Create a new python virtual environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~</span>
 <span class="n">mkdir</span> <span class="n">venv</span>
@@ -473,8 +474,8 @@ document.write(`
 <span class="n">source</span> <span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
 </pre></div>
 </div>
-<p>Install mi-instrument requirements:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">mi</span><span class="o">-</span><span class="n">instrument</span><span class="o">/</span><span class="n">requirements_py3</span><span class="o">.</span><span class="n">txt</span>
+<p>Install requirements:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="o">~/</span><span class="n">ooi</span><span class="o">-</span><span class="n">data</span><span class="o">-</span><span class="n">explorations</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p>Install <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> and <code class="docutils literal notranslate"><span class="pre">mi-instruments</span></code>:</p>
@@ -713,40 +714,40 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-05-08 17:21:24.445857
-File processing finished for hour 24 of 720. Process time: 0:00:23.698113
-File processing finished for hour 48 of 720. Process time: 0:01:23.294569
-File processing finished for hour 72 of 720. Process time: 0:02:58.923570
-File processing finished for hour 96 of 720. Process time: 0:05:09.502466
-File processing finished for hour 120 of 720. Process time: 0:07:54.647016
-File processing finished for hour 144 of 720. Process time: 0:11:13.996347
-File processing finished for hour 168 of 720. Process time: 0:15:07.991730
-File processing finished for hour 192 of 720. Process time: 0:19:37.175173
-File processing finished for hour 216 of 720. Process time: 0:24:40.882481
-File processing finished for hour 240 of 720. Process time: 0:30:18.877123
-File processing finished for hour 264 of 720. Process time: 0:36:30.512778
-File processing finished for hour 288 of 720. Process time: 0:43:15.884764
-File processing finished for hour 312 of 720. Process time: 0:50:35.129313
-File processing finished for hour 336 of 720. Process time: 0:58:28.465882
-File processing finished for hour 360 of 720. Process time: 1:06:56.079614
-File processing finished for hour 384 of 720. Process time: 1:15:58.624156
-File processing finished for hour 408 of 720. Process time: 1:25:36.404283
-File processing finished for hour 432 of 720. Process time: 1:35:49.137269
-File processing finished for hour 456 of 720. Process time: 1:46:37.121500
-File processing finished for hour 480 of 720. Process time: 1:58:00.216163
-File processing finished for hour 504 of 720. Process time: 2:09:57.315369
-File processing finished for hour 528 of 720. Process time: 2:22:28.243503
-File processing finished for hour 552 of 720. Process time: 2:35:34.078585
-File processing finished for hour 576 of 720. Process time: 2:49:15.498226
-File processing finished for hour 600 of 720. Process time: 3:03:31.931986
-File processing finished for hour 624 of 720. Process time: 3:18:22.951575
-File processing finished for hour 648 of 720. Process time: 3:33:49.085699
-File processing finished for hour 672 of 720. Process time: 3:49:50.334075
-File processing finished for hour 696 of 720. Process time: 4:06:26.672451
-File processing finished for hour 720 of 720. Process time: 4:23:38.187443
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-05-13 19:39:01.310963
+File processing finished for hour 24 of 720. Process time: 0:00:24.503842
+File processing finished for hour 48 of 720. Process time: 0:01:24.875518
+File processing finished for hour 72 of 720. Process time: 0:03:01.201279
+File processing finished for hour 96 of 720. Process time: 0:05:12.470908
+File processing finished for hour 120 of 720. Process time: 0:07:58.347464
+File processing finished for hour 144 of 720. Process time: 0:11:18.465417
+File processing finished for hour 168 of 720. Process time: 0:15:13.381220
+File processing finished for hour 192 of 720. Process time: 0:19:43.642382
+File processing finished for hour 216 of 720. Process time: 0:24:48.534814
+File processing finished for hour 240 of 720. Process time: 0:30:27.705899
+File processing finished for hour 264 of 720. Process time: 0:36:40.628308
+File processing finished for hour 288 of 720. Process time: 0:43:27.332482
+File processing finished for hour 312 of 720. Process time: 0:50:48.042872
+File processing finished for hour 336 of 720. Process time: 0:58:42.921671
+File processing finished for hour 360 of 720. Process time: 1:07:12.152135
+File processing finished for hour 384 of 720. Process time: 1:16:16.376647
+File processing finished for hour 408 of 720. Process time: 1:25:55.921642
+File processing finished for hour 432 of 720. Process time: 1:36:10.597179
+File processing finished for hour 456 of 720. Process time: 1:47:00.626439
+File processing finished for hour 480 of 720. Process time: 1:58:25.904169
+File processing finished for hour 504 of 720. Process time: 2:10:25.369848
+File processing finished for hour 528 of 720. Process time: 2:22:58.756266
+File processing finished for hour 552 of 720. Process time: 2:36:07.119024
+File processing finished for hour 576 of 720. Process time: 2:49:51.210221
+File processing finished for hour 600 of 720. Process time: 3:04:10.486372
+File processing finished for hour 624 of 720. Process time: 3:19:04.457825
+File processing finished for hour 648 of 720. Process time: 3:34:33.735370
+File processing finished for hour 672 of 720. Process time: 3:50:38.280885
+File processing finished for hour 696 of 720. Process time: 4:07:18.083898
+File processing finished for hour 720 of 720. Process time: 4:24:33.308444
 0 errors during processing.
-End time: 2025-05-08 17:22:08.137342
-Processed 720 hours of data in 0:00:43.691426.
+End time: 2025-05-13 19:39:45.164860
+Processed 720 hours of data in 0:00:43.853845.
 </pre></div>
 </div>
 </div>
@@ -759,8 +760,8 @@ Processed 720 hours of data in 0:00:43.691426.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../../_images/4391e5729843108371ffcf0b083c28bb3636affec8214671118d8dfc0957f2c1.png" src="../../../../_images/4391e5729843108371ffcf0b083c28bb3636affec8214671118d8dfc0957f2c1.png" />
-<img alt="../../../../_images/551622bd1476540ac86a95d11bdfd38eb7a48ae28642a417aadfc0b2711dd13a.png" src="../../../../_images/551622bd1476540ac86a95d11bdfd38eb7a48ae28642a417aadfc0b2711dd13a.png" />
+<img alt="../../../../_images/d2cf80bd008e8ad8faabe4738934def9cbb466a58a0a4fe71e88bcf5126ce274.png" src="../../../../_images/d2cf80bd008e8ad8faabe4738934def9cbb466a58a0a4fe71e88bcf5126ce274.png" />
+<img alt="../../../../_images/a4a037158dbb4ec0c92acaa50fb05f5229e40da735369b185d85bdfcc189b334.png" src="../../../../_images/a4a037158dbb4ec0c92acaa50fb05f5229e40da735369b185d85bdfcc189b334.png" />
 </div>
 </div>
 </section>
@@ -795,7 +796,7 @@ Processed 720 hours of data in 0:00:43.691426.
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Deployments: dict_keys([&#39;deployment0010&#39;])
 Downloading 180 data file(s) from the local kdata directory
 Downloading 180 data file(s) from the local kdata directory
-Loading and Processing Data Files: 100%|██████████| 180/180 [00:02&lt;00:00, 89.97it/s] 
+Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 105.24it/s]
 Merging the data files into a single dataset
 </pre></div>
 </div>
@@ -838,7 +839,7 @@ Merging the data files into a single dataset
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../../_images/400dd9105fdaaa5655db9fcb3b4bc80f24fa69e809199f6685a1154e8f986c54.png" src="../../../../_images/400dd9105fdaaa5655db9fcb3b4bc80f24fa69e809199f6685a1154e8f986c54.png" />
+<img alt="../../../../_images/5c4cc52283d5e99d615715420abe401d93f90294fc3d3c972959c5af730c887c.png" src="../../../../_images/5c4cc52283d5e99d615715420abe401d93f90294fc3d3c972959c5af730c887c.png" />
 </div>
 </div>
 </section>

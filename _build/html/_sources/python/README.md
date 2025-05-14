@@ -2,24 +2,27 @@
 
 ## Overview
 
-The python code provided here was developed primarily as a toolset for myself, as an OOI Data Team member, to 
-facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc. that I need to perform as 
-part of my day-to-day work. I am providing this code to the larger community in the hopes that it will be of some use 
-to you, since the steps I use for accessing and using the data are identical to those any user would employ. The code 
-uses the [OOI M2M API](https://oceanobservatories.org/ooi-m2m-interface/) to access the data and either loads it into
-the user workspace as an [xarray](http://xarray.pydata.org/en/stable/) dataset, or saves it to disk as a NetCDF file, 
-depending on how you call it. There are examples below of how to setup and use the package, with more example notebooks 
+The python code provided here was developed primarily as a toolset for the OOI Data Team to 
+facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc. that OOI performs to quality check its datasets. 
+This code is provided to the larger community in the hopes that it will be of use. The code 
+uses several methods to access data:
+* [OOI M2M API](https://oceanobservatories.org/ooi-m2m-interface/)
+* [OOI THREDDS Data Server](https://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/catalog.html)
+* [JupyterHub-mounted NetCDF store](`/home/jovyan/ooi/kdata` from an OOI JupyterHub session)
+
+Datasets are loaded into the user workspace as an [xarray](http://xarray.pydata.org/en/stable/) dataset, or saved to disk as a NetCDF filein different examples. 
+There are instructions below of how to setup and use the package, with several example notebooks 
 and scripts available in the examples directory.
 
 If you have any comments, questions or issues, please don't hesitate to 
-[let me know]((https://github.com/oceanobservatories/ooi-data-explorations/issues)).
+[open an issue]((https://github.com/oceanobservatories/ooi-data-explorations/issues)).
 
 ## Table of Contents
 
 * [Installation](#installation)
-    * [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anacondaminiconda)
+    * [Download and Install OOI Data Explorations](#obtaining-the-code-and-configuring-the-environment)
     * [Setup Access Credentials](#access-credentials)
-    * [Download and Install OOI Data Explorations](#obtaining-the-code-and-configuring-the-environment) 
+    * [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anacondaminiconda)
 * [Usage](#usage)
     * [M2M Terminology](#m2m-terminology)
     * [Requesting As-Is (Mostly) Data](#requesting-as-is-mostly-data)
@@ -32,10 +35,79 @@ If you have any comments, questions or issues, please don't hesitate to
 
 ## Installation
 
+
+
+### Obtaining the Code and Configuring the Environment
+
+If you do not have python installed, read about [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anacondaminiconda) below before following these instructions to use this code repository.
+
+This section describes getting a copy the python code, setting up a virtual environment, and installing this module for use in that environment.
+
+Clone the `ooi-data-explorations` code to your local machine:
+
+```shell
+# download the ooi-data-explorations code
+git clone https://github.com/oceanobservatories/ooi-data-explorations.git
+```
+
+What follows are two ways to set up a code environment to run `ooi-data-explorations` examples and use the python code base using either `conda` or `pip` as the package manager.
+
+#### Create conda environment
+``` shell
+# configure the OOI python environment
+cd ooi-data-explorations/python
+conda env create -f environment.yml
+conda init # might be required for windows users if environment is not active
+conda activate ooi
+
+# install the package as a local development package
+conda develop .
+```
+
+#### Create a pip environment
+```shell
+cd ooi-data-explorations/python
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install -e .
+```
+
+
+### Access Credentials
+
+Access credentials are required to download data from OOINet via the M2M interface. Directions on how to obtain 
+these, in addition to details about the M2M system, are [available on the OOI website](https://oceanobservatories.org/ooi-m2m-interface/).
+
+* If you haven't already done so, either create a user account on the [OOI Data Portal](https://ooinet.oceanobservatories.org), 
+or use the CILogon button with an academic or Google account (login button is towards the upper right corner of the 
+web page) to login to the portal.
+* Navigate to the drop down menu screen in the top-right corner of the menu bar 
+* Click on the "User Profile" element of the drop down.
+* Copy and save the following data from the user profile: API Username and API Token.
+
+The python code uses the [netrc](https://docs.python.org/3.6/library/netrc.html) utility to obtain your access 
+credentials. Users need to create a `.netrc` file in their home directory to store these access credentials. Using
+either a text editor or the bash terminal, create the `.netrc` file (replacing the `<API Username>` and `<API Token>` 
+in the example below with the corresponding values from your login credentials for the [OOI Data Portal](https://ooinet.oceanobservatories.org)):
+
+```shell script
+cd ~
+touch .netrc
+chmod 600 .netrc
+cat <<EOT >> .netrc
+machine ooinet.oceanobservatories.org
+    login <API Username>
+    password <API Token>
+EOT
+```
+
 ### Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)
 
-In order to use the python code in this repository, you will need to setup your computer with the proper tools. There
-are several examples out there on how to this, so I'll avoid reinventing the wheel here. One of the best 
+If you already have python installed or are using the OOI JupyterHub, you can skip this section, as the required tools are already available.
+
+In order to use the python code in this repository, you will need to set up the proper tools. There
+are several examples on how to this, so I'll avoid reinventing the wheel here. One of the best 
 tutorials I've found has been developed by the folks at [Earth Lab](https://www.earthdatascience.org/). The 
 [tutorial](https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/) they have 
 prepared will guide you through the process of setting up a system to use Python for Earth Science analysis from start
@@ -69,73 +141,19 @@ echo ". ${HOME}/Anaconda3/etc/profile.d/conda.sh" >> ~/.bash_profile
 source .bash_profile
 ```
 
-### Access Credentials
-
-Access credentials are required to download the data from OOINet via the M2M interface. Directions on how to obtain 
-these, in addition to details about the M2M system, are [available on the OOI website](https://oceanobservatories.org/ooi-m2m-interface/).
-
-* If you haven't already done so, either create a user account on the [OOI Data Portal](https://ooinet.oceanobservatories.org), 
-or use the CILogon button with an academic or Google account (login button is towards the upper right corner of the 
-web page) to login to the portal.
-* Navigate to the drop down menu screen in the top-right corner of the menu bar 
-* Click on the “User Profile” element of the drop down.
-* Copy and save the following data from the user profile: API Username and API Token.
-
-The python code uses the [netrc](https://docs.python.org/3.6/library/netrc.html) utility to obtain your access 
-credentials. Users need to create a `.netrc` file in their home directory to store these access credentials. Using
-either a text editor or the bash terminal, create the `.netrc` file (replacing the `<API Username>` and `<API Token>` 
-in the example below with the corresponding values from your login credentials for the [OOI Data Portal](https://ooinet.oceanobservatories.org)):
-
-```shell script
-cd ~
-touch .netrc
-chmod 600 .netrc
-cat <<EOT >> .netrc
-machine ooinet.oceanobservatories.org
-    login <API Username>
-    password <API Token>
-EOT
-```
-
-### Obtaining the Code and Configuring the Environment
-
-With the basic processing tools and access credentials in place, you need to copy the python code to your machine, 
-setup a virtual environment, and install a development copy of the code.
-
-From the bash terminal, clone the ooi-data-explorations code to your local machine:
-
-```shell script
-# download the ooi-data-explorations code
-mkdir -p ~/Documents/GitHub
-cd ~/Documents/GitHub
-git clone https://github.com/oceanobservatories/ooi-data-explorations.git
-cd ooi-data-explorations/python
-
-# configure the OOI python environment
-conda env create -f environment.yml
-conda init # might be required for windows users if environment is not active
-conda activate ooi
-
-# you can check the active environment by running
-conda env list
-
-# install the package as a local development package
-conda develop .
-```
-
 ## Usage
 
 The code is available in the [ooi_data_explorations](ooi_data_explorations) directory with examples (both scripts
-and notebooks) in the [examples](examples) directory. The python code has been developed and used with both Python 3.6
-and 3.7 on Windows and Linux machines. The functions are configured in a granular fashion to allow users to access the
+and notebooks) in the [examples](examples) directory. The python code has been developed and used with Python 3.6+ 
+on Windows and Linux machines. The functions are configured in a granular fashion to allow users to access the
 data in a few different ways.
 
 ### M2M Terminology
 
 Before using these functions, it is important to understand how requests to the 
 [OOI M2M API](https://oceanobservatories.org/ooi-m2m-interface/) are structured. A request is built around the 
-reference designator (comprised of the site, node and sensor names), the data delivery method, and data stream (think 
-of a stream as a data sets). Beginning and ending dates for the time period of interest are optional inputs. If omitted,
+reference designator (comprised of the site, node, and sensor names), the data delivery method, and data stream (think 
+of a stream as a dataset). Beginning and ending dates for the time period of interest are optional inputs. If omitted,
 all of the data for a particular instrument of interest will be downloaded.
 
 * Site -- 8 character uppercase string denoting the array and location within the array of the system. These are 

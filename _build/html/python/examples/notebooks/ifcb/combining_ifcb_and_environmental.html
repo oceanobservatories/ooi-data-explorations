@@ -1,0 +1,1880 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Linking IFCB Targets to in-situ Data &#8212; OOI Data Explorations</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'python/examples/notebooks/ifcb/combining_ifcb_and_environmental';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="OPTAA Processing Workflow using Data from the Coastal Surface Piercing Profiler (CSPP)" href="../optaa/processing_workflow_using_the_cspp_optaa.html" />
+    <link rel="prev" title="Using Quality Flags to Create and Utilize Annotations" href="../phsen/creating_annotations.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/NSF-OOI-RGB.png" class="logo__image only-light" alt="OOI Data Explorations - Home"/>
+    <script>document.write(`<img src="../../../../_static/NSF-OOI-RGB.png" class="logo__image only-dark" alt="OOI Data Explorations - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../../intro.html">
+                    Welcome to OOI Data Explorations
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../../python.html">Explore OOI Data with Python</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../README.html">Getting started with Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../m2m_explorations.html">Using the machine-to-machine interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fdchp/FdchpExample.html">Processing FDCHP data to produce hourly momentum flux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../camds/uncabled.html">Making a timelapse from uncabled CAMDS images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phsen/creating_annotations.html">Creating annotations for pH data</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Exploring Imaging FlowCytobot (IFCB) and colocated data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa_cspp.html">Accessing and processing OPTAA data from the Coastal Surface Piercing Profiler (CSPP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_cabled_profiler_ce04osps.html">Accessing and processing cabled profiler OPTAA data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optaa/when_things_go_bad.html">Examining OPTAA instrument failure</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Matlab Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../matlab/matlab.html">Explore OOI Data with MATLAB</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../matlab/README.html">Getting started with MATLAB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../matlab/examples/coastal_arrays/example_metbk.html">METBK Data Acess Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../matlab/examples/coastal_arrays/example_adcp.html">Example ADCP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../matlab/examples/global_arrays/example_apex_profiler_mooring_ctds.html">Example Apex Profiler Mooring CTDs</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">R Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../../R/README.html">Getting started with R</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../R/R_test.html">This is a test for R notebooks</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://jupyter.oceanobservatories.org/hub/user-redirect/git-pull?repo=https%3A//github.com/joffreyp/ooi-data-explorations&urlpath=tree/ooi-data-explorations/./python/examples/notebooks/ifcb/combining_ifcb_and_environmental.ipynb&branch=book" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on JupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="JupyterHub logo" src="../../../../_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/joffreyp/ooi-data-explorations/issues/new?title=Issue%20on%20page%20%2Fpython/examples/notebooks/ifcb/combining_ifcb_and_environmental.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../../_sources/python/examples/notebooks/ifcb/combining_ifcb_and_environmental.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Linking IFCB Targets to in-situ Data</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-information">More Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ifcb-utilities">IFCB Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mab-maintenance-cruise-ifcb-data">MAB Maintenance Cruise IFCB Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#central-surface-mooring-cp10cnsm-ifcb-data">Central Surface Mooring (CP10CNSM) IFCB Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-the-ifcb-data-with-co-located-instrument-data">Merge the IFCB data with Co-Located Instrument Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sea-bird-scientific-sbe-16plus-v2-seacat-conductivity-temperature-and-depth">Sea-Bird Scientific SBE 16Plus V2 SeaCAT (conductivity, temperature and depth)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sea-bird-scientific-eco-triplet-chlorophyll-optical-backscatter-and-fluorometric-dissolved-organic-matter">Sea-Bird Scientific ECO Triplet (chlorophyll, optical backscatter and fluorometric dissolved organic matter)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-the-data">Merging the Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-merged-data">Plotting the Merged Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#looked-at-from-a-different-direction">Looked at from a different direction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-co-located-instruments">Other Co-Located Instruments</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="linking-ifcb-targets-to-in-situ-data">
+<h1>Linking IFCB Targets to in-situ Data<a class="headerlink" href="#linking-ifcb-targets-to-in-situ-data" title="Link to this heading">#</a></h1>
+<p>The relocation of the U.S. National Science Foundation (NSF) Ocean Observatories Initiative (OOI) Coastal Pioneer (CP) Array from the <a class="reference external" href="https://oceanobservatories.org/array/coastal-pioneer-array">New England Shelf (NES)</a> to the <a class="reference external" href="https://oceanobservatories.org/array/coastal-pioneer-mid-atlantic-bight-array">Mid-Atlantic Bight (MAB)</a> introduced some new sensors to OOI. One of these, was the <a class="reference external" href="https://ifcb-data.whoi.edu/about">Imaging FlowCytobot (IFCB)</a> originally developed at the <a class="reference external" href="https://www.whoi.edu/">Woods Hole Oceanographic Institution (WHOI)</a> and now available commercially from <a class="reference external" href="https://mclanelabs.com">McLane Research Laboratories</a>.</p>
+<p>This notebook was developed to help users interested in exploring this instrument and the extensive data it will be producing over the next few years. While by no means an exhaustive review of how to process and analyze the IFCB data, it should help users at least get started. Addtionally, this notebook was developed to show users how additional co-located instrument data can be used to place the IFCB data into a larger environmental context.</p>
+<section id="more-information">
+<h2>More Information<a class="headerlink" href="#more-information" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://www2.whoi.edu/staff/hsosik/ifcb/">https://www2.whoi.edu/staff/hsosik/ifcb/</a></p>
+</section>
+<section id="ifcb-utilities">
+<h2>IFCB Utilities<a class="headerlink" href="#ifcb-utilities" title="Link to this heading">#</a></h2>
+<p>Before this notebook can be run, code needed to access and process the IFCB data must be installed. The code we’ll be using was developed at WHOI for processing data from the IFCB in preparation for displaying in in the <a class="reference external" href="https://ifcb-data.whoi.edu/about">IFCB Dashboard</a>. The same utilites can be used outside of the dashboard to analyze the IFCB data. Assuming the set up guide was used to configure the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> conda environment, install the needed utilities:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># activate the ooi conda environment</span>
+conda<span class="w"> </span>activate<span class="w"> </span>ooi
+
+<span class="c1"># obtain the pyIFCB code and add it to the environment</span>
+<span class="nb">cd</span><span class="w"> </span>~/code
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/joefutrelle/pyifcb.git
+<span class="nb">cd</span><span class="w"> </span>pyifcb
+conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>--name<span class="w"> </span>ooi<span class="w"> </span>--file<span class="w"> </span>environment.yml
+conda<span class="w"> </span>develop<span class="w"> </span>.
+</pre></div>
+</div>
+<p>At this point, the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment will be able to utilize the pyifcb tools (note, you may need to restart the notebook kernel to make them available). Documentation on how to use this code is <a class="reference external" href="https://github.com/joefutrelle/pyifcb/wiki">available</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the ifcb module and other required modules</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ifcb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+<section id="mab-maintenance-cruise-ifcb-data">
+<h3>MAB Maintenance Cruise IFCB Data<a class="headerlink" href="#mab-maintenance-cruise-ifcb-data" title="Link to this heading">#</a></h3>
+<p>For the OOI Coastal Pioneer MAB maintenance cruises, an IFCB will be installed inline with the ship’s flow-thru system during transits to/from the array, and mounted on the ship’s CTD rossette for discrete sampling alongside deployed moorings. Data collected by the ship’s systems and the IFCB from these cruises will be added to the raw data directory after the maintenance cruise ends, making them available online via the <a class="reference external" href="https://rawdata.oceanobservatories.org/files/">OOI Raw Data Server</a>, or within the JupyterHub environment under the <code class="docutils literal notranslate"><span class="pre">/home/joyvan/ooi/uncabled/ship_data</span></code> directory. The recovered IFCB data will also be added to the <a class="reference external" href="https://ifcb-data.oceanobservatories.org/dashboard">OOI IFCB Dashboard</a>.</p>
+<p>The following is a quick example of how we can access the same data from the raw data directory, in this case focusing on a <a class="reference external" href="https://ifcb-data.oceanobservatories.org/image?image=00562&amp;amp;bin=D20240415T215238_IFCB206">randomly selected image</a> from the discrete data collected next to the Central Surface Mooring (CP10CNSM) on 2024-04-15.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">ifcb</span><span class="o">.</span><span class="n">DataDirectory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span> <span class="s1">&#39;ooi/cruise_data/pioneer-mab/Pioneer-20_AR82_2024-04-01/IFCB/discrete/&#39;</span><span class="p">))</span>
+<span class="n">sample_bin</span> <span class="o">=</span> <span class="n">data_dir</span><span class="p">[</span><span class="s1">&#39;D20240415T215238_IFCB206&#39;</span><span class="p">]</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">sample_bin</span><span class="o">.</span><span class="n">roi_file</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="mi">562</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x7fe0366e7b50&gt;
+</pre></div>
+</div>
+<img alt="../../../../_images/4215cb6308706558a88cf06f35c3004297fd9222dd76e8f641278b42f79d1c35.png" src="../../../../_images/4215cb6308706558a88cf06f35c3004297fd9222dd76e8f641278b42f79d1c35.png" />
+</div>
+</div>
+</section>
+<section id="central-surface-mooring-cp10cnsm-ifcb-data">
+<h3>Central Surface Mooring (CP10CNSM) IFCB Data<a class="headerlink" href="#central-surface-mooring-cp10cnsm-ifcb-data" title="Link to this heading">#</a></h3>
+<p>The IFCB sample data is comprised of 3 different files: a <code class="docutils literal notranslate"><span class="pre">.hdr</span></code> file (containing metadata), a <code class="docutils literal notranslate"><span class="pre">.adc</span></code> file (containing non-image data), and a <code class="docutils literal notranslate"><span class="pre">.roi</span></code> file (containing image data). File names include the date and time that the sample was run, and the instrument number identifying the IFCB that ran the sample. Due to telemetry constraints, the imagery data (the <code class="docutils literal notranslate"><span class="pre">.roi</span></code> files) will not be available until after the mooring is recovered and the data is downloaded from the IFCB. We cannot use all of the tools available in the pyIFCB code without all three files, however we can perform an initial analysis working with just the <code class="docutils literal notranslate"><span class="pre">.adc</span></code> files. These provide data about each target (image) collected during the sample run. We can use this data to generate some simple summary statistics (sample time, sample id, number of targets per sample, and mean target size) as well as a pandas dataframe containing all of the <code class="docutils literal notranslate"><span class="pre">.adc</span></code> data that we can use in any future work we might want to engage in with the IFCB data. The remainder of the this notebook will demonstrate some basic steps that we can take to access, organize and prepare this data for further analysis. In particular, how we can merge the IFCB with other co-located instrument data to place the IFCB data into a larger environmental context.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># raw data directory with the ADC files currently being telemetered to shore during the deployment</span>
+<span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span> <span class="s1">&#39;ooi/uncabled/CP10CNSM/D00001/cg_data/dcl27/plims/D20240[456789]*.adc&#39;</span><span class="p">)</span>
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">data_dir</span><span class="p">))</span>  <span class="c1"># listing of all the ADC files</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2"> files&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)))</span>
+<span class="c1"># note, the file glob used above is constructed to deliberately exclude burn-in (aka parking lot) data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Found 812 files
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># pull out the adc data from each adc file into a pandas dataframe and add the sampling date/time extracted from the file name</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;TRIGGER ADC_TIME PMT_A PMT_B PMT_C PMT_D PEAK_A PEAK_B PEAK_C PEAK_D TIME_OF_FLIGHT GRAB_TIME_START GRAB_TIME_END ROI_X ROI_Y ROI_WIDTH ROI_HEIGHT START_BYTE COMPARATOR_OUT START_POINT SIGNAL_LENGTH STATUS RUN_TIME INHIBIT_TIME&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">index</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columns</span><span class="p">)}</span>
+
+<span class="n">full</span> <span class="o">=</span> <span class="p">[]</span>     <span class="c1"># temporary list to hold the dataframes from each sampling run</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># summary results from each sampling run we can later merge with </span>
+<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+    <span class="c1"># load the adc data and use the sample id to set the sampling time</span>
+    <span class="n">adc</span> <span class="o">=</span> <span class="n">ifcb</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">adc</span><span class="o">.</span><span class="n">AdcFile</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">sample_id</span> <span class="o">=</span> <span class="n">adc</span><span class="o">.</span><span class="n">lid</span>
+    <span class="n">sample_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">8</span><span class="p">],</span> <span class="n">tz</span><span class="o">=</span><span class="s1">&#39;UTC&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># convert the data to a pandas dataframe, rename the columns and drop any size 0 triggers</span>
+    <span class="n">adc</span> <span class="o">=</span> <span class="n">adc</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+    <span class="n">adc</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">adc</span> <span class="o">=</span> <span class="n">adc</span><span class="p">[</span><span class="n">adc</span><span class="p">[</span><span class="s1">&#39;roi_width&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># add the sample id and time that we can use later in grouping the data</span>
+    <span class="n">adc</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;sample_id&#39;</span><span class="p">,</span> <span class="n">sample_id</span><span class="p">)</span>
+    <span class="n">adc</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;sample_time&#39;</span><span class="p">,</span> <span class="n">sample_time</span><span class="p">)</span>
+    
+    <span class="c1"># append the results to the full and summary lists</span>
+    <span class="n">full</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adc</span><span class="p">)</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="n">adc</span><span class="p">[</span><span class="s1">&#39;roi_width&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.7</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">adc</span><span class="p">[</span><span class="s1">&#39;roi_height&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mf">2.7</span><span class="p">)</span>  <span class="c1"># rough estimate of target area in um^2 (~2.7 pixels/um)</span>
+    <span class="n">summary</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">sample_time</span><span class="p">,</span> <span class="n">sample_id</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">adc</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">area</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.95 s, sys: 528 ms, total: 4.48 s
+Wall time: 31 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># convert the full and summary lists into pandas dataframes</span>
+<span class="n">full</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">full</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">full</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;samples&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">summary</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:],</span> <span class="n">index</span><span class="o">=</span><span class="n">summary</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sample_id&#39;</span><span class="p">,</span> <span class="s1">&#39;target_counts&#39;</span><span class="p">,</span> <span class="s1">&#39;target_area&#39;</span><span class="p">])</span>
+<span class="n">summary</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 151 ms, sys: 101 ms, total: 252 ms
+Wall time: 251 ms
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">grps</span> <span class="o">=</span> <span class="n">full</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;sample_id&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">grps</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 177 ms, sys: 68.6 ms, total: 245 ms
+Wall time: 244 ms
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>trigger</th>
+      <th>sample_id</th>
+      <th>adc_time</th>
+      <th>sample_time</th>
+      <th>pmt_a</th>
+      <th>pmt_b</th>
+      <th>pmt_c</th>
+      <th>pmt_d</th>
+      <th>peak_a</th>
+      <th>peak_b</th>
+      <th>...</th>
+      <th>roi_y</th>
+      <th>roi_width</th>
+      <th>roi_height</th>
+      <th>start_byte</th>
+      <th>comparator_out</th>
+      <th>start_point</th>
+      <th>signal_length</th>
+      <th>status</th>
+      <th>run_time</th>
+      <th>inhibit_time</th>
+    </tr>
+    <tr>
+      <th>samples</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1375669</th>
+      <td>1</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>12.141865</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.000998</td>
+      <td>0.011843</td>
+      <td>-0.001829</td>
+      <td>-0.001004</td>
+      <td>0.009820</td>
+      <td>0.281713</td>
+      <td>...</td>
+      <td>803</td>
+      <td>80</td>
+      <td>58</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>12.164696</td>
+      <td>0.092693</td>
+    </tr>
+    <tr>
+      <th>1375670</th>
+      <td>2</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>13.948682</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>0.084343</td>
+      <td>0.021247</td>
+      <td>-0.002023</td>
+      <td>-0.001178</td>
+      <td>1.365922</td>
+      <td>0.261614</td>
+      <td>...</td>
+      <td>387</td>
+      <td>88</td>
+      <td>50</td>
+      <td>4640</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>13.970365</td>
+      <td>0.176736</td>
+    </tr>
+    <tr>
+      <th>1375671</th>
+      <td>3</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>15.010232</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.000901</td>
+      <td>0.018660</td>
+      <td>-0.001870</td>
+      <td>-0.001065</td>
+      <td>0.009816</td>
+      <td>0.359943</td>
+      <td>...</td>
+      <td>523</td>
+      <td>72</td>
+      <td>42</td>
+      <td>9040</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>15.031645</td>
+      <td>0.259551</td>
+    </tr>
+    <tr>
+      <th>1375672</th>
+      <td>4</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>19.877021</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>0.008152</td>
+      <td>0.012415</td>
+      <td>-0.001879</td>
+      <td>-0.001107</td>
+      <td>0.223012</td>
+      <td>0.204825</td>
+      <td>...</td>
+      <td>699</td>
+      <td>88</td>
+      <td>50</td>
+      <td>12064</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>19.899149</td>
+      <td>0.343255</td>
+    </tr>
+    <tr>
+      <th>1375673</th>
+      <td>5</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>26.224402</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.000285</td>
+      <td>0.002202</td>
+      <td>-0.001668</td>
+      <td>-0.000867</td>
+      <td>0.009592</td>
+      <td>0.005474</td>
+      <td>...</td>
+      <td>259</td>
+      <td>80</td>
+      <td>50</td>
+      <td>16464</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>26.246721</td>
+      <td>0.427322</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1375948</th>
+      <td>282</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>1187.321535</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.001272</td>
+      <td>0.000752</td>
+      <td>-0.002159</td>
+      <td>-0.001251</td>
+      <td>0.010190</td>
+      <td>0.005872</td>
+      <td>...</td>
+      <td>355</td>
+      <td>88</td>
+      <td>50</td>
+      <td>1638416</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1187.358889</td>
+      <td>23.496810</td>
+    </tr>
+    <tr>
+      <th>1375949</th>
+      <td>283</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>1192.985101</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.001350</td>
+      <td>0.001310</td>
+      <td>-0.002194</td>
+      <td>-0.001268</td>
+      <td>0.010202</td>
+      <td>0.005875</td>
+      <td>...</td>
+      <td>499</td>
+      <td>64</td>
+      <td>34</td>
+      <td>1642816</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1193.023194</td>
+      <td>23.580035</td>
+    </tr>
+    <tr>
+      <th>1375950</th>
+      <td>284</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>1196.085505</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>0.005088</td>
+      <td>0.012646</td>
+      <td>-0.002367</td>
+      <td>-0.001363</td>
+      <td>0.158858</td>
+      <td>0.244203</td>
+      <td>...</td>
+      <td>627</td>
+      <td>96</td>
+      <td>66</td>
+      <td>1644992</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1196.123333</td>
+      <td>23.662674</td>
+    </tr>
+    <tr>
+      <th>1375951</th>
+      <td>285</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>1196.192423</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.001560</td>
+      <td>0.004991</td>
+      <td>-0.002303</td>
+      <td>-0.001356</td>
+      <td>0.010369</td>
+      <td>0.128841</td>
+      <td>...</td>
+      <td>779</td>
+      <td>72</td>
+      <td>42</td>
+      <td>1651328</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1196.231944</td>
+      <td>23.747194</td>
+    </tr>
+    <tr>
+      <th>1375952</th>
+      <td>286</td>
+      <td>D20240922T042446_IFCB199</td>
+      <td>1198.181690</td>
+      <td>2024-09-22 04:24:46+00:00</td>
+      <td>-0.001723</td>
+      <td>0.014204</td>
+      <td>-0.002348</td>
+      <td>-0.001406</td>
+      <td>0.010428</td>
+      <td>0.366859</td>
+      <td>...</td>
+      <td>323</td>
+      <td>72</td>
+      <td>58</td>
+      <td>1654352</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1198.219306</td>
+      <td>23.829661</td>
+    </tr>
+  </tbody>
+</table>
+<p>284 rows × 26 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sample_id</th>
+      <th>target_counts</th>
+      <th>target_area</th>
+    </tr>
+    <tr>
+      <th>time</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2024-04-03 14:16:09+00:00</th>
+      <td>D20240403T141609_IFCB199</td>
+      <td>3666</td>
+      <td>752.229549</td>
+    </tr>
+    <tr>
+      <th>2024-04-03 15:26:20+00:00</th>
+      <td>D20240403T152620_IFCB199</td>
+      <td>4443</td>
+      <td>650.288381</td>
+    </tr>
+    <tr>
+      <th>2024-04-03 18:25:14+00:00</th>
+      <td>D20240403T182514_IFCB199</td>
+      <td>4073</td>
+      <td>621.513348</td>
+    </tr>
+    <tr>
+      <th>2024-04-03 21:25:11+00:00</th>
+      <td>D20240403T212511_IFCB199</td>
+      <td>6864</td>
+      <td>575.412882</td>
+    </tr>
+    <tr>
+      <th>2024-04-04 00:25:11+00:00</th>
+      <td>D20240404T002511_IFCB199</td>
+      <td>7272</td>
+      <td>570.638079</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2024-09-21 12:24:45+00:00</th>
+      <td>D20240921T122445_IFCB199</td>
+      <td>1056</td>
+      <td>703.02095</td>
+    </tr>
+    <tr>
+      <th>2024-09-21 16:24:45+00:00</th>
+      <td>D20240921T162445_IFCB199</td>
+      <td>1661</td>
+      <td>640.211286</td>
+    </tr>
+    <tr>
+      <th>2024-09-21 20:24:44+00:00</th>
+      <td>D20240921T202444_IFCB199</td>
+      <td>259</td>
+      <td>756.532194</td>
+    </tr>
+    <tr>
+      <th>2024-09-22 00:24:43+00:00</th>
+      <td>D20240922T002443_IFCB199</td>
+      <td>300</td>
+      <td>963.365341</td>
+    </tr>
+    <tr>
+      <th>2024-09-22 04:24:46+00:00</th>
+      <td>D20240922T042446_IFCB199</td>
+      <td>284</td>
+      <td>801.081937</td>
+    </tr>
+  </tbody>
+</table>
+<p>812 rows × 3 columns</p>
+</div></div></div>
+</div>
+</section>
+</section>
+<section id="merge-the-ifcb-data-with-co-located-instrument-data">
+<h2>Merge the IFCB data with Co-Located Instrument Data<a class="headerlink" href="#merge-the-ifcb-data-with-co-located-instrument-data" title="Link to this heading">#</a></h2>
+<p>On it’s own the IFCB data doesn’t really mean much. It needs to be placed into a larger environmental context. We can use some of the utilities in the <a class="reference external" href="https://github.com/oceanobservatories/ooi-data-explorations/tree/master/python">ooi-data-explorations python code</a> to quickly load and prepare select co-located instrument data to merge with the IFCB summary data. You can explore the information about the <a class="reference external" href="https://oceanobservatories.org/array/coastal-pioneer-mid-atlantic-bight-array/">Coastal Pioneer MAB array</a> to get an idea about the diversity of instrumentation and data available. For this example, we are going to use data from a co-located CTD (<a class="reference external" href="https://www.seabird.com/sbe-16plus-v2-seacat/product?id=60761421598">Sea-Bird Scientific SBE 16Plus V2 SeaCAT</a>) and dual-channel fluorometer and backscatter sensor (<a class="reference external" href="https://www.seabird.com/eco-triplet/product?id=60762467720">Sea-Bird Scientific ECO Triplet</a>) to demo how we can load data from other sensors and then combine that data with the IFCB summary data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import a utility used to load data from the kdata directory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_kdata</span>
+
+<span class="c1"># import utilites used to re-organize and prepare the CTDBP and FLORT data for further work</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.uncabled.process_ctdbp</span><span class="w"> </span><span class="kn">import</span> <span class="n">ctdbp_datalogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.uncabled.process_flort</span><span class="w"> </span><span class="kn">import</span> <span class="n">flort_datalogger</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="sea-bird-scientific-sbe-16plus-v2-seacat-conductivity-temperature-and-depth">
+<h3><a class="reference external" href="https://www.seabird.com/sbe-16plus-v2-seacat/product?id=60761421598">Sea-Bird Scientific SBE 16Plus V2 SeaCAT</a> (conductivity, temperature and depth)<a class="headerlink" href="#sea-bird-scientific-sbe-16plus-v2-seacat-conductivity-temperature-and-depth" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">ctd</span> <span class="o">=</span> <span class="n">load_kdata</span><span class="p">(</span><span class="s1">&#39;CP10CNSM&#39;</span><span class="p">,</span> <span class="s1">&#39;RID27&#39;</span><span class="p">,</span> <span class="s1">&#39;03-CTDBPC000&#39;</span><span class="p">,</span> <span class="s1">&#39;telemetered&#39;</span><span class="p">,</span> <span class="s1">&#39;ctdbp_cdef_dcl_instrument&#39;</span><span class="p">,</span> <span class="s1">&#39;*.nc&#39;</span><span class="p">)</span>
+<span class="n">ctd</span> <span class="o">=</span> <span class="n">ctdbp_datalogger</span><span class="p">(</span><span class="n">ctd</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading 17 data file(s) from the local kdata directory
+Downloading 17 data file(s) from the local kdata directory
+Loading and Processing Data Files: 100%|██████████| 17/17 [00:04&lt;00:00,  4.05it/s]
+Merging the data files into a single dataset
+CPU times: user 185 ms, sys: 159 ms, total: 344 ms
+Wall time: 4.47 s
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sea-bird-scientific-eco-triplet-chlorophyll-optical-backscatter-and-fluorometric-dissolved-organic-matter">
+<h3><a class="reference external" href="https://www.seabird.com/eco-triplet/product?id=60762467720">Sea-Bird Scientific ECO Triplet</a> (chlorophyll, optical backscatter and fluorometric dissolved organic matter)<a class="headerlink" href="#sea-bird-scientific-eco-triplet-chlorophyll-optical-backscatter-and-fluorometric-dissolved-organic-matter" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">flr</span> <span class="o">=</span> <span class="n">load_kdata</span><span class="p">(</span><span class="s1">&#39;CP10CNSM&#39;</span><span class="p">,</span> <span class="s1">&#39;RID27&#39;</span><span class="p">,</span> <span class="s1">&#39;02-FLORTD000&#39;</span><span class="p">,</span> <span class="s1">&#39;telemetered&#39;</span><span class="p">,</span> <span class="s1">&#39;flort_sample&#39;</span><span class="p">,</span> <span class="s1">&#39;*FLORT*.nc&#39;</span><span class="p">)</span>
+<span class="n">flr</span> <span class="o">=</span> <span class="n">flort_datalogger</span><span class="p">(</span><span class="n">flr</span><span class="p">,</span> <span class="n">burst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># using burst-averaging here with the ECO Triplet data (sampled at 1 Hz for 3 minutes every 15 minutes) to reduce data volume</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading 18 data file(s) from the local kdata directory
+Downloading 18 data file(s) from the local kdata directory
+Loading and Processing Data Files: 100%|██████████| 18/18 [00:14&lt;00:00,  1.21it/s]
+Merging the data files into a single dataset
+CPU times: user 2h 31min 53s, sys: 4.12 s, total: 2h 31min 57s
+Wall time: 2min 45s
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="merging-the-data">
+<h3>Merging the Data<a class="headerlink" href="#merging-the-data" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># create a merged data set, copying the source CTD data</span>
+<span class="n">merge</span> <span class="o">=</span> <span class="n">ctd</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># interpolate the chlorophyll, FDOM and optical backscatter into the CTD record and add metadata</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;estimated_chlorophyll&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">ctd</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">flr</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">flr</span><span class="o">.</span><span class="n">estimated_chlorophyll</span><span class="p">))</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;estimated_chlorophyll&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">flr</span><span class="o">.</span><span class="n">estimated_chlorophyll</span><span class="o">.</span><span class="n">attrs</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;fluorometric_cdom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">ctd</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">flr</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">flr</span><span class="o">.</span><span class="n">fluorometric_cdom</span><span class="p">))</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;fluorometric_cdom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">flr</span><span class="o">.</span><span class="n">fluorometric_cdom</span><span class="o">.</span><span class="n">attrs</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;optical_backscatter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">ctd</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">flr</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">flr</span><span class="o">.</span><span class="n">bback</span><span class="p">))</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;optical_backscatter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">flr</span><span class="o">.</span><span class="n">bback</span><span class="o">.</span><span class="n">attrs</span>
+
+<span class="c1"># interpolate the number of targets and estimated target size in the CTD record</span>
+<span class="n">smry</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">()</span>
+<span class="n">smry</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">smry</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;target_counts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">ctd</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">smry</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">smry</span><span class="p">[</span><span class="s1">&#39;target_counts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;target_counts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;counts&#39;</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;target_area&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">ctd</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">smry</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">smry</span><span class="p">[</span><span class="s1">&#39;target_area&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+<span class="n">merge</span><span class="p">[</span><span class="s1">&#39;target_area&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;um^2&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 17.3 ms, sys: 12 ms, total: 29.3 ms
+Wall time: 28 ms
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">merge</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
+<defs>
+<symbol id="icon-database" viewBox="0 0 32 32">
+<path d="M16 0c-8.837 0-16 2.239-16 5v4c0 2.761 7.163 5 16 5s16-2.239 16-5v-4c0-2.761-7.163-5-16-5z"></path>
+<path d="M16 17c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+<path d="M16 26c-8.837 0-16-2.239-16-5v6c0 2.761 7.163 5 16 5s16-2.239 16-5v-6c0 2.761-7.163 5-16 5z"></path>
+</symbol>
+<symbol id="icon-file-text2" viewBox="0 0 32 32">
+<path d="M28.681 7.159c-0.694-0.947-1.662-2.053-2.724-3.116s-2.169-2.030-3.116-2.724c-1.612-1.182-2.393-1.319-2.841-1.319h-15.5c-1.378 0-2.5 1.121-2.5 2.5v27c0 1.378 1.122 2.5 2.5 2.5h23c1.378 0 2.5-1.122 2.5-2.5v-19.5c0-0.448-0.137-1.23-1.319-2.841zM24.543 5.457c0.959 0.959 1.712 1.825 2.268 2.543h-4.811v-4.811c0.718 0.556 1.584 1.309 2.543 2.268zM28 29.5c0 0.271-0.229 0.5-0.5 0.5h-23c-0.271 0-0.5-0.229-0.5-0.5v-27c0-0.271 0.229-0.5 0.5-0.5 0 0 15.499-0 15.5 0v7c0 0.552 0.448 1 1 1h7v19.5z"></path>
+<path d="M23 26h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 22h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+<path d="M23 18h-14c-0.552 0-1-0.448-1-1s0.448-1 1-1h14c0.552 0 1 0.448 1 1s-0.448 1-1 1z"></path>
+</symbol>
+</defs>
+</svg>
+<style>/* CSS stylesheet for displaying xarray objects in jupyterlab.
+ *
+ */
+
+:root {
+  --xr-font-color0: var(--jp-content-font-color0, rgba(0, 0, 0, 1));
+  --xr-font-color2: var(--jp-content-font-color2, rgba(0, 0, 0, 0.54));
+  --xr-font-color3: var(--jp-content-font-color3, rgba(0, 0, 0, 0.38));
+  --xr-border-color: var(--jp-border-color2, #e0e0e0);
+  --xr-disabled-color: var(--jp-layout-color3, #bdbdbd);
+  --xr-background-color: var(--jp-layout-color0, white);
+  --xr-background-color-row-even: var(--jp-layout-color1, white);
+  --xr-background-color-row-odd: var(--jp-layout-color2, #eeeeee);
+}
+
+html[theme="dark"],
+html[data-theme="dark"],
+body[data-theme="dark"],
+body.vscode-dark {
+  --xr-font-color0: rgba(255, 255, 255, 1);
+  --xr-font-color2: rgba(255, 255, 255, 0.54);
+  --xr-font-color3: rgba(255, 255, 255, 0.38);
+  --xr-border-color: #1f1f1f;
+  --xr-disabled-color: #515151;
+  --xr-background-color: #111111;
+  --xr-background-color-row-even: #111111;
+  --xr-background-color-row-odd: #313131;
+}
+
+.xr-wrap {
+  display: block !important;
+  min-width: 300px;
+  max-width: 700px;
+}
+
+.xr-text-repr-fallback {
+  /* fallback to plain text repr when CSS is not injected (untrusted notebook) */
+  display: none;
+}
+
+.xr-header {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+  border-bottom: solid 1px var(--xr-border-color);
+}
+
+.xr-header > div,
+.xr-header > ul {
+  display: inline;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.xr-obj-type,
+.xr-array-name {
+  margin-left: 2px;
+  margin-right: 10px;
+}
+
+.xr-obj-type {
+  color: var(--xr-font-color2);
+}
+
+.xr-sections {
+  padding-left: 0 !important;
+  display: grid;
+  grid-template-columns: 150px auto auto 1fr 0 20px 0 20px;
+}
+
+.xr-section-item {
+  display: contents;
+}
+
+.xr-section-item input {
+  display: inline-block;
+  opacity: 0;
+  height: 0;
+}
+
+.xr-section-item input + label {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-item input:enabled + label {
+  cursor: pointer;
+  color: var(--xr-font-color2);
+}
+
+.xr-section-item input:focus + label {
+  border: 2px solid var(--xr-font-color0);
+}
+
+.xr-section-item input:enabled + label:hover {
+  color: var(--xr-font-color0);
+}
+
+.xr-section-summary {
+  grid-column: 1;
+  color: var(--xr-font-color2);
+  font-weight: 500;
+}
+
+.xr-section-summary > span {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+.xr-section-summary-in:disabled + label {
+  color: var(--xr-font-color2);
+}
+
+.xr-section-summary-in + label:before {
+  display: inline-block;
+  content: "►";
+  font-size: 11px;
+  width: 15px;
+  text-align: center;
+}
+
+.xr-section-summary-in:disabled + label:before {
+  color: var(--xr-disabled-color);
+}
+
+.xr-section-summary-in:checked + label:before {
+  content: "▼";
+}
+
+.xr-section-summary-in:checked + label > span {
+  display: none;
+}
+
+.xr-section-summary,
+.xr-section-inline-details {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.xr-section-inline-details {
+  grid-column: 2 / -1;
+}
+
+.xr-section-details {
+  display: none;
+  grid-column: 1 / -1;
+  margin-bottom: 5px;
+}
+
+.xr-section-summary-in:checked ~ .xr-section-details {
+  display: contents;
+}
+
+.xr-array-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 20px auto;
+}
+
+.xr-array-wrap > label {
+  grid-column: 1;
+  vertical-align: top;
+}
+
+.xr-preview {
+  color: var(--xr-font-color3);
+}
+
+.xr-array-preview,
+.xr-array-data {
+  padding: 0 5px !important;
+  grid-column: 2;
+}
+
+.xr-array-data,
+.xr-array-in:checked ~ .xr-array-preview {
+  display: none;
+}
+
+.xr-array-in:checked ~ .xr-array-data,
+.xr-array-preview {
+  display: inline-block;
+}
+
+.xr-dim-list {
+  display: inline-block !important;
+  list-style: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.xr-dim-list li {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.xr-dim-list:before {
+  content: "(";
+}
+
+.xr-dim-list:after {
+  content: ")";
+}
+
+.xr-dim-list li:not(:last-child):after {
+  content: ",";
+  padding-right: 5px;
+}
+
+.xr-has-index {
+  font-weight: bold;
+}
+
+.xr-var-list,
+.xr-var-item {
+  display: contents;
+}
+
+.xr-var-item > div,
+.xr-var-item label,
+.xr-var-item > .xr-var-name span {
+  background-color: var(--xr-background-color-row-even);
+  margin-bottom: 0;
+}
+
+.xr-var-item > .xr-var-name:hover span {
+  padding-right: 5px;
+}
+
+.xr-var-list > li:nth-child(odd) > div,
+.xr-var-list > li:nth-child(odd) > label,
+.xr-var-list > li:nth-child(odd) > .xr-var-name span {
+  background-color: var(--xr-background-color-row-odd);
+}
+
+.xr-var-name {
+  grid-column: 1;
+}
+
+.xr-var-dims {
+  grid-column: 2;
+}
+
+.xr-var-dtype {
+  grid-column: 3;
+  text-align: right;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-preview {
+  grid-column: 4;
+}
+
+.xr-index-preview {
+  grid-column: 2 / 5;
+  color: var(--xr-font-color2);
+}
+
+.xr-var-name,
+.xr-var-dims,
+.xr-var-dtype,
+.xr-preview,
+.xr-attrs dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+}
+
+.xr-var-name:hover,
+.xr-var-dims:hover,
+.xr-var-dtype:hover,
+.xr-attrs dt:hover {
+  overflow: visible;
+  width: auto;
+  z-index: 1;
+}
+
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  display: none;
+  background-color: var(--xr-background-color) !important;
+  padding-bottom: 5px !important;
+}
+
+.xr-var-attrs-in:checked ~ .xr-var-attrs,
+.xr-var-data-in:checked ~ .xr-var-data,
+.xr-index-data-in:checked ~ .xr-index-data {
+  display: block;
+}
+
+.xr-var-data > table {
+  float: right;
+}
+
+.xr-var-name span,
+.xr-var-data,
+.xr-index-name div,
+.xr-index-data,
+.xr-attrs {
+  padding-left: 25px !important;
+}
+
+.xr-attrs,
+.xr-var-attrs,
+.xr-var-data,
+.xr-index-data {
+  grid-column: 1 / -1;
+}
+
+dl.xr-attrs {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.xr-attrs dt,
+.xr-attrs dd {
+  padding: 0;
+  margin: 0;
+  float: left;
+  padding-right: 10px;
+  width: auto;
+}
+
+.xr-attrs dt {
+  font-weight: normal;
+  grid-column: 1;
+}
+
+.xr-attrs dt:hover span {
+  display: inline-block;
+  background: var(--xr-background-color);
+  padding-right: 10px;
+}
+
+.xr-attrs dd {
+  grid-column: 2;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.xr-icon-database,
+.xr-icon-file-text2,
+.xr-no-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1.5em !important;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+</style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 66MB
+Dimensions:                                       (time: 593917)
+Coordinates:
+  * time                                          (time) datetime64[ns] 5MB 2...
+Data variables: (12/19)
+    sea_water_pressure                            (time) float32 2MB 6.877 .....
+    sea_water_temperature_qartod_results          (time) uint8 594kB 1 1 ... 1 1
+    internal_timestamp                            (time) float64 5MB 1.712e+0...
+    sea_water_pressure_qartod_executed            (time) &lt;U1 2MB &#x27;1&#x27; &#x27;1&#x27; ... &#x27;1&#x27;
+    sea_water_practical_salinity                  (time) float64 5MB 31.08 .....
+    sea_water_temperature_qartod_executed         (time) &lt;U1 2MB &#x27;1&#x27; &#x27;1&#x27; ... &#x27;1&#x27;
+    ...                                            ...
+    sea_water_practical_salinity_qartod_executed  (time) &lt;U1 2MB &#x27;1&#x27; &#x27;1&#x27; ... &#x27;1&#x27;
+    estimated_chlorophyll                         (time) float64 5MB 1.17 ......
+    fluorometric_cdom                             (time) float64 5MB 5.315 .....
+    optical_backscatter                           (time) float64 5MB 0.01295 ...
+    target_counts                                 (time) float64 5MB 3.666e+0...
+    target_area                                   (time) float64 5MB 752.2 .....
+Attributes: (12/69)
+    node:                               RID27
+    comment:                            Data produced by the OOI M2M API and ...
+    publisher_email:                    
+    sourceUrl:                          http://oceanobservatories.org/
+    collection_method:                  telemetered
+    stream:                             ctdbp_cdef_dcl_instrument
+    ...                                 ...
+    geospatial_lon_resolution:          0.1
+    geospatial_vertical_units:          meters
+    geospatial_vertical_resolution:     0.1
+    geospatial_vertical_positive:       down
+    lat:                                35.95097
+    lon:                                -75.13082</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-3ba929e5-4344-4a65-92c0-5812967052a1' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-3ba929e5-4344-4a65-92c0-5812967052a1' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 593917</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-c38ddf13-381b-403b-ad90-a8264f4d4953' class='xr-section-summary-in' type='checkbox'  checked><label for='section-c38ddf13-381b-403b-ad90-a8264f4d4953' class='xr-section-summary' >Coordinates: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>datetime64[ns]</div><div class='xr-var-preview xr-preview'>2024-04-03T14:00:19.267999744 .....</div><input id='attrs-73384e09-9469-4b08-bb01-35c5f4d569a7' class='xr-var-attrs-in' type='checkbox' disabled><label for='attrs-73384e09-9469-4b08-bb01-35c5f4d569a7' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-ebc48c53-72bd-42dd-b815-1e3f0f22d35a' class='xr-var-data-in' type='checkbox'><label for='data-ebc48c53-72bd-42dd-b815-1e3f0f22d35a' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'></dl></div><div class='xr-var-data'><pre>array([&#x27;2024-04-03T14:00:19.267999744&#x27;, &#x27;2024-04-03T14:00:29.263000064&#x27;,
+       &#x27;2024-04-03T14:00:39.263000064&#x27;, ..., &#x27;2025-05-15T03:17:49.635999744&#x27;,
+       &#x27;2025-05-15T03:17:59.635999744&#x27;, &#x27;2025-05-15T03:18:09.640999936&#x27;],
+      shape=(593917,), dtype=&#x27;datetime64[ns]&#x27;)</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-3b4ef5d0-6f5d-4187-bbc9-8dbe20927182' class='xr-section-summary-in' type='checkbox'  ><label for='section-3b4ef5d0-6f5d-4187-bbc9-8dbe20927182' class='xr-section-summary' >Data variables: <span>(19)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_pressure</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>6.877 7.11 6.714 ... 6.885 6.785</div><input id='attrs-05a79f5f-de16-4c1b-b9c2-ccd931a7f72f' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-05a79f5f-de16-4c1b-b9c2-ccd931a7f72f' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2d16941f-bbd2-4354-a2ef-2451ef5dc6a0' class='xr-var-data-in' type='checkbox'><label for='data-2d16941f-bbd2-4354-a2ef-2451ef5dc6a0' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Seawater Pressure refers to the pressure exerted on a sensor in situ by the weight of the column of seawater above it. It is calculated by subtracting one standard atmosphere from the absolute pressure at the sensor to remove the weight of the atmosphere on top of the water column. The pressure at a sensor in situ provides a metric of the depth of that sensor.</dd><dt><span>long_name :</span></dt><dd>Seawater Pressure</dd><dt><span>precision :</span></dt><dd>3</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd><dt><span>data_product_identifier :</span></dt><dd>PRESWAT_L1</dd><dt><span>standard_name :</span></dt><dd>sea_water_pressure</dd><dt><span>units :</span></dt><dd>dbar</dd><dt><span>ancillary_variables :</span></dt><dd>pressure_qartod_results pressure_qartod_executed</dd><dt><span>alternate_parameter_name :</span></dt><dd>pressure</dd></dl></div><div class='xr-var-data'><pre>array([6.877, 7.11 , 6.714, ..., 7.063, 6.885, 6.785],
+      shape=(593917,), dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_temperature_qartod_results</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>uint8</div><div class='xr-var-preview xr-preview'>1 1 1 1 1 1 1 1 ... 1 1 1 1 1 1 1 1</div><input id='attrs-3119e78c-8d7c-4d8c-ad54-d4a1c2e103b6' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-3119e78c-8d7c-4d8c-ad54-d4a1c2e103b6' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-be38df4c-c966-4257-bdae-08c903016d48' class='xr-var-data-in' type='checkbox'><label for='data-be38df4c-c966-4257-bdae-08c903016d48' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>flag_values :</span></dt><dd>[1 2 3 4 9]</dd><dt><span>flag_meanings :</span></dt><dd>pass not_evaluated suspect_or_of_high_interest fail missing_data</dd><dt><span>standard_name :</span></dt><dd>sea_water_temperature status_flag</dd><dt><span>long_name :</span></dt><dd>Seawater Temperature QARTOD Summary Flag</dd><dt><span>references :</span></dt><dd>https://ioos.noaa.gov/project/qartod https://github.com/ioos/ioos_qc</dd><dt><span>comment :</span></dt><dd>Summary QARTOD test flags. For each datum, the flag is set to the most significant result of all QARTOD tests run for that datum.</dd><dt><span>alternate_parameter_name :</span></dt><dd>temp_qartod_results</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd></dl></div><div class='xr-var-data'><pre>array([1, 1, 1, ..., 1, 1, 1], shape=(593917,), dtype=uint8)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>internal_timestamp</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>1.712e+09 1.712e+09 ... 1.747e+09</div><input id='attrs-9c377e3c-7e9d-4451-a82e-b4150e886826' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-9c377e3c-7e9d-4451-a82e-b4150e886826' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-71f8985c-752d-4928-950e-8e991908f486' class='xr-var-data-in' type='checkbox'><label for='data-71f8985c-752d-4928-950e-8e991908f486' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>long_name :</span></dt><dd>Internal CTD Clock Time</dd><dt><span>standard_name :</span></dt><dd>time</dd><dt><span>units :</span></dt><dd>seconds since 1970-01-01 00:00:00 0:00</dd><dt><span>calendar :</span></dt><dd>gregorian</dd><dt><span>comment :</span></dt><dd>Comparing the instrument internal clock versus the GPS referenced sampling time will allow for calculations of the instrument clock offset and drift. Useful when working with the recovered instrument data where no external GPS referenced clock is available.</dd></dl></div><div class='xr-var-data'><pre>array([1.71215282e+09, 1.71215283e+09, 1.71215284e+09, ...,
+       1.74727907e+09, 1.74727908e+09, 1.74727909e+09], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_pressure_qartod_executed</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>&lt;U1</div><div class='xr-var-preview xr-preview'>&#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; ... &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27;</div><input id='attrs-eb70d061-f16e-42db-883f-85ced8bdb36e' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-eb70d061-f16e-42db-883f-85ced8bdb36e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-50ff406e-c4ab-4f3d-92be-834e0ebcf6e9' class='xr-var-data-in' type='checkbox'><label for='data-50ff406e-c4ab-4f3d-92be-834e0ebcf6e9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>tests_executed :</span></dt><dd>gross_range_test</dd><dt><span>standard_name :</span></dt><dd>sea_water_pressure status_flag</dd><dt><span>long_name :</span></dt><dd>Seawater Pressure Individual QARTOD Flags</dd><dt><span>references :</span></dt><dd>https://ioos.noaa.gov/project/qartod https://github.com/ioos/ioos_qc</dd><dt><span>comment :</span></dt><dd>Individual QARTOD test flags. For each datum, flags are listed in a string matching the order of the tests_executed attribute. Flags should be interpreted using the standard QARTOD mapping: [1: pass, 2: not_evaluated, 3: suspect_or_of_high_interest, 4: fail, 9: missing_data].</dd><dt><span>alternate_parameter_name :</span></dt><dd>pressure_qartod_executed</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd></dl></div><div class='xr-var-data'><pre>array([&#x27;1&#x27;, &#x27;1&#x27;, &#x27;1&#x27;, ..., &#x27;1&#x27;, &#x27;1&#x27;, &#x27;1&#x27;], shape=(593917,), dtype=&#x27;&lt;U1&#x27;)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_practical_salinity</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>31.08 31.09 31.12 ... 34.52 34.49</div><input id='attrs-6f59b9b9-a0b7-46eb-9539-9aa063333af6' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-6f59b9b9-a0b7-46eb-9539-9aa063333af6' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-a2624d5d-d3e5-413f-91a8-150bb0e5d7d9' class='xr-var-data-in' type='checkbox'><label for='data-a2624d5d-d3e5-413f-91a8-150bb0e5d7d9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Salinity is generally defined as the concentration of dissolved salt in a parcel of seawater. Practical Salinity is a more specific unitless quantity calculated from the conductivity of seawater and adjusted for temperature and pressure. It is approximately equivalent to Absolute Salinity (the mass fraction of dissolved salt in seawater) but they are not interchangeable.</dd><dt><span>long_name :</span></dt><dd>Practical Salinity</dd><dt><span>precision :</span></dt><dd>4</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd><dt><span>data_product_identifier :</span></dt><dd>PRACSAL_L2</dd><dt><span>standard_name :</span></dt><dd>sea_water_practical_salinity</dd><dt><span>units :</span></dt><dd>1</dd><dt><span>ancillary_variables :</span></dt><dd>practical_salinity_qartod_results practical_salinity_qartod_executed sea_water_pressure sea_water_electrical_conductivity sea_water_temperature</dd><dt><span>alternate_parameter_name :</span></dt><dd>practical_salinity</dd></dl></div><div class='xr-var-data'><pre>array([31.07809902, 31.09440348, 31.12458863, ..., 34.50171607,
+       34.51544752, 34.49499618], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_temperature_qartod_executed</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>&lt;U1</div><div class='xr-var-preview xr-preview'>&#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; ... &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27;</div><input id='attrs-2f01c3bf-9ce6-4fba-93c3-f257ef3c5809' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-2f01c3bf-9ce6-4fba-93c3-f257ef3c5809' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4bf57b2f-6300-45a7-8d9c-ed2d86947c37' class='xr-var-data-in' type='checkbox'><label for='data-4bf57b2f-6300-45a7-8d9c-ed2d86947c37' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>tests_executed :</span></dt><dd>gross_range_test</dd><dt><span>standard_name :</span></dt><dd>sea_water_temperature status_flag</dd><dt><span>long_name :</span></dt><dd>Seawater Temperature Individual QARTOD Flags</dd><dt><span>references :</span></dt><dd>https://ioos.noaa.gov/project/qartod https://github.com/ioos/ioos_qc</dd><dt><span>comment :</span></dt><dd>Individual QARTOD test flags. For each datum, flags are listed in a string matching the order of the tests_executed attribute. Flags should be interpreted using the standard QARTOD mapping: [1: pass, 2: not_evaluated, 3: suspect_or_of_high_interest, 4: fail, 9: missing_data].</dd><dt><span>alternate_parameter_name :</span></dt><dd>temp_qartod_executed</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd></dl></div><div class='xr-var-data'><pre>array([&#x27;1&#x27;, &#x27;1&#x27;, &#x27;1&#x27;, ..., &#x27;1&#x27;, &#x27;1&#x27;, &#x27;1&#x27;], shape=(593917,), dtype=&#x27;&lt;U1&#x27;)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>deployment</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>int32</div><div class='xr-var-preview xr-preview'>1 1 1 1 1 1 1 1 ... 2 2 2 2 2 2 2 2</div><input id='attrs-b721dc0b-53fc-40d3-9c46-5c5b81d9f5e6' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-b721dc0b-53fc-40d3-9c46-5c5b81d9f5e6' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-21945d1c-a2c4-4cba-bfaa-b69115c19b86' class='xr-var-data-in' type='checkbox'><label for='data-21945d1c-a2c4-4cba-bfaa-b69115c19b86' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>name :</span></dt><dd>deployment</dd></dl></div><div class='xr-var-data'><pre>array([1, 1, 1, ..., 2, 2, 2], shape=(593917,), dtype=int32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_practical_salinity_qartod_results</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>uint8</div><div class='xr-var-preview xr-preview'>1 1 1 1 1 1 1 1 ... 1 1 1 1 1 1 1 1</div><input id='attrs-7be90d4d-9287-4eac-91b5-c1b832512d98' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-7be90d4d-9287-4eac-91b5-c1b832512d98' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-b84b1c00-95e1-4425-86ad-467d606b1250' class='xr-var-data-in' type='checkbox'><label for='data-b84b1c00-95e1-4425-86ad-467d606b1250' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>flag_values :</span></dt><dd>[1 2 3 4 9]</dd><dt><span>flag_meanings :</span></dt><dd>pass not_evaluated suspect_or_of_high_interest fail missing_data</dd><dt><span>standard_name :</span></dt><dd>sea_water_practical_salinity status_flag</dd><dt><span>long_name :</span></dt><dd>Practical Salinity QARTOD Summary Flag</dd><dt><span>references :</span></dt><dd>https://ioos.noaa.gov/project/qartod https://github.com/ioos/ioos_qc</dd><dt><span>comment :</span></dt><dd>Summary QARTOD test flags. For each datum, the flag is set to the most significant result of all QARTOD tests run for that datum.</dd><dt><span>alternate_parameter_name :</span></dt><dd>practical_salinity_qartod_results</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd></dl></div><div class='xr-var-data'><pre>array([1, 1, 1, ..., 1, 1, 1], shape=(593917,), dtype=uint8)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_temperature</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>9.749 9.731 9.698 ... 20.16 20.11</div><input id='attrs-d4283d9d-8523-4735-8153-f0434056cedf' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-d4283d9d-8523-4735-8153-f0434056cedf' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-88f1f0b0-e0e0-4393-877f-4f83d0542525' class='xr-var-data-in' type='checkbox'><label for='data-88f1f0b0-e0e0-4393-877f-4f83d0542525' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Seawater temperature near the sensor.</dd><dt><span>long_name :</span></dt><dd>Seawater Temperature</dd><dt><span>precision :</span></dt><dd>4</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd><dt><span>data_product_identifier :</span></dt><dd>TEMPWAT_L1</dd><dt><span>standard_name :</span></dt><dd>sea_water_temperature</dd><dt><span>units :</span></dt><dd>degrees_Celsius</dd><dt><span>ancillary_variables :</span></dt><dd>temp_qartod_results temp_qartod_executed</dd><dt><span>alternate_parameter_name :</span></dt><dd>temp</dd></dl></div><div class='xr-var-data'><pre>array([ 9.7492,  9.7315,  9.6976, ..., 20.1233, 20.1552, 20.1133],
+      shape=(593917,), dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_density</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>1.024e+03 1.024e+03 ... 1.024e+03</div><input id='attrs-9000b8fa-329b-4ed0-aee7-0491eaa8238f' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-9000b8fa-329b-4ed0-aee7-0491eaa8238f' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-697725db-e1f7-4121-95e5-ce4cf6225585' class='xr-var-data-in' type='checkbox'><label for='data-697725db-e1f7-4121-95e5-ce4cf6225585' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Seawater Density is defined as mass per unit volume and is calculated from the conductivity, temperature and depth of a seawater sample using the TEOS-10 equation.</dd><dt><span>long_name :</span></dt><dd>Seawater Density</dd><dt><span>precision :</span></dt><dd>3</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd><dt><span>data_product_identifier :</span></dt><dd>DENSITY_L2</dd><dt><span>standard_name :</span></dt><dd>sea_water_density</dd><dt><span>units :</span></dt><dd>kg m-3</dd><dt><span>alternate_parameter_name :</span></dt><dd>density</dd><dt><span>ancillary_variables :</span></dt><dd>sea_water_pressure sea_water_practical_salinity sea_water_temperature</dd></dl></div><div class='xr-var-data'><pre>array([1023.96617844, 1023.98279171, 1024.00995145, ..., 1024.38504209,
+       1024.38629442, 1024.38134753], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>depth</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>6.827 7.058 6.665 ... 6.835 6.735</div><input id='attrs-c98a5a5e-49ab-41a5-aeb9-8920d3635117' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-c98a5a5e-49ab-41a5-aeb9-8920d3635117' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8e03b62d-2d87-450f-ba76-a952b27f4695' class='xr-var-data-in' type='checkbox'><label for='data-8e03b62d-2d87-450f-ba76-a952b27f4695' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Depth (m) calculated from pressure (dbar) and latitude.</dd><dt><span>precision :</span></dt><dd>3</dd><dt><span>long_name :</span></dt><dd>Depth calculated from pressure</dd><dt><span>units :</span></dt><dd>m</dd><dt><span>ancillary_variables :</span></dt><dd>sea_water_pressure</dd><dt><span>axis :</span></dt><dd>Z</dd></dl></div><div class='xr-var-data'><pre>array([6.82667636, 7.05796817, 6.66487252, ..., 7.0113128 , 6.83461799,
+       6.7353511 ], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_pressure_qartod_results</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>uint8</div><div class='xr-var-preview xr-preview'>1 1 1 1 1 1 1 1 ... 1 1 1 1 1 1 1 1</div><input id='attrs-ad2fb45e-a795-45d5-a56e-add5d523926e' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-ad2fb45e-a795-45d5-a56e-add5d523926e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-1870e8d3-027d-4d16-bdf8-379a15b5545e' class='xr-var-data-in' type='checkbox'><label for='data-1870e8d3-027d-4d16-bdf8-379a15b5545e' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>flag_values :</span></dt><dd>[1 2 3 4 9]</dd><dt><span>flag_meanings :</span></dt><dd>pass not_evaluated suspect_or_of_high_interest fail missing_data</dd><dt><span>standard_name :</span></dt><dd>sea_water_pressure status_flag</dd><dt><span>long_name :</span></dt><dd>Seawater Pressure QARTOD Summary Flag</dd><dt><span>references :</span></dt><dd>https://ioos.noaa.gov/project/qartod https://github.com/ioos/ioos_qc</dd><dt><span>comment :</span></dt><dd>Summary QARTOD test flags. For each datum, the flag is set to the most significant result of all QARTOD tests run for that datum.</dd><dt><span>alternate_parameter_name :</span></dt><dd>pressure_qartod_results</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd></dl></div><div class='xr-var-data'><pre>array([1, 1, 1, ..., 1, 1, 1], shape=(593917,), dtype=uint8)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_electrical_conductivity</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float32</div><div class='xr-var-preview xr-preview'>3.402 3.402 3.402 ... 4.749 4.742</div><input id='attrs-1c8eaff9-5aa0-4f1c-a211-ccc085c0782e' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-1c8eaff9-5aa0-4f1c-a211-ccc085c0782e' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-40a5252a-8172-4528-a669-bcd02bacb7b0' class='xr-var-data-in' type='checkbox'><label for='data-40a5252a-8172-4528-a669-bcd02bacb7b0' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Seawater conductivity refers to the ability of seawater to conduct electricity. The presence of ions in the seawater, such as salt, increases the electrical conducting ability of seawater. As such, conductivity can be used as a proxy for determining the quantity of salt in a sample of seawater.</dd><dt><span>long_name :</span></dt><dd>Seawater Conductivity</dd><dt><span>precision :</span></dt><dd>6</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd><dt><span>data_product_identifier :</span></dt><dd>CONDWAT_L1</dd><dt><span>standard_name :</span></dt><dd>sea_water_electrical_conductivity</dd><dt><span>units :</span></dt><dd>S m-1</dd><dt><span>alternate_parameter_name :</span></dt><dd>conductivity</dd></dl></div><div class='xr-var-data'><pre>array([3.40179, 3.4019 , 3.40197, ..., 4.74363, 4.74851, 4.74179],
+      shape=(593917,), dtype=float32)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>sea_water_practical_salinity_qartod_executed</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>&lt;U1</div><div class='xr-var-preview xr-preview'>&#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; ... &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27; &#x27;1&#x27;</div><input id='attrs-d8063fc7-b8ea-46f3-a624-a84232e098ea' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-d8063fc7-b8ea-46f3-a624-a84232e098ea' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-fe54c4ea-1909-4d4e-83dd-28b0a4b6e608' class='xr-var-data-in' type='checkbox'><label for='data-fe54c4ea-1909-4d4e-83dd-28b0a4b6e608' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>tests_executed :</span></dt><dd>gross_range_test</dd><dt><span>standard_name :</span></dt><dd>sea_water_practical_salinity status_flag</dd><dt><span>long_name :</span></dt><dd>Practical Salinity Individual QARTOD Flags</dd><dt><span>references :</span></dt><dd>https://ioos.noaa.gov/project/qartod https://github.com/ioos/ioos_qc</dd><dt><span>comment :</span></dt><dd>Individual QARTOD test flags. For each datum, flags are listed in a string matching the order of the tests_executed attribute. Flags should be interpreted using the standard QARTOD mapping: [1: pass, 2: not_evaluated, 3: suspect_or_of_high_interest, 4: fail, 9: missing_data].</dd><dt><span>alternate_parameter_name :</span></dt><dd>practical_salinity_qartod_executed</dd><dt><span>coordinates :</span></dt><dd>time lat lon depth</dd></dl></div><div class='xr-var-data'><pre>array([&#x27;1&#x27;, &#x27;1&#x27;, &#x27;1&#x27;, ..., &#x27;1&#x27;, &#x27;1&#x27;, &#x27;1&#x27;], shape=(593917,), dtype=&#x27;&lt;U1&#x27;)</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>estimated_chlorophyll</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>1.17 1.17 1.169 ... 0.3319 0.3319</div><input id='attrs-9c32af2e-1058-42cc-9bea-95d25f75a483' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-9c32af2e-1058-42cc-9bea-95d25f75a483' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-d51e75ca-2c4b-401b-8f32-f3f93dd7be39' class='xr-var-data-in' type='checkbox'><label for='data-d51e75ca-2c4b-401b-8f32-f3f93dd7be39' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>Estimated chlorophyll concentration based upon a calibration curve derived from a fluorescent proxy approximately equal to 25 ug/l of a Thalassiosira weissflogii phytoplankton culture. This measurement is considered to be an estimate only of the true chlorophyll concentration.</dd><dt><span>long_name :</span></dt><dd>Estimated Chlorophyll Concentration</dd><dt><span>precision :</span></dt><dd>6</dd><dt><span>coordinates :</span></dt><dd>time lat lon</dd><dt><span>data_product_identifier :</span></dt><dd>CHLAFLO_L1</dd><dt><span>standard_name :</span></dt><dd>mass_concentration_of_chlorophyll_in_sea_water</dd><dt><span>units :</span></dt><dd>ug L-1</dd><dt><span>ancillary_variables :</span></dt><dd>raw_chlorophyll estimated_chlorophyll_qc_executed estimated_chlorophyll_qc_results</dd><dt><span>ooinet_variable_name :</span></dt><dd>fluorometric_chlorophyll_a</dd></dl></div><div class='xr-var-data'><pre>array([1.17001478, 1.16961265, 1.16921032, ..., 0.331925  , 0.331925  ,
+       0.331925  ], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>fluorometric_cdom</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>5.315 5.323 5.331 ... 4.534 4.534</div><input id='attrs-c323cdb3-ab3d-4231-a20d-378c3f1d6e26' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-c323cdb3-ab3d-4231-a20d-378c3f1d6e26' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-3ef9a056-baf7-4e58-b8b0-f2c85b06f33a' class='xr-var-data-in' type='checkbox'><label for='data-3ef9a056-baf7-4e58-b8b0-f2c85b06f33a' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>-9999999.0</dd><dt><span>comment :</span></dt><dd>More commonly referred to as Chromophoric Dissolved Organic Matter (CDOM). CDOM plays an important role in the carbon cycling and biogeochemistry of coastal waters. It occurs naturally in aquatic environments primarily as a result of tannins released from decaying plant and animal matter, and can enter coastal areas in river run-off containing organic materials leached from soils.</dd><dt><span>long_name :</span></dt><dd>Fluorometric CDOM Concentration</dd><dt><span>precision :</span></dt><dd>6</dd><dt><span>coordinates :</span></dt><dd>time lat lon</dd><dt><span>data_product_identifier :</span></dt><dd>CDOMFLO_L1</dd><dt><span>units :</span></dt><dd>ppb</dd><dt><span>ancillary_variables :</span></dt><dd>raw_fluorometric_cdom fluorometric_cdom_qc_executed fluorometric_cdom_qc_results</dd><dt><span>standard_name :</span></dt><dd>concentration_of_colored_dissolved_organic_matter_in_sea_water_expressed_as_equivalent_mass_fraction_of_quinine_sulfate_dihydrate</dd></dl></div><div class='xr-var-data'><pre>array([5.31535528, 5.32333618, 5.33132107, ..., 4.5335    , 4.5335    ,
+       4.5335    ], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>optical_backscatter</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.01295 0.01296 ... 0.001286</div><input id='attrs-68a429e6-aec8-4b4c-a64d-8bf3d4c0ddf5' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-68a429e6-aec8-4b4c-a64d-8bf3d4c0ddf5' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-cd259fd2-a148-4676-82aa-b5aea3f3d0f1' class='xr-var-data-in' type='checkbox'><label for='data-cd259fd2-a148-4676-82aa-b5aea3f3d0f1' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>_FillValue :</span></dt><dd>nan</dd><dt><span>comment :</span></dt><dd>Total (particulate + water) optical backscatter at 700 nm, derived from the Volume Scattering Function and corrected for effects of temperature and salinity.</dd><dt><span>long_name :</span></dt><dd>Total Optical Backscatter at 700 nm</dd><dt><span>precision :</span></dt><dd>4</dd><dt><span>coordinates :</span></dt><dd>time lat lon</dd><dt><span>data_product_identifier :</span></dt><dd>FLUBSCT_L2</dd><dt><span>units :</span></dt><dd>m-1</dd><dt><span>ancillary_variables :</span></dt><dd>beta_700 sea_water_temperature sea_water_practical_salinity sea_water_scattering_coefficient bback_qc_executed bback_qc_results</dd><dt><span>ooinet_variable_name :</span></dt><dd>optical_backscatter</dd><dt><span>standard_name :</span></dt><dd>volume_backwards_scattering_coefficient_of_radiative_flux_in_sea_water</dd></dl></div><div class='xr-var-data'><pre>array([0.01294684, 0.01295585, 0.01296486, ..., 0.00128607, 0.00128607,
+       0.00128607], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>target_counts</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>3.666e+03 3.666e+03 ... 284.0 284.0</div><input id='attrs-ef193cc7-01cc-4fe7-a555-3d9d19f7f5b8' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-ef193cc7-01cc-4fe7-a555-3d9d19f7f5b8' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-4fa785d6-ef85-41a7-bd9b-2b6df0d5f911' class='xr-var-data-in' type='checkbox'><label for='data-4fa785d6-ef85-41a7-bd9b-2b6df0d5f911' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>units :</span></dt><dd>counts</dd></dl></div><div class='xr-var-data'><pre>array([3666., 3666., 3666., ...,  284.,  284.,  284.], shape=(593917,))</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>target_area</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>752.2 752.2 752.2 ... 801.1 801.1</div><input id='attrs-17c46e95-d87f-4146-883b-d32488059ddb' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-17c46e95-d87f-4146-883b-d32488059ddb' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-d0567292-d3df-4cce-bdb2-d6cacbd57602' class='xr-var-data-in' type='checkbox'><label for='data-d0567292-d3df-4cce-bdb2-d6cacbd57602' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>units :</span></dt><dd>um^2</dd></dl></div><div class='xr-var-data'><pre>array([752.22954866, 752.22954866, 752.22954866, ..., 801.08193744,
+       801.08193744, 801.08193744], shape=(593917,))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-821b2da6-159e-4c7a-b535-ffbeb905b6b4' class='xr-section-summary-in' type='checkbox'  ><label for='section-821b2da6-159e-4c7a-b535-ffbeb905b6b4' class='xr-section-summary' >Indexes: <span>(1)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-79d1d2f9-006f-4995-a3eb-613e3c6ece3c' class='xr-index-data-in' type='checkbox'/><label for='index-79d1d2f9-006f-4995-a3eb-613e3c6ece3c' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(DatetimeIndex([&#x27;2024-04-03 14:00:19.267999744&#x27;,
+               &#x27;2024-04-03 14:00:29.263000064&#x27;,
+               &#x27;2024-04-03 14:00:39.263000064&#x27;,
+               &#x27;2024-04-03 14:00:49.265999872&#x27;,
+               &#x27;2024-04-03 14:00:59.263000064&#x27;,
+               &#x27;2024-04-03 14:01:09.263000064&#x27;,
+               &#x27;2024-04-03 14:01:19.262000128&#x27;,
+               &#x27;2024-04-03 14:01:29.263000064&#x27;,
+               &#x27;2024-04-03 14:01:39.262000128&#x27;,
+                  &#x27;2024-04-03 14:01:49.264000&#x27;,
+               ...
+               &#x27;2025-05-15 03:16:39.635999744&#x27;,
+               &#x27;2025-05-15 03:16:49.637000192&#x27;,
+               &#x27;2025-05-15 03:16:59.644000256&#x27;,
+               &#x27;2025-05-15 03:17:09.635999744&#x27;,
+               &#x27;2025-05-15 03:17:19.637000192&#x27;,
+               &#x27;2025-05-15 03:17:29.637000192&#x27;,
+               &#x27;2025-05-15 03:17:39.637000192&#x27;,
+               &#x27;2025-05-15 03:17:49.635999744&#x27;,
+               &#x27;2025-05-15 03:17:59.635999744&#x27;,
+               &#x27;2025-05-15 03:18:09.640999936&#x27;],
+              dtype=&#x27;datetime64[ns]&#x27;, name=&#x27;time&#x27;, length=593917, freq=None))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-39de1ef5-2ed6-4b9d-ab70-3a2f142ca7cf' class='xr-section-summary-in' type='checkbox'  ><label for='section-39de1ef5-2ed6-4b9d-ab70-3a2f142ca7cf' class='xr-section-summary' >Attributes: <span>(69)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>node :</span></dt><dd>RID27</dd><dt><span>comment :</span></dt><dd>Data produced by the OOI M2M API and reworked for use in locally stored NetCDF files.</dd><dt><span>publisher_email :</span></dt><dd></dd><dt><span>sourceUrl :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>collection_method :</span></dt><dd>telemetered</dd><dt><span>stream :</span></dt><dd>ctdbp_cdef_dcl_instrument</dd><dt><span>featureType :</span></dt><dd>timeSeries</dd><dt><span>creator_email :</span></dt><dd></dd><dt><span>publisher_name :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>date_modified :</span></dt><dd>2025-05-04T05:53:35.052998</dd><dt><span>keywords :</span></dt><dd></dd><dt><span>cdm_data_type :</span></dt><dd>Station</dd><dt><span>references :</span></dt><dd>More information can be found at http://oceanobservatories.org/</dd><dt><span>Metadata_Conventions :</span></dt><dd>Unidata Dataset Discovery v1.0</dd><dt><span>date_created :</span></dt><dd>2025-05-04T05:53:35.052995</dd><dt><span>id :</span></dt><dd>CP10CNSM-RID27-03-CTDBPC000-telemetered-ctdbp_cdef_dcl_instrument</dd><dt><span>requestUUID :</span></dt><dd>bad46c81-cbf9-41ea-bc83-a5fae250f862</dd><dt><span>contributor_role :</span></dt><dd></dd><dt><span>summary :</span></dt><dd>Dataset Generated by Stream Engine from Ocean Observatories Initiative</dd><dt><span>keywords_vocabulary :</span></dt><dd></dd><dt><span>institution :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>naming_authority :</span></dt><dd>org.oceanobservatories</dd><dt><span>infoUrl :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>license :</span></dt><dd></dd><dt><span>contributor_name :</span></dt><dd></dd><dt><span>uuid :</span></dt><dd>bad46c81-cbf9-41ea-bc83-a5fae250f862</dd><dt><span>creator_name :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>title :</span></dt><dd>Data produced by Stream Engine version 1.20.14 for CP10CNSM-RID27-03-CTDBPC000-telemetered-ctdbp_cdef_dcl_instrument</dd><dt><span>sensor :</span></dt><dd>03-CTDBPC000</dd><dt><span>standard_name_vocabulary :</span></dt><dd>NetCDF Climate and Forecast (CF) Metadata Convention Standard Name Table 29</dd><dt><span>acknowledgement :</span></dt><dd>National Science Foundation</dd><dt><span>Conventions :</span></dt><dd>CF-1.6</dd><dt><span>project :</span></dt><dd>Ocean Observatories Initiative</dd><dt><span>source :</span></dt><dd>CP10CNSM-RID27-03-CTDBPC000-telemetered-ctdbp_cdef_dcl_instrument</dd><dt><span>publisher_url :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>creator_url :</span></dt><dd>http://oceanobservatories.org/</dd><dt><span>nodc_template_version :</span></dt><dd>NODC_NetCDF_TimeSeries_Orthogonal_Template_v1.1</dd><dt><span>subsite :</span></dt><dd>CP10CNSM</dd><dt><span>processing_level :</span></dt><dd>L2</dd><dt><span>history :</span></dt><dd>2025-05-04T05:53:35.052967 generated from Stream Engine</dd><dt><span>Manufacturer :</span></dt><dd>Sea-Bird Electronics</dd><dt><span>ModelNumber :</span></dt><dd>SBE 16plus V2</dd><dt><span>SerialNumber :</span></dt><dd>16-50108</dd><dt><span>Description :</span></dt><dd>CTD Pumped: CTDBP Series C</dd><dt><span>FirmwareVersion :</span></dt><dd>Not specified.</dd><dt><span>SoftwareVersion :</span></dt><dd>Not specified.</dd><dt><span>AssetUniqueID :</span></dt><dd>CGINS-CTDBPC-50108</dd><dt><span>Notes :</span></dt><dd>Not specified.</dd><dt><span>Owner :</span></dt><dd>Not specified.</dd><dt><span>RemoteResources :</span></dt><dd>[]</dd><dt><span>ShelfLifeExpirationDate :</span></dt><dd>Not specified.</dd><dt><span>Mobile :</span></dt><dd>False</dd><dt><span>AssetManagementRecordLastModified :</span></dt><dd>2025-05-01T16:56:47.799000</dd><dt><span>time_coverage_start :</span></dt><dd>2024-04-03T14:00:19.267999744Z</dd><dt><span>time_coverage_end :</span></dt><dd>2025-05-15T03:18:09.640999936Z</dd><dt><span>time_coverage_resolution :</span></dt><dd>P59.14S</dd><dt><span>geospatial_lat_min :</span></dt><dd>35.95097</dd><dt><span>geospatial_lat_max :</span></dt><dd>35.95097</dd><dt><span>geospatial_lat_units :</span></dt><dd>degrees_north</dd><dt><span>geospatial_lat_resolution :</span></dt><dd>0.1</dd><dt><span>geospatial_lon_min :</span></dt><dd>-75.13082</dd><dt><span>geospatial_lon_max :</span></dt><dd>-75.13082</dd><dt><span>geospatial_lon_units :</span></dt><dd>degrees_east</dd><dt><span>geospatial_lon_resolution :</span></dt><dd>0.1</dd><dt><span>geospatial_vertical_units :</span></dt><dd>meters</dd><dt><span>geospatial_vertical_resolution :</span></dt><dd>0.1</dd><dt><span>geospatial_vertical_positive :</span></dt><dd>down</dd><dt><span>lat :</span></dt><dd>35.95097</dd><dt><span>lon :</span></dt><dd>-75.13082</dd></dl></div></li></ul></div></div></div></div>
+</div>
+</section>
+<section id="plotting-the-merged-data">
+<h3>Plotting the Merged Data<a class="headerlink" href="#plotting-the-merged-data" title="Link to this heading">#</a></h3>
+<p>Now that the data has all been merged, we can create a set of stacked timeseries plots for an initial review of the data</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">sea_water_temperature</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax1</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># turn off x-axis ticklabels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span> <span class="mi">29</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature ($^\circ$C)&#39;</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">sea_water_practical_salinity</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax2</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># turn off x-axis ticklabels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">28</span><span class="p">,</span> <span class="mi">38</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Salinity (psu)&#39;</span><span class="p">)</span>
+
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">estimated_chlorophyll</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax3</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># turn off x-axis ticklabels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Chlorophyll ($\mu$g/L)&#39;</span><span class="p">)</span>
+
+<span class="n">ax4</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">optical_backscatter</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax4</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># turn off x-axis ticklabels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Backscatter (m$^-1$)&#39;</span><span class="p">)</span>
+
+<span class="n">ax5</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">fluorometric_cdom</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax5</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># turn off x-axis ticklabels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;FDOM (ppm)&#39;</span><span class="p">)</span>
+
+<span class="n">ax6</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">target_counts</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax6</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># turn off x-axis ticklabels</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8000</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Target Counts&#39;</span><span class="p">)</span>
+
+<span class="n">ax6</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merge</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">merge</span><span class="o">.</span><span class="n">target_area</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3000</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Target Area ($\mu$m$^2$)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../../_images/9f858d82258423d88b4e90474b93e80de66d14f0e00cc2ddae382e84ccbdd386.png" src="../../../../_images/9f858d82258423d88b4e90474b93e80de66d14f0e00cc2ddae382e84ccbdd386.png" />
+</div>
+</div>
+</section>
+<section id="looked-at-from-a-different-direction">
+<h3>Looked at from a different direction<a class="headerlink" href="#looked-at-from-a-different-direction" title="Link to this heading">#</a></h3>
+<p>We can look at some of the data above, in particular the target counts and area, from a different perspective using a T/S diagram.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">merge</span><span class="p">[</span><span class="s1">&#39;sea_water_temperature&#39;</span><span class="p">],</span> <span class="n">merge</span><span class="p">[</span><span class="s1">&#39;sea_water_practical_salinity&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">merge</span><span class="p">[</span><span class="s1">&#39;target_counts&#39;</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">shrink</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Target Counts&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Temperature ($^\circ$C)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Salinity (psu)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span> <span class="mi">29</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">28</span><span class="p">,</span> <span class="mi">38</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">merge</span><span class="p">[</span><span class="s1">&#39;sea_water_temperature&#39;</span><span class="p">],</span> <span class="n">merge</span><span class="p">[</span><span class="s1">&#39;sea_water_practical_salinity&#39;</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">merge</span><span class="p">[</span><span class="s1">&#39;target_area&#39;</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">)</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">shrink</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Target Area ($\mu$m$^2$)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Temperature ($^\circ$C)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Salinity (psu)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../../../_images/0f36a9f8ca1bcb6c39261a9c061ff9afee759633da7028a98564c356188a22de.png" src="../../../../_images/0f36a9f8ca1bcb6c39261a9c061ff9afee759633da7028a98564c356188a22de.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="other-co-located-instruments">
+<h2>Other Co-Located Instruments<a class="headerlink" href="#other-co-located-instruments" title="Link to this heading">#</a></h2>
+<p>The above example only uses two co-located instruments to provide an environmental context for the IFCB data. Other instruments on the NSIF that could be used, include:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p>Measurement</p></th>
+<th class="head text-center"><p>Instrument</p></th>
+<th class="head text-center"><p>Depth</p></th>
+<th class="head text-center"><p>Reference Designator</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>Dissolved nitrate concentration</p></td>
+<td class="text-center"><p>Sea-Bird Scientific SUNA V2</p></td>
+<td class="text-center"><p>7 m</p></td>
+<td class="text-center"><p>CP10CNSM-RID26-07-NUTNRB000</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>Dissolved oxygen concentration</p></td>
+<td class="text-center"><p>Aanderaa Optode 4831</p></td>
+<td class="text-center"><p>7 m</p></td>
+<td class="text-center"><p>CP10CNSM-RID27-04-DOSTAD000</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>Downwelling spectral irradiance (7 wavelengths)</p></td>
+<td class="text-center"><p>Sea-Bird Scientific OCR-507</p></td>
+<td class="text-center"><p>7 m</p></td>
+<td class="text-center"><p>CP10CNSM-RID26-08-SPKIRB000</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>Particle size analyzer</p></td>
+<td class="text-center"><p>Sequoia LISST-200X</p></td>
+<td class="text-center"><p>7 m</p></td>
+<td class="text-center"><p>CP10CNSM-RID26-01-PRTSZA000</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>Seawater pH (total scale)</p></td>
+<td class="text-center"><p>Sunburst Sensors SAMI-pH</p></td>
+<td class="text-center"><p>7 m</p></td>
+<td class="text-center"><p>CP10CNSM-RID26-06-PHSEND000</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Additionally, surface meterological data, wave data, velocity profiles, bioacoustic profiles, surface pCO<sub>2</sub> (can extended to the NSIF if within the mixed layer), other carbonate sytem parameters derived from estimated argonite saturation and co-located pH (or surface pCO<sub>2</sub>), can all be used to help in understanding forces affecting the plankton community.</p>
+<p>See the <a class="reference external" href="https://oceanobservatories.org/site/cp10cnsm/">CP10CNSM site description</a> for a full listing of available instrumentation, and the <a class="reference external" href="https://oceanobservatories.org/array/coastal-pioneer-mid-atlantic-bight-array/">Coastal Pioneer MAB array description</a> for more information about the array as a whole.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "jupyter-book"
+        },
+        kernelOptions: {
+            name: "jupyter-book",
+            path: "./python/examples/notebooks/ifcb"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'jupyter-book'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../phsen/creating_annotations.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Using Quality Flags to Create and Utilize Annotations</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../optaa/processing_workflow_using_the_cspp_optaa.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">OPTAA Processing Workflow using Data from the Coastal Surface Piercing Profiler (CSPP)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-information">More Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ifcb-utilities">IFCB Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mab-maintenance-cruise-ifcb-data">MAB Maintenance Cruise IFCB Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#central-surface-mooring-cp10cnsm-ifcb-data">Central Surface Mooring (CP10CNSM) IFCB Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-the-ifcb-data-with-co-located-instrument-data">Merge the IFCB data with Co-Located Instrument Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sea-bird-scientific-sbe-16plus-v2-seacat-conductivity-temperature-and-depth">Sea-Bird Scientific SBE 16Plus V2 SeaCAT (conductivity, temperature and depth)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sea-bird-scientific-eco-triplet-chlorophyll-optical-backscatter-and-fluorometric-dissolved-organic-matter">Sea-Bird Scientific ECO Triplet (chlorophyll, optical backscatter and fluorometric dissolved organic matter)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-the-data">Merging the Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-merged-data">Plotting the Merged Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#looked-at-from-a-different-direction">Looked at from a different direction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-co-located-instruments">Other Co-Located Instruments</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Ocean Observatories Initiative
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

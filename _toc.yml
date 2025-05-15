@@ -22,6 +22,8 @@ parts:
       title: Assessing pCO2 Data
     - file: python/examples/notebooks/phsen/creating_annotations.ipynb
       title: Creating annotations for pH data
+    - file: python/examples/notebooks/ifcb/combining_ifcb_and_environmental.ipynb
+      title: Exploring Imaging FlowCytobot (IFCB) and colocated data
     - file: python/examples/notebooks/optaa/processing_workflow_using_the_cspp_optaa.ipynb
       title: Processing workflow for Optical Absorption and Attenuation (OPTAA) data
     - file: python/examples/notebooks/optaa/process_thredds_optaa.ipynb

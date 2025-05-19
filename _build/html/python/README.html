@@ -415,6 +415,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-the-code-and-configuring-the-environment">Obtaining the Code and Configuring the Environment</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-conda-environment">Create conda environment</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-pip-environment">Create a pip environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensure-the-python-environment-is-available-in-jupyterhub">Ensure the python environment is available in JupyterHub</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-credentials">Access Credentials</a></li>
@@ -505,6 +506,7 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ocean
 <p>What follows are two ways to set up a code environment to run <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> examples and use the python code base using either <code class="docutils literal notranslate"><span class="pre">conda</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span></code> as the package manager.</p>
 <section id="create-conda-environment">
 <h4>Create conda environment<a class="headerlink" href="#create-conda-environment" title="Link to this heading">#</a></h4>
+<p>If you prefer to use the <code class="docutils literal notranslate"><span class="pre">conda</span></code> package manager, follow this section to set up the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment which has the dependencies needed to run the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorer</span></code> python code and example notebooks.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># configure the OOI python environment</span>
 <span class="nb">cd</span><span class="w"> </span>ooi-data-explorations/python
 conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
@@ -518,6 +520,7 @@ conda<span class="w"> </span>develop<span class="w"> </span>.
 </section>
 <section id="create-a-pip-environment">
 <h4>Create a pip environment<a class="headerlink" href="#create-a-pip-environment" title="Link to this heading">#</a></h4>
+<p>If you prefer to use the <code class="docutils literal notranslate"><span class="pre">pip</span></code> package manager, follow this section to set up the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment which has the dependencies needed to run the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorer</span></code> python code and example notebooks.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>ooi-data-explorations/python
 python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
 <span class="nb">source</span><span class="w"> </span>venv/bin/activate
@@ -525,6 +528,19 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
+</section>
+<section id="ensure-the-python-environment-is-available-in-jupyterhub">
+<h4>Ensure the python environment is available in JupyterHub<a class="headerlink" href="#ensure-the-python-environment-is-available-in-jupyterhub" title="Link to this heading">#</a></h4>
+<p>If using this code in a JupyterHub environment, an additional step will be needed to ensure the environment is available for running in a JupyterHub kernel.
+If using a pip environment, a couple of additional dependencies are required. Install them with pip:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ipykernel<span class="w"> </span>ipympl
+</pre></div>
+</div>
+<p>For either the conda or pip environments, the environment must be added to a list of available kernels using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>ipykernel<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>--name<span class="o">=</span>ooi
+</pre></div>
+</div>
+<p>Now the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> kernel should be listed as available when running a Jupyter Notebook.</p>
 </section>
 </section>
 <section id="access-credentials">
@@ -935,6 +951,7 @@ time.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-the-code-and-configuring-the-environment">Obtaining the Code and Configuring the Environment</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-conda-environment">Create conda environment</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-pip-environment">Create a pip environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensure-the-python-environment-is-available-in-jupyterhub">Ensure the python environment is available in JupyterHub</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-credentials">Access Credentials</a></li>

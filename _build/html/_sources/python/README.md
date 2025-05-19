@@ -53,6 +53,7 @@ git clone https://github.com/oceanobservatories/ooi-data-explorations.git
 What follows are two ways to set up a code environment to run `ooi-data-explorations` examples and use the python code base using either `conda` or `pip` as the package manager.
 
 #### Create conda environment
+If you prefer to use the `conda` package manager, follow this section to set up the `ooi` environment which has the dependencies needed to run the `ooi-data-explorer` python code and example notebooks.
 ``` shell
 # configure the OOI python environment
 cd ooi-data-explorations/python
@@ -65,6 +66,8 @@ conda develop .
 ```
 
 #### Create a pip environment
+If you prefer to use the `pip` package manager, follow this section to set up the `ooi` environment which has the dependencies needed to run the `ooi-data-explorer` python code and example notebooks.
+
 ```shell
 cd ooi-data-explorations/python
 python -m venv venv
@@ -73,6 +76,20 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+#### Ensure the python environment is available in JupyterHub
+If using this code in a JupyterHub environment, an additional step will be needed to ensure the environment is available for running in a JupyterHub kernel.
+If using a pip environment, a couple of additional dependencies are required. Install them with pip:
+
+```shell
+pip install ipykernel ipympl
+```
+
+For either the conda or pip environments, the environment must be added to a list of available kernels using the following command:
+
+```shell
+python -m ipykernel install --user --name=ooi
+```
+Now the `ooi` kernel should be listed as available when running a Jupyter Notebook.
 
 ### Access Credentials
 

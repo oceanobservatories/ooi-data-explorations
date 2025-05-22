@@ -1,4 +1,4 @@
-xarray>=0.15.1
+xarray[accel]>=0.15.1
 munch>=2.5.0
 tqdm>=4.46.0
 urllib3>=1.25.8

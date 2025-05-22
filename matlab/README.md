@@ -2,9 +2,15 @@
 
 ## Installation
 
-Download the main [ooi-data-explorations repository] as a ZIP.
-Extract the ZIP folder so that the matlab subfolder is available.
-Rename this folder to something unique to prevent possible confusion with other toolboxes (e.g. ooi_m2m).
+Download the main [ooi-data-explorations repository](https://github.com/oceanobservatories/ooi-data-explorations/archive/refs/heads/master.zip) as a ZIP, 
+extract the ZIP file, and navigate to the matlab sub directory.
+Rename this director to something unique to prevent possible confusion with other toolboxes (e.g. ooi_m2m).
+
+Alternatively, clone this repository with `git` and navigate to the `matlab` subdirectory to see the available MATLAB functions and examples:
+```shell
+git clone https://github.com/oceanobservatories/ooi-data-explorations.git
+cd ooi-data-explorations/matlab
+```
 
 ### Windows
 1. Navigate to C:\Program Files\MATLAB\RYYYYY\toolbox. 

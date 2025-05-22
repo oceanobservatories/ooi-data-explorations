@@ -189,6 +189,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../phsen/creating_annotations.html">Creating annotations for pH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ifcb/combining_ifcb_and_environmental.html">Exploring Imaging FlowCytobot (IFCB) and colocated data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
@@ -466,32 +467,8 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="fdchp-data-processing">
 <h1>FDCHP Data Processing<a class="headerlink" href="#fdchp-data-processing" title="Link to this heading">#</a></h1>
 <p>This Notebook demonstrates how to process FDCHP data to calculate fluxes using the tools in the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations.python.examples.fdchp</span></code> library. The FDCHP instrument is on for 20 minutes out of each hour. While the instrument is recording, it includes 10 Hz 3-axis sonic wind data, as well as buoy motion data. Here, we calculate hourly motion-corrected momentum flux from these 20-minute data segments.</p>
-<p>To do the calculations, we need to set up a python environment that contains the necessary dependencies.</p>
-<p>Create a new python virtual environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~</span>
-<span class="n">mkdir</span> <span class="n">venv</span>
-<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">~/</span><span class="n">venv</span>
-<span class="n">source</span> <span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
-</pre></div>
-</div>
-<p>Install requirements:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="o">~/</span><span class="n">ooi</span><span class="o">-</span><span class="n">data</span><span class="o">-</span><span class="n">explorations</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
-</div>
-<p>Install <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> and <code class="docutils literal notranslate"><span class="pre">mi-instruments</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="n">ooi</span><span class="o">-</span><span class="n">data</span><span class="o">-</span><span class="n">explorations</span><span class="o">/</span><span class="n">python</span><span class="o">/</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="n">mi</span><span class="o">-</span><span class="n">instrument</span><span class="o">/</span>
-</pre></div>
-</div>
-<p>Prepare environment for use by Jupyter Notebook kernel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ipykernel</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">ipympl</span>
-<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">ipykernel</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="n">name</span><span class="o">=</span><span class="n">fdchp</span>
-<span class="n">vi</span> <span class="o">~/.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">jupyter</span><span class="o">/</span><span class="n">kernels</span><span class="o">/</span><span class="n">fdchp</span><span class="o">/</span><span class="n">kernel</span><span class="o">.</span><span class="n">json</span>
-</pre></div>
-</div>
-<p>Check that the first line of the <code class="docutils literal notranslate"><span class="pre">argv</span></code> array in <code class="docutils literal notranslate"><span class="pre">kernel.json</span></code> points to the python from the new virtual environment: <code class="docutils literal notranslate"><span class="pre">&quot;/home/jovyan/venv/bin/python&quot;,</span></code></p>
-<p>Now, select the <code class="docutils literal notranslate"><span class="pre">Kernel</span></code> menu, click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">kernel...</span></code> and select the new <code class="docutils literal notranslate"><span class="pre">fdchp</span></code> environment.</p>
+<p>To run this notebook, we need a python environment that contains the necessary dependencies. The <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment setup detailed in the <a class="reference internal" href="../../../README.html#obtaining-the-code-and-configuring-the-environment"><span class="std std-ref">README</span></a>. There are instructions there on how to set up either a <a class="reference internal" href="../../../README.html#create-conda-environment"><span class="std std-ref">conda environment</span></a>  or a <a class="reference internal" href="../../../README.html#create-a-pip-environment"><span class="std std-ref">pip virtual environment</span></a>.</p>
+<p>With the appropriate <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment created and installed in the list of available kernels, select the <code class="docutils literal notranslate"><span class="pre">Kernel</span></code> menu in the top right of the notebook, click <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">kernel...</span></code> and select the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment.</p>
 <section id="import-necessary-libraries">
 <h2>Import necessary libraries<a class="headerlink" href="#import-necessary-libraries" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
@@ -506,11 +483,13 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
 
+<span class="c1"># FDCHP-specific tools for reading files, processing, and plotting the data</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp</span><span class="w"> </span><span class="kn">import</span> <span class="n">fdchp_utils</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp.fdchp_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">particles_to_pandas</span><span class="p">,</span> <span class="n">read_file</span><span class="p">,</span> <span class="n">read_file_to_pandas</span><span class="p">,</span> <span class="n">convert_data_to_nwu</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp.process_fdchp</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_fdchp</span><span class="p">,</span> <span class="n">process_fdchp_xarray</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">examples.fdchp.plot_fdchp</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_x_velocity_vs_wind_speed</span><span class="p">,</span> <span class="n">plot_wave_height_vs_wind_speed</span>
 
+<span class="c1"># Helper functions to download data via m2m or load netCDFs from the kdata directory available in JupyterHub</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">kdata_collect_from_file_list</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ooi_data_explorations.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_kdata</span><span class="p">,</span> <span class="n">m2m_request</span><span class="p">,</span> <span class="n">m2m_collect</span>
 </pre></div>
@@ -527,8 +506,10 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">refdes</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_refdes&#39;</span><span class="p">,</span> <span class="s1">&#39;GI01SUMO-SBD12-08-FDCHPA000&#39;</span><span class="p">)</span>
 <span class="n">stream</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_stream&#39;</span><span class="p">,</span> <span class="s1">&#39;fdchp_a_instrument_recovered&#39;</span><span class="p">)</span>
 <span class="n">method</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_method&#39;</span><span class="p">,</span> <span class="s1">&#39;recovered_inst&#39;</span><span class="p">);</span>
-<span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_startTime&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-09-01T00:00:00.000Z&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
-<span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_endTime&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-09-30T23:59:59.999Z&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_startTime&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-09-01T00:00:00.000Z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># to work with python &lt;= 3.10 version of fromisoformat</span>
+<span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ooiparams_endTime&#39;</span><span class="p">,</span> <span class="s1">&#39;2023-09-30T23:59:59.999Z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># to work with python &lt;= 3.10 version of fromisoformat</span>
+<span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;refdes: </span><span class="si">{}</span><span class="s2">, stream: </span><span class="si">{}</span><span class="s2">, method: </span><span class="si">{}</span><span class="s2">, start_time: </span><span class="si">{}</span><span class="s2">, end_time: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">refdes</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -546,7 +527,10 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_file_dates</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
     <span class="c1"># deployment0010_GI01SUMO-SBD12-08-FDCHPA000-recovered_inst-fdchp_a_instrument_recovered_20231222T210200.048000-20240107T202200.041000.nc</span>
     <span class="n">dates</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># to work with python &lt;= 3.10 version of fromisoformat</span>
+    <span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># to work with python &lt;= 3.10 version of fromisoformat</span>
+    <span class="n">datetime_format</span> <span class="o">=</span> <span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">T%H%M%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">datetime_format</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">datetime_format</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">limit_files</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">):</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
@@ -714,40 +698,40 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-05-13 19:39:01.310963
-File processing finished for hour 24 of 720. Process time: 0:00:24.503842
-File processing finished for hour 48 of 720. Process time: 0:01:24.875518
-File processing finished for hour 72 of 720. Process time: 0:03:01.201279
-File processing finished for hour 96 of 720. Process time: 0:05:12.470908
-File processing finished for hour 120 of 720. Process time: 0:07:58.347464
-File processing finished for hour 144 of 720. Process time: 0:11:18.465417
-File processing finished for hour 168 of 720. Process time: 0:15:13.381220
-File processing finished for hour 192 of 720. Process time: 0:19:43.642382
-File processing finished for hour 216 of 720. Process time: 0:24:48.534814
-File processing finished for hour 240 of 720. Process time: 0:30:27.705899
-File processing finished for hour 264 of 720. Process time: 0:36:40.628308
-File processing finished for hour 288 of 720. Process time: 0:43:27.332482
-File processing finished for hour 312 of 720. Process time: 0:50:48.042872
-File processing finished for hour 336 of 720. Process time: 0:58:42.921671
-File processing finished for hour 360 of 720. Process time: 1:07:12.152135
-File processing finished for hour 384 of 720. Process time: 1:16:16.376647
-File processing finished for hour 408 of 720. Process time: 1:25:55.921642
-File processing finished for hour 432 of 720. Process time: 1:36:10.597179
-File processing finished for hour 456 of 720. Process time: 1:47:00.626439
-File processing finished for hour 480 of 720. Process time: 1:58:25.904169
-File processing finished for hour 504 of 720. Process time: 2:10:25.369848
-File processing finished for hour 528 of 720. Process time: 2:22:58.756266
-File processing finished for hour 552 of 720. Process time: 2:36:07.119024
-File processing finished for hour 576 of 720. Process time: 2:49:51.210221
-File processing finished for hour 600 of 720. Process time: 3:04:10.486372
-File processing finished for hour 624 of 720. Process time: 3:19:04.457825
-File processing finished for hour 648 of 720. Process time: 3:34:33.735370
-File processing finished for hour 672 of 720. Process time: 3:50:38.280885
-File processing finished for hour 696 of 720. Process time: 4:07:18.083898
-File processing finished for hour 720 of 720. Process time: 4:24:33.308444
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start time: 2025-05-15 16:54:51.752748
+File processing finished for hour 24 of 720. Process time: 0:00:22.578277
+File processing finished for hour 48 of 720. Process time: 0:01:21.142432
+File processing finished for hour 72 of 720. Process time: 0:02:55.514983
+File processing finished for hour 96 of 720. Process time: 0:05:04.608793
+File processing finished for hour 120 of 720. Process time: 0:07:48.142134
+File processing finished for hour 144 of 720. Process time: 0:11:05.616685
+File processing finished for hour 168 of 720. Process time: 0:14:57.505721
+File processing finished for hour 192 of 720. Process time: 0:19:24.443033
+File processing finished for hour 216 of 720. Process time: 0:24:25.731640
+File processing finished for hour 240 of 720. Process time: 0:30:01.066354
+File processing finished for hour 264 of 720. Process time: 0:36:09.771314
+File processing finished for hour 288 of 720. Process time: 0:42:51.854758
+File processing finished for hour 312 of 720. Process time: 0:50:07.492810
+File processing finished for hour 336 of 720. Process time: 0:57:56.986588
+File processing finished for hour 360 of 720. Process time: 1:06:20.508832
+File processing finished for hour 384 of 720. Process time: 1:15:18.839779
+File processing finished for hour 408 of 720. Process time: 1:24:52.167280
+File processing finished for hour 432 of 720. Process time: 1:35:00.223243
+File processing finished for hour 456 of 720. Process time: 1:45:43.280102
+File processing finished for hour 480 of 720. Process time: 1:57:01.200416
+File processing finished for hour 504 of 720. Process time: 2:08:52.781877
+File processing finished for hour 528 of 720. Process time: 2:21:17.903476
+File processing finished for hour 552 of 720. Process time: 2:34:17.796348
+File processing finished for hour 576 of 720. Process time: 2:47:53.017408
+File processing finished for hour 600 of 720. Process time: 3:02:02.946892
+File processing finished for hour 624 of 720. Process time: 3:16:47.085567
+File processing finished for hour 648 of 720. Process time: 3:32:06.003920
+File processing finished for hour 672 of 720. Process time: 3:47:59.705731
+File processing finished for hour 696 of 720. Process time: 4:04:28.260121
+File processing finished for hour 720 of 720. Process time: 4:21:31.778549
 0 errors during processing.
-End time: 2025-05-13 19:39:45.164860
-Processed 720 hours of data in 0:00:43.853845.
+End time: 2025-05-15 16:55:35.106645
+Processed 720 hours of data in 0:00:43.353853.
 </pre></div>
 </div>
 </div>
@@ -760,8 +744,8 @@ Processed 720 hours of data in 0:00:43.853845.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../../_images/d2cf80bd008e8ad8faabe4738934def9cbb466a58a0a4fe71e88bcf5126ce274.png" src="../../../../_images/d2cf80bd008e8ad8faabe4738934def9cbb466a58a0a4fe71e88bcf5126ce274.png" />
-<img alt="../../../../_images/a4a037158dbb4ec0c92acaa50fb05f5229e40da735369b185d85bdfcc189b334.png" src="../../../../_images/a4a037158dbb4ec0c92acaa50fb05f5229e40da735369b185d85bdfcc189b334.png" />
+<img alt="../../../../_images/a6804edbe855bf918a742bd78386205ebc9215d29c77dcfab5e3d41de9645b8e.png" src="../../../../_images/a6804edbe855bf918a742bd78386205ebc9215d29c77dcfab5e3d41de9645b8e.png" />
+<img alt="../../../../_images/a978d485e11e93d88ac78eca55352e43328feff72df40a2944406e005d33728c.png" src="../../../../_images/a978d485e11e93d88ac78eca55352e43328feff72df40a2944406e005d33728c.png" />
 </div>
 </div>
 </section>
@@ -796,7 +780,7 @@ Processed 720 hours of data in 0:00:43.853845.
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Deployments: dict_keys([&#39;deployment0010&#39;])
 Downloading 180 data file(s) from the local kdata directory
 Downloading 180 data file(s) from the local kdata directory
-Loading and Processing Data Files: 100%|██████████| 180/180 [00:01&lt;00:00, 105.24it/s]
+Loading and Processing Data Files: 100%|██████████| 180/180 [00:02&lt;00:00, 87.52it/s]
 Merging the data files into a single dataset
 </pre></div>
 </div>
@@ -839,7 +823,7 @@ Merging the data files into a single dataset
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../../_images/5c4cc52283d5e99d615715420abe401d93f90294fc3d3c972959c5af730c887c.png" src="../../../../_images/5c4cc52283d5e99d615715420abe401d93f90294fc3d3c972959c5af730c887c.png" />
+<img alt="../../../../_images/15bc4a5b4e97a6ae8b9d96d395e146a9029c2eb7bbf8e04939a609e7612da545.png" src="../../../../_images/15bc4a5b4e97a6ae8b9d96d395e146a9029c2eb7bbf8e04939a609e7612da545.png" />
 </div>
 </div>
 </section>
@@ -854,16 +838,16 @@ Merging the data files into a single dataset
         },
         codeMirrorConfig: {
             theme: "abcdef",
-            mode: "fdchp"
+            mode: "ooi"
         },
         kernelOptions: {
-            name: "fdchp",
+            name: "ooi",
             path: "./python/examples/notebooks/fdchp"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'fdchp'</script>
+    <script>kernelName = 'ooi'</script>
 
                 </article>
               

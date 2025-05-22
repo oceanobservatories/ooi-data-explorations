@@ -189,6 +189,7 @@
 <li class="toctree-l2"><a class="reference internal" href="examples/notebooks/dosta/ooiea_uncabled_dosta_data.html">Plotting Endurance Array surface cooring dissolved oxygen data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/notebooks/pco2w/PCO2_Calculations.html">Assessing pCO2 Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/notebooks/phsen/creating_annotations.html">Creating annotations for pH data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/notebooks/ifcb/combining_ifcb_and_environmental.html">Exploring Imaging FlowCytobot (IFCB) and colocated data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/notebooks/optaa/processing_workflow_using_the_cspp_optaa.html">Processing workflow for Optical Absorption and Attenuation (OPTAA) data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/notebooks/optaa/process_thredds_optaa.html">Acessing and processing OPTAA data from Thredds server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/notebooks/optaa/process_kdata_optaa.html">Accessing and processing OPTAA data from JupyterHub-mounted NetCDFs</a></li>
@@ -411,9 +412,14 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-system-for-python-install-bash-git-and-anaconda-miniconda">Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-the-code-and-configuring-the-environment">Obtaining the Code and Configuring the Environment</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-conda-environment">Create conda environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-pip-environment">Create a pip environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensure-the-python-environment-is-available-in-jupyterhub">Ensure the python environment is available in JupyterHub</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-credentials">Access Credentials</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-the-code-and-configuring-the-environment">Obtaining the Code and Configuring the Environment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-system-for-python-install-bash-git-and-anaconda-miniconda">Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
@@ -444,25 +450,29 @@ document.write(`
 <h1>OOI Data Explorations with Python<a class="headerlink" href="#ooi-data-explorations-with-python" title="Link to this heading">#</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>The python code provided here was developed primarily as a toolset for myself, as an OOI Data Team member, to
-facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc. that I need to perform as
-part of my day-to-day work. I am providing this code to the larger community in the hopes that it will be of some use
-to you, since the steps I use for accessing and using the data are identical to those any user would employ. The code
-uses the <a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">OOI M2M API</a> to access the data and either loads it into
-the user workspace as an <a class="reference external" href="http://xarray.pydata.org/en/stable/">xarray</a> dataset, or saves it to disk as a NetCDF file,
-depending on how you call it. There are examples below of how to setup and use the package, with more example notebooks
+<p>The python code provided here was developed primarily as a toolset for the OOI Data Team to
+facilitate accessing data from OOINet for the QC reviews, gap analyses, metadata checks, etc. that OOI performs to quality check its datasets.
+This code is provided to the larger community in the hopes that it will be of use. The code
+uses several methods to access data:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">OOI M2M API</a></p></li>
+<li><p><a class="reference external" href="https://thredds.dataexplorer.oceanobservatories.org/thredds/catalog/ooigoldcopy/public/catalog.html">OOI THREDDS Data Server</a></p></li>
+<li><p>[JupyterHub-mounted NetCDF store](<code class="docutils literal notranslate"><span class="pre">/home/jovyan/ooi/kdata</span></code> from an OOI JupyterHub session)</p></li>
+</ul>
+<p>Datasets are loaded into the user workspace as an <a class="reference external" href="http://xarray.pydata.org/en/stable/">xarray</a> dataset, or saved to disk as a NetCDF filein different examples.
+There are instructions below of how to setup and use the package, with several example notebooks
 and scripts available in the examples directory.</p>
 <p>If you have any comments, questions or issues, please don’t hesitate to
-<a class="reference internal" href="#(https://github.com/oceanobservatories/ooi-data-explorations/issues)"><span class="xref myst">let me know</span></a>.</p>
+<a class="reference internal" href="#(https://github.com/oceanobservatories/ooi-data-explorations/issues)"><span class="xref myst">open an issue</span></a>.</p>
 </section>
 <section id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="#installation"><span class="xref myst">Installation</span></a></p>
 <ul>
-<li><p><a class="reference internal" href="#configuring-system-for-python-install-bash-git-and-anacondaminiconda"><span class="xref myst">Installing Bash, Git and Python</span></a></p></li>
-<li><p><a class="reference internal" href="#access-credentials"><span class="xref myst">Setup Access Credentials</span></a></p></li>
 <li><p><a class="reference internal" href="#obtaining-the-code-and-configuring-the-environment"><span class="xref myst">Download and Install OOI Data Explorations</span></a></p></li>
+<li><p><a class="reference internal" href="#access-credentials"><span class="xref myst">Setup Access Credentials</span></a></p></li>
+<li><p><a class="reference internal" href="#configuring-system-for-python-install-bash-git-and-anacondaminiconda"><span class="xref myst">Installing Bash, Git and Python</span></a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#usage"><span class="xref myst">Usage</span></a></p>
@@ -484,10 +494,87 @@ and scripts available in the examples directory.</p>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<section id="obtaining-the-code-and-configuring-the-environment">
+<h3>Obtaining the Code and Configuring the Environment<a class="headerlink" href="#obtaining-the-code-and-configuring-the-environment" title="Link to this heading">#</a></h3>
+<p>If you do not have python installed, read about <a class="reference internal" href="#configuring-system-for-python-install-bash-git-and-anacondaminiconda"><span class="xref myst">Installing Bash, Git and Python</span></a> below before following these instructions to use this code repository.</p>
+<p>This section describes getting a copy the python code, setting up a virtual environment, and installing this module for use in that environment.</p>
+<p>Clone the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> code to your local machine:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># download the ooi-data-explorations code</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/oceanobservatories/ooi-data-explorations.git
+</pre></div>
+</div>
+<p>What follows are two ways to set up a code environment to run <code class="docutils literal notranslate"><span class="pre">ooi-data-explorations</span></code> examples and use the python code base using either <code class="docutils literal notranslate"><span class="pre">conda</span></code> or <code class="docutils literal notranslate"><span class="pre">pip</span></code> as the package manager.</p>
+<section id="create-conda-environment">
+<h4>Create conda environment<a class="headerlink" href="#create-conda-environment" title="Link to this heading">#</a></h4>
+<p>If you prefer to use the <code class="docutils literal notranslate"><span class="pre">conda</span></code> package manager, follow this section to set up the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment which has the dependencies needed to run the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorer</span></code> python code and example notebooks.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># configure the OOI python environment</span>
+<span class="nb">cd</span><span class="w"> </span>ooi-data-explorations/python
+conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
+conda<span class="w"> </span>init<span class="w"> </span><span class="c1"># might be required for windows users if environment is not active</span>
+conda<span class="w"> </span>activate<span class="w"> </span>ooi
+
+<span class="c1"># install the package as a local development package</span>
+conda<span class="w"> </span>develop<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="create-a-pip-environment">
+<h4>Create a pip environment<a class="headerlink" href="#create-a-pip-environment" title="Link to this heading">#</a></h4>
+<p>If you prefer to use the <code class="docutils literal notranslate"><span class="pre">pip</span></code> package manager, follow this section to set up the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> environment which has the dependencies needed to run the <code class="docutils literal notranslate"><span class="pre">ooi-data-explorer</span></code> python code and example notebooks.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>ooi-data-explorations/python
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="ensure-the-python-environment-is-available-in-jupyterhub">
+<h4>Ensure the python environment is available in JupyterHub<a class="headerlink" href="#ensure-the-python-environment-is-available-in-jupyterhub" title="Link to this heading">#</a></h4>
+<p>If using this code in a JupyterHub environment, an additional step will be needed to ensure the environment is available for running in a JupyterHub kernel.
+If using a pip environment, a couple of additional dependencies are required. Install them with pip:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ipykernel<span class="w"> </span>ipympl
+</pre></div>
+</div>
+<p>For either the conda or pip environments, the environment must be added to a list of available kernels using the following command:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>ipykernel<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>--name<span class="o">=</span>ooi
+</pre></div>
+</div>
+<p>Now the <code class="docutils literal notranslate"><span class="pre">ooi</span></code> kernel should be listed as available when running a Jupyter Notebook.</p>
+</section>
+</section>
+<section id="access-credentials">
+<h3>Access Credentials<a class="headerlink" href="#access-credentials" title="Link to this heading">#</a></h3>
+<p>Access credentials are required to download data from OOINet via the M2M interface. Directions on how to obtain
+these, in addition to details about the M2M system, are <a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">available on the OOI website</a>.</p>
+<ul class="simple">
+<li><p>If you haven’t already done so, either create a user account on the <a class="reference external" href="https://ooinet.oceanobservatories.org">OOI Data Portal</a>,
+or use the CILogon button with an academic or Google account (login button is towards the upper right corner of the
+web page) to login to the portal.</p></li>
+<li><p>Navigate to the drop down menu screen in the top-right corner of the menu bar</p></li>
+<li><p>Click on the “User Profile” element of the drop down.</p></li>
+<li><p>Copy and save the following data from the user profile: API Username and API Token.</p></li>
+</ul>
+<p>The python code uses the <a class="reference external" href="https://docs.python.org/3.6/library/netrc.html">netrc</a> utility to obtain your access
+credentials. Users need to create a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file in their home directory to store these access credentials. Using
+either a text editor or the bash terminal, create the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file (replacing the <code class="docutils literal notranslate"><span class="pre">&lt;API</span> <span class="pre">Username&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;API</span> <span class="pre">Token&gt;</span></code>
+in the example below with the corresponding values from your login credentials for the <a class="reference external" href="https://ooinet.oceanobservatories.org">OOI Data Portal</a>):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~
+touch<span class="w"> </span>.netrc
+chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>.netrc
+cat<span class="w"> </span><span class="s">&lt;&lt;EOT &gt;&gt; .netrc</span>
+<span class="s">machine ooinet.oceanobservatories.org</span>
+<span class="s">    login &lt;API Username&gt;</span>
+<span class="s">    password &lt;API Token&gt;</span>
+<span class="s">EOT</span>
+</pre></div>
+</div>
+</section>
 <section id="configuring-system-for-python-install-bash-git-and-anaconda-miniconda">
 <h3>Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)<a class="headerlink" href="#configuring-system-for-python-install-bash-git-and-anaconda-miniconda" title="Link to this heading">#</a></h3>
-<p>In order to use the python code in this repository, you will need to setup your computer with the proper tools. There
-are several examples out there on how to this, so I’ll avoid reinventing the wheel here. One of the best
+<p>If you already have python installed or are using the OOI JupyterHub, you can skip this section, as the required tools are already available.</p>
+<p>In order to use the python code in this repository, you will need to set up the proper tools. There
+are several examples on how to this, so I’ll avoid reinventing the wheel here. One of the best
 tutorials I’ve found has been developed by the folks at <a class="reference external" href="https://www.earthdatascience.org/">Earth Lab</a>. The
 <a class="reference external" href="https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/">tutorial</a> they have
 prepared will guide you through the process of setting up a system to use Python for Earth Science analysis from start
@@ -517,70 +604,19 @@ directory (assuming you installed Anaconda in your home directory, which is the 
 </pre></div>
 </div>
 </section>
-<section id="access-credentials">
-<h3>Access Credentials<a class="headerlink" href="#access-credentials" title="Link to this heading">#</a></h3>
-<p>Access credentials are required to download the data from OOINet via the M2M interface. Directions on how to obtain
-these, in addition to details about the M2M system, are <a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">available on the OOI website</a>.</p>
-<ul class="simple">
-<li><p>If you haven’t already done so, either create a user account on the <a class="reference external" href="https://ooinet.oceanobservatories.org">OOI Data Portal</a>,
-or use the CILogon button with an academic or Google account (login button is towards the upper right corner of the
-web page) to login to the portal.</p></li>
-<li><p>Navigate to the drop down menu screen in the top-right corner of the menu bar</p></li>
-<li><p>Click on the “User Profile” element of the drop down.</p></li>
-<li><p>Copy and save the following data from the user profile: API Username and API Token.</p></li>
-</ul>
-<p>The python code uses the <a class="reference external" href="https://docs.python.org/3.6/library/netrc.html">netrc</a> utility to obtain your access
-credentials. Users need to create a <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file in their home directory to store these access credentials. Using
-either a text editor or the bash terminal, create the <code class="docutils literal notranslate"><span class="pre">.netrc</span></code> file (replacing the <code class="docutils literal notranslate"><span class="pre">&lt;API</span> <span class="pre">Username&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;API</span> <span class="pre">Token&gt;</span></code>
-in the example below with the corresponding values from your login credentials for the <a class="reference external" href="https://ooinet.oceanobservatories.org">OOI Data Portal</a>):</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~
-touch<span class="w"> </span>.netrc
-chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>.netrc
-cat<span class="w"> </span><span class="s">&lt;&lt;EOT &gt;&gt; .netrc</span>
-<span class="s">machine ooinet.oceanobservatories.org</span>
-<span class="s">    login &lt;API Username&gt;</span>
-<span class="s">    password &lt;API Token&gt;</span>
-<span class="s">EOT</span>
-</pre></div>
-</div>
-</section>
-<section id="obtaining-the-code-and-configuring-the-environment">
-<h3>Obtaining the Code and Configuring the Environment<a class="headerlink" href="#obtaining-the-code-and-configuring-the-environment" title="Link to this heading">#</a></h3>
-<p>With the basic processing tools and access credentials in place, you need to copy the python code to your machine,
-setup a virtual environment, and install a development copy of the code.</p>
-<p>From the bash terminal, clone the ooi-data-explorations code to your local machine:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># download the ooi-data-explorations code</span>
-mkdir<span class="w"> </span>-p<span class="w"> </span>~/Documents/GitHub
-<span class="nb">cd</span><span class="w"> </span>~/Documents/GitHub
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/oceanobservatories/ooi-data-explorations.git
-<span class="nb">cd</span><span class="w"> </span>ooi-data-explorations/python
-
-<span class="c1"># configure the OOI python environment</span>
-conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>environment.yml
-conda<span class="w"> </span>init<span class="w"> </span><span class="c1"># might be required for windows users if environment is not active</span>
-conda<span class="w"> </span>activate<span class="w"> </span>ooi
-
-<span class="c1"># you can check the active environment by running</span>
-conda<span class="w"> </span>env<span class="w"> </span>list
-
-<span class="c1"># install the package as a local development package</span>
-conda<span class="w"> </span>develop<span class="w"> </span>.
-</pre></div>
-</div>
-</section>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
 <p>The code is available in the <a class="reference internal" href="#ooi_data_explorations"><span class="xref myst">ooi_data_explorations</span></a> directory with examples (both scripts
-and notebooks) in the <a class="reference internal" href="#examples"><span class="xref myst">examples</span></a> directory. The python code has been developed and used with both Python 3.6
-and 3.7 on Windows and Linux machines. The functions are configured in a granular fashion to allow users to access the
+and notebooks) in the <a class="reference internal" href="#examples"><span class="xref myst">examples</span></a> directory. The python code has been developed and used with Python 3.6+
+on Windows and Linux machines. The functions are configured in a granular fashion to allow users to access the
 data in a few different ways.</p>
 <section id="m2m-terminology">
 <h3>M2M Terminology<a class="headerlink" href="#m2m-terminology" title="Link to this heading">#</a></h3>
 <p>Before using these functions, it is important to understand how requests to the
 <a class="reference external" href="https://oceanobservatories.org/ooi-m2m-interface/">OOI M2M API</a> are structured. A request is built around the
-reference designator (comprised of the site, node and sensor names), the data delivery method, and data stream (think
-of a stream as a data sets). Beginning and ending dates for the time period of interest are optional inputs. If omitted,
+reference designator (comprised of the site, node, and sensor names), the data delivery method, and data stream (think
+of a stream as a dataset). Beginning and ending dates for the time period of interest are optional inputs. If omitted,
 all of the data for a particular instrument of interest will be downloaded.</p>
 <ul class="simple">
 <li><p>Site – 8 character uppercase string denoting the array and location within the array of the system. These are
@@ -912,9 +948,14 @@ time.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-system-for-python-install-bash-git-and-anaconda-miniconda">Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-the-code-and-configuring-the-environment">Obtaining the Code and Configuring the Environment</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-conda-environment">Create conda environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-pip-environment">Create a pip environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ensure-the-python-environment-is-available-in-jupyterhub">Ensure the python environment is available in JupyterHub</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-credentials">Access Credentials</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#obtaining-the-code-and-configuring-the-environment">Obtaining the Code and Configuring the Environment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-system-for-python-install-bash-git-and-anaconda-miniconda">Configuring System for Python (Install Bash, Git and Anaconda/Miniconda)</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">

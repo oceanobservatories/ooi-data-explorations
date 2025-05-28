@@ -39,7 +39,7 @@ If you have any comments, questions or issues, please don't hesitate to
 
 ### Obtaining the Code and Configuring the Environment
 
-If you do not have python installed, read about [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anacondaminiconda) below before following these instructions to use this code repository.
+If you do not have python installed, read about [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anaconda-miniconda) below before following these instructions to use this code repository.
 
 This section describes getting a copy the python code, setting up a virtual environment, and installing this module for use in that environment.
 

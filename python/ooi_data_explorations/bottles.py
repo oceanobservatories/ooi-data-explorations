@@ -237,24 +237,28 @@ def clean_data(bottle_data: pd.DataFrame) -> pd.DataFrame:
     bottle_data = bottle_data.replace(to_replace=["-9999999", -9999999], value=np.nan)
 
     # Convert time columns to datetime
-    for time_col in ["Start Time [UTC]", "CTD Bottle Closure Time [UTC]"]:
-        if time_col in bottle_data.columns:
-            bottle_data[time_col] = bottle_data[time_col].apply(convert_times)
+    for col in bottle_data.columns:
+        if "time" in col.lower():
+            bottle_data[col] = bottle_data[col].apply(convert_times)
 
     # Replace nutrient values with '<' by zero
     bottle_data = bottle_data.applymap(not_statistically_sigificant)
 
     # Map flag columns to QARTOD flags
     for col in bottle_data.columns:
-        if "Flag" in col:
-            if "CTD" in col and "File" not in col:
+        if "flag" in col.lower():
+            col_lower = col.lower()
+            if "ctd" in col_lower and "file" not in col_lower:
                 bottle_data[col] = bottle_data[col].apply(map_ctd_flag)
-            elif "Discrete" in col:
-                bottle_data[col] = bottle_data[col].apply(map_discrete_flag)
-            elif "Replicate" in col:
-                bottle_data[col] = bottle_data[col].apply(map_replicate_flag)
-            elif "Niskin" in col:
+            elif "discrete" in col_lower:
+                if "replicate" in col_lower:
+                    bottle_data[col] = bottle_data[col].apply(map_replicate_flag)
+                else:
+                    bottle_data[col] = bottle_data[col].apply(map_discrete_flag)
+            elif "niskin" in col_lower:
                 bottle_data[col] = bottle_data[col].apply(map_niskin_flag)
-            # else: leave unchanged
+            else:
+                # default fallback
+                bottle_data[col] = bottle_data[col].apply(map_discrete_flag)
 
     return bottle_data

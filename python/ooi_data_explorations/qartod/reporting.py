@@ -84,14 +84,9 @@ def create_pdf(fig, annotations, report):
         pdf.savefig(fig)
         plt.close(fig)
 
-#        # create an annotations table
-#        # Lets create a figure first
-#        tab, ax = plt.subplots(figsize=(17, 11))
-#        ax.axis('off')
-#        ax.table(
-#            cellText=annotations.values,
-#           colLabels=annotations.columns,
-#           loc='center'
-#        )
-#        pdf.savefig(tab)
-#        plt.close(tab)
+        # create an annotations table
+        tab, ax = plt.subplots(figsize=(17, 11))
+        ax.axis('off')
+        ax.table(cellText=annotations.values, colLabels=annotations.columns, loc='center')
+        pdf.savefig(tab)
+        plt.close(tab)

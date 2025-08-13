@@ -27,13 +27,19 @@ def turbd_datalogger(ds, burst=False):
     and cleeans up the data set to make it more user friendly. Primary 
     task is renaming parameters and dropping some that are of limited use.
 
+    This function:
+    - Drops redundant variables
+    - Renames variables for clarity
+    - Updates variable attributes
+    - Optionally resamples burst-mode data to median values, with associated statistics
+
     Parameters
     ----------
-    ds: xarray.Dataset
-        The TURBD dataset with the raw signal and calculated turbidity
-    burst: boolean, default=False
-        Option to resample the burst sampling of the sensor to median
-        average result for the burst duration
+    ds : xarray.Dataset
+        TURBD dataset with raw signal and calculated turbidity.
+    burst : bool, default=False
+        If True, resample burst-mode data to median over 15 min intervals and
+        compute min, max, and std for turbidity.
 
     Returns
     -------
@@ -43,58 +49,51 @@ def turbd_datalogger(ds, burst=False):
     # Drop some redundant variables
     #   internal_timestamp == superceded by time
     #   measurement_wavelength_beta == constant, add as attribute to raw_signal_beta
-    drop_vars = ['internal_timestamp', 'measurement_wavelength_beta']
-    for var in ds.variables:
-        if var in drop_vars:
-            ds = ds.drop_vars(var)
+    drop_vars = {'internal_timestamp', 'measurement_wavelength_beta'} & set(ds.variables)
+    if drop_vars:
+        ds = ds.drop_vars(drop_vars)
 
-    # Rename some variables to have more explanatory names or align with other sensor
-    # naming conventions
-    rename = {
-        'raw_signal_beta': 'raw_backscatter'
-    }
+    # Rename variables in one call
+    rename_map = {'raw_signal_beta': 'raw_backscatter'}
+    rename_map = {k: v for k, v in rename_map.items() if k in ds.variables}
+    if rename_map:
+        ds = ds.rename(rename_map)
+        # Keep original variable name as attribute
+        for old_name, new_name in rename_map.items():
+            ds[new_name].attrs['ooinet_variable_name'] = old_name
 
-    for key, value in rename.items():
-        if key in ds.variables:
-            ds = ds.rename({key: value})
-            ds[value].attrs['ooinet_variable_name'] = key
+    # Update attributes only for variables that exist
+    for var, attrs in ATTRS.items():
+        if var in ds.variables:
+            ds[var].attrs.update(attrs)
 
-    # reset some attributes
-    for key, value in ATTRS.items():
-        for atk, atv in value.items():
-            if key in ds.variables:
-                ds[key].attrs[atk] = atv
-
-    # Add in burst resampling
     if burst:
-        # resample the data to the defined time interval
-        ds['time'] = ds['time'] + np.timedelta64(450, 's')
-        burst = ds.resample(time='900s', skipna=True).median(dim='time', keep_attrs=True)
+        # Shift time so that burst windows align, then resample
+        ds = ds.assign_coords(time=ds['time'] + np.timedelta64(450, 's'))
+        burst_ds = ds.resample(time='900s', skipna=True).median(keep_attrs=True)
 
-        # for the turbidity, calculate the associated stats for the burst resampling
-        turbd = ds['turbidity'].resample(time='900s', skipna=True)
-        turbd = np.array([turbd.min('time').values, turbd.max('time').values, turbd.std('time').values])
+        # Turbidity statistics in one go
+        turbd_resampled = ds['turbidity'].resample(time='900s', skipna=True)
+        turbd_stats = xr.concat(
+            [turbd_resampled.min(), turbd_resampled.max(), turbd_resampled.std()],
+            dim='stats'
+        )
+        turbd_stats = turbd_stats.assign_coords(stats=('stats', [0, 1, 2]))
 
-        # create a data set with the burst statistics for the variables
-        stats = xr.Dataset({
-            'turbidity_burst_stats': (['time', 'stats'], turbd.T),
-        }, coords={'time': burst['time'], 'stats': np.arange(0, 3).astype('int32')})
+        # Merge stats into burst dataset
+        burst_ds['turbidity_burst_stats'] = turbd_stats
+        burst_ds = burst_ds.where(~np.isnan(burst_ds.deployment), drop=True)
 
-        # add the stats into the burst averaged data set, and then remove the missing rows
-        burst = burst.merge(stats)
-        burst = burst.where(~np.isnan(burst.deployment), drop=True)
-
-        # save the newly average data
-        ds = burst
-
-        # Add in attributes for the statistics
-        ds['turbidity_burst_stats'].attrs = {
-            'long_name': 'Turbidity Statisitics',
+        # Add attributes
+        burst_ds['turbidity_burst_stats'].attrs.update({
+            'long_name': 'Turbidity Statistics',
             'units': 'ntu',
             'comment': 'Associated statistics for the resampled turbidity measurements.',
             'data_product_identifier': 'FLUBSCT_L0',
             'statistics': 'min max std'
-        }
+        })
+
+        ds = burst_ds
 
     return ds
 

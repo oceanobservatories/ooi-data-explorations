@@ -106,8 +106,7 @@ class Climatology():
         self.monthly_mu = self._interpolate_monthly_series(mu_series)
 
 
-    def fit(self, da):
-        def fit(self, da: xr.DataArray):
+    def fit(self, da: xr.DataArray):
         """
         Calculate climatological monthly fit using 2-cycle harmonic regression.
 

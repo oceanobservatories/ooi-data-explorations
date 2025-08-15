@@ -181,7 +181,8 @@ def plotting(site, node, sensor, deployment, dates, availability, merged, qartod
     ax8.set_ylabel('Flags')
     ax8.plot(auto[0].time, auto[0].values.astype(str), '*', label='QARTOD', color='RoyalBlue')
     ax8.plot(self[0].time, self[0].values.astype(str), '+', label='Self', color='DarkOrange')
-    ax8.plot(anno[0].time, anno[0].values.astype(str), '.', label='Anno', color='DarkGreen')
+    if len(anno) > 0:
+        ax8.plot(anno[0].time, anno[0].values.astype(str), '.', label='Anno', color='DarkGreen')
     ax8.legend(loc='best', fontsize='small')
 
     # return the figure object
@@ -222,9 +223,12 @@ def generate_report(site, node, sensor, deployment):
 
     # get the start and end dates for the deployment
     start, end = get_deployment_dates(site, node, sensor, deployment)
-    start = parser.parse(start, ignoretz=True)
-    end = parser.parse(end, ignoretz=True)
-    dates = [start, end]
+    if start is not None and end is not None:
+        start = parser.parse(start, ignoretz=True)
+        end = parser.parse(end, ignoretz=True)
+        dates = [start, end]
+    else:
+        raise ValueError('Deployment dates for {}-{}-{} deployment {:02d} not found'.format(site, node, sensor, deployment))
 
     # get the current system annotations for the sensor
     annotations = get_annotations(site, node, sensor)
@@ -289,14 +293,18 @@ def generate_report(site, node, sensor, deployment):
 
     # re-work the QC variables to ensure they are in the correct format (integer) and fill in any missing values
     # with the default value of 9 (missing data)
-    merged['seawater_ph_quality_flag'] = merged['seawater_ph_quality_flag'].where(
-        ~np.isnan(merged['seawater_ph_quality_flag']), 9).astype(int)
+    for var in merged.variables:
+        if var == 'seawater_ph_quality_flag':
+            merged['seawater_ph_quality_flag'] = merged['seawater_ph_quality_flag'].where(
+                ~np.isnan(merged['seawater_ph_quality_flag']), 9).astype(int)
 
-    merged['seawater_ph_qartod_results'] = merged['seawater_ph_qartod_results'].where(
-        ~np.isnan(merged['seawater_ph_qartod_results']), 9).astype(int)
+        if var == 'seawater_ph_qartod_results':
+            merged['seawater_ph_qartod_results'] = merged['seawater_ph_qartod_results'].where(
+                ~np.isnan(merged['seawater_ph_qartod_results']), 9).astype(int)
 
-    merged['rollup_annotations_qc_results'] = merged['rollup_annotations_qc_results'].where(
-        ~np.isnan(merged['rollup_annotations_qc_results']), 9).astype(int)
+        if var == 'rollup_annotations_qc_results':
+            merged['rollup_annotations_qc_results'] = merged['rollup_annotations_qc_results'].where(
+                ~np.isnan(merged['rollup_annotations_qc_results']), 9).astype(int)
 
     # pull out the QC results for the 4 parameters of interest
     qartod = [
@@ -370,7 +378,7 @@ def main(argv=None):
     # save the downloaded annotations and plots to a local directory
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/reports')
     platform = 'midwater'
-    if node == 'MFD37':
+    if node == 'MFD35':
         platform = 'seafloor'
 
     out_path = os.path.join(out_path, site, platform, 'phsen')

@@ -117,7 +117,7 @@ class Climatology():
         -------
         from qartod.climatology import Climatology
         climatology = Climatology()
-        climatology.fit(ctdbp_data, "ctdbp_seawater_temperature")
+        climatology.fit(ctdbp_data)
         """
         # Resample the data to monthly means
         mu = da.resample(time="M").mean()
@@ -168,5 +168,5 @@ class Climatology():
             self.mu(da)
             self.monthly_fit = self.monthly_mu
 
-        # Return the monthly_std
+        # Set self.monthly_std
         self.std(da)

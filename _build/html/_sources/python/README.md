@@ -39,7 +39,7 @@ If you have any comments, questions or issues, please don't hesitate to
 
 ### Obtaining the Code and Configuring the Environment
 
-If you do not have python installed, read about [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anacondaminiconda) below before following these instructions to use this code repository.
+If you do not have python installed, read about [Installing Bash, Git and Python](#configuring-system-for-python-install-bash-git-and-anaconda-miniconda) below before following these instructions to use this code repository.
 
 This section describes getting a copy the python code, setting up a virtual environment, and installing this module for use in that environment.
 
@@ -378,7 +378,7 @@ directory.
 
 For most individuals, the above code should satisfy your needs. For some of the data QC tasks I work through, the data
 needs organizational reworking, renaming of variables or different processing to fit within my workflow. The 
-process_*.py modules in the [cabled](ooi_data_explorations/cabled) and [uncabled](ooi_data_explorations/uncabled) 
+process_*.py modules in the [cabled](./ooi_data_explorations/cabled) and [uncabled](./ooi_data_explorations/uncabled) 
 directories represent an attempt on my part to rework the data sets into more useful forms before conducting any 
 further work. Primarily, these re-works are for my own use, but they are available for others to use. The primary steps
 are:

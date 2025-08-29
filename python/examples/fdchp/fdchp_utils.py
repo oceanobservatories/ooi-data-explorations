@@ -2,16 +2,30 @@ import datetime
 
 import numpy as np
 import pandas as pd
-from mi.dataset.parser.fdchp_a import FdchpADataParticle, FdchpAParser
 from scipy import integrate, interpolate
 from scipy.signal import detrend, filtfilt
 
 PADLENGTH = 12 # (3*(np.max([len(bhi), len(ahi)]) - 1) == 12)
 
-def exception_handler(exception):
-    print("Exception!".format(exception))
+
+def convert_data_to_nwu(data):
+    """
+    Rotate direction, angular rate, and accelerations to North-West-Up coordinate system.
+    """
+    data['fdchp_heading'] = -data['fdchp_heading']   # z heading(yaw) counter clockwise
+    data['fdchp_pitch'] = -data['fdchp_pitch']   # y pitch east to west
+    data['fdchp_y_ang_rate'] = -data['fdchp_y_ang_rate'] # angular rate around y-axis
+    data['fdchp_z_ang_rate'] = -data['fdchp_z_ang_rate'] # angular rate around z-axis 
+    data['fdchp_y_accel_g'] = -data['fdchp_y_accel_g'] # linear acceleration along y-axis
+    data['fdchp_z_accel_g'] = -data['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
     
+def exception_handler(exception):
+    print("Exception! {}".format(exception))
+
+
 def read_file(file_path):
+    from mi.dataset.parser.fdchp_a import FdchpAParser
+    
     data = []
     with open(file_path, 'rb') as input:
         parser = FdchpAParser(input, exception_handler)
@@ -21,7 +35,10 @@ def read_file(file_path):
         data = parser.get_records(num_particles)
     return data
 
+
 def read_file_to_pandas(file_path, convert_to_nwu=True):
+    from mi.dataset.parser.fdchp_a import FdchpAParser
+
     data = []
     with open(file_path, 'rb') as input:
         parser = FdchpAParser(input, exception_handler)
@@ -33,20 +50,18 @@ def read_file_to_pandas(file_path, convert_to_nwu=True):
             particle = parser.get_records()
     if data:
         df = pd.DataFrame(data)
+    else:
+        df = None
     if df is not None:
         df['time'] = df.apply(lambda row: datetime.datetime( int(row.year), int(row.month), int(row.day), int(row.hour), int(row.minute), int(row.second), int(row.millisecond)*1000), axis=1)
         
         if convert_to_nwu:
             # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
             # Note that we can leave the x-axis variable as measured.
-
-            df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
-            df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
-            df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
-            df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
-            df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
-            df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+            convert_data_to_nwu(df)
+            
     return df
+
 
 def particles_to_pandas(particles, convert_to_nwu=True):
     df = None
@@ -62,13 +77,7 @@ def particles_to_pandas(particles, convert_to_nwu=True):
         if convert_to_nwu:
             # Convert IMU from North East Down coordinate system to North West Up coordinate system to match Sonic.
             # Note that we can leave the x-axis variable as measured.
-
-            df['fdchp_heading'] = -df['fdchp_heading']   # z heading(yaw) counter clockwise
-            df['fdchp_pitch'] = -df['fdchp_pitch']   # y pitch east to west
-            df['fdchp_y_ang_rate'] = -df['fdchp_y_ang_rate'] # angular rate around y-axis
-            df['fdchp_z_ang_rate'] = -df['fdchp_z_ang_rate'] # angular rate around z-axis 
-            df['fdchp_y_accel_g'] = -df['fdchp_y_accel_g'] # linear acceleration along y-axis
-            df['fdchp_z_accel_g'] = -df['fdchp_z_accel_g'] # linear acceleration along z-axis (positve up)
+            convert_data_to_nwu(df)
         
     return df
     
@@ -80,7 +89,6 @@ def despikesimple(Y, exclusion_stdevs = 4, iterations = 3):
     # iterations is number of passes
     # exclusion_stdevs is the number of standard deviations beyond which to exclude data
 
-    # TODO: fix this function - seems not to work like the MATLAB version
     data_shape = Y.shape
     rows = data_shape[0]
 
@@ -97,8 +105,6 @@ def despikesimple(Y, exclusion_stdevs = 4, iterations = 3):
         good_data = (data < median + exclusion_stdevs*stdev) & (data > median - exclusion_stdevs*stdev)
         acceptable_points = data[good_data]
         k = np.sum(good_data)
-        # if k != len(data):
-        #     print("despikesimple despiking {} points".format(len(data) - k))
         if k == len(rows):
             return data# don't bother iterating when there aren't any points to exclude
         if k > 0:
@@ -266,7 +272,7 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     theta = np.maximum(theta,-1)                    
     sensible_x_acc =np.nonzero(np.abs(normalized_x_acceleration) < 1)  # Get indices where x-acceleration is less than g
     theta[sensible_x_acc] = np.arcsin(normalized_x_acceleration[sensible_x_acc])
-    #TODO: check out filtfilt some more. It looks like scipy default filtering may be different than MATLAB's:
+    # Scipy default filtering differs from MATLAB's:
     # https://dsp.stackexchange.com/questions/11466/differences-between-python-and-matlab-filtfilt-function
     theta_slow = theta - filtfilt(bhi, ahi, theta, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default
 
@@ -291,7 +297,6 @@ def get_euler_angles(ahi, bhi, sampling_frequency, accelerations, angular_rates,
     rates = get_angle_update_matrix(ang_rates, euler)
     # INTEGRATE AND FILTER ANGLE RATES, AND ADD TO SLOW ANGLES
     for i in np.arange(iterations):
-        #TODO: check column/row ordering of phi,theta, psi from rates
         phi_int = integrate.cumulative_trapezoid(rates[:, 0], dx = 1/sampling_frequency, initial=0)
         phi = phi_slow + filtfilt(bhi, ahi, phi_int, padlen = PADLENGTH) # 3*(np.max([len(bhi), len(ahi)]) - 1)) # padlen set to match MATLAB default 
         theta_int = integrate.cumulative_trapezoid(rates[:, 1], dx = 1/sampling_frequency, initial=0)
@@ -479,7 +484,8 @@ def calculate_and_write_metrics(mean_time, sonics, ang_rates, platform_accelerat
                  
     with open(file_path, 'w') as outfile:
         outfile.write(str(fluxes))
-        
+
+
 def write_metrics(metrics_list, file_path='fluxes', rounding=2):
     with open(file_path, 'w') as outfile:
         for metric in metrics_list:

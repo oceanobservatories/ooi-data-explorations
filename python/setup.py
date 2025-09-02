@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from os import path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 # read the contents of the README file
 this_directory = path.abspath(path.dirname(__file__))
@@ -37,7 +38,7 @@ setup(
     license = 'MIT',
     packages = find_packages(),
     install_requires = [
-        'xarray',
+        'xarray[accel]',
         'dask',
         'munch',
         'tqdm',
@@ -47,7 +48,11 @@ setup(
         'gsw',
         'requests',
         'beautifulsoup4',
-        'PyYAML'
+        'PyYAML',
+        'matplotlib',
+        'ntplib',
+        'netcdf4',
+        'h5netcdf',
     ],
     include_package_data=True,
     zip_safe=False

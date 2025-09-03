@@ -71,3 +71,4 @@ jobs:
       with:
         repository-url: https://test.pypi.org/legacy/
         packages-dir: downloaded-artifacts/
+        verbose: true

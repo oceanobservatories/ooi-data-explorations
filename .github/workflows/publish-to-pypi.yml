@@ -2,7 +2,6 @@ name: Upload Python Package to PyPI when a Release is Created
 
 on:
   release:
-  
     types: [created]
 
 jobs:
@@ -28,37 +27,15 @@ jobs:
         name: python-package-distributions
         path: python/dist/
 
-  # publish-to-pypi:
-  #   name: >-
-  #     Publish Python 🐍 distribution 📦 to PyPI
-  #   if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
-  #   needs:
-  #   - build
-  #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: pypi
-  #     url: https://pypi.org/p/ooi_data_explorations
-  #   permissions:
-  #     id-token: write  # IMPORTANT: mandatory for trusted publishing
-
-  #   steps:
-  #   - name: Download all the dists
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: python-package-distributions
-  #       path: dist/
-  #   - name: Publish distribution 📦 to PyPI
-  #     uses: pypa/gh-action-pypi-publish@release/v1
-
-  publish-to-testpypi:
-    name: Publish Python 🐍 distribution 📦 to TestPyPI
+  publish-to-pypi:
+    name: Publish Python 🐍 distribution 📦 to PyPI
     needs:
     - build
     runs-on: ubuntu-latest
 
     environment:
-      name: testpypi
-      url: https://test.pypi.org/p/ooi_data_explorations
+      name: pypi
+      url: https://pypi.org/p/ooi_data_explorations
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
@@ -69,9 +46,8 @@ jobs:
       with:
         name: python-package-distributions
         path: ./downloaded-artifacts/
-    - name: Publish distribution 📦 to TestPyPI
+    - name: Publish distribution 📦 to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        repository-url: https://test.pypi.org/legacy/
         packages-dir: downloaded-artifacts/
         verbose: true

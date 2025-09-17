@@ -19,7 +19,7 @@ name = "ooi_data_explorations"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE.txt"]
-description = "A package to pass specific parameters to JupyterNotebooks on the OOI JupyterHub server."
+description = "Tools for interacting with OOI data, including downloading, cleaning, and visualizing."
 keywords = ["URL parameters", "Ocean Observatories Initiative", "jupyter_server"]
 classifiers = [
     "Development Status :: 3 - Alpha",

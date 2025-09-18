@@ -158,15 +158,18 @@ def metbk_datalogger(ds, burst=False):
     #   met_latnflx_minute
     #   met_netlirr_minute
     #   met_sensflx_minute
-    ds = ds.drop(['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres', 'met_windavg_mag_corr_east',
-                  'met_windavg_mag_corr_north', 'met_netsirr', 'met_spechum', 'ct_depth', 'met_current_direction',
-                  'met_current_speed', 'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute',
-                  'met_latnflx_minute', 'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed',
-                  'met_barpres_qc_results', 'met_current_direction_qc_executed', 'met_current_direction_qc_results',
-                  'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
-                  'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
-                  'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
-                  'met_spechum_qc_results'])
+    drop_vars = ['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres', 'met_windavg_mag_corr_east',
+                'met_windavg_mag_corr_north', 'met_netsirr', 'met_spechum', 'ct_depth', 'met_current_direction',
+                'met_current_speed', 'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute',
+                'met_latnflx_minute', 'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed',
+                'met_barpres_qc_results', 'met_current_direction_qc_executed', 'met_current_direction_qc_results',
+                'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
+                'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
+                'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
+                'met_spechum_qc_results']
+    for var in drop_vars:
+        if var in ds.variables:
+            ds = ds.drop(var)
 
     # rename the met_salsurf parameters
     rename = {

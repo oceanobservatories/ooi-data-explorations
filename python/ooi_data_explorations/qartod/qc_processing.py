@@ -536,6 +536,9 @@ def parse_qc(ds):
     # create a list of the variables that have had QC tests applied
     variables = [x.split('_qc_results')[0] for x in ds.variables if 'qc_results' in x]
 
+    # If annotations have been applied, ignore those "qc_results"
+    variables = [v for v in variables if 'annotation' not in v]
+
     # for each variable with qc tests applied
     for var in variables:
         # set the qc_results and qc_executed variable names and the new qc_flags variable name

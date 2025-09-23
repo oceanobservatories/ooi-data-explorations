@@ -13,10 +13,6 @@ Installation instructions can be found in the README in that folder.
 This subfolder contains a series of examples that utilize the ooim2mr package.
 Links to the R package and installation instructions can be found in the README in that folder.
 
-### Julia
-This subfolder contains a working set of functions that allows Julia users to download OOI data via the OOI M2M interface.
-
-
 ### OOI Nomenclature
 
 ### OOI Sites

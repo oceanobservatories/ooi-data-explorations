@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from os import path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 # read the contents of the README file
 this_directory = path.abspath(path.dirname(__file__))

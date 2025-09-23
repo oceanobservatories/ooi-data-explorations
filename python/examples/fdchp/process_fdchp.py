@@ -1,8 +1,15 @@
 import numpy as np
-from examples.fdchp.fdchp_utils import (alignwind, calculate_and_write_metrics, despikesimple,
-                         get_euler_angles, get_platform_vel_pos,
-                         gravity_from_latitude, heave_calc, sonic,
-                         write_metrics)
+from examples.fdchp.fdchp_utils import (
+    alignwind,
+    calculate_and_write_metrics,
+    despikesimple,
+    get_euler_angles,
+    get_platform_vel_pos,
+    gravity_from_latitude,
+    heave_calc,
+    sonic,
+    write_metrics,
+)
 from scipy.signal import detrend, filtfilt
 
 

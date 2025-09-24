@@ -12,7 +12,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name = 'ooi_data_explorations',
-    version = '0.0.1',
+    version = '0.2.3',
     description = (
         'Collection of python processing modules for requesting data '
         'from the OOI M2M system'

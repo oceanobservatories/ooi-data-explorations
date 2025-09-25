@@ -117,5 +117,3 @@ venv.bak/
 *.jpg
 *.mp4
 
-# JupyterBook
-_build/

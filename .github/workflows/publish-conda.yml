@@ -36,7 +36,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: conda-package-distributions
-        path: ~/miniconda/conda-bld/noarch/
+        path: /usr/share/miniconda/envs/test/conda-bld/noarch/
 
   publish-to-conda-ooi:
     name: Publish Conda package to Anaconda OOI channel
@@ -57,6 +57,12 @@ jobs:
       with:
         name: conda-package-distributions
         path: ./downloaded-artifacts/
+
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: 3.11 # Or your desired Python version
+        channels: conda-forge,defaults
 
     - name: Upload to Anaconda.org
       uses: uibcdf/action-build-and-upload-conda-packages@v1 # Or openalea/action-build-publish-anaconda@v1

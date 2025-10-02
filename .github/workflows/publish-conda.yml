@@ -5,67 +5,39 @@ on:
     types: [created]
 
 jobs:
-  build:
-    name: Build distribution 📦
+  conda_deployment:
+    name: Conda deployment
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-
-
-    - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        python-version: 3.11 # Or your desired Python version
-        channels: conda-forge,defaults
-
-    - name: Install build tools
-      shell: bash -l {0}
-      run: |
-        conda install conda-build anaconda-client -y
-
-    - name: Build Conda package
-      shell: bash -l {0}
-      run: |
-        conda build python/conda-recipe/
-
-    - name: Store the distribution packages
-      uses: actions/upload-artifact@v4
-      with:
-        name: conda-package-distributions
-        path: /usr/share/miniconda/envs/test/conda-bld/noarch/
-
-  publish-to-conda-ooi:
-    name: Publish Conda package to Anaconda OOI channel
-    needs:
-    - build
-    runs-on: ubuntu-latest
-
     environment:
       name: anaconda
       url: https://anaconda.org/ooi
-
     permissions:
       id-token: write
 
     steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v4
-      with:
-        name: conda-package-distributions
-        path: ./downloaded-artifacts/
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-    - name: Setup Miniconda
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        python-version: 3.11 # Or your desired Python version
-        channels: conda-forge,defaults
+      - name: Conda environment creation and activation
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.11
+          auto-update-conda: false
+          auto-activate-base: false
+          show-channel-urls: true
 
-    - name: Upload to Anaconda.org
-      uses: uibcdf/action-build-and-upload-conda-packages@v1 # Or openalea/action-build-publish-anaconda@v1
-      with:
-        anaconda-token: ${{ secrets.ANACONDA_TOKEN }}
-        package-path: ./downloaded-artifacts/       
+      - name: Install build tools
+        shell: bash -l {0}
+        run: |
+          conda install conda-build anaconda-client -y
+
+
+      - name: Build and upload the conda packages
+        uses: uibcdf/action-build-and-upload-conda-packages@v2.0.0
+        with:
+          meta_yaml_dir: python/conda-recipe/ # Path to meta.yaml directory
+          user: ooi # Replace with your Anaconda username (or an Anaconda organization username)
+          token: ${{ secrets.ANACONDA_TOKEN }} # Replace with the name of your Anaconda Token secret
+          platform_linux-64: true
+          platform_osx-64: true
+          platform_win-64: true     

@@ -404,7 +404,7 @@ def rotate(vectors: np.ndarray,
     phi, theta, psi = angles[0], angles[1], angles[2]
 
     # Get the accelerations
-    u, v, w = vectors[0], vectors[1], vectors[2]
+    up, vp, wp = vectors[0], vectors[1], vectors[2]
 
     # Precompute the trig functions
     cp, sp = np.cos(phi), np.sin(phi)
@@ -413,21 +413,21 @@ def rotate(vectors: np.ndarray,
 
     # Calculate the rotation matrices
     if body_to_earth:
-        # Body to Earth (inverse rotation)
-        u_rot = u * ct * cps + v * (sp * st * cps - cp * sps) + \
-            w * (cp * st * cps + sp * sps)
-        v_rot = u * ct * sps + v * (sp * st * sps + cp * cps) + \
-            w * (cp * st * sps - sp * cps)
-        w_rot = -u * st + v * ct * sp + w * ct * cp
+        # IFLAG=0: x'y'z' -> xyz (body to earth)
+        u = up * ct * cps + vp * (sp * st * cps - cp * sps) + \
+            wp * (cp * st * cps + sp * sps)
+        v = up * ct * sps + vp * (sp * st * sps + cp * cps) + \
+            wp * (cp * st * sps - sp * cps)
+        w = up * (-st) + vp * (ct * sp) + wp * (ct * cp)
     else:
-        # Earth to Body
-        u_rot = u * ct * cps + v * ct * sps - w * st
-        v_rot = u * (sp * st * cps - cp * sps) + \
-            v * (sp * st * sps + cp * cps) + w * ct * sp
-        w_rot = u * (cp * st * cps + sp * sps) + \
-            v * (cp * st * sps - cp * cps) + w * ct * cp
+        # IFLAG=1: xyz -> x'y'z' (earth to body)
+        u = up * ct * cps + vp * ct * sps - wp * st
+        v = up * (sp * st * cps - cp * sps) + vp * (sp * st * sps + cp * cps) \
+            + wp * ct * sp
+        w = up * (cp * st * cps + sp * sps) + vp * (cp * st * sps - sp * cps) \
+            + wp * ct * cp
 
-    return np.vstack([u_rot, v_rot, w_rot])
+    return np.vstack([u, v, w])
 
 
 def updater(rates: np.ndarray, angles: np.ndarray) -> np.ndarray:
@@ -1230,6 +1230,13 @@ def process_wave_sample(platform: np.ndarray,
     z = xyz[2, edge:-edge]
     u = uvw[1, edge:-edge]  # North velocity
     v = -uvw[0, edge:-edge]  # East velocity (note sign convention)
+
+    # Debug output
+    print(f"    DEBUG: z range: [{np.min(z):.2f}, {np.max(z):.2f}], std: {np.std(z):.2f}")
+    print(f"    DEBUG: z mean: {np.mean(z):.4f}, should be ~0")
+    print(f"    DEBUG: uvw shape: {uvw.shape}, xyz shape: {xyz.shape}")
+    print(f"    DEBUG: u range: [{np.min(u):.2f}, {np.max(u):.2f}]")
+    print(f"    DEBUG: v range: [{np.min(v):.2f}, {np.max(v):.2f}]")
 
     # === NON-DIRECTIONAL STATISTICS ===
 

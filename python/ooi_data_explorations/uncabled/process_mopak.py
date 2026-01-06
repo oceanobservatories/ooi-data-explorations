@@ -7,7 +7,7 @@ statistics from MOPAK accelerometer data
 """
 import numpy as np
 import xarray as xr
-from scipy.signal import butter, sosfiltfilt, detrend, welch
+from scipy.signal import butter, buttord, filtfilt, detrend, welch
 from scipy.fft import rfft, rfftfreq
 from scipy.signal.windows import hann
 from scipy.integrate import cumulative_trapezoid
@@ -223,7 +223,7 @@ class FilterRegistry:
     def __init__(self):
         self._cache = {}
 
-    def get_highpass_sos(self, fs: float, fc: float, ludo: bool = True):
+    def get_highpass_ba(self, fs: float, fc: float, ludo: bool = True):
         """
         Get highpass filter in second-order sections format (more stable).
         """
@@ -231,23 +231,27 @@ class FilterRegistry:
         if key not in self._cache:
             n_freq = fs / 2
             wp = fc / n_freq
-            ws = 0.8 * wp if ludo else 0.7 * wp
 
-            # Use zpk format for better numerical stability
-            from scipy.signal import buttord
-            n, wn = buttord(wp, ws, 3, 7) if ludo else buttord(wp, ws, 10, 25)
-            sos = butter(n, wn, 'high', output='sos')
-            self._cache[key] = sos
+            if ludo:
+                ws = 0.8 * wp
+                n, wn = buttord(wp, ws, 3, 7)
+            else:
+                ws = 0.7 * wp
+                n, wn = buttord(wp, ws, 10, 25)
+
+            b, a = butter(n, wn, 'high')
+            self._cache[key] = (b, a)
         return self._cache[key]
 
 
-def apply_filter_sos(data: np.ndarray,
-                     sos: np.ndarray,
-                     axis: int = -1) -> np.ndarray:
+def apply_filter_ba(data: np.ndarray,
+                    b: np.ndarray,
+                    a: np.ndarray,
+                    axis: int = -1) -> np.ndarray:
     """
-    Apply second-or-sections filter (more stable than a/b)
+    Apply BA filter
     """
-    return sosfiltfilt(sos, data, axis=axis)
+    return filtfilt(b, a, data, axis=axis)
 
 
 def despike(data: np.ndarray,
@@ -599,8 +603,8 @@ class MopakPreprocessor:
 # ============================================================================
 
 
-def compute_euler_angles(ahi,
-                         bhi,
+def compute_euler_angles(b: np.ndarray,
+                         a: np.ndarray,
                          fs: float,
                          accm: np.ndarray,
                          ratem: np.ndarray,
@@ -616,10 +620,10 @@ def compute_euler_angles(ahi,
 
     Parameters
     ----------
-    ahi: array_like
-        The filter coefficients a
-    bhi: array_like
+    b: array_like
         The filter coefficients b
+    a: array_like
+        The filter coefficients a
     fs: float
         The sample frequency
     accm: array_like
@@ -653,41 +657,45 @@ def compute_euler_angles(ahi,
 
     # === Low frequency angles from accelerometers ===
     # Pitch
-    theta_ratio = np.clip(-accm[0] / gravity, -1, 1)
+    theta_ratio = np.minimum(-accm[0] / gravity, 1)
+    theta = theta_ratio.copy()
+
     # Identify free-fall values and remove
-    theta = np.where(np.abs(accm[0]) < gravity,
-                     np.arcsin(theta_ratio),
-                     theta_ratio)
+    ind = np.where(np.abs(accm[0, :]) < gravity)[0]
+    theta[ind] = np.arcsin(-accm[0, ind] / gravity)
+
     # Calculate the slow angles
-    theta_slow = theta - apply_filter_sos(theta, bhi)
+    theta_slow = theta - filtfilt(b, a, theta)
 
     # Roll (depends on pitch)
-    phi_ratio = accm[1] / gravity / np.cos(theta_slow)
-    # Find well-behaved angles
-    phi = np.where(np.abs(phi_ratio) < 1,
-                   np.arcsin(phi_ratio),
-                   accm[1] / gravity)
+    phi_ratio = accm[1, :] / gravity
+    phi = phi_ratio.copy()
+
+    # Identify poor angles and replace
+    ind = np.where(np.abs(accm[1, :] / gravity / np.cos(theta_slow)) < 1)[0]
+    phi[ind] = np.arcsin(accm[1, ind] / gravity / np.cos(theta_slow[ind]))
+
     # Calculate the slow angles
-    phi_slow = phi - apply_filter_sos(phi, bhi)
+    phi_slow = phi - filtfilt(b, a, phi)
 
     # Yaw
-    psi_slow = gyro - apply_filter_sos(gyro, bhi)
+    psi_slow = gyro - filtfilt(b, a, gyro)
 
     # === Iterative refinement ===
     euler = np.vstack([phi_slow, theta_slow, psi_slow])
     rates = updater(ratem, euler)
+    dt = 1 / fs
 
     for _ in range(iters):
         # Integrate rates
-        dt = 1 / fs
-        phi_fast = dt * cumulative_trapezoid(rates[0], initial=0)
-        theta_fast = dt * cumulative_trapezoid(rates[1], initial=0)
-        psi_fast = dt * cumulative_trapezoid(rates[2], initial=0)
+        phi_fast = dt * cumulative_trapezoid(rates[0, :], initial=0)
+        theta_fast = dt * cumulative_trapezoid(rates[1, :], initial=0)
+        psi_fast = dt * cumulative_trapezoid(rates[2, :], initial=0)
 
         # Filter and add to slow angles
-        phi = phi_slow + apply_filter_sos(phi_fast, bhi)
-        theta = theta_slow + apply_filter_sos(theta_fast, bhi)
-        psi = psi_slow + apply_filter_sos(psi_fast, bhi)
+        phi = phi_slow + filtfilt(b, a, phi_fast)
+        theta = theta_slow + filtfilt(b, a, theta_fast)
+        psi = psi_slow + filtfilt(b, a, psi_fast)
 
         euler = np.vstack([phi, theta, psi])
 
@@ -695,7 +703,9 @@ def compute_euler_angles(ahi,
         rates = updater(ratem, euler)
 
         # Detrend rates for next iteration
-        rates = detrend(rates, axis=1, type='constant')
+        rates[0, :] = detrend(rates[0, :], type='constant')
+        rates[1, :] = detrend(rates[1, :], type='constant')
+        rates[2, :] = detrend(rates[2, :], type='constant')
 
     return euler, ratem
 
@@ -708,7 +718,8 @@ def compute_platform_motion(angular_rates: np.ndarray,
                             euler: np.ndarray,
                             accm: np.ndarray,
                             fs: float,
-                            sos_filter,
+                            b: np.ndarray,
+                            a: np.ndarray,
                             offset: List[float],
                             gravity: float) -> Tuple[np.ndarray, np.ndarray]:
     """
@@ -724,8 +735,10 @@ def compute_platform_motion(angular_rates: np.ndarray,
         A (3 x n) array of platform accelerations
     fs: float
         The sampling frequency
-    sos_filter: array_like
-        The second-order sections filter coefficients
+    b: array_like
+        The filter coefficients
+    a: array_like
+        The filter coefficients
     offset: array_like
         Vector distance from motion pack to wave sensor
     gravity: float
@@ -743,31 +756,38 @@ def compute_platform_motion(angular_rates: np.ndarray,
     Beardsley, Bob. 1999. AIR SEA MatLab Toolbox. Ver. 2.0. [Software: MatLab]
     """
     n_samples = angular_rates.shape[1]
-    offset_vec = np.array(offset).reshape(3, 1)
-    offset_matrix = np.tile(offset_vec, (1, n_samples))
+    # Create offset vector matrix
+    R = np.vstack([
+        offset[0] * np.ones(n_samples),
+        offset[1] * np.ones(n_samples),
+        offset[2] * np.ones(n_samples)
+    ])
 
     # Rotational velocity contribution
-    uvw_rot = np.cross(angular_rates, offset_matrix, axis=0)
+    uvw_rot = np.cross(angular_rates, R, axis=0)
     uvw_rot = rotate(uvw_rot, euler, body_to_earth=True)
 
     # Linear acceleration in earth frame
     acc_earth = rotate(accm, euler, body_to_earth=True)
-    acc_earth[2] = acc_earth[2] - gravity  # Remove gravity
+    acc_earth[2, :] = acc_earth[2, :] - gravity  # Remove gravity
 
     # Filter and integrate acceleration
-    acc_filtered = apply_filter_sos(acc_earth, sos_filter, axis=1)
+    motion = np.ones(acc_earth.shape)
+    uvw_plat = np.ones(acc_earth.shape)
 
-    # Velocity = integrated acceleration + rotational contribution
-    dt = 1 / fs
-    vel_trans = dt * cumulative_trapezoid(acc_filtered, axis=1, initial=0)
-    motion = vel_trans + uvw_rot
-    uvw_platform = apply_filter_sos(motion, sos_filter, axis=1)
+    for i in range(3):
+        acc_earth[i, :] = filtfilt(b, a, acc_earth[i, :])
+        motion[i, :] = cumulative_trapezoid(acc_earth[i, :], initial=0) / fs \
+            + uvw_rot[i, :]
+        uvw_plat[i, :] = filtfilt(b, a, motion[i, :])
 
     # Displacement = integrated velocity
-    disp = dt * cumulative_trapezoid(uvw_platform, axis=1, initial=0)
-    xyz_platform = apply_filter_sos(disp, sos_filter, axis=1)
+    xyz_plat = np.ones(uvw_plat.shape)
+    for i in range(3):
+        xyz_plat[i, :] = cumulative_trapezoid(uvw_plat[i, :], initial=0) / fs
+        xyz_plat[i, :] = filtfilt(b, a, xyz_plat[i, :])
 
-    return uvw_platform, xyz_platform
+    return uvw_plat, xyz_plat
 
 
 # ============================================================================
@@ -1171,8 +1191,8 @@ def process_wave_sample(platform: np.ndarray,
         (n_crossings, H_sig_zc, T_sig_zc, H_10, T_10, T_sig_spec,
          H_avg, T_avg, Tdir, Ts, Fs, Hm0)
     """
-    # Get filter
-    sos = filters.get_highpass_sos(config.fs, config.f_cutoff)
+    # Get filter coefficients
+    b, a = filters.get_highpass_ba(config.fs, config.f_cutoff)
 
     # Despike data
     platform, _ = despike(platform, config.n_std, config.despike_iters)
@@ -1189,13 +1209,13 @@ def process_wave_sample(platform: np.ndarray,
 
     # Compute Euler angles
     euler, rates = compute_euler_angles(
-        sos, sos, config.fs, platform, deg_rate, gyro,
+        b, a, config.fs, platform, deg_rate, gyro,
         config.gravity, config.euler_iters
     )
 
     # Compute platform motion
     uvw, xyz = compute_platform_motion(
-        rates, euler, platform, config.fs, sos,
+        rates, euler, platform, config.fs, b, a,
         config.com_offset, config.gravity
     )
 
@@ -1378,7 +1398,8 @@ def identify_samples(ds, threshold):
         sample interval number
     """
     # First, get the difference of the time in seconds
-    dt = ds["time"].diff(dim="time").dt.total_seconds().values
+    time_diff = ds["time"].diff(dim="time")
+    dt = time_diff.values.astype('timedelta64[s]').astype(float)
 
     # Next, find where the gaps in the time series occur
     gap_ends = np.where(dt > threshold)[0] + 1

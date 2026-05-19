@@ -29,6 +29,34 @@ QCThresholds = {
 }
 
 
+def _threshold_qc(values: npt.NDArray, suspect: float, fail: float) -> npt.NDArray[np.int8]:
+    """
+    Apply simple absolute-value threshold QC and return QARTOD flags.
+
+    Uses np.select for a single, vectorised pass over the data rather than
+    applying two sequential boolean masks.
+
+    Parameters
+    ----------
+    values: numpy.ndarray
+        Raw measurement array (already extracted from the dataset).
+    suspect: float
+        Threshold above which a value is considered suspect.
+    fail: float
+        Threshold above which a value is considered a fail.
+
+    Returns
+    -------
+    qc_flags: numpy.ndarray[int8]
+    """
+    abs_values = np.abs(values)
+    return np.select(
+        [abs_values > fail, abs_values > suspect],
+        [4, 3],
+        default=1,
+    ).astype(np.int8)
+
+
 def sidelobe_depth(ds: xr.Dataset, theta: int = 20) -> xr.DataArray:
     """
     Calculate the sidelobe contamination depth for the given ADCP.
@@ -56,18 +84,16 @@ def sidelobe_depth(ds: xr.Dataset, theta: int = 20) -> xr.DataArray:
     z_ic:
     """
     # First, get the transducer depth
-    depth = ds['depth_from_pressure']
-    ha = depth.interpolate_na(dim='time', method='linear')
+    ha = ds['depth_from_pressure'].interpolate_na(dim='time', method='linear')
 
     # Next, get the beam angle
     theta = np.deg2rad(theta)
 
-    # Grab the cell length and convert to m
-    delta_z = ds['cell_length'].mean(skipna=True)/100
+    # Grab the cell length and convert from cm to m
+    delta_z = ds['cell_length'].mean(skipna=True) / 100
 
     # Calculate the range of cells contaminated by sidelobe interference
-    z_ic = ha*(1 - np.cos(theta)) + 3*delta_z/2
-
+    z_ic = ha * (1 - np.cos(theta)) + 3 * delta_z / 2
     return z_ic
 
 
@@ -107,18 +133,14 @@ def sidelobe_qc(ds: xr.Dataset) -> xr.Dataset:
     # First, get the sidelobe contamination depth z_ic
     z_ic = sidelobe_depth(ds)
 
-    # Next, create a qc_flag for each bin measurement and
-    # identify the bins which are shallower than z_ic
-    qc_flag = np.ones(ds['bin_depths'].shape, dtype=int)
-    mask = ds['bin_depths'] < z_ic
-    qc_flag[mask] = 4
+    # Identify bins which are shallower than z_ic
+    # QC flag: start with all-pass, mark contaminated bins as fail
+    qc_flag = np.where(ds['bin_depths'] < z_ic, 4, 1).astype(np.int8)
 
-    # Add the qc_flags
+    # Add the qc_flags and associated attributes
     qc_name = 'bin_depths_qc_summary_flag'
-    ds[qc_name] =  (['time', 'bins'], qc_flag)
-    
-     # set up the attributes for the new variable
-    ds[qc_name].attrs = dict({
+    ds[qc_name] =  (['time', 'bins'], qc_flag)    
+    ds[qc_name].attrs = {
         'long_name': '%s QC Summary Flag' % ds['bin_depths'].attrs['long_name'],
         'comment': ('A QARTOD style summary flag indicating depth bins with sidelobe contamination, where ',
                     'the values are 1 == pass, 2 == not evaluated, 3 == suspect or of high interest, ',
@@ -126,12 +148,11 @@ def sidelobe_qc(ds: xr.Dataset) -> xr.Dataset:
                     'fail values. Sidelobe contamination depth is determined following Lentz et al (2022).'),
         'flag_values': np.array([1, 2, 3, 4, 9]),
         'flag_meanings': 'pass not_evaluated suspect_or_of_high_interest fail missing'
-    })
-
+    }
     return ds
 
 
-def error_velocity_qc(ds: xr.Dataset, suspect: float | int, fail: float | int) -> npt.NDArray[int]:
+def error_velocity_qc(ds: xr.Dataset, suspect: float | int, fail: float | int) -> npt.NDArray[np.int8]:
     """
     Determine ADCP QC based on Error velocity and assign
     QARTOD-style flags. This algorithm uses thresholds computed
@@ -164,21 +185,10 @@ def error_velocity_qc(ds: xr.Dataset, suspect: float | int, fail: float | int) -
         test for each given datum
 
     """
-    # Set up a qc_flags the shape of the variable
-    qc_flags = np.ones(ds['error_seawater_velocity'].shape, dtype=int)
-    
-    # Now find the "suspect" values
-    mask = (np.abs(ds['error_seawater_velocity']) > suspect)
-    qc_flags[mask] = 3
-    
-    # Now find the "fail" values
-    mask = (np.abs(ds['error_seawater_velocity']) > fail)
-    qc_flags[mask] = 4
-
-    return qc_flags
+    return _threshold_qc(ds['error_seawater_velocity'].values, suspect, fail)
 
 
-def vertical_velocity_qc(ds: xr.Dataset, suspect: float | int, fail: float | int) -> npt.NDArray[int]:
+def vertical_velocity_qc(ds: xr.Dataset, suspect: float | int, fail: float | int) -> npt.NDArray[np.int8]:
     """
     Determine ADCP QC based on vertical velocity and assign
     QARTOD-style flags. This algorithm uses thresholds computed
@@ -210,21 +220,10 @@ def vertical_velocity_qc(ds: xr.Dataset, suspect: float | int, fail: float | int
         An array of QARTOD-style flags indicating the results of the QC
         test for each given datum
     """
-    # Set up a qc_flags the shape of the variable
-    qc_flags = np.ones(ds['upward_seawater_velocity'].shape, dtype=int)
-    
-    # Now find the "suspect" values
-    mask = (np.abs(ds['upward_seawater_velocity']) > suspect)
-    qc_flags[mask] = 3
-    
-    # Now find the "fail" values
-    mask = (np.abs(ds['upward_seawater_velocity']) > fail)
-    qc_flags[mask] = 4
-
-    return qc_flags
+    return _threshold_qc(ds['upward_seawater_velocity'].values, suspect, fail)
 
 
-def horizontal_speed_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt.NDArray[int]:
+def horizontal_speed_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt.NDArray[np.int8]:
     """
     Determine ADCP QC based on vertical velocity and assign
     QARTOD-style flags. This algorithm uses thresholds computed
@@ -257,37 +256,23 @@ def horizontal_speed_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt.NDAr
         An array of QARTOD-style flags indicating the results of the QC
         test for each given datum
     """
-    # Set up a qc_flags the shape of the variable
-    qc_flags_east = np.ones(ds['eastward_seawater_velocity'].shape, dtype=int)
-    qc_flags_north = np.ones(ds['northward_seawater_velocity'].shape, dtype=int)
+    # Get the east and north velocity
+    east = np.abs(ds['eastward_seawater_velocity'].values)
+    north = np.abs(ds['northward_seawater_velocity'].values)
     
-    # Now find the "suspect" values
-    mask = (np.abs(ds['eastward_seawater_velocity']) > suspect)
-    qc_flags_east[mask] = 3
-    mask = (np.abs(ds['northward_seawater_velocity']) > suspect)
-    qc_flags_north[mask] = 3
-    
-    # Now find the "fail" values
-    mask = (np.abs(ds['eastward_seawater_velocity']) > fail)
-    qc_flags_east[mask] = 4
-    mask = (np.abs(ds['northward_seawater_velocity']) > fail)
-    qc_flags_north[mask] = 4
-
-    # Now combine them using math to parse out the combinations
-    qc_flags = np.ones(ds['eastward_seawater_velocity'].shape, dtype=int)
-    
-    # Suspect flags when both directions are suspect
-    suspect_flags = ((qc_flags_east == 3) & (qc_flags_north == 3))
-    qc_flags[suspect_flags] = 3
-
-    # Fail flags when either direction is bad
-    bad_flags = ((qc_flags_east == 4) | (qc_flags_north == 4))
-    qc_flags[bad_flags] = 4
+    # Fail if either component exceeds the fail threshold; suspect if both
+    # exceed the suspect threshold; otherwise pass — single vectorised call.
+    qc_flags = np.select(
+        [(east > fail) | (north > fail),
+         (east > suspect) & (north > suspect)],
+        [4, 3],
+        default=1,
+    ).astype(np.int8)
 
     return qc_flags
 
 
-def correlation_magnitude_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt.NDArray[int]:
+def correlation_magnitude_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt.NDArray[np.int8]:
     """
     Determine ADCP QC based on correlation magnitude and assign
     QARTOD-style flags. This algorithm uses thresholds computed
@@ -319,32 +304,29 @@ def correlation_magnitude_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt
         An array of QARTOD-style flags indicating the results of the QC
         test for each given datum
     """
-    # Set up the qc_flags 
-    qc_flags = np.ones(ds['correlation_magnitude_beam1'].shape, dtype=int)
-    
-    # Simplify implementation by adding booleans
-    beam1_pass = (ds['correlation_magnitude_beam1'] > suspect).astype(int)
-    beam2_pass = (ds['correlation_magnitude_beam2'] > suspect).astype(int)
-    beam3_pass = (ds['correlation_magnitude_beam3'] > suspect).astype(int)
-    beam4_pass = (ds['correlation_magnitude_beam4'] > suspect).astype(int)
+    # Stack all four beams along a new trailing axis, then count passes in one op
+    beams = np.stack([
+        ds['correlation_magnitude_beam1'].values,
+        ds['correlation_magnitude_beam2'].values,
+        ds['correlation_magnitude_beam3'].values,
+        ds['correlation_magnitude_beam4'].values,
+    ], axis=-1)
 
-    # Sum the results
-    total_pass = beam1_pass + beam2_pass + beam3_pass + beam4_pass
+    # Get the total pass
+    total_pass = np.sum(beams > suspect, axis=-1)  # shape: (time, bins)
 
-    # Good values sum to 3 or 4
-    # Suspect values sum to 2
-    mask = (total_pass == 2)
-    qc_flags[mask] = 3
-
-    # Fail values sum to 0 or 1
-    mask = (total_pass < 2)
-    qc_flags[mask] = 4
+    # Find which flags passes
+    qc_flags = np.select(
+        [total_pass < 2, total_pass == 2],
+        [4, 3],
+        default=1,
+    ).astype(np.int8)
 
     # Return the qc_flags
     return qc_flags
 
 
-def percent_good_qc(ds: xarray.Dataset, suspect: float, fail: float) -> npt.NDArray[int]:
+def percent_good_qc(ds: xr.Dataset, suspect: float, fail: float) -> npt.NDArray[np.int8]:
     """
     Determine ADCP QC based on the percent good returned for each
     beam and assign QARTOD-style flags. This algorithm uses thresholds
@@ -374,20 +356,18 @@ def percent_good_qc(ds: xarray.Dataset, suspect: float, fail: float) -> npt.NDAr
         An array of QARTOD-style flags indicating the results of the QC
         test for each given datum
     """
-    # Merge the 3 and 4 beam solutions along a new axis and take the maximum
-    percent_good = np.stack([ds['percent_good_3beam'].values, ds['percent_good_4beam'].values], axis=-1)
-    percent_good = np.max(percent_good, axis=2)
-    
-    # Create a qc_flags array
-    qc_flags = np.ones(percent_good.shape, dtype=int)
-    
-    # Find where the flags are suspect
-    mask = (percent_good < suspect)
-    qc_flags[mask] = 3
+    # Take the element-wise maximum of the 3-beam and 4-beam solutions
+    percent_good = np.maximum(
+        ds['percent_good_3beam'].values,
+        ds['percent_good_4beam'].values,
+    )
 
-    # Find where the correlation magnitude is bad
-    mask = (percent_good < fail)
-    qc_flags[mask] = 4
+    # Get the qc_flags
+    qc_flags = np.select(
+        [percent_good < fail, percent_good < suspect],
+        [4, 3],
+        default=1,
+    ).astype(np.int8)
 
     # Return the results
     return qc_flags
@@ -419,34 +399,21 @@ def merge_qc(test_results: list[npt.NDArray[int]]) -> npt.NDArray[int]:
         A numpy array that contains the combined results
         of the individual QC tests passed in test_results
     """
+    # Stack into (n_tests, ...) then compute per-element statistics in one pass
+    stacked = np.stack(test_results, axis=0)  # shape: (n, time, bins)
     n = len(test_results)
-    qc_flags = np.zeros(test_results[0].shape, dtype=int)
 
-    # First, calculate the most "inclusive" case of the number
-    # of pass OR suspect tests and calculate the fraction 
-    tests_suspect = np.zeros(test_results[0].shape, dtype=int)
-    for test in test_results:
-        suspect = ((test == 1) | (test == 3)).astype(int)
-        tests_suspect = tests_suspect + suspect
-    # Now calculate the fraction of tests that passed
-    total_suspect = (tests_suspect / n)
-    # Find where not enough tests pass and mark as fail
-    mask = (total_suspect < 0.5)
-    qc_flags[mask] = 4
-    # Mark the rest as suspect. Will test for pass next
-    mask = (total_suspect >= 0.5)
-    qc_flags[mask] = 3
+    # Count passes and pass-or-suspects across all tests simultaneously
+    n_passed   = np.sum(stacked == 1, axis=0)
+    n_suspect  = np.sum((stacked == 1) | (stacked == 3), axis=0)
 
-    # Now test for if all tests pass
-    tests_passed = np.zeros(test_results[0].shape, dtype=int)
-    # Sum up the number of "passes" in the qc_tests
-    for test in test_results:
-        passed = (test == 1).astype(int)
-        tests_passed = tests_passed + passed
-    # Now calculate the fraction of tests that passed
-    total_passed = (tests_passed / n)
-    mask = (total_passed == 1)
-    qc_flags[mask] = 1
+    # Calculate the qc_flags
+    qc_flags = np.select(
+        [n_suspect / n < 0.5,   # fail: fewer than half are even suspect
+         n_passed  / n < 1.0],  # suspect: not all passed
+        [4, 3],
+        default=1,              # pass: every test passed
+    ).astype(np.int8)
 
     # Return the result
     return qc_flags

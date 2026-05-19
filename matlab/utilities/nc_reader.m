@@ -72,7 +72,7 @@ for k = 1:numel(varNames)
     % pull out the variable units and comment attributes
     units = {''}; descr = {''};
     if ~isempty(vAttributes{k})
-        attr = struct2table(vAttributes{k});
+        attr = struct2table(vAttributes{k}, "AsArray", true);
         for j = 1:height(attr)
             if strcmp(attr.Name(j), 'units')
                 units = attr.Value(j);

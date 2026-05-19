@@ -1,7 +1,11 @@
-function [outputArg1,outputArg2] = untitled(inputArg1,inputArg2)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
-end
+function info = get_parameter_information(parameter_id)
+% GET_PARAMETER_INFORMATION Use the Parameter ID# to retrieve information
+% about the parameter: units, sources, data product ID, comments, etc
+%
+% C. Wingard, 2026-01-06
 
+% load the default names and access credentials
+ooinet_defaults
+
+% get the parameter information
+info = webread([BASE_URL PARAMETER_URL parameter_id], options);

@@ -16,7 +16,16 @@ from ooi_data_explorations.common import inputs, get_vocabulary, m2m_request, li
 from ooi_data_explorations.profilers import create_profile_id, bin_profiles
 from ooi_data_explorations.uncabled.utilities.utilities_optaa import load_cal_coefficients, apply_dev, apply_tscorr, \
     apply_scatcorr, estimate_chl_poc, calculate_ratios, PureWater, tscor
-from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
+
+try:
+    from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
+except ImportError:
+    opt_internal_temp = None
+    opt_external_temp = None
+    _PYSEAS_ERR = (
+        "pyseas is required for OPTAA processing but is not installed. "
+        "Install via: pip install https://bitbucket.org/ooicgsn/pyseas/get/develop.zip"
+    )
 
 # reset the variable level attributes and set some global defaults
 ATTRS = dict({
@@ -374,6 +383,10 @@ def optaa_datalogger(ds, cal_file, a_purewater_file = None, c_purewater_file=Non
         file for the c-channel. If left None will not apply purewater correction
     :return ds: cleaned up data set
     """
+    # check for required pyseas dependency
+    if opt_internal_temp is None:
+        raise ImportError(_PYSEAS_ERR)
+
     # check to see if there is more than one deployment in the data set
     if len(np.unique(ds['deployment'].values)) > 1:
         raise ValueError('More than one deployment in the data set.  Please structure processing request to process '
@@ -556,6 +569,10 @@ def optaa_cspp(ds, cal_file):
         coefficients
     :return ds: cleaned up data set
     """
+    # check for required pyseas dependency
+    if opt_internal_temp is None:
+        raise ImportError(_PYSEAS_ERR)
+
     # check to see if there is more than one deployment in the data set
     if len(np.unique(ds['deployment'].values)) > 1:
         raise ValueError('More than one deployment in the data set.  Please structure processing request to process '

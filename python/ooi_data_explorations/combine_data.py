@@ -11,7 +11,6 @@ import numpy as np
 import os
 import sys
 
-import pandas as pd
 import xarray as xr
 
 
@@ -113,7 +112,7 @@ def combine_datasets(tdata, rhdata, ridata, resample_time):
         gtime = '{:d}Min'.format(resample_time * 3)
         ds = ds.sortby('time')
         ds['time'] = ds['time'] + np.timedelta64(btime, 'm')
-        avg = ds.resample(time=itime, skipna=True).median(keep_attrs=True)
+        avg = ds.resample(time=itime).median(skipna=True, keep_attrs=True)
         avg = avg.interpolate_na(dim='time', max_gap=gtime)
         avg = avg.where(~np.isnan(avg.deployment), drop=True)
 

@@ -17,7 +17,15 @@ from ooi_data_explorations.profilers import create_profile_id, bin_profiles, upd
 from ooi_data_explorations.uncabled.process_optaa import ATTRS, FILL_INT, load_cal_coefficients, apply_dev, \
     apply_tscorr, apply_scatcorr, estimate_chl_poc, calculate_ratios
 
-from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
+try:
+    from pyseas.data.opt_functions import opt_internal_temp, opt_external_temp
+except ImportError:
+    opt_internal_temp = None
+    opt_external_temp = None
+    _PYSEAS_ERR = (
+        "pyseas is required for OPTAA processing but is not installed. "
+        "Install via: pip install https://bitbucket.org/ooicgsn/pyseas/get/develop.zip"
+    )
 
 # set floating-point error handling for numpy
 _ = np.seterr(all='ignore', divide='warn')
@@ -42,6 +50,10 @@ def optaa_benthic(ds, cal_file):
         coefficients
     :return ds: cleaned up and reprocessed data set
     """
+    # check for required pyseas dependency
+    if opt_internal_temp is None:
+        raise ImportError(_PYSEAS_ERR)
+
     # check to see if there is more than one deployment in the data set
     if len(np.unique(ds['deployment'].values)) > 1:
         raise ValueError('More than one deployment in the data set.  Please structure processing request to process '
@@ -223,6 +235,10 @@ def optaa_profiler(ds, cal_file):
         coefficients
     :return ds: cleaned up and reprocessed data set
     """
+    # check for required pyseas dependency
+    if opt_internal_temp is None:
+        raise ImportError(_PYSEAS_ERR)
+
     # check to see if there is more than one deployment in the data set
     if len(np.unique(ds['deployment'].values)) > 1:
         raise ValueError('More than one deployment in the data set.  Please structure processing request to process '

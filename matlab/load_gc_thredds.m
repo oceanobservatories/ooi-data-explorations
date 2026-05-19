@@ -124,7 +124,7 @@ clear base_url dap_url dataset_id url files nfiles options i file ext nc_url sou
 
 % finally, concatenate the timetables together returning the results
 if length(data) > 1
-    fprintf("Merge and finalize the data set, returning final product as a timetable.\n")
+    fprintf("Concatenate the files together, returning a timetable as the final product.\n")
     data = ph.merge_frames(data);
 else
     fprintf("Returning final product as a timetable.\n")

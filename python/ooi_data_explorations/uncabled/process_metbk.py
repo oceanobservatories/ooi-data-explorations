@@ -39,8 +39,9 @@ def quality_checks(ds):
             continue
         # The primary failure mode of the METBK is to repeat the last value it received from a sensor.
         # Use the IOOS QARTOD flat line test to identify these cases (consider it suspect if it repeats
-        # for 10+ minutes and failed if it repeats for 20+ minutes).
-        flags = qartod.flat_line_test(ds[p].values, ds['time'].values, 600, 1200, 0.00001)
+        # for 5+ minutes and failed if it repeats for 7+ minutes).
+        flags = qartod.flat_line_test(np.array(ds[p].values, dtype=np.float64), np.array(ds['time'].values),
+                                      300, 420, 0.00001)
 
         # The secondary failure mode occurs when the METBK logger sets values to a NaN if no sensor data is available.
         # In the case of the sea surface conductivity and temperature data, different values are used to represent
@@ -62,7 +63,7 @@ def quality_checks(ds):
             flags[m] = 9
 
         # add the qc_flags to the dataset, rolling up the results into a single value
-        qc_summary = p + '_qc_summary_flag'
+        qc_summary = p + '_quality_flag'
         if qc_summary in ds.variables:
             # add the new test results to the existing QC summary results
             qc = ds[qc_summary]
@@ -75,7 +76,7 @@ def quality_checks(ds):
         # set up the attributes for the new variable
         ds[qc_summary].attrs = dict({
             'long_name': '%s QC Summary Flag' % ds[p].attrs['long_name'],
-            'standard_name': 'aggregate_quality_flag',
+            'standard_name': 'quality_flag',
             'comment': ('Summary quality flag combining the results of the instrument-specific quality tests with '
                         'existing OOI QC tests, if available, to create a single QARTOD style aggregate quality flag'),
             'flag_values': np.array([1, 2, 3, 4, 9]),
@@ -158,15 +159,18 @@ def metbk_datalogger(ds, burst=False):
     #   met_latnflx_minute
     #   met_netlirr_minute
     #   met_sensflx_minute
-    ds = ds.drop(['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres', 'met_windavg_mag_corr_east',
-                  'met_windavg_mag_corr_north', 'met_netsirr', 'met_spechum', 'ct_depth', 'met_current_direction',
-                  'met_current_speed', 'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute',
-                  'met_latnflx_minute', 'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed',
-                  'met_barpres_qc_results', 'met_current_direction_qc_executed', 'met_current_direction_qc_results',
-                  'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
-                  'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
-                  'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
-                  'met_spechum_qc_results'])
+    drop_vars = ['dcl_controller_timestamp', 'internal_timestamp', 'met_barpres', 'met_windavg_mag_corr_east',
+                'met_windavg_mag_corr_north', 'met_netsirr', 'met_spechum', 'ct_depth', 'met_current_direction',
+                'met_current_speed', 'met_relwind_direction', 'met_relwind_speed', 'met_heatflx_minute',
+                'met_latnflx_minute', 'met_netlirr_minute', 'met_sensflx_minute', 'met_barpres_qc_executed',
+                'met_barpres_qc_results', 'met_current_direction_qc_executed', 'met_current_direction_qc_results',
+                'met_current_speed_qc_executed', 'met_current_speed_qc_results', 'met_relwind_direction_qc_executed',
+                'met_relwind_direction_qc_results', 'met_relwind_speed_qc_executed', 'met_relwind_speed_qc_results',
+                'met_netsirr_qc_executed', 'met_netsirr_qc_results', 'met_spechum_qc_executed',
+                'met_spechum_qc_results']
+    for var in drop_vars:
+        if var in ds.variables:
+            ds = ds.drop(var)
 
     # rename the met_salsurf parameters
     rename = {

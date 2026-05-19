@@ -10,8 +10,16 @@ import os
 import pandas as pd
 import xarray as xr
 
-from cgsn_processing.process.finding_calibrations import find_calibration
-from cgsn_processing.process.proc_pco2w import Calibrations
+try:
+    from cgsn_processing.process.finding_calibrations import find_calibration
+    from cgsn_processing.process.proc_pco2w import Calibrations
+except ImportError:
+    find_calibration = None
+    Calibrations = None
+    _CGSN_ERR = (
+        "cgsn-processing is required for this script but is not installed. "
+        "Install via: conda install -c conda-forge cgsn-processing"
+    )
 
 from ooi_data_explorations.common import ENCODINGS, get_annotations, get_vocabulary, get_deployment_dates, \
     load_gc_thredds, add_annotation_qc_flags, update_dataset
@@ -105,6 +113,10 @@ def apply_quality_flags(data, site, node, sensor):
     :return: xarray dataset with the quality flags used to NaN the seawater pCO2
         values that failed the quality tests.
     """
+    # check for required cgsn-processing dependency
+    if Calibrations is None:
+        raise ImportError(_CGSN_ERR)
+
     # pull in the calibration coefficients from the GitHub Asset Management repo
     cal = Calibrations(None)
     csv_url = find_calibration('PCO2W', data.SerialNumber, (data.time.values.astype('int64') * 10 ** -9)[0])

@@ -35,16 +35,27 @@ If you have any comments, questions or issues, please don't hesitate to
 
 ## Installation
 ### Installing via conda or pip
-The `ooi-data-explorations` package is available on [conda-forge](https://anaconda.org/conda-forge/ooi-data-explorations) 
+The `ooi-data-explorations` package is available on [conda-forge](https://anaconda.org/conda-forge/ooi-data-explorations)
 and can be installed into an existing conda environment with the following command:
 ```shell
 conda install -c conda-forge ooi-data-explorations
 ```
-Alternatively, the package can be installed via `pip` from [PyPI](https://pypi.org/project/ooi-data-explorations/) with 
+
+Alternatively, the package can be installed via `pip` from [PyPI](https://pypi.org/project/ooi-data-explorations/) with
 the following command:
 ```shell
 pip install ooi-data-explorations
 ```
+
+**Optional dependencies:** Some processing functions require additional packages that must be installed separately:
+- **PCO2W processing** requires `cgsn-parsers` and `cgsn-processing` (available on conda-forge):
+  ```shell
+  conda install -c conda-forge cgsn-parsers cgsn-processing
+  ```
+- **OPTAA processing** requires `pyseas` (not on PyPI or conda-forge):
+  ```shell
+  pip install https://bitbucket.org/ooicgsn/pyseas/get/develop.zip
+  ```
 
 ### Obtaining the Code and Configuring the Environment
 If you do not have python installed, read about [Installing Bash, Git and Python](#configuring-system-for-python) below 
@@ -55,6 +66,12 @@ module for use in that environment. All commands below are to be run from a term
 
 Clone the `ooi-data-explorations` code to your local machine:
 ```shell
+# create a directory for the code to live in (this can be anywhere you want, 
+# but for now...
+cd ~
+mkdir code
+cd code
+
 # download the ooi-data-explorations code
 git clone https://github.com/oceanobservatories/ooi-data-explorations.git
 ```
@@ -62,8 +79,10 @@ What follows are two ways to set up a code environment to run `ooi-data-explorat
 base using either `conda` or `pip` as the package manager.
 
 #### Create conda environment
-If you prefer to use the `conda` package manager, follow this section to set up the `ooi` environment which has the 
-dependencies needed to run the `ooi-data-explorer` python code and example notebooks.
+If you prefer to use the `conda` package manager, follow this section to set up the `ooi` environment. The
+`environment.yml` file installs the core `ooi-data-explorations` dependencies plus a broader set of packages
+useful for OOI data work (e.g. `cartopy`, `scikit-learn`, `iris`, `pyco2sys`, and others). This is the
+recommended approach for a fully-featured research environment.
 ```shell
 # configure the OOI python environment
 cd ooi-data-explorations/python
@@ -73,29 +92,40 @@ conda develop .
 ```
 
 #### Create a pip environment
-If you prefer to use the `pip` package manager, follow this section to set up the `ooi` environment which has the 
-dependencies needed to run the `ooi-data-explorer` python code and example notebooks.
+If you prefer to use the `pip` package manager, follow this section to set up the `ooi` environment which has the
+dependencies needed to run the `ooi-data-explorations` python code and example notebooks.
 ```shell
+python -m venv ooi
+source ooi/bin/activate
 cd ooi-data-explorations/python
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
+pip install -e .                         # core dependencies only
+pip install -e ".[jupyter]"              # add Jupyter notebook support
+pip install -e ".[extended]"             # add extended research packages
+pip install -e ".[all]"                  # everything
 ```
+Note that two packages used in some workflows are not available on PyPI and must be installed separately:
+- `cgsn-parsers` and `cgsn-processing`: `conda install -c conda-forge cgsn-parsers cgsn-processing`
+- `pyseas`: `pip install https://bitbucket.org/ooicgsn/pyseas/get/develop.zip`
 
-#### Ensure the python environment is available in JupyterHub
+#### Ensure the python environment is available in JupyterHub (or JupyterLab)
 If using this code in a JupyterHub environment, an additional step will be needed to ensure the environment is 
-available for running in a JupyterHub kernel. If using a pip environment, a couple of additional dependencies are 
-required. Install them with pip:
-```shell
-pip install ipykernel ipympl
-```
-For either the conda or pip environments, the environment must be added to a list of available kernels using the 
-following command:
+available for running in a JupyterHub kernel. For either the conda or pip environments, the environment must be added 
+to a list of available kernels using the following command:
 ```shell
 python -m ipykernel install --user --name=ooi
 ```
 Now the `ooi` kernel should be listed as available when running a Jupyter Notebook.
+
+Note, if you are using your own computer system, you will want to also install JupyterLab to run the example 
+notebooks (do this before adding the environment to the list of kernels). Since the OOI JupyterHub already has 
+JupyterLab installed, you can skip this step if using that system.
+```shell
+# if using conda
+conda install -c conda-forge jupyterlab
+
+# if using pip
+pip install jupyterlab
+```
 
 ### Access Credentials
 Access credentials are required to download data from OOINet via the M2M interface. Directions on how to obtain 
@@ -127,7 +157,7 @@ EOT
 If you already have python installed or are using the OOI JupyterHub, you can skip this section, as the required tools 
 are already available.
 
-In order to use the python code in this repository, you will need to set up the proper tools. There  are several 
+In order to use the python code in this repository, you will need to set up the proper tools. There are several 
 examples on how to this, so I'll avoid reinventing the wheel here. One of the best tutorials I've found has been 
 developed by the folks at [Earth Lab](https://www.earthdatascience.org/). The [tutorial](https://www.earthdatascience.org/workshops/setup-earth-analytics-python/setup-git-bash-conda/) they have 
 prepared will guide you through the process of setting up a system to use Python for Earth Science analysis from start

@@ -27,7 +27,6 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-config.yaml
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -100,6 +99,10 @@ venv.bak/
 
 # Pycharm project settings
 .idea/
+
+# Anthropic Claude settings
+CLAUDE.md
+.claude
 
 # Rope project settings
 .ropeproject

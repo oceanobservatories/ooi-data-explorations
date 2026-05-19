@@ -11,7 +11,15 @@ from tqdm import tqdm
 
 from ooi_data_explorations.calibrations import Coefficients
 from ooi_data_explorations.common import get_calibrations_by_uid
-from pyseas.data.opt_functions_tscor import tscor
+
+try:
+    from pyseas.data.opt_functions_tscor import tscor
+except ImportError:
+    tscor = None
+    _PYSEAS_ERR = (
+        "pyseas is required for OPTAA processing but is not installed. "
+        "Install via: pip install https://bitbucket.org/ooicgsn/pyseas/get/develop.zip"
+    )
 
 
 def _compare_names(cal_name, data_source):
@@ -778,6 +786,8 @@ class PureWater():
     
     def load_tscor(self, tscor):
         """Load the temperature and salinity correction data"""
+        if tscor is None:
+            raise ImportError(_PYSEAS_ERR)
 
         TScor = {
             "wvl_cor": [],

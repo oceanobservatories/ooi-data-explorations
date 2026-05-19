@@ -74,7 +74,10 @@ def dofst_wfp(ds, grid=False):
     # drop some of the variables:
     #   internal_timestamp == time, redundant so can remove
     ds = ds.reset_coords()
-    ds = ds.drop(['internal_timestamp'])
+    drop_vars = ['internal_timestamp']
+    for v in  ds.variables:
+        if v in drop_vars:
+            ds = ds.drop(v)
 
     # lots of renaming here to get a better defined data set with cleaner attributes
     rename = {

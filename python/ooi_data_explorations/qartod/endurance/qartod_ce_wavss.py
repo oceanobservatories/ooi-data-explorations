@@ -208,8 +208,8 @@ def main(argv=None):
                       'significant_period', 'wave_period_10', 'wave_period_tp5', 'mean_direction', 'mean_spread']
     else:
         parameters = ['significant_wave_height', 'peak_wave_period', 'peak_wave_direction', 'h_mean', 't_mean',
-                      'd_mean', 'h_max', 't_max', 'h_1_3', 't_1_3', 'h_1_10', 't_1_10', 'hs_sea', 'ts_sea',
-                      'dp_sea', 'hs_swell', 'ts_swell', 'dp_swell']
+                      'd_mean', 'h_max', 't_max', 'h_1_3', 't_1_3', 'h_1_10', 't_1_10', 'hs_sea', 'tp_sea',
+                      'dp_sea', 'hs_swell', 'tp_swell', 'dp_swell']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

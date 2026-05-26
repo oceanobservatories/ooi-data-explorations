@@ -140,7 +140,7 @@ def generate_qartod(site, node, sensor, cut_off):
                   'precipitation', 'shortwave_irradiance', 'sea_surface_temperature', 'sea_surface_conductivity',
                   'sea_surface_salinity', 'eastward_wind_velocity', 'northward_wind_velocity']
     for p in parameters:
-        annotation_variable = p + 'annotations_qc_results'
+        annotation_variable = p + '_annotations_qc_results'
         if annotation_variable in data.variables:
             m = data[annotation_variable] == 4
             data[p][m] = np.NaN

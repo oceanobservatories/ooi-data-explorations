@@ -21,7 +21,7 @@ from ooi_data_explorations.qartod.qc_processing import process_gross_range, proc
 def combine_delivery_methods(site, node, sensor):
     """
     Takes the downloaded data from each of the three data delivery methods for
-    the uncabled CTD (ADCP), and combines each of them into a single, merged
+    the uncabled ADCP, and combines each of them into a single, merged
     xarray data set.
 
     :param site: Site designator, extracted from the first part of the
@@ -72,7 +72,7 @@ def generate_qartod(site, node, sensor, cut_off):
     :return clm_table: CSV formatted strings to save to a csv file for the
         QARTOD climatology range table for the seafloor pressure and temperature.
     """
-    # load the combined telemetered and recovered_host data for the data and water streams
+    # load the combined telemetered, recovered_host and recovered_inst data
     data = combine_delivery_methods(site, node, sensor)
 
     # get the current system annotations for the sensor
@@ -88,10 +88,6 @@ def generate_qartod(site, node, sensor, cut_off):
 
     if 'rollup_annotations_qc_results' in data.variables:
         data = data.where(data.rollup_annotations_qc_results != 4, drop=True)
-
-    # apply some basic sensor specific checks to the data
-    data = data.where(np.abs(data['pitch']) < 1500, drop=True)
-    data = data.where(np.abs(data['roll']) < 1500, drop=True)
 
     # if a cut_off date was used, limit data to all data collected up to the cut_off date.
     # otherwise, set the limit to the range of the downloaded data.
@@ -129,7 +125,6 @@ def generate_qartod(site, node, sensor, cut_off):
     depth_bins = depth_bins[m, :]
     
     # create the initial climatology lookup and tables for the data
-    # TODO: need to flatten the bin_depths and velocity data to allow for the climatology processing to work
     data = data.rename({'bin_depths': 'depth'})
     clm_lookup, clm_table = process_climatology(data, parameters[3:], limits[3:], site=site, node=node,
                                                 depth_bins=depth_bins, sensor=sensor, stream='adcpt_velocity_earth')
@@ -150,10 +145,10 @@ def main(argv=None):
     cut_off = args.cut_off
 
     # create the QARTOD gross range and climatology lookup values and tables
-    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
+    annotations, gr_lookup, clm_lookup, clm_table = yesgenerate_qartod(site, node, sensor, cut_off)
 
     # save the downloaded annotations and qartod lookups and tables
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/ctdbp')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/adcp')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)

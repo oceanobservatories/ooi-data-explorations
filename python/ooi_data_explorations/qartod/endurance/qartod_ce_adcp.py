@@ -145,7 +145,7 @@ def main(argv=None):
     cut_off = args.cut_off
 
     # create the QARTOD gross range and climatology lookup values and tables
-    annotations, gr_lookup, clm_lookup, clm_table = yesgenerate_qartod(site, node, sensor, cut_off)
+    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
     # save the downloaded annotations and qartod lookups and tables
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/adcp')

@@ -251,19 +251,6 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
         'source': source,
     }
 
-    # pull out the variance explained by the climatology model and set to 0 if not available
-    var_explained = clm.regression['variance_explained']
-    # coerce empty -> 0.0, single-element containers -> float, leave scalars unchanged
-    arr = np.asarray(var_explained)
-    if arr.size == 0:
-        var_explained = 0.0
-    elif arr.size == 1:
-        # .item() covers numpy scalars and 1-element arrays
-        var_explained = float(arr.item())
-    else:
-        # if it's a list-like with >1 elements, then something's wrong
-        return ValueError("Unexpected multiple variance_explained values")
-
     # create the climatology table
     for idx, mu in enumerate(clm.monthly_fit):
         # use the index number to create the header row
@@ -280,15 +267,6 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
 
         # append the data to ranges
         value_str += ',"[{:.5f}, {:.5f}]"'.format(cmin, cmax)
-
-        # update the notes
-        if var_explained < 0.15:
-            qc_dict['notes'] = ('The climatological ranges are based on the monthly mean plus/minus {}x '
-                                'the monthly standard deviations.'.format(stdx))
-        else:
-            qc_dict['notes'] = ('The climatological ranges are based on a 2-cycle harmonic fit to the monthly means '
-                                'plus/minus {}x the monthly standard deviations. The variance explained by the '
-                                'climatological model is {:.1f}.'.format(stdx, var_explained))
 
     clm_table = header_str + '\n' + value_str
 
@@ -352,6 +330,8 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
         if param in ds.variables:
             if depth_bins.any():
                 depth_tables = ''
+                ve_vals: list[float] = []
+                last_qc_dict: dict | None = None
                 for bins in depth_bins:
                     # slice the dataset, selecting our data based on depth ranges
                     sliced = ds[param].where((ds.depth >= bins[0]) & (ds.depth <= bins[1]), drop=True).to_dataset()
@@ -369,17 +349,34 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                     sliced = sliced[param].where(m, drop=True)
                     clm.fit(sliced)
 
+                    ve = np.asarray(clm.regression['variance_explained'])
+                    if ve.size > 0:
+                        ve_vals.append(float(ve.flat[0]))
+
                     # create the formatted dictionary for the lookup tables
                     qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
                                                             stream, fixed_lower, fixed_upper, stdx)
-
-                    # append the dictionary to the dataframe and build the depth table
-                    df = (pd.Series(qc_dict).to_frame()).transpose()
-                    clm_lookup.append(df)
+                    last_qc_dict = qc_dict
                     if depth_tables:
                         depth_tables += clm_table[114:]
                     else:
                         depth_tables += clm_table
+
+                # append one row per parameter with notes summarizing the full depth range
+                if last_qc_dict is not None:
+                    if ve_vals and max(ve_vals) >= 0.15:
+                        last_qc_dict['notes'] = (
+                            'The climatological ranges are based on a 2-cycle harmonic fit to the monthly '
+                            'means plus/minus {}x the monthly standard deviations. The variance explained '
+                            'by the climatological model ranges from {:.1f} (near surface) to {:.1f} '
+                            '(at depth).'.format(stdx, ve_vals[0], ve_vals[-1])
+                        )
+                    else:
+                        last_qc_dict['notes'] = (
+                            'The climatological ranges are based on the monthly mean plus/minus {}x '
+                            'the monthly standard deviations.'.format(stdx)
+                        )
+                    clm_lookup.append((pd.Series(last_qc_dict).to_frame()).transpose())
 
                 # add the final depth table for the parameter
                 clm_tables.append(depth_tables)
@@ -392,6 +389,20 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                 # create the formatted dictionary for the lookup tables
                 qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
                                                         site, node, sensor, stream, fixed_lower, fixed_upper)
+
+                ve = np.asarray(clm.regression['variance_explained'])
+                ve_val = float(ve.flat[0]) if ve.size > 0 else 0.0
+                if ve_val >= 0.15:
+                    qc_dict['notes'] = (
+                        'The climatological ranges are based on a 2-cycle harmonic fit to the monthly means '
+                        'plus/minus {}x the monthly standard deviations. The variance explained by the '
+                        'climatological model is {:.1f}.'.format(stdx, ve_val)
+                    )
+                else:
+                    qc_dict['notes'] = (
+                        'The climatological ranges are based on the monthly mean plus/minus {}x '
+                        'the monthly standard deviations.'.format(stdx)
+                    )
 
                 # append the dictionary to the dataframe and the table to the list
                 df = (pd.Series(qc_dict).to_frame()).transpose()

@@ -13,12 +13,9 @@ import pandas as pd
 import pytz
 
 from ooi_data_explorations.common import get_vocabulary
-from ooi_data_explorations.gdac import collect_glider, glider_institution
+from ooi_data_explorations.gdac import collect_glider, glider_institution, glider_search_for
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, \
-    woa_standard_bins, inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
-
-# GliderDAC variables requested for this instrument (internal names from gdac.py)
-_VARIABLES = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
+    woa_standard_bins, inputs, CLM_HEADER, GR_HEADER
 
 
 def combine_delivery_methods(site: str, node: str, sensor: str):
@@ -38,14 +35,12 @@ def combine_delivery_methods(site: str, node: str, sensor: str):
     :return: xarray Dataset of all CE glider optical backscatter,
         chlorophyll, and CDOM data near the site
     """
-    vocab = get_vocabulary(site, node, sensor)[0]
-    lat = vocab['latitude']
-    lon = vocab['longitude']
     institution = glider_institution(site)
+    search_for = glider_search_for(site)
 
-    # extent of 100 nm captures the full array deployment area rather than
-    # just data near a single mooring
-    data = collect_glider(lat, lon, institution, variables=_VARIABLES, extent=100.0)
+    data = collect_glider(institution, search_for,
+                          latitude=[43.0, 48.0], longitude=[-128.0, -123.9],
+                          variables=['bback', 'estimated_chlorophyll', 'fluorometric_cdom'])
     return data
 
 
@@ -80,9 +75,6 @@ def generate_qartod(site: str, node: str, sensor: str, cut_off: str) -> tuple:
         range tables
     """
     data = combine_delivery_methods(site, node, sensor)
-
-    # no OOI system annotations for GliderDAC data
-    annotations = pd.DataFrame()
 
     if cut_off:
         cut = parser.parse(cut_off)
@@ -123,7 +115,7 @@ def generate_qartod(site: str, node: str, sensor: str, cut_off: str) -> tuple:
                                                 site=site, node=node, sensor=sensor, stream=stream)
     clm_lookup['source'] = ('Climatology based on data collected through {}.'.format(src_date))
 
-    return annotations, gr_lookup, clm_lookup, clm_table
+    return gr_lookup, clm_lookup, clm_table
 
 
 def main(argv=None):
@@ -137,15 +129,12 @@ def main(argv=None):
     sensor = args.sensor
     cut_off = args.cut_off
 
-    annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
+    gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
     out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/flort_glider')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
-
-    anno_csv = '-'.join([site, node, sensor]) + '.quality_annotations.csv'
-    annotations.to_csv(os.path.join(out_path, anno_csv), index=False, columns=ANNO_HEADER)
 
     gr_csv = '-'.join([site, node, sensor]) + '.gross_range.csv'
     gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=GR_HEADER)

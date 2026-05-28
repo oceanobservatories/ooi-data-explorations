@@ -150,7 +150,7 @@ class Climatology():
                   + β₃ sin(4πft) + β₄ cos(4πft)
         where f = 1/12 cycles per month.
         """
-        mu = da.resample(time="M").mean()
+        mu = da.resample(time="ME").mean()
         if 'depth' in mu.dims:
             mu = mu.mean(dim='depth')
 

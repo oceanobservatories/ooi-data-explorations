@@ -6,6 +6,7 @@
     the OOI QC lookup functions to implement the QARTOD testing.
 """
 import argparse
+import math
 import numpy as np
 import pandas as pd
 import sys
@@ -265,8 +266,18 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
         if fixed_upper or (cmax > sensor_range[1] or cmax < sensor_range[0]):
             cmax = sensor_range[1]
 
+        span = abs(cmax - cmin)
+        if span < 0.0001 * (sensor_range[1] - sensor_range[0]):
+            user_range = [sensor_range[0], sensor_range[1]]
+        else:
+            magnitude = math.floor(math.log10(span))
+            decimal_places = max(0, 2 - magnitude)
+            scale = 10 ** decimal_places
+            user_range = [math.floor(round(cmin * scale, 1)) / scale,
+                          math.ceil(round(cmax * scale, 1)) / scale]
+
         # append the data to ranges
-        value_str += ',"[{:.5f}, {:.5f}]"'.format(cmin, cmax)
+        value_str += ',"[{}, {}]"'.format(user_range[0], user_range[1])
 
     clm_table = header_str + '\n' + value_str
 
@@ -347,6 +358,8 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                     m = (sliced[param] > sensor_range[idx][0]) & (sliced[param] < sensor_range[idx][1]) \
                         & (~np.isnan(sliced[param]))
                     sliced = sliced[param].where(m, drop=True)
+                    if len(sliced) == 0:
+                        continue
                     clm.fit(sliced)
 
                     ve = np.asarray(clm.regression['variance_explained'])
@@ -561,7 +574,16 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
                 upper = sensor_range[idx][1]
 
             # create the formatted dictionary
-            user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
+            span = abs(upper - lower)
+            if span < 0.0001 * (sensor_range[idx][1] - sensor_range[idx][0]):
+                user_range = [sensor_range[idx][0], sensor_range[idx][1]]
+            else:
+                magnitude = math.floor(math.log10(span))
+                decimal_places = max(0, 2 - magnitude)
+                scale = 10 ** decimal_places
+                user_range = [math.floor(round(lower * scale, 1)) / scale,
+                              math.ceil(round(upper * scale, 1)) / scale]
+
             qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, notes)
 
             # append the dictionary to the dataframe

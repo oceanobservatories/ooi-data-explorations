@@ -12,39 +12,33 @@ import os
 import pandas as pd
 import pytz
 
-from ooi_data_explorations.common import get_vocabulary
-from ooi_data_explorations.gdac import collect_glider, glider_institution, glider_search_for
+from ooi_data_explorations.common import list_nodes
+from ooi_data_explorations.gdac import collect_glider, glider_institution
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, \
     woa_standard_bins, inputs, CLM_HEADER, GR_HEADER
 
 
-def combine_delivery_methods(site: str, node: str, sensor: str):
+def combine_delivery_methods(site: str):
     """
     Collect all CE glider optical data from the GliderDAC near the
     deployment location of the given reference designator.
 
-    Vocabulary is used to determine the latitude and longitude used as
-    the center of the GliderDAC search.
-
     :param site: Site designator, extracted from the first part of the
         reference designator
-    :param node: Node designator, extracted from the second part of the
-        reference designator
-    :param sensor: Sensor designator, extracted from the third and
-        fourth part of the reference designator
     :return: xarray Dataset of all CE glider optical backscatter,
         chlorophyll, and CDOM data near the site
     """
     institution = glider_institution(site)
-    search_for = glider_search_for(site)
+    search_for = None  # all CE data sets, delayed and/or realtime
 
     data = collect_glider(institution, search_for,
                           latitude=[43.0, 48.0], longitude=[-128.0, -123.9],
-                          variables=['bback', 'estimated_chlorophyll', 'fluorometric_cdom'])
+                          variables=['bback', 'estimated_chlorophyll', 'fluorometric_cdom'],
+                          subsample=33)
     return data
 
 
-def generate_qartod(site: str, node: str, sensor: str, cut_off: str) -> tuple:
+def generate_qartod(site: str, cut_off: str) -> tuple:
     """
     Load all CE glider optical data from the GliderDAC and combine into
     a single data set from which QARTOD test limits for the gross range
@@ -59,14 +53,8 @@ def generate_qartod(site: str, node: str, sensor: str, cut_off: str) -> tuple:
 
     :param site: Site designator, extracted from the first part of the
         reference designator
-    :param node: Node designator, extracted from the second part of the
-        reference designator
-    :param sensor: Sensor designator, extracted from the third and
-        fourth part of the reference designator
     :param cut_off: string formatted date to use as cut-off for data to
         add to QARTOD test sets
-    :return annotations: empty DataFrame (no OOI annotations for GDAC
-        data)
     :return gr_lookup: CSV formatted strings for the QARTOD gross range
         lookup tables
     :return clm_lookup: CSV formatted strings for the QARTOD
@@ -74,7 +62,7 @@ def generate_qartod(site: str, node: str, sensor: str, cut_off: str) -> tuple:
     :return clm_table: CSV formatted strings for the QARTOD climatology
         range tables
     """
-    data = combine_delivery_methods(site, node, sensor)
+    data = combine_delivery_methods(site)
 
     if cut_off:
         cut = parser.parse(cut_off)
@@ -95,25 +83,48 @@ def generate_qartod(site: str, node: str, sensor: str, cut_off: str) -> tuple:
     parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
     limits = [[0, 3], [0, 30], [0, 375]]
 
-    # set up depth bins -- gliders profile the water column
-    vocab = get_vocabulary(site, node, sensor)[0]
-    max_depth = vocab['maxdepth']
-    depth_bins = woa_standard_bins()
-    m = depth_bins[:, 1] <= max_depth
-    depth_bins = depth_bins[m, :]
-
     # both delivery methods share the same stream name for glider FLORT
     stream = 'flort_m_sample'
 
-    # create the gross range lookup table
-    gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node,
+    # OOI nodes (glider serial numbers) for the Endurance Array
+    nodes = list_nodes(site)
+    sensor = '02-FLORTM000'
+
+    # create the gross range lookup table and replicate for all nodes
+    gr_lookup = process_gross_range(data, parameters, limits, site=site, node=nodes[0],
                                     sensor=sensor, stream=stream)
+    gr_lookup = pd.concat([gr_lookup] * len(nodes), ignore_index=True)
+
+    idx = 0
+    for node in nodes:
+        for j in range(len(parameters)):
+            gr_lookup.loc[idx + j, 'node'] = node
+        idx += len(parameters)
+
     gr_lookup['source'] = ('User range based on data collected through {}.'.format(src_date))
 
-    # create the climatology lookup and tables
+    # set up depth bins -- gliders profile the water column
+    depth_bins = woa_standard_bins()
+    m = depth_bins[:, 1] <= 1000  # if a glider goes past 1000 m, it isn't coming back
+    depth_bins = depth_bins[m, :]
+
+    # create the climatology lookup and tables and replicate for all nodes
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins,
-                                                site=site, node=node, sensor=sensor, stream=stream)
-    clm_lookup['source'] = ('Climatology based on data collected through {}.'.format(src_date))
+                                                site=site, node=nodes[0], sensor=sensor, stream=stream)
+    clm_lookup = pd.concat([clm_lookup] * len(nodes), ignore_index=True)
+
+    idx = 0
+    for node in nodes:
+        for j in range(len(parameters)):
+            clm_lookup.loc[idx + j, 'node'] = node
+        idx += len(parameters)
+
+    clm_lookup['source'] = (
+        'Climatology based on depth bins (from {} to {} m), '
+        'using data collected through {}.'.format(
+            int(depth_bins[0, 0]), int(depth_bins[-1, 1]), src_date
+        )
+    )
 
     return gr_lookup, clm_lookup, clm_table
 
@@ -125,26 +136,24 @@ def main(argv=None):
     """
     args = inputs(argv)
     site = args.site
-    node = args.node
-    sensor = args.sensor
     cut_off = args.cut_off
 
-    gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
+    gr_lookup, clm_lookup, clm_table = generate_qartod(site, cut_off)
 
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/flort_glider')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/glider')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
 
-    gr_csv = '-'.join([site, node, sensor]) + '.gross_range.csv'
+    gr_csv = site.lower() + '.flort.gross_range.csv'
     gr_lookup.to_csv(os.path.join(out_path, gr_csv), index=False, columns=GR_HEADER)
 
-    clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
+    clm_csv = site.lower() + '.flort.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
 
     parameters = ['bback', 'estimated_chlorophyll', 'fluorometric_cdom']
     for i in range(len(parameters)):
-        tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
+        tbl = '.'.join([site.lower(), 'flort.climatology', parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:
             clm.write(clm_table[i])
 

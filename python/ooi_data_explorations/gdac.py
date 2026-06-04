@@ -10,6 +10,7 @@ import dask
 import io
 import numpy as np
 import pandas as pd
+import re
 import requests
 import time
 import xarray as xr
@@ -188,6 +189,60 @@ def _list_gliders(
     search_url = server.get_search_url(**kwargs)
     search = pd.read_csv(search_url)
     return search['Dataset ID'].values
+
+
+def _stratified_subsample(gliders: np.ndarray, subsample: int) -> np.ndarray:
+    """
+    Subsample glider dataset IDs with stratification by deployment date
+    to ensure full temporal coverage.
+
+    Deployment dates are parsed from the dataset ID (e.g.
+    ``ce_388-20160718T1600``). The full date range is divided into
+    ``n_target`` equal-sized buckets and one dataset is drawn at random
+    from each bucket, guaranteeing uniform coverage across the record.
+    Glider diversity follows naturally from temporal coverage since
+    different gliders operated at different times.
+
+    :param gliders: Array of GliderDAC dataset IDs.
+    :param subsample: Percentage of datasets to retain [1, 100].
+    :return: Subsampled array, length <= ``n_target``.
+    """
+    n_target = max(1, round(len(gliders) * subsample / 100))
+    if n_target >= len(gliders):
+        return gliders
+
+    date_pat = re.compile(r'-(\d{8}T\d{4})')
+    records = []
+    for gid in gliders:
+        m = date_pat.search(gid)
+        date = pd.to_datetime(m.group(1), format='%Y%m%dT%H%M') if m else pd.NaT
+        records.append({'dataset_id': gid, 'date': date})
+
+    df = pd.DataFrame(records).sort_values('date', na_position='last').reset_index(drop=True)
+
+    # Always anchor to the earliest and latest deployments, then fill
+    # n_target - 2 slots by stratified random sampling from the middle.
+    first = df.iloc[0]['dataset_id']
+    last = df.iloc[-1]['dataset_id']
+
+    if n_target <= 2:
+        anchors = [first] if n_target == 1 else [first, last]
+        return np.array(anchors)
+
+    middle = df.iloc[1:-1]
+    n_middle = n_target - 2
+    bucket_size = len(middle) / n_middle
+    rng = np.random.default_rng()
+    selected: list[str] = [first]
+
+    for i in range(n_middle):
+        lo = int(i * bucket_size)
+        hi = max(lo + 1, int((i + 1) * bucket_size))
+        pick = middle.iloc[lo:hi].sample(1, random_state=int(rng.integers(1_000_000)))
+        selected.append(pick['dataset_id'].iloc[0])
+
+    selected.append(last)
+    return np.array(selected)
 
 
 def _download_glider(
@@ -373,12 +428,11 @@ def collect_glider(
             raise ValueError(
                 f"subsample must be an integer in [1, 100], got {subsample}."
             )
-        n = max(1, round(len(gliders) * subsample / 100))
-        gliders = np.random.choice(gliders, size=n, replace=False)
+        gliders = _stratified_subsample(gliders, subsample)
 
     downloads = [
         dask.delayed(_download_glider)(gid, bounding_box, erddap_vars)
-        for gid in gliders[:24]
+        for gid in gliders
     ]
     with ProgressBar():
         frames = dask.compute(*downloads, scheduler='threads', num_workers=3)

@@ -13,7 +13,7 @@ import pandas as pd
 import pytz
 
 from ooi_data_explorations.common import list_nodes
-from ooi_data_explorations.gdac import collect_glider, glider_institution, glider_search_for
+from ooi_data_explorations.gdac import collect_glider, glider_institution
 from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, \
     woa_standard_bins, inputs, CLM_HEADER, GR_HEADER
 
@@ -28,12 +28,12 @@ def combine_delivery_methods(qc_flags: bool = False):
     :return: xarray Dataset of all CE glider CTD data
     """
     institution = glider_institution('CE05MOAS')
-    search_for = glider_search_for('CE05MOAS')
+    search_for = None  # all CE data sets, delayed and/or realtime
 
     data = collect_glider(institution, search_for,
                           latitude=[43.0, 48.0], longitude=[-128.0, -123.9],
                           variables=['conductivity', 'temperature', 'salinity'],
-                          qc_flags=qc_flags, subsample=33)
+                          qc_flags=qc_flags, subsample=15)
     return data
 
 
@@ -138,7 +138,7 @@ def main(argv=None):
 
     gr_lookup, clm_lookup, clm_table = generate_qartod(site, cut_off)
 
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/ctdgv')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/glider')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)

@@ -90,12 +90,12 @@ def generate_qartod(site: str, cut_off: str) -> tuple:
 
     # OOI nodes (glider serial numbers) for the Endurance Array
     nodes = list_nodes(site)
+    sensor = '01-PARADM000'
 
     # OOI stream names for both delivery methods
     streams = ['parad_m_glider_instrument', 'parad_m_glider_recovered']
 
     # create the gross range lookup table and replicate for both streams
-    sensor = '01-PARADM000'
     gr_lookup = process_gross_range(data, parameters, limits, site=site, node=nodes[0],
                                     sensor=sensor, stream=streams[0], fixed_lower=True)
     gr_lookup = pd.concat([gr_lookup] * 2 * len(nodes), ignore_index=True)
@@ -116,8 +116,7 @@ def generate_qartod(site: str, cut_off: str) -> tuple:
     depth_bins = depth_bins[m, :]
 
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins, site=site,
-                                                node=nodes[0], sensor=sensor, stream=streams[0], stdx=5,
-                                                fixed_lower=True)
+                                                node=nodes[0], sensor=sensor, stream=streams[0], fixed_lower=True)
     clm_lookup = pd.concat([clm_lookup] * 2 * len(nodes), ignore_index=True)
 
     idx = 0

@@ -33,7 +33,7 @@ def combine_delivery_methods(qc_flags: bool = False):
     data = collect_glider(institution, search_for,
                           latitude=[43.0, 48.0], longitude=[-128.0, -123.9],
                           variables=['conductivity', 'temperature', 'salinity'],
-                          qc_flags=qc_flags, subsample=15)
+                          qc_flags=qc_flags, subsample=33)
     return data
 
 
@@ -80,11 +80,11 @@ def generate_qartod(site: str, cut_off: str) -> tuple:
 
     # OOI nodes (glider serial numbers) for the Endurance Array
     nodes = list_nodes(site)
+    sensor = '05-CTDGVM000'
 
     # create the gross range lookup table and replicate for both streams
-    sensor = '05-CTDGVM000'
     gr_lookup = process_gross_range(data, parameters, limits, site=site, node=nodes[0],
-                                    sensor=sensor, stream=streams[0], stdx=5)
+                                    sensor=sensor, stream=streams[0])
     gr_lookup = pd.concat([gr_lookup] * 2 * len(nodes), ignore_index=True)
 
     idx = 0
@@ -106,7 +106,7 @@ def generate_qartod(site: str, cut_off: str) -> tuple:
     parameters = ['temperature', 'salinity']
     limits = [[-5, 35], [0, 42]]
     clm_lookup, clm_table = process_climatology(data, parameters, limits, depth_bins=depth_bins, site=site,
-                                                node=nodes[0], sensor=sensor, stream=streams[0], stdx=5)
+                                                node=nodes[0], sensor=sensor, stream=streams[0])
     clm_lookup = pd.concat([clm_lookup] * 2 * len(nodes), ignore_index=True)
 
     idx = 0

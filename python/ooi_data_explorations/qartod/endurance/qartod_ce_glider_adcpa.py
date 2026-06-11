@@ -8,7 +8,7 @@
 
 Note: climatology tests are deferred -- the combination of glider platform
 motion and depth-variable profiling makes the bin-based depth climatology
-approach used for moored ADCPs unsuitable without further methodology work.
+approach used for moored ADCPs unsuitable.
 """
 import dateutil.parser as parser
 import numpy as np

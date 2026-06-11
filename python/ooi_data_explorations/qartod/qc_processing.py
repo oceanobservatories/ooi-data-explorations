@@ -6,12 +6,12 @@
     the OOI QC lookup functions to implement the QARTOD testing.
 """
 import argparse
+import math
 import numpy as np
 import pandas as pd
 import sys
 
 from scipy.stats import normaltest
-from scipy.stats import median_abs_deviation as mad
 import dask
 from dask.diagnostics import ProgressBar
 
@@ -208,7 +208,7 @@ def create_annotations(site, node, sensor, blocks):
 
 
 def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sensor, stream,
-                       fixed_lower, fixed_upper, expanded=False):
+                       fixed_lower, fixed_upper, stdx=3):
     """
     Creates a dictionary object that can later be saved to a CSV formatted
     file for use in the Climatology lookup tables.
@@ -224,10 +224,11 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
     :param sensor: Sensor designator, extracted from the third and fourth part of
         the reference designator
     :param stream: Stream name that contains the data of interest
-    :param fixed_lower: boolean flag to set the lower range to the sensor range
-    :param fixed_upper: boolean flag to set the upper range to the sensor range
-    :param expanded: boolean flag to use 3 or 5x the standard deviation for the
-        user range (optional input, default is False when not set which uses 3x)
+    :param fixed_lower: fixed, pre-defined value to use for the lower range
+        limit of the climatology test
+    :param fixed_upper: fixed, pre-defined value to use for the upper range
+        limit of the climatology test
+    :param stdx: number of standard deviations to use in the climatology test
     :return: dictionary with the sensor and user gross range values
         added in the formatting expected by the QC lookup
     """
@@ -251,42 +252,35 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
         'source': source,
     }
 
-    # set the number of standard deviations to use for the climatology test limits
-    if expanded:
-        nx = 5
-    else:
-        nx = 3
-
-    # pull out the variance explained by the climatology model and set to 0 if not available
-    var_explained = clm.regression['variance_explained']
-    if len(var_explained) == 0:
-        var_explained = [0]
-
     # create the climatology table
+    # create the climatology table
+    sensor_span = sensor_range[1] - sensor_range[0]
+    magnitude = math.floor(math.log10(sensor_span))
+    decimal_places = max(0, 2 - magnitude)
+    scale = 10 ** decimal_places
+
     for idx, mu in enumerate(clm.monthly_fit):
         # use the index number to create the header row
         header_str += ',"[{}, {}]"'.format(idx + 1, idx + 1)
 
         # calculate the climatological ranges
-        cmin = mu - clm.monthly_std.values[idx] * nx
+        cmin = mu - clm.monthly_std.values[idx] * stdx
         if fixed_lower or (cmin < sensor_range[0] or cmin > sensor_range[1]):
             cmin = sensor_range[0]
 
-        cmax = mu + clm.monthly_std.values[idx] * nx
+        cmax = mu + clm.monthly_std.values[idx] * stdx
         if fixed_upper or (cmax > sensor_range[1] or cmax < sensor_range[0]):
             cmax = sensor_range[1]
 
-        # append the data to ranges
-        value_str += ',"[{:.5f}, {:.5f}]"'.format(cmin, cmax)
-
-        # update the notes
-        if var_explained[0] < 0.15:
-            qc_dict['notes'] = ('The climatological ranges are based on the monthly mean plus/minus {}x '
-                                'the monthly standard deviations.'.format(nx))
+        span = abs(cmax - cmin)
+        if math.isnan(span) or span < 0.0001 * sensor_span:
+            user_range = [sensor_range[0], sensor_range[1]]
         else:
-            qc_dict['notes'] = ('The climatological ranges are based on a 2-cycle harmonic fit to the monthly means '
-                                'plus/minus {}x the monthly standard deviations. The variance explained by the '
-                                'climatological model is {:.1%}.'.format(nx, var_explained[0]))
+            user_range = [math.floor(round(cmin * scale, 1)) / scale,
+                          math.ceil(round(cmax * scale, 1)) / scale]
+
+        # append the data to ranges
+        value_str += ',"[{}, {}]"'.format(user_range[0], user_range[1])
 
     clm_table = header_str + '\n' + value_str
 
@@ -308,8 +302,8 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
         (optional input)
     :**fixed_upper: boolean flag to set the upper range to the sensor range
         (optional input)
-    :**expanded: boolean flag to use 3 or 5x the standard deviation for the
-        user range (optional input, default is 3x)
+    :**stdx: use Nx the standard deviation for the user range (optional input,
+        default is 3x)
     :**site: Site designator, extracted from the first part of the
         reference designator (optional input)
     :**node: Node designator, extracted from the second part of the
@@ -327,7 +321,7 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
     depth_bins = kwargs.get('depth_bins')
     fixed_lower = kwargs.get('fixed_lower')
     fixed_upper = kwargs.get('fixed_upper')
-    expanded = kwargs.get('expanded')
+    stdx = kwargs.get('stdx', 3)
     site = kwargs.get('site')
     node = kwargs.get('node')
     sensor = kwargs.get('sensor')
@@ -350,6 +344,8 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
         if param in ds.variables:
             if depth_bins.any():
                 depth_tables = ''
+                ve_vals: list[float] = []
+                last_qc_dict: dict | None = None
                 for bins in depth_bins:
                     # slice the dataset, selecting our data based on depth ranges
                     sliced = ds[param].where((ds.depth >= bins[0]) & (ds.depth <= bins[1]), drop=True).to_dataset()
@@ -365,24 +361,38 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                     m = (sliced[param] > sensor_range[idx][0]) & (sliced[param] < sensor_range[idx][1]) \
                         & (~np.isnan(sliced[param]))
                     sliced = sliced[param].where(m, drop=True)
+                    if len(sliced) == 0:
+                        continue
                     clm.fit(sliced)
 
+                    ve = np.asarray(clm.regression['variance_explained'])
+                    if ve.size > 0:
+                        ve_vals.append(float(ve.flat[0]))
+
                     # create the formatted dictionary for the lookup tables
-                    if not expanded:
-                        qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
-                                                                stream, fixed_lower, fixed_upper)
-
-                    else:
-                        qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
-                                                                stream, fixed_lower, fixed_upper, expanded=True)
-
-                    # append the dictionary to the dataframe and build the depth table
-                    df = (pd.Series(qc_dict).to_frame()).transpose()
-                    clm_lookup.append(df)
+                    qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], bins, site, node, sensor,
+                                                            stream, fixed_lower, fixed_upper, stdx)
+                    last_qc_dict = qc_dict
                     if depth_tables:
                         depth_tables += clm_table[114:]
                     else:
                         depth_tables += clm_table
+
+                # append one row per parameter with notes summarizing the full depth range
+                if last_qc_dict is not None:
+                    if ve_vals and max(ve_vals) >= 0.15:
+                        last_qc_dict['notes'] = (
+                            'The climatological ranges are based on a 2-cycle harmonic fit to the monthly '
+                            'means plus/minus {}x the monthly standard deviations. The variance explained '
+                            'by the climatological model ranges from {:.1f} (near surface) to {:.1f} '
+                            '(at depth).'.format(stdx, ve_vals[0], ve_vals[-1])
+                        )
+                    else:
+                        last_qc_dict['notes'] = (
+                            'The climatological ranges are based on the monthly mean plus/minus {}x '
+                            'the monthly standard deviations.'.format(stdx)
+                        )
+                    clm_lookup.append((pd.Series(last_qc_dict).to_frame()).transpose())
 
                 # add the final depth table for the parameter
                 clm_tables.append(depth_tables)
@@ -395,6 +405,20 @@ def process_climatology(ds, parameters, sensor_range, **kwargs):
                 # create the formatted dictionary for the lookup tables
                 qc_dict, clm_table = format_climatology(param, clm, sensor_range[idx], depth_bins,
                                                         site, node, sensor, stream, fixed_lower, fixed_upper)
+
+                ve = np.asarray(clm.regression['variance_explained'])
+                ve_val = float(ve.flat[0]) if ve.size > 0 else 0.0
+                if ve_val >= 0.15:
+                    qc_dict['notes'] = (
+                        'The climatological ranges are based on a 2-cycle harmonic fit to the monthly means '
+                        'plus/minus {}x the monthly standard deviations. The variance explained by the '
+                        'climatological model is {:.1f}.'.format(stdx, ve_val)
+                    )
+                else:
+                    qc_dict['notes'] = (
+                        'The climatological ranges are based on the monthly mean plus/minus {}x '
+                        'the monthly standard deviations.'.format(stdx)
+                    )
 
                 # append the dictionary to the dataframe and the table to the list
                 df = (pd.Series(qc_dict).to_frame()).transpose()
@@ -469,8 +493,8 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
         (optional input)
     :**fixed_upper: boolean flag to set the upper range to the sensor range
         (optional input)
-    :**expanded: boolean flag to use 3 or 5x the standard deviation or MAD for
-        the user range (optional input, default is 3x)
+    :**stdx: use Nx the standard deviation for the user range (optional input,
+        default is 3x)
     :**site: Site designator, extracted from the first part of the
         reference designator (optional input)
     :**node: Node designator, extracted from the second part of the
@@ -485,35 +509,37 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
     # process the optional keyword arguments
     fixed_lower = kwargs.get('fixed_lower')
     fixed_upper = kwargs.get('fixed_upper')
-    expanded = kwargs.get('expanded')
+    stdx = kwargs.get('stdx', 3)
     site = kwargs.get('site')
     node = kwargs.get('node')
     sensor = kwargs.get('sensor')
     stream = kwargs.get('stream')
 
+    if stdx == 3:
+        percents = [0.15, 99.85]
+    else:
+        percents = [0.0115, 99.9885]
+
     # create an empty pandas dataframe to hold the results
     gross_range = []
-
-    # set the number of standard deviations to use for the gross range test limits
-    if not expanded:
-        nx = 3
-    else:
-        nx = 5
 
     # loop through the parameter(s) of interest, roughly estimating if the data is normally distributed using a
     # bootstrap analysis to randomly select 4500 data points to use, running the test a total of 5000 times
     sensor_range = np.atleast_2d(sensor_range).tolist()
     for idx, param in enumerate(parameters):
         if param in ds.variables:
-            # Select out the data array of the desired param. This speeds up the processing
-            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
-            da = ds[param][m]
-
             # Utilize dask to parallelize the random choice and calculate the pnorm
             random_choice = dask.delayed(np.random.choice)
+
+            # Select out the dataarray of the desired param. This speeds up the process
+            m = (ds[param] > sensor_range[idx][0]) & (ds[param] < sensor_range[idx][1]) & (~np.isnan(ds[param]))
+            da = ds[param].where(m, drop=True).values.flatten()
             vals = []
             for i in range(5000):
                 vals.append(random_choice(da, 4500))
+
+            # reset the dataarray
+            da = ds[param].where(m, drop=True)
 
             # Now compute the pnorm values via dask.delayed
             with ProgressBar():
@@ -522,28 +548,26 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
 
             pnorm = [normaltest(v).pvalue for v in pvals]
             if np.mean(pnorm) < 0.05:
-                # Even with a log-normal transformation, the data is not normally distributed, use the median and MAD
-                mu = da.median().values
-                sd = mad(da)
-                lower = mu - sd * nx
-                upper = mu + sd * nx
-                notes = ('User range based on the median +- {}x of the median absolute deviation (MAD) of all '
-                         'observations.').format(nx)
-                ##### block this out for now, testing use of median and MAD #####
-                # # Even with a log-normal transformation, the data is not normally distributed, so we will
-                # # set the user range using percentiles that approximate the Empirical Rule, covering
-                # # 99.7% of the data
-                # lower = np.nanpercentile(da, 0.15)
-                # upper = np.nanpercentile(da, 99.85)
-                # notes = ('User range based on percentiles of the observations, which are not normally distributed. '
-                #          'Percentiles were chosen to cover 99.7% of the data, approximating the Empirical Rule.')
+                # Even with a log-normal transformation, the data is not normally distributed, so we will
+                # set the user range using percentiles that approximate the Empirical Rule, covering
+                # 99.7% of the data
+                lower = np.nanpercentile(da, percents[0])
+                upper = np.nanpercentile(da, percents[1])
+                if stdx == 3:
+                    notes = ('User range based on percentiles of the observations, which are not normally '
+                             'distributed. Percentiles were chosen to cover 99.7% of the data, approximating the '
+                             'Empirical Rule.')
+                else:
+                    notes = ('User range based on percentiles of the observations, which are not normally '
+                             'distributed. Percentiles were chosen to cover 99.977% of the data, approximating '
+                             'a 5-sigma range.')
             else:
                 # most likely this data is normally distributed, or close enough, and we can use the mean
                 mu = da.mean().values
                 sd = da.std().values
-                lower = mu - sd * nx
-                upper = mu + sd * nx
-                notes = 'User range based on the mean +- {} standard deviations of all observations.'.format(nx)
+                lower = mu - sd * stdx
+                upper = mu + sd * stdx
+                notes = 'User range based on the mean +- {} standard deviations of all observations.'.format(stdx)
 
             # reset the lower and upper ranges if they exceed the sensor ranges
             if fixed_lower or lower < sensor_range[idx][0]:
@@ -553,7 +577,16 @@ def process_gross_range(ds, parameters, sensor_range, **kwargs):
                 upper = sensor_range[idx][1]
 
             # create the formatted dictionary
-            user_range = [np.round(lower, decimals=5), np.round(upper, decimals=5)]
+            span = abs(upper - lower)
+            if span < 0.0001 * (sensor_range[idx][1] - sensor_range[idx][0]):
+                user_range = [sensor_range[idx][0], sensor_range[idx][1]]
+            else:
+                magnitude = math.floor(math.log10(span))
+                decimal_places = max(0, 2 - magnitude)
+                scale = 10 ** decimal_places
+                user_range = [math.floor(round(lower * scale, 1)) / scale,
+                              math.ceil(round(upper * scale, 1)) / scale]
+
             qc_dict = format_gross_range(param, sensor_range[idx], user_range, site, node, sensor, stream, notes)
 
             # append the dictionary to the dataframe

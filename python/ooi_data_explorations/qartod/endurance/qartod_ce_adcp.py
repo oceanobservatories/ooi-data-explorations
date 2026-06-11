@@ -2,27 +2,27 @@
 # -*- coding: utf-8 -*-
 """
 @author Christopher Wingard
-@brief Load the CTDPF data from the uncabled, Coastal Endurance Profiler
-    Mooring and process the data to generate QARTOD Gross Range and Climatology
-    test limits
+@brief Load the ADCP data from the uncabled, Coastal Endurance Surface
+    Moorings and processes the data to generate QARTOD Gross Range and
+    Climatology test limits
 """
 import dateutil.parser as parser
+import numpy as np
 import os
 import pandas as pd
 import pytz
-import xarray as xr
 
 from ooi_data_explorations.common import get_annotations, get_vocabulary, load_gc_thredds, add_annotation_qc_flags
 from ooi_data_explorations.combine_data import combine_datasets
-from ooi_data_explorations.uncabled.process_ctdpf import ctdpf_wfp, ctdpf_cspp
-from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, woa_standard_bins, \
-    inputs, ANNO_HEADER, CLM_HEADER, GR_HEADER
+from ooi_data_explorations.qartod.qc_processing import process_gross_range, process_climatology, inputs, \
+    woa_standard_bins, ANNO_HEADER, CLM_HEADER, GR_HEADER
+
 
 def combine_delivery_methods(site, node, sensor):
     """
-    Takes the downloaded data from the different data delivery methods for the
-    WFP dissolved oxygen sensor (CTDPF), and combines them into a single,
-    merged xarray data sets.
+    Takes the downloaded data from each of the three data delivery methods for
+    the uncabled ADCP, and combines each of them into a single, merged
+    xarray data set.
 
     :param site: Site designator, extracted from the first part of the
         reference designator
@@ -30,57 +30,30 @@ def combine_delivery_methods(site, node, sensor):
         reference designator
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
-    :return merged: the merged CTDPF dataset
+    :return merged: the merged ADCP data stream resampled to a 3-hour time
+        record
     """
-    # set the tag
-    tag = r'.*CTDPF.*\.nc$'
+    # download the telemetered data and re-process it to create a more useful and coherent data set
+    tag = '.*ADCP.*\\.nc$'
+    stream = 'adcp_velocity_earth'
+    telem = load_gc_thredds(site, node, sensor, 'telemetered', stream, tag)
 
-    if node == 'SP001':  # This is a CSPP
-       telem = None  # don't use the telemetered CSPP data
-       print('##### Downloading the recovered_cspp CTDPF data for %s #####' % site)
-       rhost = load_gc_thredds(site, node, sensor, 'recovered_cspp', 'ctdpf_j_cspp_instrument_recovered', tag)
-       deployments = []
-       print('# -- Group the data by deployment and process the data')
-       grps = list(rhost.groupby('deployment'))
-       for grp in grps:
-           print('# -- Processing recovered_host deployment %s' % grp[0])
-           deployments.append(ctdpf_cspp(grp[1]))
-       deployments = [i for i in deployments if i]
-       rhost = xr.concat(deployments, 'time')
-    else:  # This is a WFP
-        # this CTDPF is part of a WFP and includes telemetered and recovered data
-        print('##### Downloading the telemetered CTDPF data for %s #####' % site)
-        telem = load_gc_thredds(site, node, sensor, 'telemetered', 'ctdpf_ckl_wfp_instrument', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(telem.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing telemetered deployment %s' % grp[0])
-            deployments.append(ctdpf_wfp(grp[1]))
-        deployments = [i for i in deployments if i]
-        telem = xr.concat(deployments, 'time')
+    # download the recovered host data and re-process it to create a more useful and coherent data set
+    rhost = load_gc_thredds(site, node, sensor, 'recovered_host', stream, tag)
 
-        print('##### Downloading the recovered_wfp CTDPF data for %s #####' % site)
-        rhost = load_gc_thredds(site, node, sensor, 'recovered_wfp', 'ctdpf_ckl_wfp_instrument_recovered', tag)
-        deployments = []
-        print('# -- Group the data by deployment and process the data')
-        grps = list(rhost.groupby('deployment'))
-        for grp in grps:
-            print('# -- Processing recovered_host deployment %s' % grp[0])
-            deployments.append(ctdpf_wfp(grp[1]))
-        deployments = [i for i in deployments if i]
-        rhost = xr.concat(deployments, 'time')
+    # download the recovered instrument data and re-process it to create a more useful and coherent data set
+    rinst = load_gc_thredds(site, node, sensor, 'recovered_inst', stream, tag)
 
-    # merge, but do not resample the time records.
-    merged = combine_datasets(telem, rhost, None, None)
+    # combine the three datasets into a single, merged time series
+    merged = combine_datasets(telem, rhost, rinst, None)
     return merged
 
 
 def generate_qartod(site, node, sensor, cut_off):
     """
-    Load all CTDPF data for a defined reference designator (using the site,
-    node and sensor names to construct the reference designator) and
-    collected via the different data delivery methods and combine them into a
+    Load the ADCP data for a defined reference designator (using the site, node
+    and sensor names to construct the reference designator) collected via the
+    telemetered, recovered host and instrument methods and combine them into a
     single data set from which QARTOD test limits for the gross range and
     climatology tests can be calculated.
 
@@ -97,9 +70,9 @@ def generate_qartod(site, node, sensor, cut_off):
     :return clm_lookup: CSV formatted strings to save to a csv file for the
         QARTOD climatology lookup tables.
     :return clm_table: CSV formatted strings to save to a csv file for the
-        QARTOD climatology range tables.
+        QARTOD climatology range table for the seafloor pressure and temperature.
     """
-    # load the combined data for the different sources of CTDPF data
+    # load the combined telemetered, recovered_host and recovered_inst data
     data = combine_delivery_methods(site, node, sensor)
 
     # get the current system annotations for the sensor
@@ -113,7 +86,6 @@ def generate_qartod(site, node, sensor, cut_off):
         # create an annotation-based quality flag
         data = add_annotation_qc_flags(data, annotations)
 
-    # clean-up the data, removing all records where the rollup annotation was set to fail.
     if 'rollup_annotations_qc_results' in data.variables:
         data = data.where(data.rollup_annotations_qc_results != 4, drop=True)
 
@@ -130,28 +102,20 @@ def generate_qartod(site, node, sensor, cut_off):
         end_date = cut.strftime('%Y-%m-%dT%H:%M:%S')
         src_date = cut.strftime('%Y-%m-%d')
 
+    _, index = np.unique(data['time'], return_index=True)
+    data = data.isel(time=index)
     data = data.sel(time=slice('2014-01-01T00:00:00', end_date))
-    start_date = str(data.time[0].values.min())[:10]
 
     # set the parameters and the sensor range limits
-    parameters = ['sea_water_electrical_conductivity', 'sea_water_temperature',
-                  'sea_water_pressure', 'sea_water_practical_salinity']
-    limits = [[0, 9], [-5, 35], [0, 600], [0, 42]]
-    stream = 'ctdpf_ckl_wfp_instrument'
-    if node == 'SP001':  # CSPP
-        stream = 'ctdpf_j_cspp_instrument_recovered'
-        if site in ['CE01ISSP', 'CE06ISSP']:
-            limits[2] = [0, 35]  # adjust the pressure limit for CSPP at the inshore sites
-        else:
-            limits[2] = [0, 95]  # adjust the pressure limit for CSPP at the shelf sites
+    parameters = ['pitch','roll','temperature','eastward_seawater_velocity','northward_seawater_velocity']
+    limits = [[-2000, 2000], [-2000, 2000], [-500, 4500], [-5, 5], [-5, 5]]
 
     # create the initial gross range entry
-    gr_lookup = process_gross_range(data, parameters, limits, stdx=5, site=site,
-                                    node=node, sensor=sensor, stream=stream)
+    gr_lookup = process_gross_range(data, parameters, limits, site=site, node=node, sensor=sensor,
+                                    stream='adcpt_velocity_earth', extended=True)
 
-    # add the source comment
-    gr_lookup['source'] = ('User Gross Range based on data collected from {} through to {}.'.format(start_date,
-                                                                                                    src_date))
+    # add the source date to the notes
+    gr_lookup['notes'] = ('User range based on data collected through {}.'.format(src_date))
 
     # set up the bins for a depth based climatology
     vocab = get_vocabulary(site, node, sensor)[0]
@@ -159,19 +123,18 @@ def generate_qartod(site, node, sensor, cut_off):
     depth_bins = woa_standard_bins()
     m = depth_bins[:, 1] <= max_depth
     depth_bins = depth_bins[m, :]
-
-    # create and format the climatology lookups and tables for the data
-    parameters = ['sea_water_temperature', 'sea_water_practical_salinity']
-    limits = [[-5, 35], [0, 42]]
-    clm_lookup, clm_table = process_climatology(data, parameters, limits, stdx=5, depth_bins=depth_bins,
-                                                site=site, node=node, sensor=sensor, stream=stream)
+    
+    # create the initial climatology lookup and tables for the data
+    data = data.rename({'bin_depths': 'depth'})
+    clm_lookup, clm_table = process_climatology(data, parameters[3:], limits[3:], site=site, node=node,
+                                                depth_bins=depth_bins, sensor=sensor, stream='adcpt_velocity_earth')
 
     return annotations, gr_lookup, clm_lookup, clm_table
 
 
 def main(argv=None):
     """
-    Download the CTDPF data from the Gold Copy THREDDS server and create the
+    Download the ADCP data from the Gold Copy THREDDS server and create the
     QARTOD gross range and climatology test lookup tables.
     """
     # set up the input arguments
@@ -185,7 +148,7 @@ def main(argv=None):
     annotations, gr_lookup, clm_lookup, clm_table = generate_qartod(site, node, sensor, cut_off)
 
     # save the downloaded annotations and qartod lookups and tables
-    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/ctdpf')
+    out_path = os.path.join(os.path.expanduser('~'), 'ooidata/qartod/adcp')
     out_path = os.path.abspath(out_path)
     if not os.path.exists(out_path):
         os.makedirs(out_path)
@@ -201,7 +164,7 @@ def main(argv=None):
     # save the climatology values and table to a csv for further processing
     clm_csv = '-'.join([site, node, sensor]) + '.climatology.csv'
     clm_lookup.to_csv(os.path.join(out_path, clm_csv), index=False, columns=CLM_HEADER)
-    parameters = ['sea_water_temperature', 'sea_water_practical_salinity']
+    parameters = ['eastward_seawater_velocity', 'northward_seawater_velocity']
     for i in range(len(parameters)):
         tbl = '-'.join([site, node, sensor, parameters[i]]) + '.csv'
         with open(os.path.join(out_path, tbl), 'w') as clm:

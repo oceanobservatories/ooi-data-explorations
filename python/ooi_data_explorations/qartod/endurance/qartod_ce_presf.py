@@ -29,8 +29,7 @@ def combine_delivery_methods(site, node, sensor):
         reference designator
     :param sensor: Sensor designator, extracted from the third and fourth part
         of the reference designator
-    :return merged: the atmospheric or surface seawater pCO2 data stream
-        resampled to a 3 hour time record
+    :return merged: the merged and resampled PRESF dataset
     """
     # download the telemetered, recovered_host and recovered_inst data and re-process it to create
     # a more useful and coherent data set
@@ -47,9 +46,9 @@ def combine_delivery_methods(site, node, sensor):
 
 def generate_qartod(site, node, sensor, cut_off):
     """
-    Load all of the pCO2 data for a defined reference designator (using the
+    Load all of the PRESF data for a defined reference designator (using the
     site, node and sensor names to construct the reference designator)
-    collected via the recovered instrument method and combine them into a
+    collected via the different data delivery methods and combine them into a
     single data set from which QARTOD test limits for the gross range and
     climatology tests can be calculated.
 

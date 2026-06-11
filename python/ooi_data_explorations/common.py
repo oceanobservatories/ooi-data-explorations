@@ -114,7 +114,12 @@ class InputError(Error):
 
 
 def convert_time(ms):
-    """Calculate UTC timestamp from OOI milliseconds"""
+    """
+    Calculate UTC timestamp from OOI milliseconds
+
+    :param ms: time in milliseconds since 1900-01-01T00:00:00.000Z
+    :return: datetime object
+    """
     if ms is None:
         return None
     else:

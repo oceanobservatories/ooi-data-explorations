@@ -23,7 +23,7 @@ from ooi_data_explorations.qartod.qc_processing import process_gross_range, proc
 def combine_delivery_methods(site, node, sensor):
     """
     Takes the downloaded data from the different data delivery methods for the
-    seven-channel, downwelling spectral irradiance (VELPT) sensor, and combines
+    single-point acoustic current meter (VELPT) sensor, and combines
     them into a single, merged xarray data sets.
 
     :param site: Site designator, extracted from the first part of the

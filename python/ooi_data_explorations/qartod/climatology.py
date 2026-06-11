@@ -150,7 +150,7 @@ class Climatology():
                   + β₃ sin(4πft) + β₄ cos(4πft)
         where f = 1/12 cycles per month.
         """
-        mu = da.resample(time="M").mean()
+        mu = da.resample(time="ME").mean()
         if 'depth' in mu.dims:
             mu = mu.mean(dim='depth')
 
@@ -183,8 +183,7 @@ class Climatology():
         beta, resid, rank, s = np.linalg.lstsq(X, ts_valid, rcond=None)
         total_ss = np.sum((ts_valid - ts_valid.mean()) ** 2)
         resid_sum = resid if resid.size else 0.0
-        r_squared = 1 - (resid_sum / total_ss if total_ss > 0 else 0.0)
-
+        r_squared = 1.0 - (resid_sum / total_ss if total_ss > 0 else 0.0)
         self.regression = {
             "beta": beta,
             "residuals": resid,
@@ -193,19 +192,20 @@ class Climatology():
             "variance_explained": r_squared,
         }
 
-        if r_squared > 0.15:
-            t_full = np.arange(len(ts))
-            fitted = (
-                beta[0]
-                + beta[1] * np.sin(2 * np.pi * f * t_full)
-                + beta[2] * np.cos(2 * np.pi * f * t_full)
-                + beta[3] * np.sin(4 * np.pi * f * t_full)
-                + beta[4] * np.cos(4 * np.pi * f * t_full)
-            )
-            self.fitted_data = pd.Series(fitted, index=time_index)
-            self.monthly_fit = self.fitted_data.groupby(self.fitted_data.index.month).mean()
-        else:
-            self.mu(da)
-            self.monthly_fit = self.monthly_mu
+        # calculate the monthly averages first from the monthly means
+        self.mu(da)
+        self.monthly_fit = self.monthly_mu
+        if self.regression['residuals'].size > 0:
+            if self.regression['variance_explained'] > 0.15:
+                # Calculate the two-cycle fitted data
+                t_out = np.arange(len(ts))
+                fitted_data = beta[0] + beta[1]*np.sin(2*np.pi*f*t_out) + beta[2]*np.cos(
+                    2*np.pi*f*t_out) + beta[3]*np.sin(4*np.pi*f*t_out) + beta[4]*np.cos(4*np.pi*f*t_out)
+
+                fitted_data = pd.Series(fitted_data, index=mu.get_index("time"))
+                self.fitted_data = fitted_data
+
+                # re-calculate the monthly averages using the fitted data
+                self.monthly_fit = self.fitted_data.groupby(self.fitted_data.index.month).mean()
 
         self.std(da)

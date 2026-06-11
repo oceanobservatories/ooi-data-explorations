@@ -188,7 +188,13 @@ def _list_gliders(
         )
     search_url = server.get_search_url(**kwargs)
     search = pd.read_csv(search_url)
-    return search['Dataset ID'].values
+
+    # Prefer delayed-mode datasets: drop any realtime entry that has a
+    # corresponding -delayed counterpart in the same search results.
+    gliders = search['Dataset ID'].values
+    delayed = {gid[:-8] for gid in gliders if gid.endswith('-delayed')}
+    gliders = np.array([gid for gid in gliders if gid.endswith('-delayed') or gid not in delayed])
+    return gliders
 
 
 def _stratified_subsample(gliders: np.ndarray, subsample: int) -> np.ndarray:

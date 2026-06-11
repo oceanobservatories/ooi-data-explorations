@@ -253,6 +253,12 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
     }
 
     # create the climatology table
+    # create the climatology table
+    sensor_span = sensor_range[1] - sensor_range[0]
+    magnitude = math.floor(math.log10(sensor_span))
+    decimal_places = max(0, 2 - magnitude)
+    scale = 10 ** decimal_places
+
     for idx, mu in enumerate(clm.monthly_fit):
         # use the index number to create the header row
         header_str += ',"[{}, {}]"'.format(idx + 1, idx + 1)
@@ -267,12 +273,9 @@ def format_climatology(parameter, clm, sensor_range, depth_bins, site, node, sen
             cmax = sensor_range[1]
 
         span = abs(cmax - cmin)
-        if span < 0.0001 * (sensor_range[1] - sensor_range[0]):
+        if math.isnan(span) or span < 0.0001 * sensor_span:
             user_range = [sensor_range[0], sensor_range[1]]
         else:
-            magnitude = math.floor(math.log10(span))
-            decimal_places = max(0, 2 - magnitude)
-            scale = 10 ** decimal_places
             user_range = [math.floor(round(cmin * scale, 1)) / scale,
                           math.ceil(round(cmax * scale, 1)) / scale]
 
